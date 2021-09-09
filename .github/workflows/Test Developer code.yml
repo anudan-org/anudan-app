@@ -18,13 +18,13 @@ env:
 jobs:
   DEV-Frontend-Build:
     runs-on: ubuntu-latest
+    if: github.ref == ${{github_ref}}
     name: Dev Frontend Build
     steps:
     - uses: actions/checkout@v2
       with:
         repository: anudan-org/anudan-app
         token: ${{ secrets.MY_PAT }}
-        ref: ${{github_ref}}
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@master
       with:
