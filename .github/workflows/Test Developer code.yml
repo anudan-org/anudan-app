@@ -1,7 +1,6 @@
 name: Test Developer Code
 
 on:
-   workflow_dispatch:
    push:
     branches: [ feature** ]
   #pull_request:
@@ -18,7 +17,6 @@ env:
 jobs:
   DEV-Frontend-Build:
     runs-on: ubuntu-latest
-    if: github.ref == ${{github_ref}}
     name: Dev Frontend Build
     steps:
     - uses: actions/checkout@v2
@@ -44,7 +42,6 @@ jobs:
   # this block of code will do unit and functinal testing      
   unit-and-functional-testing-Frontend:
     runs-on: ubuntu-latest
-    if: github.ref == '${GITHUB_REF}'
     name: unit and functional testing frontend 
     steps: 
     - name: test frontend code(functional)
@@ -59,7 +56,6 @@ jobs:
 
   Static-Code-Analysis-Sonarqube-Frontend:
     runs-on: ubuntu-latest
-    if: github.ref == '${GITHUB_REF}'
     name: Static Code Analysis Sonarqube Dev Frontend 
     steps:
     - uses: actions/checkout@v2
