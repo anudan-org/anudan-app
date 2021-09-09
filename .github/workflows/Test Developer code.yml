@@ -18,7 +18,6 @@ env:
 jobs:
   DEV-Frontend-Build:
     runs-on: ubuntu-latest
-    if: github.ref == ${{github_ref}}
     name: Dev Frontend Build
     steps:
     - uses: actions/checkout@v2
