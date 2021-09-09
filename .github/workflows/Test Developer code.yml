@@ -1,0 +1,119 @@
+name: Test Developer Code
+
+on:
+   workflow_dispatch:
+   push:
+    branches: [ feature** ]
+  #pull_request:
+  #  branches: [ dev ]
+  #schedule:
+   # - cron:'0/5 * * * *' 
+
+# creating env variable for head commit meassge 
+env:
+  commitmsg: ${{ github.event.head_commit.message }} 
+
+# This block of code will do a clean install of node dependencies, cache/restore them.
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions   
+jobs:
+  DEV-Frontend-Build:
+    runs-on: ubuntu-latest
+    if: github.ref == '${GITHUB_REF}'
+    name: Dev Frontend Build
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        repository: anudan-org/anudan-app
+        token: ${{ secrets.MY_PAT }}
+        ref: '${GITHUB_REF}'
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@master
+      with:
+        node-version: '12.x'
+        cache: 'npm'
+    - name: list ouput    
+      run: |
+       pwd
+       ls -lrt
+       npm install -g @angular/cli@latest
+       npm install --save-dev @angular-devkit/build-angular
+       npm ci
+       ng build --prod --no-aot --output-hashing=all --sourceMap=false --base-href=/ --extractLicenses=false --build-optimizer false
+       ls -lrt dist 
+
+
+  # this block of code will do unit and functinal testing      
+  unit-and-functional-testing-Frontend:
+    runs-on: ubuntu-latest
+    if: github.ref == '${GITHUB_REF}'
+    name: unit and functional testing frontend 
+    steps: 
+    - name: test frontend code(functional)
+      run: |
+        ls -l
+    - name: test frontend code(unit)
+      run: | 
+        ls   
+
+  # this block of code will do static code analysis 
+  # For more information see: https://github.com/sonarsource/sonarcloud-github-action
+
+  Static-Code-Analysis-Sonarqube-Frontend:
+    runs-on: ubuntu-latest
+    if: github.ref == '${GITHUB_REF}'
+    name: Static Code Analysis Sonarqube Dev Frontend 
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+       fetch-depth: 0
+       ref: '${GITHUB_REF}'
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+       GITHUB_TOKEN: ${{ secrets.MY_PAT }}
+       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}          
+                     
+
+
+  # this block of code will send email notifications. 
+  # For more information see: https://github.com/wadeww/send-email-action
+  Notify-on-email:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [DEV-Frontend-Build, unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend]
+    name: EmailNotify
+    steps:
+      - name: Send some mail
+        uses: wadeww/send-email-action@master
+        with:
+          server_address: smtp.gmail.com
+          port: ${{ secrets.SMTP_SERVER_PORT }}
+          username: ${{ secrets.AUTH_USER }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Test Developer code Workflow Finished
+          body: ${{github.repository}} 
+
+
+                1) Buildjob- ${{needs.DEV-Frontend-Build.result}} 
+
+
+                2) unit and functional testing Frontend - ${{needs.unit-and-functional-testing-Frontend.result}} 
+
+
+                3) Static Code Analysis Sonarqube Dev Frontend - ${{needs.Static-Code-Analysis-Sonarqube-Frontend.result}} 
+
+
+                7) commit messages - ${{ env.commitmsg }}
+
+
+                8) changes done by - ${{ github.actor }}
+
+                  
+                9) The name of the webhook event that triggered the workflow - ${{ github.event_name}}
+
+
+          to: prabhu@socialalpha.org, karniprabhu28@gmail.com
+          from: donotreply@anudan.org          
+
+       

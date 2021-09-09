@@ -2,8 +2,8 @@ name: UAT Build And Deploy Frontend
 
 on:
   workflow_dispatch:
-  #push:
-   #branches: [ master ]
+  push:
+   branches: [ master ]
   #pull_request:
   #   branches: [ master ]
   #schedule:
