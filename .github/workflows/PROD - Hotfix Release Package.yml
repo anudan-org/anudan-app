@@ -1,0 +1,119 @@
+name: PROD - Hotfix Release Package
+
+on:
+  workflow_dispatch:
+  #push:
+   #branches: [ master ]
+  #pull_request:
+   # branches: [ master ]
+  #schedule:
+   # - cron:'0/5 * * * *' 
+   
+jobs:
+#https://github.com/marketplace/actions/remote-ssh-commands
+  Anudan-Rlease-checkout:
+      runs-on: ubuntu-latest 
+      if: github.ref == 'refs/heads/hotfix/production_bug_fixes'
+      name: Anudan Rlease checkout
+      steps:
+        - name: checkout release repo
+          uses: actions/checkout@v2
+          with:
+            repository: anudan-org/release   
+            token: ${{ secrets.MY_PAT }}
+            ref: master
+        - name: list files
+          run: |
+            pwd
+            ls -lrt
+        - name: set variables
+          run: | 
+             echo "major=`cat release.json | cut -d "," -f4 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV  
+             echo "minor=`cat release.json | cut -d "," -f5 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV  
+             echo "releaseCandidate=`cat release.json | cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g'`" >> $GITHUB_ENV 
+             echo "productionRelease=`cat release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`" >> $GITHUB_ENV
+             echo "hotFixRelease=`cat release.json | cut -d "," -f3 |cut -d ":" -f2 | sed 's/"//g' |sed 's/}//g'`" >> $GITHUB_ENV
+        - name: release version creating for UAT
+          run: | 
+             echo '{"releaseCandidate":"${{ env.major}}.${{ env.minor }}.${{ env.releaseCandidate }}","productionRelease":"${{ env.major}}.${{ env.minor }}.${{ env.productionRelease }}","hotFixRelease":"${{ env.hotFixRelease }}"}' > release.json 
+             ls -lrt    
+        - name: creating release.json artifact for build number which is mentioned in s3cmd command
+          uses: actions/upload-artifact@v2
+          with:
+              name: Anudan-Release
+              path: release.json
+              retention-days: 5
+
+  Hotfix-prod-artifacts-downloading:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/hotfix/production_bug_fixes'
+    name: Hotfix prod artifacts downloading
+    needs: [Anudan-Rlease-checkout]
+    steps: 
+        - name: Anudan Release artifact downloading      
+          uses: actions/download-artifact@v2
+          with:
+            name: Anudan-Release 
+        - name: copying release.json file to remote server 
+          uses: burnett01/rsync-deployments@4.1
+          with:
+              switches: -avzr -q
+              path: .
+              remote_path: /home/anudan/github
+              remote_host: ${{ secrets.HOST_PROD }}
+              remote_port: ${{ secrets.SSH_PORT }}
+              remote_user: ${{ secrets.SSH_USER }}
+              remote_key: ${{ secrets.SSH_DEPLOY_KEY }}     
+#https://github.com/marketplace/actions/remote-ssh-commands       
+        - name: artifacts downloading from spaces
+          uses: fifsky/ssh-action@master
+          with:
+            command: |
+                cd /home/anudan/github
+                TAG_NO_1=`cat release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`
+                TAG_NO_2=`cat release.json | cut -d "," -f3 |cut -d ":" -f2 | sed 's/"//g' |sed 's/}//g'`
+                BuildNo=$TAG_NO_1-HF-$TAG_NO_2
+                t=$BuildNo
+                /home/anudan/github/s3cmd/s3cmd-2.0.1/s3cmd --recursive --force get s3://anudan-hotfix-artifacts-test/$t/
+                ls -a
+            host: ${{ secrets.HOST_PROD }}
+            user: ${{ secrets.SSH_USER }}
+            key: ${{ secrets.SSH_DEPLOY_KEY }}
+
+  Notify-on-email:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [Anudan-Rlease-checkout, Hotfix-prod-artifacts-downloading]
+    name: EmailNotify
+    steps:
+      - name: Anudan Release artifact downloading      
+        uses: actions/download-artifact@v2
+        with:
+          name: Anudan-Release 
+
+      - name: set env variable with bash expression 
+        run:   |
+         ls -lrt
+         TAG_NO_1=`cat release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`
+         TAG_NO_2=`cat release.json | cut -d "," -f3 |cut -d ":" -f2 | sed 's/"//g' |sed 's/}//g'`
+         echo "Hotfix_Release=$TAG_NO_1-HF-$TAG_NO_2" >> $GITHUB_ENV
+      - name: Send some mail
+        uses: wadeww/send-email-action@master
+        with:
+          server_address: smtp.gmail.com
+          port: ${{ secrets.SMTP_SERVER_PORT }}
+          username: ${{ secrets.AUTH_USER }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: PROD - Hotfix Release Package Workflow Finished
+          body: ${{github.repository}} 
+
+
+                1) Anudan Rlease checkout - ${{needs.Anudan-Rlease-checkout.result}} 
+
+
+                2) Hotfix prod artifacts downloading - ${{needs.Hotfix-prod-artifacts-downloading.result}} 
+
+
+                3) Anudan - Grant Management System › PROD Hotfix Release - ${{ env.Hotfix_Release }}
+          to: prabhu@socialalpha.org
+          from: donotreply@anudan.org          

@@ -1,0 +1,40 @@
+name: HOTFIX Rlease Version
+
+on:
+  workflow_dispatch:
+  #push:
+   #branches: [ master ]
+  #pull_request:
+   # branches: [ master ]
+  #schedule:
+   # - cron:'0/5 * * * *' 
+   
+jobs:
+  update-release-candidate:
+      runs-on: ubuntu-latest 
+      if: github.ref == 'refs/heads/hotfix/production_bug_fixes'
+      name: update release candidate
+      steps: 
+      - uses: actions/checkout@v2
+        with:
+          repository: anudan-org/release   
+          token: ${{ secrets.MY_PAT }}
+          ref: master  
+      - name: Create local changes
+        run: |
+            node updatehotfixversion.js
+            pwd
+            ls -lrt
+      - name: Commit files
+        run: |
+          git config --local user.email "admin@anudan.org"
+          git config --local user.name "${GITHUB_ACTOR}"
+          git add .
+          git commit -m "this file is updated by github/action" 
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.MY_PAT }}
+          repository: anudan-org/release 
+          branch: master
+                

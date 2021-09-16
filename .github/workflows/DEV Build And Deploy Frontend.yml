@@ -1,0 +1,236 @@
+
+name: DEV Build And Deploy Frontend
+
+on:
+   workflow_dispatch:
+   #push:
+    #branches: [ dev ]
+  #pull_request:
+  #  branches: [ dev ]
+  #schedule:
+   # - cron:'0/5 * * * *' 
+
+# creating env variable for head commit meassge 
+env:
+  commitmsg: ${{ github.event.head_commit.message }} 
+
+# This block of code will do a clean install of node dependencies, cache/restore them.
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions   
+jobs:
+  DEV-Frontend-Build:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev' 
+    name: Dev Frontend Build
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        repository: anudan-org/anudan-app
+        token: ${{ secrets.MY_PAT }}
+        ref: dev
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@master
+      with:
+        node-version: '12.x'
+        cache: 'npm'
+    - name: list ouput    
+      run: |
+       pwd
+       ls -lrt
+       npm install -g @angular/cli@latest
+       npm install --save-dev @angular-devkit/build-angular
+       npm ci
+       ng build --prod --no-aot --output-hashing=all --sourceMap=false --base-href=/ --extractLicenses=false --build-optimizer false
+       ls -lrt dist 
+
+    - name: anudan frontend artifact uploading
+      uses: actions/upload-artifact@v2
+      with:
+          name: dist
+          path: dist/**
+          retention-days: 5
+
+  # this block of code will do unit and functinal testing      
+  unit-and-functional-testing-Frontend:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
+    name: unit and functional testing frontend 
+    steps: 
+    - name: test frontend code(functional)
+      run: |
+        ls -l
+    - name: test frontend code(unit)
+      run: | 
+        ls   
+
+  # this block of code will do static code analysis 
+  # For more information see: https://github.com/sonarsource/sonarcloud-github-action
+
+  Static-Code-Analysis-Sonarqube-Frontend:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
+    name: Static Code Analysis Sonarqube Dev Frontend 
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+       fetch-depth: 0
+       ref: dev
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+       GITHUB_TOKEN: ${{ secrets.MY_PAT }}
+       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}          
+
+  # this block of code will do checkout anudan-config repo 
+  # For more information see: https://github.com/actions/checkout
+  Anudan-config:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
+    name: Anudan config
+    steps: 
+      - name: Checking out my anudan-config repo
+        uses: actions/checkout@master
+        with:
+          repository: anudan-org/anudan-config   
+          token: ${{ secrets.MY_PAT }}
+          ref: master
+      - run: pwd
+      - run: ls -lrt     
+      - name: anudan-config artifact building
+        uses: actions/upload-artifact@v2
+        with:
+          name: Anudan-Configuration
+          path: backend/application.yaml
+          retention-days: 5
+
+  # this block of code will do trigger Dev-package.yml workflow file  
+  # For more information see: https://github.com/convictional/trigger-workflow-and-wait
+  Trigger-Dev-Release:
+      runs-on: ubuntu-latest  
+      if: github.ref == 'refs/heads/dev'
+      name: Creating Dev Release Version
+      steps:      
+        - name: DEV-deployment  
+          uses: convictional/trigger-workflow-and-wait@v1.3.0
+          with:
+            owner: anudan-org
+            repo: anudan-app
+            github_token: ${{ secrets.MY_PAT }}
+            workflow_file_name: Dev-Package.yml
+            ref: dev  
+
+  Release-repo-checkout:
+      runs-on: ubuntu-latest
+      if: github.ref == 'refs/heads/dev'
+      name: Release repo checkout
+      needs: [Trigger-Dev-Release]
+      steps:
+        - uses: actions/checkout@v2
+          with:
+            repository: anudan-org/release   
+            token: ${{ secrets.MY_PAT }}
+        - name: creating Dev_release.json artifact 
+          uses: actions/upload-artifact@v2
+          with:
+            name: Anudan-Dev-Release
+            path: Dev_release.json
+            retention-days: 5  
+
+  # this block of code will use rsync-deployment action to copy the artifact to remote server. 
+  # For more information see: https://github.com/marketplace/actions/rsync-deployments-action
+  Rsync-Dev-Deployments:
+      runs-on: ubuntu-latest
+      needs: [DEV-Frontend-Build, unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend, Anudan-config, Release-repo-checkout]
+      if: github.ref == 'refs/heads/dev'
+      name: Copy Artifacts To Dev Server
+      steps:
+      - name: downloading dist arifact 
+        uses: actions/download-artifact@v2
+        with:
+          name: dist
+          path: dist
+      - name: downloading Anudan-Configuration artifact 
+        uses: actions/download-artifact@v2
+        with:
+          name: Anudan-Configuration  
+      - name: downloading Anudan-Dev-Release artifact 
+        uses: actions/download-artifact@v2
+        with:
+          name: Anudan-Dev-Release     
+      - run: |  
+          ls -lrt
+          mv Dev_release.json release.json
+          ls -lrt
+      - name: rsync deployments
+        uses: burnett01/rsync-deployments@4.1
+        with:
+          switches: -avzr -q
+          path: .
+          remote_path: /home/anudan/github
+          remote_host: ${{ secrets.HOST_DEV }}
+          remote_port: ${{ secrets.SSH_PORT }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_DEPLOY_KEY }}            
+
+
+  # this block of code will send email notifications. 
+  # For more information see: https://github.com/wadeww/send-email-action
+  Notify-on-email:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [DEV-Frontend-Build, unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend, Anudan-config, Rsync-Dev-Deployments, Trigger-Dev-Release]
+    name: EmailNotify
+    steps:
+      - name: Anudan Release artifact downloading      
+        uses: actions/download-artifact@v2
+        with:
+            name: Anudan-Dev-Release
+
+      - name: set env variable with bash expression 
+        run:   |
+          ls -lrt
+          echo "Dev_Version=`cat Dev_release.json| cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV
+      - name: Send some mail
+        uses: wadeww/send-email-action@master
+        with:
+          server_address: smtp.gmail.com
+          port: ${{ secrets.SMTP_SERVER_PORT }}
+          username: ${{ secrets.AUTH_USER }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: DEV Build - Frontend Workflow Finished
+          body: ${{github.repository}} 
+
+
+                1) Buildjob- ${{needs.DEV-Frontend-Build.result}} 
+
+
+                2) unit and functional testing Frontend - ${{needs.unit-and-functional-testing-Frontend.result}} 
+
+
+                3) Static Code Analysis Sonarqube Dev Frontend - ${{needs.Static-Code-Analysis-Sonarqube-Frontend.result}} 
+
+
+                4) Anudan config - ${{needs.Anudan-config.result}} 
+
+
+                5) Copy Artifacts To Dev Server - ${{needs.Rsync-Dev-Deployments.result}} 
+
+
+                6) Trigger Dev Release - ${{needs.Trigger-Dev-Release.result}}
+
+
+                7) commit messages - ${{ env.commitmsg }}
+
+
+                8) changes done by - ${{ github.actor }}
+
+                  
+                9) The name of the webhook event that triggered the workflow - ${{ github.event_name}}
+
+
+                10) Anudan - Grant Management System › DEV Build - ${{ env.Dev_Version }}
+
+          to: prabhu@socialalpha.org karniprabhu28@gmail.com
+          from: donotreply@anudan.org          
+
+       

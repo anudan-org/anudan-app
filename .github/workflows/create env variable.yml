@@ -1,0 +1,35 @@
+name: env create and default env variables 
+
+on:
+  workflow_dispatch:
+  #push:
+   #branches: [ dev ]
+  #pull_request:
+    #branches: [ dev ]
+  #schedule:
+   # - cron:'0/5 * * * *' 
+   
+jobs:
+  default-env-variables:
+      runs-on: ubuntu-latest
+      env: 
+        step_new-1: env testing-1
+        step_new-2: env testing-2 
+      steps:
+        - name: default env variables
+          run: | 
+              echo "HOME: ${HOME}"
+              echo "GITHUB_WORKFLOW: ${GITHUB_WORKFLOW}"
+              echo "GITHUB_ACTION: ${GITHUB_ACTION}"
+              echo "GITHUB_ACTIONS: ${GITHUB_ACTIONS}"
+              echo "GITHUB_ACTOR: ${GITHUB_ACTOR}"
+              echo "GITHUB_REPOSITORY: ${GITHUB_REPOSITORY}"
+              echo "GITHUB_EVENT_NAME: ${GITHUB_EVENT_NAME}"
+              echo "GITHUB_WORKSPACE: ${GITHUB_WORKSPACE}"
+              echo "GITHUB_SHA: ${GITHUB_SHA}"
+              echo "GITHUB_REF: ${GITHUB_REF}"
+              echo "GITHUB_JOB: ${GITHUB_JOB}"
+              echo "GITHUB_RUN_NUMBER: ${GITHUB_RUN_NUMBER}"
+              echo " test-1: ${step_new-1}"
+              echo " test-2: ${step_new-2}"
+       

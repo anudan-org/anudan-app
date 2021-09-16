@@ -1,0 +1,290 @@
+name: PROD - Release Package
+
+on:
+  workflow_dispatch:
+  #push:
+   #branches: [ master ]
+  #pull_request:
+   # branches: [ master ]
+  #schedule:
+   # - cron:'0/5 * * * *' 
+   
+jobs:
+#https://github.com/marketplace/actions/remote-ssh-commands
+
+  update-release-candidate:
+      runs-on: ubuntu-latest 
+      if: github.ref == 'refs/heads/master'
+      name: update release candidate
+      steps:
+        - name: checkout release repo
+          uses: actions/checkout@v2
+          with:
+            repository: anudan-org/release   
+            token: ${{ secrets.MY_PAT }}
+            ref: master
+        - name: update production release 
+          run: | 
+            node updateproductionrelease.js    
+            ls -lrt 
+            pwd
+        - name: Commit files
+          run: |
+            git config --local user.email "admin@anudan.org"
+            git config --local user.name "${GITHUB_ACTOR}"
+            git add .
+            git commit -m "this file is updated by github/action" 
+        - name: Commit Updated Production Release Version 
+          uses: ad-m/github-push-action@master
+          with:
+            github_token: ${{ secrets.MY_PAT }}
+            repository: anudan-org/release 
+            branch: master 
+        - name: set variables
+          run: | 
+             echo "major=`cat release.json | cut -d "," -f4 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV  
+             echo "minor=`cat release.json | cut -d "," -f5 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV  
+             echo "releaseCandidate=`cat release.json | cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g'`" >> $GITHUB_ENV 
+             echo "productionRelease=`cat release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`" >> $GITHUB_ENV
+             echo "hotFixRelease=`cat release.json | cut -d "," -f3 |cut -d ":" -f2 | sed 's/"//g' |sed 's/}//g'`" >> $GITHUB_ENV
+        - name: release version creating for UAT
+          run: | 
+             echo '{"releaseCandidate":"${{ env.major}}.${{ env.minor }}.${{ env.releaseCandidate }}","productionRelease":"${{ env.major}}.${{ env.minor }}.${{ env.productionRelease }}","hotFixRelease":"${{ env.hotFixRelease }}"}' > release.json 
+             ls -lrt       
+        - name: creating release.json artifact for tagging master branch
+          uses: actions/upload-artifact@v2
+          with:
+              name: Anudan-Release
+              path: release.json
+              retention-days: 5                         
+
+  Prod-deployment-artifacts-downloading:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs: [update-release-candidate]
+    name: Prod deployment artifacts downloading 
+    steps: 
+        - name: Anudan Release artifact downloading      
+          uses: actions/download-artifact@v2
+          with:
+            name: Anudan-Release  
+        - name: copying release.json file to remote server 
+          uses: burnett01/rsync-deployments@4.1
+          with:
+              switches: -avzr -q
+              path: .
+              remote_path: /home/anudan/github/BuldNo
+              remote_host: ${{ secrets.HOST_PROD }}
+              remote_port: ${{ secrets.SSH_PORT }}
+              remote_user: ${{ secrets.SSH_USER }}
+              remote_key: ${{ secrets.SSH_DEPLOY_KEY }}   
+        - name: artifacts downloading from spaces
+          uses: fifsky/ssh-action@master
+          with:
+           command: |
+              cd /home/anudan/github
+              cd /home/anudan/github
+              BuildNO=`cat BuldNo/release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`
+              /home/anudan/github/s3cmd/s3cmd-2.0.1/s3cmd --recursive --force get s3://anudan-certified-uat-artifacts-test/"$BuildNO"/
+              ls -a
+           host: ${{ secrets.HOST_PROD }}
+           user: ${{ secrets.SSH_USER }}
+           key: ${{ secrets.SSH_DEPLOY_KEY }} 
+
+        - name: copying release.json file to remote server 
+          uses: burnett01/rsync-deployments@4.1
+          with:
+              switches: -avzr -q
+              path: .
+              remote_path: /home/anudan/github
+              remote_host: ${{ secrets.HOST_PROD }}
+              remote_port: ${{ secrets.SSH_PORT }}
+              remote_user: ${{ secrets.SSH_USER }}
+              remote_key: ${{ secrets.SSH_DEPLOY_KEY }}    
+
+           
+          
+  
+
+  Create-Production-Release-Version-Branch-for-Frontend:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    needs: [update-release-candidate]
+    name: Create Production Release Version Branch for Frontend
+    steps:
+    - name: check out gms-service master
+      uses: actions/checkout@master
+      with:
+          repository: anudan-org/anudan-app
+          token: ${{ secrets.MY_PAT }} 
+          ref: master
+
+    - name: Anudan Release artifact downloading      
+      uses: actions/download-artifact@v2
+      with:
+        name: Anudan-Release
+    - name: Create local changes
+      run: |
+            pwd
+            ls -lrt
+    - name: production release branch creating
+      run: |
+          TAG_NO=`cat release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`
+          echo $TAG_NO
+          git config --local user.email "admin@anudan.org"
+          git config --local user.name "${GITHUB_ACTOR}"
+          git checkout -b branch_$TAG_NO
+          echo 'release.json' >> .gitignore
+          git push origin branch_$TAG_NO  
+
+  Merging-production-Release-version-Frontend-to-Hotfix:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    needs: [Create-Production-Release-Version-Branch-for-Frontend]
+    name: Merging production Release version Frontend to Hotfix Frontend 
+    steps:
+     - name: check out anudan-app master
+       uses: actions/checkout@master
+       with:
+            repository: anudan-org/anudan-app
+            token: ${{ secrets.MY_PAT }} 
+            fetch-depth: 0
+            
+     - name: Anudan Release artifact downloading      
+       uses: actions/download-artifact@v2
+       with:
+        name: Anudan-Release
+     - name: Create local changes
+       run: |
+            pwd
+            ls -lrt  
+     - name: merging production branch to hotfix/production_bug_fixes frontend
+       run: | 
+        TAG_NO=`cat release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`
+        git config --local user.email "admin@anudan.org"
+        git config --local user.name "${GITHUB_ACTOR}"
+        git checkout branch_$TAG_NO
+        git checkout hotfix/production_bug_fixes
+        git merge branch_$TAG_NO
+        echo 'release.json' >> .gitignore
+        git add . 
+        git commit -m "Merging production Release version Frontend to Hotfix Frontend"
+        git push origin hotfix/production_bug_fixes 
+
+
+
+  Create-Production-Release-Version-Branch-for-Backend:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    needs: [update-release-candidate]
+    name: Create Production Release Version Branch for Backend
+    steps:
+    - name: check out gms-service master
+      uses: actions/checkout@master
+      with:
+          repository: anudan-org/gms-service 
+          token: ${{ secrets.MY_PAT }} 
+          ref: master 
+          fetch-depth: 0
+
+    - name: Anudan Release artifact downloading      
+      uses: actions/download-artifact@v2
+      with:
+        name: Anudan-Release
+    - name: Create local changes
+      run: |
+            pwd
+            ls -lrt
+    - name: production release branch creating
+      run: |
+          TAG_NO=`cat release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`
+          echo $TAG_NO
+          git config --local user.email "admin@anudan.org"
+          git config --local user.name "${GITHUB_ACTOR}"
+          git checkout -b branch_$TAG_NO
+          echo 'release.json' >> .gitignore
+          git push origin branch_$TAG_NO     
+
+  Merging-production-Release-version-Backend-to-Hotfix:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    needs: [Create-Production-Release-Version-Branch-for-Backend]
+    name: Merging production Release version Backend to Hotfix Backend
+    steps:
+    - name: check out anudan-app master
+      uses: actions/checkout@master
+      with:
+          repository: anudan-org/gms-service
+          token: ${{ secrets.MY_PAT }} 
+          fetch-depth: 0
+
+    - name: Anudan Release artifact downloading      
+      uses: actions/download-artifact@v2
+      with:
+        name: Anudan-Release
+    - name: Create local changes
+      run: |
+            pwd
+            ls -lrt  
+    - name: merging production branch to hotfix/production_bug_fixes
+      run: | 
+        TAG_NO=`cat release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`
+        git config --local user.email "admin@anudan.org"
+        git config --local user.name "${GITHUB_ACTOR}"
+        git checkout branch_$TAG_NO
+        git checkout hotfix/production_bug_fixes
+        git merge branch_$TAG_NO
+        echo 'release.json' >> .gitignore
+        git add . 
+        git commit -m "Merging-production-Release-version-Backend-to-Hotfix"
+        git push origin hotfix/production_bug_fixes  
+
+               
+
+  Notify-on-email:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [update-release-candidate, Prod-deployment-artifacts-downloading, Create-Production-Release-Version-Branch-for-Frontend, Merging-production-Release-version-Frontend-to-Hotfix, Create-Production-Release-Version-Branch-for-Backend, Merging-production-Release-version-Backend-to-Hotfix ]
+    name: EmailNotify
+    steps:
+      - name: Anudan Release artifact downloading      
+        uses: actions/download-artifact@v2
+        with:
+          name: Anudan-Release
+      - name: set env variable with bash expression 
+        run:   |
+         ls -lrt
+         echo "PROD_Release=`cat release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`" >> $GITHUB_ENV
+      - name: Send some mail
+        uses: wadeww/send-email-action@master
+        with:
+          server_address: smtp.gmail.com
+          port: ${{ secrets.SMTP_SERVER_PORT }}
+          username: ${{ secrets.AUTH_USER }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: PROD - Release Package Workflow Finished
+          body: ${{github.repository}} 
+
+
+                1) update release candidate - ${{needs.update-release-candidate.result}} 
+
+
+                2) Prod deployment artifacts downloading - ${{needs.Prod-deployment-artifacts-downloading.result}} 
+
+
+                3) Create Production Release Version Branch for Frontend - ${{needs.Create-Production-Release-Version-Branch-for-Frontend.result}} 
+
+
+                4) Merging production Release version Frontend to Hotfix - ${{needs.Merging-production-Release-version-Frontend-to-Hotfix.result}} 
+
+
+                5) Create Production Release Version Branch for Backend - ${{needs.Create-Production-Release-Version-Branch-for-Backend.result}} 
+
+
+                6) Merging production Release version Backend to Hotfix - ${{needs.Merging-production-Release-version-Backend-to-Hotfix.result}} 
+
+
+                7) Anudan - Grant Management System › PROD Release version - ${{ env.PROD_Release }}
+                 
+          to: prabhu@socialalpha.org
+          from: donotreply@anudan.org          

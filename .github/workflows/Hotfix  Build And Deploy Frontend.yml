@@ -1,0 +1,231 @@
+name: Hotfix Build And Deploy Frontend
+
+on:
+   workflow_dispatch:
+   push:
+    branches: [ hotfix/production_bug_fixes ]
+  #pull_request:
+  #   branches: [ hotfix/production_bug_fixes ]
+  #schedule:
+   # - cron:'0/5 * * * *' 
+
+env:
+  commitmsg: ${{ github.event.head_commit.message }} 
+
+jobs:
+  Hotflix-Frontend-Build:
+
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/hotfix/production_bug_fixes'
+    name: Hotflix Frontend Build
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        repository: anudan-org/anudan-app
+        token: ${{ secrets.MY_PAT }}
+        ref: hotfix/production_bug_fixes
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@master
+      with:
+        node-version: '12.x'
+        cache: 'npm'
+    - name: list output     
+      run: |
+       pwd
+       ls -lrt
+       npm install -g @angular/cli@latest
+       npm install --save-dev @angular-devkit/build-angular
+       npm ci
+       ng build --prod --no-aot --output-hashing=all --sourceMap=false --base-href=/ --extractLicenses=false --build-optimizer false
+       ls -lrt dist    
+
+    - name: anudan frontend artifact uploading
+      uses: actions/upload-artifact@v2
+      with:
+          name: dist
+          path: dist/**
+          retention-days: 5
+
+        
+  unit-and-functional-testing-Frontend:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/hotfix/production_bug_fixes'
+    name: unit and functional testing Frontend
+    steps: 
+    - name: test frontend code(functional)
+      run: |
+        ls -l
+    - name: test frontend code(unit)
+      run: | 
+        ls   
+
+
+
+  Static-Code-Analysis-Sonarqube-Frontend:
+    runs-on: ubuntu-latest
+    name: Static Code Analysis Sonarqube hotfix/production_bug_fixes Frontend
+    if: github.ref == 'refs/heads/hotfix/production_bug_fixes'
+    steps:
+    - uses: actions/checkout@master
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
+        ref: hotfix/production_bug_fixes
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.MY_PAT }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}          
+
+  Anudan-config:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/hotfix/production_bug_fixes'
+    name: Anudan config
+    steps: 
+      - name: Checking out my anudan-config repo
+        uses: actions/checkout@master
+        with:
+          repository: anudan-org/anudan-config   
+          token: ${{ secrets.MY_PAT }}
+          ref: master
+      - run: pwd
+      - run: ls -lrt     
+      - name: anudan-config artifact uploading
+        uses: actions/upload-artifact@v2
+        with:
+          name: Anudan-Configuration
+          path: backend/application.yaml
+          retention-days: 5    
+      
+
+  Trigger-Hotfix-Release:
+      runs-on: ubuntu-latest
+      if: github.ref == 'refs/heads/hotfix/production_bug_fixes'  
+      name: Creating Hotfix Release Version
+      steps:      
+        - name: Hotfix-deployment 
+          uses: convictional/trigger-workflow-and-wait@v1.3.0
+          with:
+            owner: anudan-org
+            repo: anudan-app
+            github_token: ${{ secrets.MY_PAT }}
+            workflow_file_name: Hotfix-package.yml
+            ref: hotfix/production_bug_fixes   
+
+  Release-repo-checkout:
+      runs-on: ubuntu-latest
+      if: github.ref == 'refs/heads/hotfix/production_bug_fixes'
+      name: Release repo checkout
+      needs: [Trigger-Hotfix-Release]
+      steps:
+        - uses: actions/checkout@v2
+          with:
+            repository: anudan-org/release   
+            token: ${{ secrets.MY_PAT }}
+        - name: set variables
+          run: | 
+             echo "major=`cat release.json | cut -d "," -f4 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV  
+             echo "minor=`cat release.json | cut -d "," -f5 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV  
+             echo "releaseCandidate=`cat release.json | cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g'`" >> $GITHUB_ENV 
+             echo "productionRelease=`cat release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`" >> $GITHUB_ENV
+             echo "hotFixRelease=`cat release.json | cut -d "," -f3 |cut -d ":" -f2 | sed 's/"//g' |sed 's/}//g'`" >> $GITHUB_ENV
+        - name: release version creating for UAT
+          run: | 
+             echo '{"releaseCandidate":"${{ env.major}}.${{ env.minor }}.${{ env.releaseCandidate }}","productionRelease":"${{ env.major}}.${{ env.minor }}.${{ env.productionRelease }}","hotFixRelease":"${{ env.hotFixRelease }}"}' > release.json 
+             ls -lrt    
+        - name: creating Hotfix_release.json artifact 
+          uses: actions/upload-artifact@v2
+          with:
+            name: Anudan-Hotfix-Release
+            path: release.json
+            retention-days: 5            
+
+  Rsync-Hotfix-Deployments:
+      runs-on: ubuntu-latest
+      if: github.ref == 'refs/heads/hotfix/production_bug_fixes'
+      needs: [Hotflix-Frontend-Build, unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend, Anudan-config, Release-repo-checkout]
+      name: Copy Artifacts to Hotfix Server
+      steps:
+      - name: downloading dist arifact
+        uses: actions/download-artifact@v2
+        with:
+          name: dist 
+          path: dist
+      - name: downloading Anudan-Configuration arifact
+        uses: actions/download-artifact@v2
+        with:
+          name: Anudan-Configuration    
+      - name: downloading Anudan-Hotfix-Release artifact 
+        uses: actions/download-artifact@v2
+        with:
+          name: Anudan-Hotfix-Release     
+      - run: |  
+          ls -lrt
+          pwd
+      - name: rsync deployments
+        uses: burnett01/rsync-deployments@4.1
+        with:
+          switches: -avzr -q
+          path: .
+          remote_path: /home/anudan/github
+          remote_host: ${{ secrets.HOST_HOTFIX }}
+          remote_port: ${{ secrets.SSH_PORT }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_DEPLOY_KEY }}              
+
+  Notify-on-email:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [Hotflix-Frontend-Build, unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend, Anudan-config, Rsync-Hotfix-Deployments, Trigger-Hotfix-Release]
+    name: EmailNotify
+    steps:
+      - name: Anudan Release artifact downloading      
+        uses: actions/download-artifact@v2
+        with:
+          name: Anudan-Hotfix-Release
+
+      - name: set env variable with bash expression 
+        run:   |
+         ls -lrt
+         echo "Hotfix_Release=`cat release.json | cut -d "," -f3 |cut -d ":" -f2 | sed 's/"//g' |sed 's/}//g'`" >> $GITHUB_ENV
+      - name: Send some mail
+        uses: wadeww/send-email-action@master
+        with:
+          server_address: smtp.gmail.com
+          port: ${{ secrets.SMTP_SERVER_PORT }}
+          username: ${{ secrets.AUTH_USER }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Hotfix - Build Frontend Workflow Finished
+          body: ${{github.repository}} 
+
+
+                1) Buildjob- ${{needs.Hotflix-Frontend-Build.result}} 
+
+
+                2) unit and functional testing Frontend - ${{needs.unit-and-functional-testing-Frontend.result}}
+
+
+                3) Static Code Analysis Sonarqube hotfix/production_bug_fixes Frontend - ${{needs.Static-Code-Analysis-Sonarqube-Frontend.result}}
+
+
+                4) Anudan config - ${{needs.Anudan-config.result}} 
+
+
+                5) Rsync Hotfix Deployments - ${{needs.Rsync-Hotfix-Deployments.result}} 
+
+
+                6) Trigger Hotfix Release - ${{needs.Trigger-Hotfix-Release.result}}
+
+
+                7) commit messages - ${{ env.commitmsg }}
+
+
+                8) changes done by - ${{ github.actor }}
+
+                  
+                9) The name of the webhook event that triggered the workflow - ${{ github.event_name}}
+
+
+                10) Anudan - Grant Management System › Hotfix Release - ${{ env.Hotfix_Release }}
+          to: prabhu@socialalpha.org
+          from: donotreply@anudan.org            
