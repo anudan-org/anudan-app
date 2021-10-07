@@ -87,7 +87,6 @@ jobs:
       env:
           GITHUB_TOKEN: ${{ secrets.MY_PAT }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
-  
       with:
          args: >
           -Dsonar.organization=anudan
