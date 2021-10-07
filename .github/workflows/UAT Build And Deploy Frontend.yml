@@ -87,7 +87,16 @@ jobs:
       uses: sonarsource/sonarcloud-github-action@master
       env:
         GITHUB_TOKEN: ${{ secrets.MY_PAT }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}          
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}      
+      with:
+         args: >
+          -Dsonar.organization=anudan
+          -Dsonar.projectKey=anudan-app-master
+          -Dsonar.projectName=anudan-app/master
+          -Dsonar.projectVersion=1.0
+          -Dsonar.sources=src/app
+          -Dsonar.exclusions=src/app/**.spec.ts
+          -Dsonar.sourceEncoding=UTF-8      
 
   # this block of code will do checkout anudan-config repo 
   # For more information see: https://github.com/actions/checkout
