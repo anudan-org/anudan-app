@@ -1,4 +1,4 @@
-name: UAT Rlease Version
+name: UAT Release Version
 
 on:
   workflow_dispatch:
