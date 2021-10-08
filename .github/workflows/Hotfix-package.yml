@@ -1,4 +1,4 @@
-name: HOTFIX Rlease Version
+name: HOTFIX Release Version
 
 on:
   workflow_dispatch:
