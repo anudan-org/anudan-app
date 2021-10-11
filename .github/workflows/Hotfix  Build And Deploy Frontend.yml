@@ -117,7 +117,7 @@ jobs:
   Trigger-Hotfix-Release:
       runs-on: ubuntu-latest
       needs: [ unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend]
-      if: github.event_name == github.event.action == 'push' || github.event_name == github.event.action == 'pull_request' 
+      if: github.event_name == 'push'  
       name: Create Hotfix Release Version
       steps:      
         - name: Hotfix-deployment 
@@ -159,7 +159,7 @@ jobs:
 
   Rsync-Hotfix-Deployments:
       runs-on: ubuntu-latest
-      if: github.ref == 'refs/heads/hotfix/production_bug_fixes'
+      if: always()
       needs: [Hotfix-Frontend-Build, unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend, Anudan-config, Release-repo-checkout]
       name: Copy Artifacts To Hotfix Server
       steps:
