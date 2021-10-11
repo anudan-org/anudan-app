@@ -131,7 +131,7 @@ jobs:
       if: github.event_name == github.event.action == 'push'
       name: Create Dev Release Version
       steps:    
-        - if: github.ref == 'refs/heads/dev'  
+        #- if: github.ref == 'refs/heads/dev'  
         - name: DEV-deployment  
           uses: convictional/trigger-workflow-and-wait@v1.3.0
           with:
