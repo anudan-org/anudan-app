@@ -95,7 +95,7 @@ jobs:
           -Dsonar.organization=anudan
           -Dsonar.projectKey=anudan-app-dev
           -Dsonar.projectName=anudan-app/dev
-          -Dsonar.projectVersion=Anudan Sonar 1.0
+          -Dsonar.projectVersion=1.0
           -Dsonar.sources=src/app
           -Dsonar.exclusions=src/app/**.spec.ts
           -Dsonar.sourceEncoding=UTF-8
