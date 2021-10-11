@@ -96,8 +96,14 @@ jobs:
           -Dsonar.projectVersion=1.0
           -Dsonar.sources=src/app
           -Dsonar.exclusions=src/app/**.spec.ts
-          -Dsonar.sourceEncoding=UTF-8      
-
+          -Dsonar.sourceEncoding=UTF-8  
+    - name: SonarQube Quality Gate check
+      uses: sonarsource/sonarqube-quality-gate-action@master
+      # Force to fail step after specific time
+      timeout-minutes: 5
+      env:
+       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}         
+         
   # this block of code will do checkout anudan-config repo 
   # For more information see: https://github.com/actions/checkout
   Anudan-config:
