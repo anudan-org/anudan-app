@@ -147,8 +147,6 @@ jobs:
       name: Checkout release.json
       needs: [Trigger-Dev-Release]
       steps:
-        - name: condition 
-          if: github.ref == 'refs/heads/dev'
         - name: checkout repo      
           uses: actions/checkout@v2
           with:
