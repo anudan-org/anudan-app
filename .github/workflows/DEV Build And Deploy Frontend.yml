@@ -128,9 +128,9 @@ jobs:
   Trigger-Dev-Release:
       runs-on: ubuntu-latest 
       needs: [unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend]
-      if: github.ref == 'refs/heads/dev'
+      if: github.event_name == github.event.action == 'push'
       name: Create Dev Release Version
-      steps:      
+      steps:     
         - name: DEV-deployment  
           uses: convictional/trigger-workflow-and-wait@v1.3.0
           with:
@@ -142,11 +142,12 @@ jobs:
 
   Release-repo-checkout:
       runs-on: ubuntu-latest
-      if: github.ref == 'refs/heads/dev'
+      if: 'always()'
       name: Checkout release.json
       needs: [Trigger-Dev-Release]
       steps:
-        - uses: actions/checkout@v2
+        - name: checkout repo      
+          uses: actions/checkout@v2
           with:
             repository: anudan-org/release   
             token: ${{ secrets.MY_PAT }}
@@ -162,7 +163,7 @@ jobs:
   Rsync-Dev-Deployments:
       runs-on: ubuntu-latest
       needs: [DEV-Frontend-Build, unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend, Anudan-config, Release-repo-checkout]
-      if: github.ref == 'refs/heads/dev'
+      if: always()
       name: Copy Artifacts To Dev Server
       steps:
       - name: downloading dist arifact from github
