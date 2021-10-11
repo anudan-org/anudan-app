@@ -117,7 +117,7 @@ jobs:
   Trigger-Hotfix-Release:
       runs-on: ubuntu-latest
       needs: [ unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend]
-      if: github.ref == 'refs/heads/hotfix/production_bug_fixes'  
+      if: github.event_name == github.event.action == 'push' || github.event_name == github.event.action == 'pull_request' 
       name: Create Hotfix Release Version
       steps:      
         - name: Hotfix-deployment 
@@ -131,7 +131,7 @@ jobs:
 
   Release-repo-checkout:
       runs-on: ubuntu-latest
-      if: github.ref == 'refs/heads/hotfix/production_bug_fixes'
+      if: always()
       name: Checkout release.json
       needs: [Trigger-Hotfix-Release]
       steps:
