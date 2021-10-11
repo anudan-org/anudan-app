@@ -10,6 +10,6 @@ if (environment.production) {
   /*if(window){
       window.console.log=function(){};
   }*/
-}
+} 
 
 platformBrowserDynamic().bootstrapModule(AppModule);
