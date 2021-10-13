@@ -169,7 +169,7 @@ jobs:
   Rsync-Dev-Deployments:
       runs-on: ubuntu-latest
       if: github.ref == 'refs/heads/dev' 
-      needs: [DEV-Frontend-Build, unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend, Anudan-config, Trigger-Dev-Release]
+      needs: [DEV-Frontend-Build, unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend, Anudan-config, Release-repo-checkout]
       name: Copy Artifacts To Dev Server
       steps:
       - name: downloading dist arifact from github
