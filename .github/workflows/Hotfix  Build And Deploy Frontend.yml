@@ -165,7 +165,7 @@ jobs:
 
   Rsync-Hotfix-Deployments:
       runs-on: ubuntu-latest
-      if: github.ref == 'refs/heads/dev' 
+      if: github.ref == 'refs/heads/hotfix/production_bug_fixes' 
       needs: [Hotfix-Frontend-Build, unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend, Anudan-config, Release-repo-checkout]
       name: Copy Artifacts To Hotfix Server
       steps:
