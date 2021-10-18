@@ -1,3 +1,5 @@
+import { ListDialogComponent } from './../../components/list-dialog/list-dialog.component';
+import { Disbursement } from 'app/model/disbursement';
 import { GrantCompareComponent } from './../../grant-compare/grant-compare.component';
 import { GrantApiService } from './../../grant-api.service';
 import { WfvalidationService } from './../../wfvalidation.service';
@@ -140,6 +142,8 @@ export class PreviewComponent implements OnInit {
   private ngUnsubscribe = new Subject();
   approvedReports: Report[];
   hasApprovedReports: boolean;
+  disbursements: Disbursement[];
+  hasDisbursements: boolean;
   wfDisabled: boolean = false;
   subscribers: any = {};
 
@@ -239,6 +243,7 @@ export class PreviewComponent implements OnInit {
       });
 
     this.getApprovedReports();
+    this.getDisbursements();
   }
 
   ngOnInit() {
@@ -1765,6 +1770,14 @@ export class PreviewComponent implements OnInit {
     this.grantComponent.showActiveReports(grant, this.approvedReports);
   }
 
+  showDisbursements() {
+    const dg = this.dialog.open(ListDialogComponent, {
+      data: { _for: 'disbursement', disbursements: this.disbursements, appComp: this.appComp, title: 'Recorded Disbursements' },
+      panelClass: "addnl-report-class"
+    });
+
+  }
+
   getGrantAmountInWords(amount: number) {
     let amtInWords = "Not set";
     if (amount) {
@@ -1869,6 +1882,31 @@ export class PreviewComponent implements OnInit {
       );
       if (this.approvedReports && this.approvedReports.length > 0) {
         this.hasApprovedReports = true;
+      }
+    });
+  }
+
+  public getDisbursements() {
+    console.log(this);
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
+    const user = JSON.parse(localStorage.getItem("USER"));
+    const url =
+      "/api/user/" + user.id + "/disbursements/grant/" + this.currentGrant.id + "/approved";
+    this.http.get<Disbursement[]>(url, httpOptions).subscribe((disbs: Disbursement[]) => {
+      //disbs.sort((a, b) => (a.endDate > b.endDate ? 1 : -1));
+
+      this.disbursements = disbs.filter(
+        (a) => a.status.internalStatus == "CLOSED"
+      );
+      if (this.disbursements && this.disbursements.length > 0) {
+        this.hasDisbursements = true;
       }
     });
   }
