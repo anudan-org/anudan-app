@@ -26,7 +26,7 @@ jobs:
           run: |
             git config --local user.email "admin@anudan.org"
             git config --local user.name "${GITHUB_ACTOR}"
-            git add .
+            git add . 
             git commit -m "Dev Release Version DEV R-${{env.major}}.${{env.minor}}.${{ github.run_number }}" 
         - name: Push changes
           uses: ad-m/github-push-action@master 
