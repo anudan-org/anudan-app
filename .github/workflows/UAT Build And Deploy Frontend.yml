@@ -142,7 +142,7 @@ jobs:
 
   Release-repo-checkout:
       runs-on: ubuntu-latest
-      if: always()
+      if: github.event_name == 'push' 
       name: Checkout release.json
       needs: [Trigger-UAT-release]
       steps:
