@@ -1771,7 +1771,7 @@ export class PreviewComponent implements OnInit {
   }
 
   showDisbursements() {
-    const dg = this.dialog.open(ListDialogComponent, {
+    this.dialog.open(ListDialogComponent, {
       data: { _for: 'disbursement', disbursements: this.disbursements, appComp: this.appComp, title: 'Recorded Disbursements' },
       panelClass: "addnl-report-class"
     });
@@ -1900,8 +1900,6 @@ export class PreviewComponent implements OnInit {
     const url =
       "/api/user/" + user.id + "/disbursements/grant/" + this.currentGrant.id + "/approved";
     this.http.get<Disbursement[]>(url, httpOptions).subscribe((disbs: Disbursement[]) => {
-      //disbs.sort((a, b) => (a.endDate > b.endDate ? 1 : -1));
-
       this.disbursements = disbs.filter(
         (a) => a.status.internalStatus == "CLOSED"
       );
