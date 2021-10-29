@@ -76,8 +76,8 @@ export class OrgadminComponent implements OnInit {
                 this.roles = data;
             });
         } else if (ev.tab.textLabel === 'Users') {
-            this.adminService.getOrgUsers(this.appComp.loggedInUser).then((data: User[]) => {
-                this.users = data;
+            this.adminService.getOrgUsers(this.appComp.loggedInUser).then((data1: User[]) => {
+                this.users = data1;
                 this.adminService.getOrgRoles(this.appComp.loggedInUser).then((data: Role[]) => {
                     this.roles = data;
                 });
