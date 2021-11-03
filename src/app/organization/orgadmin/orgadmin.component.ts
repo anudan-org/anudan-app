@@ -30,7 +30,7 @@ export class OrgadminComponent implements OnInit {
     users: User[];
     docs: TemplateLibrary[];
     tags: OrgTag[];
-    selectedMenu: BehaviorSubject<any> = new BehaviorSubject({ item: "roles", title: "Roles" });
+    selectedMenu: BehaviorSubject<any> = new BehaviorSubject({ item: "config", title: "Application Settings" });
 
     constructor(
         public appComp: AppComponent,
@@ -67,7 +67,7 @@ export class OrgadminComponent implements OnInit {
             this.roles = data;
         });
 
-        this.selectedMenu.next({ item: "roles", title: "Roles" });
+        this.selectedMenu.next({ item: "config", title: "Application Settings" });
     }
 
     tabSelected(ev: MatTabChangeEvent) {

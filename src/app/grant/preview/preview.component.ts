@@ -1772,7 +1772,7 @@ export class PreviewComponent implements OnInit {
 
   showDisbursements() {
     this.dialog.open(ListDialogComponent, {
-      data: { _for: 'disbursement', disbursements: this.disbursements, appComp: this.appComp, title: 'Recorded Disbursements' },
+      data: { _for: 'disbursement', disbursements: this.disbursements, appComp: this.appComp, title: 'Disbursements for', subtitle: (this.currentGrant.referenceNo ? '[' + this.currentGrant.referenceNo + ']' : '') + ' ' + this.currentGrant.name },
       panelClass: "addnl-report-class"
     });
 
