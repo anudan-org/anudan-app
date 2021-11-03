@@ -12,6 +12,7 @@
 <div class="row mb-3">
   <div class="col-12">
     <div class="text-green mb-0 ng-star-inserted w-100 text-center" style="font-weight: 500;font-size: 1.2em;">{{title}}</div>
+    <div class="text-header text-center" *ngIf="subtitle">{{subtitle}}</div>
   </div>
   
   <div class="col-12 scrollable" style="overflow-y: scroll;height: inherit;min-height: calc(100vh - 180px) !important;max-height: calc(100vh - 180px) !important;" *ngIf="_for==='grant'">

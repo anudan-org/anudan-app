@@ -68,6 +68,7 @@ export class ListDialogComponent implements OnInit {
   filteredReports: any;
   filteredDisbursements: any;
   deleteGrantEvent: boolean = false;
+  subtitle: any;
 
   constructor(private dialog: MatDialog,
     private reportService: ReportDataService,
@@ -87,6 +88,7 @@ export class ListDialogComponent implements OnInit {
     this.appComp = listMetaData.appComp;
     this._for = listMetaData._for;
     this.title = listMetaData.title;
+    this.subtitle = listMetaData.subtitle;
     if (listMetaData._for === 'grant') {
       this.grants = listMetaData.grants;
       /* if (this.grants && this.grants.length > 0) {

@@ -1,11 +1,11 @@
 <div class="main-content no-top-margin5" style="overflow: hidden;">
     <div class="container-fluid px-3">
-        <div class="row">
+        <div class="row mt-4">
         <div class="col-11">
-            <h4 class="col-8 text-left my-3 section-header">
-                <!-- {{selectedMenu.getValue().title}} -->
+            <div class="mat-tab-label mat-ripple mat-tab-label-active ng-star-inserted" style="height: 48px; display: flex; width: fit-content; min-width: 200px; align-items: center; justify-content: center;">
+                {{selectedMenu.getValue().title}}
                 &nbsp;
-              </h4>
+            </div>
         </div>
         <div
         class="col-1 text-right"
@@ -20,25 +20,25 @@
         </mat-icon>
         <mat-menu #menu="matMenu">
           <button mat-menu-item *ngIf="selectedMenu.getValue().item!=='roles'" (click)="switchMenu('roles','Roles')">
-            <mat-icon class="ml-1">group</mat-icon>Manage Roles
+            <mat-icon class="ml-1">group</mat-icon>Roles
           </button>
           <button mat-menu-item  *ngIf="selectedMenu.getValue().item!=='users'" (click)="switchMenu('users','Users')">
-            <mat-icon class="ml-1">person</mat-icon>Manage Users
+            <mat-icon class="ml-1">person</mat-icon>Users
           </button>
           <button mat-menu-item *ngIf="selectedMenu.getValue().item!=='library'" (click)="switchMenu('library','Library')">
-            <mat-icon class="ml-1">library_books</mat-icon>Manage Document Library
+            <mat-icon class="ml-1">library_books</mat-icon>Library
           </button>
           <button mat-menu-item *ngIf="selectedMenu.getValue().item!=='tags'" (click)="switchMenu('tags','Tags')">
-            <mat-icon class="ml-1">bookmark</mat-icon>Manage Tags
+            <mat-icon class="ml-1">bookmark</mat-icon>Grant Tags
           </button>
           <button mat-menu-item *ngIf="selectedMenu.getValue().item!=='config'" (click)="switchMenu('config','Application Configurations')">
-            <mat-icon class="ml-1">settings</mat-icon>Manage Application Settings
+            <mat-icon class="ml-1">settings</mat-icon>Application Settings
           </button>
           <button mat-menu-item disabled *ngIf="selectedMenu.getValue().item!=='workflows'" (click)="switchMenu('workflows','Workflows')">
-            <mat-icon class="ml-1">account_tree</mat-icon>Manage Workflows
+            <mat-icon class="ml-1">account_tree</mat-icon>Workflows
           </button>
           <button mat-menu-item disabled *ngIf="selectedMenu.getValue().item!=='templates'" (click)="switchMenu('templates','Templates')">
-            <mat-icon class="ml-1">description</mat-icon>Manage Templates
+            <mat-icon class="ml-1">description</mat-icon>Templates
           </button>
           </mat-menu>
           </div>
