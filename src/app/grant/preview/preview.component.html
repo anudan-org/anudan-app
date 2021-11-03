@@ -89,6 +89,23 @@
               src="./assets/img/rp.svg"
             />View Approved Reports
           </button>
+          <button
+            mat-menu-item
+            *ngIf="
+              (currentGrant.grantStatus.internalStatus === 'ACTIVE' ||
+                currentGrant.grantStatus.internalStatus === 'CLOSED') &&
+              this.appComp.loggedInUser.organization.organizationType !==
+                'GRANTEE'
+            "
+            (click)="showDisbursements(currentGrant)"
+            [disabled]="!hasDisbursements"
+          >
+            <img alt="approved disbursements"
+              class="ml-2 mr-3"
+              style="width: 20px; height: 20px"
+              src="./assets/img/rp.svg"
+            />View Actual Disbursements
+          </button>
           <hr />
           <button mat-menu-item (click)="saveAs(currentGrant.name + '.pdf')">
             <mat-icon class="ml-1">picture_as_pdf</mat-icon>Export for Offline

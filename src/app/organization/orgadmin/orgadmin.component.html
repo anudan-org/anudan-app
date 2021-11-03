@@ -1,48 +1,63 @@
 <div class="main-content no-top-margin5" style="overflow: hidden;">
     <div class="container-fluid px-3">
+        <div class="row">
+        <div class="col-11">
+            <h4 class="col-8 text-left my-3 section-header">
+                <!-- {{selectedMenu.getValue().title}} -->
+                &nbsp;
+              </h4>
+        </div>
+        <div
+        class="col-1 text-right"
+        style="display: flex; align-items: center; justify-content: flex-start"
+      >
+        <mat-icon
+          mat-button
+          [matMenuTriggerFor]="menu"
+          class="float-right"
+          style="cursor: pointer"
+          >more_vert
+        </mat-icon>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item *ngIf="selectedMenu.getValue().item!=='roles'" (click)="switchMenu('roles','Roles')">
+            <mat-icon class="ml-1">group</mat-icon>Manage Roles
+          </button>
+          <button mat-menu-item  *ngIf="selectedMenu.getValue().item!=='users'" (click)="switchMenu('users','Users')">
+            <mat-icon class="ml-1">person</mat-icon>Manage Users
+          </button>
+          <button mat-menu-item *ngIf="selectedMenu.getValue().item!=='library'" (click)="switchMenu('library','Library')">
+            <mat-icon class="ml-1">library_books</mat-icon>Manage Document Library
+          </button>
+          <button mat-menu-item *ngIf="selectedMenu.getValue().item!=='tags'" (click)="switchMenu('tags','Tags')">
+            <mat-icon class="ml-1">bookmark</mat-icon>Manage Tags
+          </button>
+          <button mat-menu-item *ngIf="selectedMenu.getValue().item!=='config'" (click)="switchMenu('config','Application Configurations')">
+            <mat-icon class="ml-1">settings</mat-icon>Manage Application Settings
+          </button>
+          <button mat-menu-item disabled *ngIf="selectedMenu.getValue().item!=='workflows'" (click)="switchMenu('workflows','Workflows')">
+            <mat-icon class="ml-1">account_tree</mat-icon>Manage Workflows
+          </button>
+          <button mat-menu-item disabled *ngIf="selectedMenu.getValue().item!=='templates'" (click)="switchMenu('templates','Templates')">
+            <mat-icon class="ml-1">description</mat-icon>Manage Templates
+          </button>
+          </mat-menu>
+          </div>
+        </div>
 
-        <mat-tab-group class="org-tab mt-4" (focusChange)="tabSelected($event)">
-            <mat-tab label="Roles">
-                <div class="anu-container text-left mx-0 px-0">
-                    <app-roles [roles]="roles"></app-roles>
-
-                </div>
-            </mat-tab>
-            <mat-tab label="Users">
-                <div class="anu-container text-left mx-0 px-0">
-                    <app-users [users]="users" [roles]="roles"></app-users>
-
-                </div>
-            </mat-tab>
-            
-
-            <mat-tab label="Library">
-                <div class="anu-container text-left mx-0 px-0">
-                        <app-document-library [docs]="docs"></app-document-library>
-                </div>
-            </mat-tab>
-
-            <mat-tab label="Tags" *ngIf="appComp.loggedInUser.organization.organizationType!=='GRANTEE'">
-                <div class="anu-container text-left mx-0 px-0">
-                        <app-org-tags [tags]="tags"></app-org-tags>
-                </div>
-            </mat-tab>
-
-            <mat-tab label="App Configurations" *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'">
-                <div class="anu-container text-left mx-0 px-0">
-                        <app-settings></app-settings>
-                </div>
-            </mat-tab>
-            <mat-tab label="Workflows (Coming Soon)" *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'">
-                <div class="anu-container text-left mx-0 px-0">
-                        <app-workflow-management></app-workflow-management>
-                </div>
-            </mat-tab>
-            <mat-tab label="Templates (Coming Soon)" *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'">
-                <div class="anu-container text-left mx-0 px-0">
-                        <app-templates></app-templates>
-                </div>
-            </mat-tab>
-        </mat-tab-group>
+        <div *ngIf="selectedMenu.getValue().item==='roles'" class="anu-container text-left mx-0 px-0">
+            <app-roles [roles]="roles"></app-roles>
+        </div>
+        <div *ngIf="selectedMenu.getValue().item==='users'" class="anu-container text-left mx-0 px-0">
+            <app-users [users]="users" [roles]="roles"></app-users>
+        </div>
+        <div *ngIf="selectedMenu.getValue().item==='tags'" class="anu-container text-left mx-0 px-0">
+            <app-org-tags [tags]="tags"></app-org-tags>
+        </div>
+        <div *ngIf="selectedMenu.getValue().item==='library'" class="anu-container text-left mx-0 px-0">
+            <app-document-library [docs]="docs"></app-document-library>
+        </div>
+        <div *ngIf="selectedMenu.getValue().item==='config'" class="anu-container text-left mx-0 px-0">
+            <app-settings></app-settings>
+        </div>
     </div>
 </div>
