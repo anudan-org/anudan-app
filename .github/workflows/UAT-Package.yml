@@ -1,13 +1,7 @@
 name: UAT Release Version
 
 on:
-  workflow_dispatch:
-  #push:
-   #branches: [ master ]
-  #pull_request:
-   # branches: [ master ]
-  #schedule:
-   # - cron:'0/5 * * * *' 
+  workflow_dispatch: 
    
 jobs:
   # this block of code will create UAT release version for UAT remote server. 
