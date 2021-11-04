@@ -180,6 +180,7 @@ jobs:
           name: Anudan-UAT-Release     
       - run: |  
           ls -lrt
+          echo "UAT_Version=`cat UAT_release.json| cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV
           mv UAT_release.json release.json
           ls -lrt     
       - name: copy aritfacts to uat server. 
@@ -201,15 +202,6 @@ jobs:
     needs: [UAT-Frontend-Build, unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend, Anudan-config, Rsync-UAT-Deployments, Trigger-UAT-release]
     name: Notify via Email
     steps:
-      - name: Anudan Release artifact downloading      
-        uses: actions/download-artifact@v2
-        with:
-            name: Anudan-UAT-Release
-
-      - name: set env variable with bash expression 
-        run:   |
-          ls -lrt
-          echo "UAT_Version=`cat UAT_release.json| cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV
       - name: Send some mail
         uses: wadeww/send-email-action@master
         with:

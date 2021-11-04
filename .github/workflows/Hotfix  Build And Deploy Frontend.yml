@@ -185,6 +185,7 @@ jobs:
       - run: |  
           ls -lrt
           pwd
+          echo "Hotfix_Release=`cat release.json | cut -d "," -f3 |cut -d ":" -f2 | sed 's/"//g' |sed 's/}//g'`" >> $GITHUB_ENV
       - name: copy artifacts to Hotfix server. 
         uses: burnett01/rsync-deployments@4.1
         with:
@@ -202,15 +203,6 @@ jobs:
     needs: [Hotfix-Frontend-Build, unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend, Anudan-config, Rsync-Hotfix-Deployments, Trigger-Hotfix-Release]
     name: Notify Via Email
     steps:
-      - name: Anudan Release artifact downloading from github. 
-        uses: actions/download-artifact@v2
-        with:
-          name: Anudan-Hotfix-Release
-
-      - name: set env variable with bash expression 
-        run:   |
-         ls -lrt
-         echo "Hotfix_Release=`cat release.json | cut -d "," -f3 |cut -d ":" -f2 | sed 's/"//g' |sed 's/}//g'`" >> $GITHUB_ENV
       - name: Send some mail
         uses: wadeww/send-email-action@master
         with:
