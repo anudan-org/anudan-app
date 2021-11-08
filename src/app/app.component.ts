@@ -179,13 +179,6 @@ export class AppComponent implements AfterViewChecked {
       this.profile = "/api/public/images/profile/" + this.loggedInUser.id + "?" + (new Date().getTime()).toString();
     }
 
-    if (this.loggedInUser && this.loggedInUser.organization.organizationType === 'GRANTER') {
-      this.logo = "/api/public/images/" + localStorage.getItem("X-TENANT-CODE") + '/logo?' + (new Date().getTime()).toString();
-    } else if (this.loggedInUser && this.loggedInUser.organization.organizationType === 'GRANTEE') {
-      this.logo = "/api/public/images/" + localStorage.getItem("X-TENANT-CODE") + '/' + this.loggedInUser.organization.id + '/logo?' + (new Date().getTime()).toString();
-    } else {
-      this.logo = "/api/public/images/" + localStorage.getItem("X-TENANT-CODE") + '/logo?' + (new Date().getTime()).toString();
-    }
   }
 
   getGrantTypes() {
@@ -226,6 +219,14 @@ export class AppComponent implements AfterViewChecked {
       hostName = 'anudan';
     }
     localStorage.setItem('X-TENANT-CODE', hostName.toUpperCase());
+
+    if (this.loggedInUser && this.loggedInUser.organization.organizationType === 'GRANTER') {
+      this.logo = "/api/public/images/" + localStorage.getItem("X-TENANT-CODE") + '/logo?' + (new Date().getTime()).toString();
+    } else if (this.loggedInUser && this.loggedInUser.organization.organizationType === 'GRANTEE') {
+      this.logo = "/api/public/images/" + localStorage.getItem("X-TENANT-CODE") + '/' + this.loggedInUser.organization.id + '/logo?' + (new Date().getTime()).toString();
+    } else {
+      this.logo = "/api/public/images/" + localStorage.getItem("X-TENANT-CODE") + '/logo?' + (new Date().getTime()).toString();
+    }
 
   };
 
