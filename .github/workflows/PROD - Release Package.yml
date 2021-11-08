@@ -250,6 +250,7 @@ jobs:
          ls -lrt
          echo "PROD_Release=`cat release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`" >> $GITHUB_ENV
       - name: Send some mail
+        if: always()
         uses: wadeww/send-email-action@master
         with:
           server_address: smtp.gmail.com
