@@ -1,3 +1,4 @@
+import { MatTabGroup } from '@angular/material';
 import { Grant } from './../../model/dahsboard';
 import { UiUtilService } from './../../ui-util.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
@@ -32,6 +33,7 @@ export class SubmittedReportsComponent implements OnInit {
     filterReady = false;
     filterCriteria: any;
     @ViewChild("appSearchFilter") appSearchFilter: SearchFilterComponent;
+    @ViewChild("matTabGroup") matTabGroup: MatTabGroup;
 
 
     constructor(
@@ -163,20 +165,24 @@ export class SubmittedReportsComponent implements OnInit {
     startFilter(val) {
         val = val.toLowerCase();
         this.filterCriteria = val;
-        this.filteredSubmittedReportsD = this.filteredSubmittedReportsDOrig.filter(g => {
-            return (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
-                (g.grant.name.toLowerCase().includes(val)) ||
-                (g.grant.organization && g.grant.organization.name && g.grant.organization.name.toLowerCase().includes(val)) ||
-                (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
-                (g.ownerName && g.ownerName.toLowerCase().includes(val))
-        });
-        this.filteredSubmittedReportsOD = this.filteredSubmittedReportsODOrig.filter(g => {
-            return (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
-                (g.grant.name.toLowerCase().includes(val)) ||
-                (g.grant.organization && g.grant.organization.name && g.grant.organization.name.toLowerCase().includes(val)) ||
-                (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
-                (g.ownerName && g.ownerName.toLowerCase().includes(val))
-        });
+        if (this.matTabGroup.selectedIndex === 0 && this.filteredSubmittedReportsDOrig) {
+            this.filteredSubmittedReportsD = this.filteredSubmittedReportsDOrig.filter(g => {
+                return (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
+                    (g.grant.name.toLowerCase().includes(val)) ||
+                    (g.grant.organization && g.grant.organization.name && g.grant.organization.name.toLowerCase().includes(val)) ||
+                    (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
+                    (g.ownerName && g.ownerName.toLowerCase().includes(val))
+            });
+        }
+        if (this.matTabGroup.selectedIndex === 1 && this.filteredSubmittedReportsODOrig) {
+            this.filteredSubmittedReportsOD = this.filteredSubmittedReportsODOrig.filter(g => {
+                return (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
+                    (g.grant.name.toLowerCase().includes(val)) ||
+                    (g.grant.organization && g.grant.organization.name && g.grant.organization.name.toLowerCase().includes(val)) ||
+                    (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
+                    (g.ownerName && g.ownerName.toLowerCase().includes(val))
+            });
+        }
 
         this.filterReady = true;
 

@@ -219,6 +219,7 @@ jobs:
           ls -lrt
           echo "Dev_Version=`cat Dev_release.json| cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV
       - name: Send mail
+        if: always()
         uses: wadeww/send-email-action@master
         with:
           server_address: smtp.gmail.com

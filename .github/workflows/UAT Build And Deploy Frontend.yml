@@ -211,6 +211,7 @@ jobs:
           ls -lrt
           echo "UAT_Version=`cat UAT_release.json| cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV
       - name: Send some mail
+        if: always()
         uses: wadeww/send-email-action@master
         with:
           server_address: smtp.gmail.com

@@ -7,7 +7,7 @@ import { Grant } from '../../model/dahsboard';
 import { AppComponent } from '../../app.component';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatTabGroup } from '@angular/material';
 import { ReportTemplateDialogComponent } from '../../components/report-template-dialog/report-template-dialog.component';
 import { GrantSelectionDialogComponent } from '../../components/grant-selection-dialog/grant-selection-dialog.component';
 import { AddnlreportsDialogComponent } from '../../components/addnlreports-dialog/addnlreports-dialog.component';
@@ -57,6 +57,7 @@ export class UpcomingReportsComponent implements OnInit {
     filterReady = false;
     filterCriteria: any;
     @ViewChild("appSearchFilter") appSearchFilter: SearchFilterComponent;
+    @ViewChild("matTabGroup") matTabGroup: MatTabGroup;
 
     constructor(
         private reportService: ReportDataService,
@@ -439,42 +440,52 @@ export class UpcomingReportsComponent implements OnInit {
     startFilter(val) {
         val = val.toLowerCase();
         this.filterCriteria = val;
-        this.filteredToSetupReportD = this.filteredToSetupReportDOrig.filter(g => {
-            return (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
-                (g.grant.name.toLowerCase().includes(val)) ||
-                (g.grant.organization && g.grant.organization.name && g.grant.organization.name.toLowerCase().includes(val)) ||
-                (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
-                (g.ownerName && g.ownerName.toLowerCase().includes(val))
-        });
-        this.filteredToSetupReportOD = this.filteredToSetupReportODOrig.filter(g => {
-            return (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
-                (g.grant.name.toLowerCase().includes(val)) ||
-                (g.grant.organization && g.grant.organization.name && g.grant.organization.name.toLowerCase().includes(val)) ||
-                (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
-                (g.ownerName && g.ownerName.toLowerCase().includes(val))
-        });
-        this.filteredReadyToSubmitReportsD = this.filteredReadyToSubmitReportsDOrig.filter(g => {
-            return (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
-                (g.grant.name.toLowerCase().includes(val)) ||
-                (g.grant.organization && g.grant.organization.name && g.grant.organization.name.toLowerCase().includes(val)) ||
-                (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
-                (g.ownerName && g.ownerName.toLowerCase().includes(val))
-        });
-        this.filteredReadyToSubmitReportsOD = this.filteredReadyToSubmitReportsODOrig.filter(g => {
-            return (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
-                (g.grant.name.toLowerCase().includes(val)) ||
-                (g.grant.organization && g.grant.organization.name && g.grant.organization.name.toLowerCase().includes(val)) ||
-                (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
-                (g.ownerName && g.ownerName.toLowerCase().includes(val))
-        });
-        if (this.allReports) {
-            this.filterAllReports = this.allReports.filter(g => {
+        if (this.matTabGroup.selectedIndex === 0 && this.filteredToSetupReportDOrig) {
+            this.filteredToSetupReportD = this.filteredToSetupReportDOrig.filter(g => {
                 return (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
                     (g.grant.name.toLowerCase().includes(val)) ||
                     (g.grant.organization && g.grant.organization.name && g.grant.organization.name.toLowerCase().includes(val)) ||
                     (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
                     (g.ownerName && g.ownerName.toLowerCase().includes(val))
             });
+        }
+        if (this.matTabGroup.selectedIndex === 1 && this.filteredToSetupReportODOrig) {
+            this.filteredToSetupReportOD = this.filteredToSetupReportODOrig.filter(g => {
+                return (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
+                    (g.grant.name.toLowerCase().includes(val)) ||
+                    (g.grant.organization && g.grant.organization.name && g.grant.organization.name.toLowerCase().includes(val)) ||
+                    (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
+                    (g.ownerName && g.ownerName.toLowerCase().includes(val))
+            });
+        }
+        if (this.matTabGroup.selectedIndex === 0 && this.filteredReadyToSubmitReportsDOrig) {
+            this.filteredReadyToSubmitReportsD = this.filteredReadyToSubmitReportsDOrig.filter(g => {
+                return (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
+                    (g.grant.name.toLowerCase().includes(val)) ||
+                    (g.grant.organization && g.grant.organization.name && g.grant.organization.name.toLowerCase().includes(val)) ||
+                    (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
+                    (g.ownerName && g.ownerName.toLowerCase().includes(val))
+            });
+        }
+        if (this.matTabGroup.selectedIndex === 1 && this.filteredReadyToSubmitReportsODOrig) {
+            this.filteredReadyToSubmitReportsOD = this.filteredReadyToSubmitReportsODOrig.filter(g => {
+                return (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
+                    (g.grant.name.toLowerCase().includes(val)) ||
+                    (g.grant.organization && g.grant.organization.name && g.grant.organization.name.toLowerCase().includes(val)) ||
+                    (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
+                    (g.ownerName && g.ownerName.toLowerCase().includes(val))
+            });
+        }
+        if (this.matTabGroup.selectedIndex === 2 && this.allReports) {
+            if (this.allReports) {
+                this.filterAllReports = this.allReports.filter(g => {
+                    return (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
+                        (g.grant.name.toLowerCase().includes(val)) ||
+                        (g.grant.organization && g.grant.organization.name && g.grant.organization.name.toLowerCase().includes(val)) ||
+                        (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
+                        (g.ownerName && g.ownerName.toLowerCase().includes(val))
+                });
+            }
         }
 
         this.filterReady = true;

@@ -167,6 +167,7 @@ jobs:
          TAG_NO_2=`cat release.json | cut -d "," -f3 |cut -d ":" -f2 | sed 's/"//g' |sed 's/}//g'`
          echo "Hotfix_Release=$TAG_NO_1-HF-$TAG_NO_2" >> $GITHUB_ENV
       - name: Send some mail
+        if: always()
         uses: wadeww/send-email-action@master
         with:
           server_address: smtp.gmail.com

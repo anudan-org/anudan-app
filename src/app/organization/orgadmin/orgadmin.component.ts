@@ -67,7 +67,11 @@ export class OrgadminComponent implements OnInit {
             this.roles = data;
         });
 
-        this.selectedMenu.next({ item: "config", title: "Application Settings" });
+        if (this.appComp.loggedInUser.organization.organizationType !== 'GRANTEE') {
+            this.selectedMenu.next({ item: "config", title: "Application Settings" });
+        } else {
+            this.selectedMenu.next({ item: "roles", title: "Roles" });
+        }
     }
 
     tabSelected(ev: MatTabChangeEvent) {
