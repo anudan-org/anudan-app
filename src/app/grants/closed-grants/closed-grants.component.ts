@@ -512,4 +512,8 @@ export class ClosedGrantsComponent implements OnInit {
       this.appSearchFilter.closeSearch();
     }
   }
+
+  getRoundedFigure(grant) {
+    return Math.round(((grant.approvedDisbursementsTotal / grant.amount) * 100))
+  }
 }

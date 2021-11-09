@@ -9,20 +9,20 @@
             </div>
             <div class="col-4">
                 <mat-label>Time to run task</mat-label>
-                <mat-form-field class="mt-2" *ngIf="setting.configName!=='DUE_REPORTS_REMINDER_SETTINGS' && setting.configName!=='ACTION_DUE_REPORTS_REMINDER_SETTINGS'">
+                <mat-form-field class="mt-3" *ngIf="setting.configName!=='DUE_REPORTS_REMINDER_SETTINGS' && setting.configName!=='ACTION_DUE_REPORTS_REMINDER_SETTINGS'">
                     <input matInput class="anu-input" [(ngModel)]="setting.configValue">
                 </mat-form-field>
                 
                 <mat-form-field class="mt-2" *ngIf="setting.configName==='DUE_REPORTS_REMINDER_SETTINGS' || setting.configName==='ACTION_DUE_REPORTS_REMINDER_SETTINGS'">
                     
-                    <input matInput class="anu-input" [(ngModel)]="setting.scheduledTaskConfiguration.time" placeholder="HH:mi">
+                    <input matInput class="anu-input" [(ngModel)]="setting.scheduledTaskConfiguration.time" placeholder="hh:mm">
                 </mat-form-field>
             </div>
             <div class="col-7 text-left">
                     <ng-container *ngIf="setting.configName==='DUE_REPORTS_REMINDER_SETTINGS'">
                         <mat-label>Number of days before Report Due Reminder to be sent:</mat-label>
                         <table>
-                            <tr>
+                            <tr style="display: none;">
                                 <th [id]="'setting_'+i" *ngFor="let db of setting.scheduledTaskConfiguration.configuration.daysBefore,let i = index"></th>
                             </tr>
                             <tr>
