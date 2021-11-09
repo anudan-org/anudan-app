@@ -58,6 +58,10 @@ import { SearchFilterComponent } from "app/layouts/admin-layout/search-filter/se
         .mat-ripple-element {
         background-color: #39743c !important;
       }
+
+      ::ng-deep .progress-summary-class .mat-progress-bar-fill::after {
+          background: #4DC252 !important;
+      }
     `,
   ],
 })
@@ -511,5 +515,9 @@ export class ClosedGrantsComponent implements OnInit {
       this.searchClosed = true;
       this.appSearchFilter.closeSearch();
     }
+  }
+
+  getRoundedFigure(grant) {
+    return Math.round(((grant.approvedDisbursementsTotal / grant.amount) * 100))
   }
 }

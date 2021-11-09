@@ -1,15 +1,15 @@
 <div class="main-content no-top-margin5" style="overflow: hidden;">
     <div class="container-fluid px-3">
         <div class="row mt-4">
-        <div class="col-11" style="border-bottom: 1px solid rgba(0,0,0,.12);">
+        <!-- <div class="col-11" style="border-bottom: 1px solid rgba(0,0,0,.12);">
             <div class="mat-tab-label mat-ripple mat-tab-label-active ng-star-inserted" style="height: 48px; display: flex; width: fit-content; min-width: 200px; align-items: center; justify-content: center;">
                 {{selectedMenu.getValue().title}}
                 &nbsp;
             </div>
-        </div>
+        </div> -->
         <div
-        class="col-1 text-right"
-        style="display: flex; align-items: center; justify-content: flex-start"
+        class="col-12 text-right"
+        style="display: flex; align-items: center; justify-content: flex-end"
       >
         <mat-icon
           mat-button
@@ -44,20 +44,26 @@
           </div>
         </div>
 
-        <div *ngIf="selectedMenu.getValue().item==='roles'" class="anu-container text-left mx-0 px-0">
-            <app-roles [roles]="roles"></app-roles>
-        </div>
-        <div *ngIf="selectedMenu.getValue().item==='users'" class="anu-container text-left mx-0 px-0">
-            <app-users [users]="users" [roles]="roles"></app-users>
-        </div>
-        <div *ngIf="selectedMenu.getValue().item==='tags'" class="anu-container text-left mx-0 px-0">
-            <app-org-tags [tags]="tags"></app-org-tags>
-        </div>
-        <div *ngIf="selectedMenu.getValue().item==='library'" class="anu-container text-left mx-0 px-0">
-            <app-document-library [docs]="docs"></app-document-library>
-        </div>
-        <div *ngIf="selectedMenu.getValue().item==='config'" class="anu-container text-left mx-0 px-0">
-            <app-settings></app-settings>
-        </div>
+        <mat-tab-group #matTabGroup>
+          <mat-tab [label]="selectedMenu.getValue().title">
+            <div *ngIf="selectedMenu.getValue().item==='roles'" class="anu-container text-left mx-0 px-0">
+              <app-roles [roles]="roles"></app-roles>
+            </div>
+            <div *ngIf="selectedMenu.getValue().item==='users'" class="anu-container text-left mx-0 px-0">
+              <app-users [users]="users" [roles]="roles"></app-users>
+            </div>
+            <div *ngIf="selectedMenu.getValue().item==='tags'" class="anu-container text-left mx-0 px-0">
+                <app-org-tags [tags]="tags"></app-org-tags>
+            </div>
+            <div *ngIf="selectedMenu.getValue().item==='library'" class="anu-container text-left mx-0 px-0">
+                <app-document-library [docs]="docs"></app-document-library>
+            </div>
+            <div *ngIf="selectedMenu.getValue().item==='config'" class="anu-container text-left mx-0 px-0">
+                <app-settings></app-settings>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+        
+        
     </div>
 </div>
