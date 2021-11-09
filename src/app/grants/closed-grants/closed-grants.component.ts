@@ -61,7 +61,7 @@ import { SearchFilterComponent } from "app/layouts/admin-layout/search-filter/se
 
       ::ng-deep .progress-summary-class .mat-progress-bar-fill::after {
           background: #4DC252 !important;
-      }
+      
     `,
   ],
 })
