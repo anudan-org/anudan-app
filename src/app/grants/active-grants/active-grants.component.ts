@@ -93,7 +93,7 @@ export class ActiveGrantsComponent implements OnInit {
     private grantUpdateService: GrantUpdateService,
     private dialog: MatDialog,
     private titlecasePipe: TitleCasePipe,
-    private currencyService: CurrencyService,
+    public currencyService: CurrencyService,
     public uiService: UiUtilService
   ) { }
 

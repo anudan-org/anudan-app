@@ -4,7 +4,7 @@
         <ng-container class="row grants-section p-3 mx-3" *ngFor="let setting of appSettings">
             <div *ngIf="setting.configurable" class="row grants-section px-3 pt-3 pb-0 mx-3">
             <div class="col-12 mb-3" align="left" width="30%" valign="top">
-            <div [innerHTML]="setting.description" class="text-header"></div>
+            <div [innerHTML]="setting.description" class="text-header text-green"></div>
                 <a class="btn btn-sm btn-green" style="position: absolute; right: 0; top: 0;" (click)="saveSetting(setting)">Save</a>
             </div>
             <div class="col-4">
@@ -38,7 +38,7 @@
                     <ng-container *ngIf="setting.configName==='ACTION_DUE_REPORTS_REMINDER_SETTINGS'">
                         <mat-label>Number of days after which to send no action reminders:</mat-label>
                         <table>
-                            <tr>
+                            <tr style="display: none;">
                                 <th [id]="'setting_action_due'+i" *ngFor="let db of setting.scheduledTaskConfiguration.configuration.daysBefore,let i = index"></th>
                             </tr>
                             <tr>
