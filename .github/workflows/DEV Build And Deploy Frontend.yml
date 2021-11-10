@@ -240,11 +240,11 @@ jobs:
 
                 3. Static Code Analysis Result - ${{needs.Static-Code-Analysis-Sonarqube-Frontend.result}} 
 
-                4. Checkout release.json Result - ${{needs.Anudan-config.result}} 
+                4. Checkout application.yaml Result - ${{needs.Anudan-config.result}} 
 
                 5. Copy Artifacts To DEV Server - ${{needs.Rsync-Dev-Deployments.result}} 
 
-                6. Dev Release Result - ${{needs.Trigger-Dev-Release.result}} 
+                6. Dev Version Release Result - ${{needs.Trigger-Dev-Release.result}} 
                
                 7. Anudan - Grant Management System › DEV Build - ${{ env.Dev_Version }}
                 

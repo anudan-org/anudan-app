@@ -232,11 +232,11 @@ jobs:
               
                 3. Static Code Analysis Result - ${{needs.Static-Code-Analysis-Sonarqube-Frontend.result}} 
 
-                4. Checkout release.json Result - ${{needs.Anudan-config.result}} 
+                4. Checkout application.yaml Result - ${{needs.Anudan-config.result}} 
  
                 5. Copy Artifacts To Uat Server - ${{needs.Rsync-UAT-Deployments.result}} 
                 
-                6. Uat Release Result - ${{needs.Trigger-UAT-release.result}} 
+                6. Uat Version Release Result - ${{needs.Trigger-UAT-release.result}} 
 
                 7. Anudan - Grant Management System › UAT Build - UAT R-${{ env.UAT_Version }}
                 
