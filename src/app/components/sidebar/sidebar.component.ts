@@ -177,6 +177,10 @@ export class SidebarComponent implements OnInit {
     this.canManageOrg = this.appComponent.loggedInUser.userRoles.filter((ur) => ur.role.name === 'Admin').length > 0;
   }
 
+  getLastClosureSectionsPath() {
+    return this.closureSectionMenuItems[this.closureSectionMenuItems.length - 1].path;
+  }
+
   drop(event: CdkDragDrop<string[]>) {
 
     if (this.appComponent.currentView === 'grant' && this.currentGrant) {
@@ -240,7 +244,7 @@ export class SidebarComponent implements OnInit {
 
     this.closureService.currentMessage.subscribe((closure) => {
       this.currentClosure = closure;
-      //this.buildSectionsSideNav(null);
+      this.buildSectionsSideNav(null);
     });
 
     this.disbursementDataService.currentMessage.subscribe((d) => this.currentDisbursement = d);
@@ -318,6 +322,7 @@ export class SidebarComponent implements OnInit {
     console.log('>>>>>>>>> ' + this.appComponent.currentView);
     this.grantData.currentMessage.subscribe(grant => this.currentGrant = grant);
     this.singleReportDataService.currentMessage.subscribe(report => this.currentReport = report);
+    this.closureService.currentMessage.subscribe(closure => this.currentClosure = closure);
 
     SECTION_ROUTES = [];
     REPORT_SECTION_ROUTES = [];

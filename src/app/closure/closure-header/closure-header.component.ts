@@ -150,8 +150,8 @@ export class ClosureHeaderComponent implements OnInit {
     this.adminComp.showWorkflowAssigments();
   }
 
-  showHistory(title, closure) {
-
+  showHistory(type, obj) {
+    this.adminComp.showHistory(type, obj);
   }
 
   showClosureDocuments() {

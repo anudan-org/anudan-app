@@ -246,7 +246,7 @@ export class ClosurePreviewComponent implements OnInit {
       }
       if (!closure.template.published) {
         const dialogRef = this.dialog.open(TemplateDialogComponent, {
-          data: this.currentClosure.template.name,
+          data: "Closure Template",
           panelClass: 'grant-notes-class'
         });
 
