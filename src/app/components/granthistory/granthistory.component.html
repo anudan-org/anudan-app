@@ -101,3 +101,36 @@
     <p>No notes have been added until now.</p>
   </ng-container>
 </div>
+
+<div
+  *ngIf="data.type === 'grant-closure'"
+  #flowContainer
+  id="flowContainer"
+  class="text-left"
+  style="height: calc(100vh - 170px);overflow-y: scroll;"
+>
+  <ng-container *ngFor="let item of closureHistory">
+    <ng-container *ngIf="item.note !== '' && item.noteAddedByUser">
+      <p class="mb-0 p-1">
+        <span
+          [class]="
+            'badge mb-1 mr-2 text-white state-' +
+            item.status.internalStatus.toLowerCase()
+          "
+          >{{ item.status.name }}</span
+        >
+        <b
+          >{{ item.noteAddedByUser.firstName }}
+          {{ item.noteAddedByUser.lastName }}</b
+        >
+        <small> ({{ item.noteAdded | date: "dd-MMM-yyyy hh:mm a" }})</small>
+      </p>
+      <p class="p-1">{{ item.note }}</p>
+    </ng-container>
+  </ng-container>
+  <ng-container
+    *ngIf="!data.data.noteAddedByUser && closureHistory.length === 0"
+  >
+    <p>No notes have been added until now.</p>
+  </ng-container>
+</div>

@@ -1,3 +1,6 @@
+import { ClosureDataService } from './../../closure.data.service';
+import { ClosureTemplateDialogComponent } from './../../components/closure-template-dialog/closure-template-dialog.component';
+import { ClosureTemplate, GrantClosure } from './../../model/closures';
 import { ListDialogComponent } from './../../components/list-dialog/list-dialog.component';
 import { Disbursement } from 'app/model/disbursement';
 import { GrantCompareComponent } from './../../grant-compare/grant-compare.component';
@@ -90,6 +93,8 @@ import { GrantValidationService } from "app/grant-validation-service";
 import { MessagingComponent } from "app/components/messaging/messaging.component";
 import { CurrencyService } from "app/currency-service";
 import { ProjectDocumentsComponent } from "app/components/project-documents/project-documents.component";
+import { ClosureSelectionComponent } from 'app/components/closure-selection/closure-selection.component';
+import { template } from '@angular/core/src/render3';
 
 @Component({
   selector: "app-preview",
@@ -167,10 +172,12 @@ export class PreviewComponent implements OnInit {
   @ViewChild("pdf") pdf;
   @ViewChild("pdf2") pdf2;
   orgTags: OrgTag[] = [];
+  currentClosure: GrantClosure;
   //@ViewChild("pdf2Content") pdf2Content: ElementRef;
 
   constructor(
     private grantData: GrantDataService,
+    private closureData: ClosureDataService,
     private submissionData: SubmissionDataService,
     private route: ActivatedRoute,
     private router: Router,
@@ -1055,6 +1062,57 @@ export class PreviewComponent implements OnInit {
 
   submitGrant(toStateId: number) {
 
+    if (this.currentGrant.grantStatus.internalStatus === 'ACTIVE') {
+      const dialogRef = this.dialog.open(ClosureSelectionComponent, {
+        data: {
+          title: "Important!",
+          content:
+            '<p class="x_MsoNormal">You are about to close an active Grant. This action will create a new &lsquo;Grant closure request&rsquo; with a separate closure workflow.</p> <p class="x_MsoNormal">The &lsquo;Grant closure request&rsquo; will be placed in a "Draft" stage with you as the owner of this state.&nbsp; You will need to add appropriate assignments to progress the Grant closure through the current organizational workflow.&nbsp;</p> <p class="x_MsoNormal">All reports and disbursements that were in progress when the grant closure request was initiated will be available until the grant closure workflow is completed. On completion of the grant closure workflow, the Grant will be marked as "Closed" and while you and others in your organization can view it, it will be unavailable for future disbursements or project progress reports against it.</p>',
+          grant: this.currentGrant
+        },
+        panelClass: "grant-notes-class",
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          const httpOptions = {
+            headers: new HttpHeaders({
+              'Content-Type': 'application/json',
+              'X-TENANT-CODE': localStorage.getItem('X-TENANT-CODE'),
+              'Authorization': localStorage.getItem('AUTH_TOKEN')
+            })
+          };
+
+          const user = JSON.parse(localStorage.getItem('USER'));
+          let url = '/api/user/' + user.id + '/closure/templates';
+          this.http.get<ClosureTemplate[]>(url, httpOptions).subscribe((templates: ClosureTemplate[]) => {
+            if (templates.length === 1) {
+              this.createClosure(templates[0]);
+            } else {
+              let dialogRef = this.dialog.open(ClosureTemplateDialogComponent, {
+                data: templates,
+                panelClass: 'grant-template-class'
+              });
+
+              dialogRef.afterClosed().subscribe(result => {
+                if (result.result) {
+                  this.createClosure(result.selectedTemplate);
+
+                } else {
+                  dialogRef.close();
+                }
+              });
+            }
+
+          });
+
+        } else {
+          dialogRef.close();
+        }
+      });
+      return;
+    }
+
     for (let assignment of this.currentGrant.workflowAssignments) {
       const status1 = this.appComp.appConfig.workflowStatuses.filter(
         (status) => status.id === assignment.stateId
@@ -1140,6 +1198,53 @@ export class PreviewComponent implements OnInit {
     /* this.openBottomSheetForGrantNotes(toStateId);
     this.wfDisabled = true; */
     //}
+  }
+
+  createClosure(template: any) {
+    this.appComp.currentView = "grant-closure";
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
+    const url =
+      "/api/user/" +
+      this.appComp.loggedInUser.id +
+      "/closure/" +
+      this.currentGrant.id +
+      "/" + template.id;
+
+    this.http.get<GrantClosure>(url, httpOptions).subscribe((closure: GrantClosure) => {
+      if (
+        closure.workflowAssignment.filter(
+          (wf) =>
+            wf.stateId === closure.status.id &&
+            wf.assignmentId === this.appComp.loggedInUser.id
+        ).length > 0 &&
+        this.appComp.loggedInUser.organization.organizationType !==
+        "GRANTEE" &&
+        closure.status.internalStatus !== "ACTIVE" &&
+        closure.status.internalStatus !== "CLOSED"
+      ) {
+        closure.canManage = true;
+      } else {
+        closure.canManage = false;
+      }
+
+      //grant.templateId = template.id;
+      const savedClosure = closure;
+      this.appComp.originalClosure = JSON.parse(JSON.stringify(closure));
+      this.currentClosure = closure;
+      this.closureData.changeMessage(closure, this.appComp.loggedInUser.id);
+      this.appComp.currentView = "grant-closure";
+      this.appComp.subMenu = { name: "In-progress Closures", action: "dgc" };
+
+      this.router.navigate(["grant-closure/header"]);
+    });
   }
 
   submitAndSaveGrant(toStateId: number, message: String) {

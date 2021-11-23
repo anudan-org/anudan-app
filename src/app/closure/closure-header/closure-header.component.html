@@ -1,0 +1,236 @@
+<div
+    class="col-12 bg-white"
+    style="position: sticky; top: 80px; z-index: 1040"
+  >
+    <!--<span class="badge badge-dark text-white pull-right mt-2" matBadgeSize="medium">{{currentGrant.grantStatus.displayName}}</span>-->
+    <div class="row">
+      <h4 class="col-11 text-left my-3 section-header">Grant Closure Request</h4>
+      <div
+        class="col-1 text-right"
+        style="display: flex; align-items: center; justify-content: flex-start"
+      >
+        <!--<button *ngIf="canManage" class="btn btn-sm btn-green float-right">
+                  <em class="fas fa-plus-square mr-2"></em>Add new Section</button>-->
+        <mat-icon
+          mat-button
+          [matMenuTriggerFor]="menu"
+          class="float-right"
+          style="cursor: pointer"
+          >more_vert
+        </mat-icon>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item (click)="showWorkflowAssigments()">
+            <mat-icon class="ml-1">assignment</mat-icon>View Assignments
+          </button>
+          <button mat-menu-item (click)="showHistory('grant-closure', currentClosure)">
+            <mat-icon class="ml-1">comment</mat-icon>View Notes
+          </button>
+          <ng-container>
+            <hr />
+            <button mat-menu-item (click)="manageGrant()">
+              <img
+                class="ml-2 mr-3"
+                style="width: 20px; height: 20px"
+                src="./assets/img/dp.svg"
+              />View Grant
+            </button>
+          </ng-container>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+  <div class="main-content no-top-margin2" style="margin-top: 40px;">
+    <div class="container-fluid anudan-scrollable" style="background: #fff;">
+  <div class="row anu-container">
+  <div class="col-lg-12">
+    <div #container class="container text-left mt-2 px-0 py-2">
+      <!--MANAGEMENT SECTION-->
+      <div *ngIf="currentClosure.canManage">
+        <div class="row w-100 p-0 mt-3 mb-2 mx-0 grants-section">
+          <div class="col-12">
+            <div class="row p-2" style="background: #fafafa">
+              <div class="col-12 mb-1">
+                <span *ngIf="appComp.loggedInUser.organization.organizationType!=='GRANTEE'" class=" badge text-black m-0 grant-type" [ngStyle]="{'background-color':getGrantTypeColor(currentClosure.grant.grantTypeId)}" ><small>{{getGrantTypeName(currentClosure.grant.grantTypeId)}}</small></span>
+                <mat-label>Grant Name:</mat-label>
+                <div class="ml-0 mb-1">
+                  <strong>{{
+                    (currentClosure.grant.referenceNo
+                      ? currentClosure.grant.referenceNo + " | "
+                      : "") + currentClosure.grant.name
+                  }}</strong>
+                </div>
+              </div>
+              <div class="col-6">
+                <mat-label>Implementing Organization:</mat-label>
+                <div class="ml-0 mb-2">
+                  <strong *ngIf="appComp.loggedInUser.organization.organizationType!=='GRANTEE' && isExternalGrant(currentClosure.grant)">{{
+                    currentClosure.grant.organization
+                      ? currentClosure.grant.organization.name
+                      : ""
+                  }}</strong>
+                  <strong *ngIf="appComp.loggedInUser.organization.organizationType!=='GRANTEE' && !isExternalGrant(currentClosure.grant)">{{
+                    currentClosure.grant.grantorOrganization.name
+                  }}</strong>
+                  <strong *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'">{{
+                    currentClosure.grant.organization
+                      ? currentClosure.grant.organization.name
+                      : ""
+                  }}</strong>
+                </div>
+              </div>
+              <div class="col-6">
+                <mat-label>Implementing Organization Representative:</mat-label>
+                <div class="ml-0 mb-1">
+                  <strong>{{currentClosure.grant.representative}}</strong></div>
+              </div>
+              <div class="col-6 mb-0">
+                <mat-label>Duration:</mat-label>
+                <div class="row ml-0 mb-0">
+                  <div>
+                    <mat-icon [inline]="true" class="mr-1"
+                      >calendar_today
+                    </mat-icon>
+                    <strong>{{
+                      currentClosure.grant.startDate | date: "dd-MMM-yyyy"
+                    }}</strong>
+                  </div>
+                  <div>
+                    <mat-icon [inline]="true" class="mx-3 my-0"
+                      >arrow_forward
+                    </mat-icon>
+                  </div>
+                  <div>
+                    <mat-icon [inline]="true" class="mr-1"
+                      >calendar_today
+                    </mat-icon>
+                    <strong>{{
+                      currentClosure.grant.endDate | date: "dd-MMM-yyyy"
+                    }}</strong>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-6">
+                <mat-label>Grant Amount:</mat-label>
+                <div class="ml-0 mb-1">
+                  <img alt="img"src="./assets/img/rupee.png" style="width: 9px" /><strong>{{
+                    getFormattedGrantAmount(currentClosure.grant.amount)
+                  }}</strong>
+                  &nbsp;&nbsp;&nbsp;<small>{{
+                    getGrantAmountInWords(currentClosure.grant.amount)
+                  }}</small>
+                </div>
+              </div>
+            </div>
+            <div class="row mt-3 mx-3">
+              <div class="col-12">
+                <form>
+                <mat-form-field
+                  [floatLabel]="'always'"
+                  *ngIf="
+                    currentClosure.canManage && !currentClosure.forGranteeUse
+                  "
+                >
+                  <mat-label>Closure Reason:</mat-label>
+                  <input
+                    id="closureReason"
+                    matInput
+                    class="anu-input"
+                    [formControl]="myControl"
+                    class="anu-input"
+                    [matAutocomplete]="auto"
+                    placeholder="Select or create Closure Reason"
+                  />
+                </mat-form-field>
+                <mat-autocomplete
+                #auto="matAutocomplete"
+                [displayWith]="displayFn"
+                autoActiveFirstOption
+              >
+                <mat-option
+                  *ngFor="let option of filteredOptions | async"
+                  [value]="option"
+                >
+                  {{ option.reason }}
+                </mat-option>
+              </mat-autocomplete>
+              </form>
+              </div>
+              <div class="col-12">
+                <mat-form-field
+                  [floatLabel]="'always'"
+                  *ngIf="
+                    currentClosure.canManage && !currentClosure.forGranteeUse
+                  "
+                >
+                  <mat-label>Description:</mat-label>
+                  <textarea
+                    id="closureDesc"
+                    matInput
+                    [(ngModel)]="currentClosure.description"
+                    class="anu-input"
+                  ></textarea>
+                </mat-form-field>
+               
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+<div
+  #createSectionModal
+  class="modal fade mt-5"
+  id="createSectionModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog center-class mt-5" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createSectionLabel"></h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="fieldTitleInput" class="mat-form-field-label pull-left"
+            >Section Name:</label
+          >
+          <input id="sectionTitleInput" class="form-control" value="" />
+        </div>
+        <div class="row px-3">
+          <button
+            type="button"
+            class="btn btn-sm btn-green-primary"
+            (click)="saveSection()"
+          >
+            Done
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-green"
+            data-dismiss="modal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
