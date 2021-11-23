@@ -1,0 +1,27 @@
+name: Anudan App Roll Back 
+
+on:
+  workflow_dispatch:
+ 
+   
+jobs:  
+
+  #https://github.com/marketplace/actions/remote-ssh-commands
+  Anudan-Roll-Back-To-Previous-Version:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' 
+    name: App Roll Back
+    steps:       
+      - name: Roll Back To Previous Version
+        uses: fifsky/ssh-action@master
+        with:
+          command: |
+            cd /home/anudan/github
+            BuildNO= 1.1.3
+            /home/anudan/github/s3cmd/s3cmd-2.0.1/s3cmd --recursive --force get s3://anudan-certified-uat-artifacts-test/"$BuildNO"/
+            ls -a
+            #!/bin/bash
+            cd /home/anudan/github
+          host: ${{ secrets.HOST_QA }}
+          user: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_DEPLOY_KEY }} 
