@@ -46,7 +46,7 @@ jobs:
                 
               
 
-                1. App Roll Back - ${{needs.Anudan-Roll-Back-To-Previous-Version}} 
+                1. App Roll Back - ${{needs.Anudan-Roll-Back-To-Previous-Version.result}} 
 
                 
 
