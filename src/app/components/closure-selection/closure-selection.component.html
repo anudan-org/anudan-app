@@ -1,0 +1,40 @@
+<h1 mat-dialog-title class="text-header" style="font-weight: normal">
+  {{ message.title }}
+</h1>
+<div *ngIf="message.subTitle" class="my-4" [innerHTML]="message.subTitle"></div>
+<pre *ngIf="message.content" [innerHtml]="message.content"></pre>
+<div
+  mat-dialog-actions
+  class="row px-3"
+  *ngIf="message.btnSecondary === undefined && message.btnMain === undefined"
+>
+
+  <button
+    *ngIf="!message.type"
+    (click)="onYesClick()"
+    class="btn btn-sm btn-green-primary"
+  >
+    Close
+  </button>
+  <button disabled
+    *ngIf="!message.type"
+    (click)="onYesClick()"
+    class="btn btn-sm btn-green-primary"
+  >
+    Terminte
+  </button>
+  <button disabled
+    *ngIf="!message.type"
+    (click)="onYesClick()"
+    class="btn btn-sm btn-green-primary"
+  >
+    Put on hold
+  </button>
+  <button
+    *ngIf="!message.type"
+    (click)="onNoClick()"
+    class="btn btn-sm btn-green"
+  >
+    Not now
+  </button>
+</div>

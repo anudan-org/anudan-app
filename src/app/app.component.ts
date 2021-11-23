@@ -1,3 +1,4 @@
+import { GrantClosure } from './model/closures';
 import { MessagingComponent } from './components/messaging/messaging.component';
 import { AfterViewChecked, ChangeDetectorRef, Component, enableProdMode, ApplicationRef, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
@@ -56,21 +57,26 @@ export class AppComponent implements AfterViewChecked {
   currentTenant: Tenant;
   grantSaved = false;
   reportSaved = true;
+  closureSaved = false;
   confgSubscription: any;
   public grantTypes: GrantType[];
   originalGrant: Grant;
+  originalClosure: GrantClosure;
   originalReport: Report;
   action: string;
   createNewSection = new BehaviorSubject<boolean>(false);
   createNewReportSection = new BehaviorSubject<boolean>(false);
+  createNewClosureSection = new BehaviorSubject<boolean>(false);
   grantRemoteUpdate = new BehaviorSubject<boolean>(false);
   failedAttempts = 0;
   parameters: any;
   tenantUsers: User[];
   reportWorkflowStatuses: WorkflowStatus[];
+  closureWorkflowStatuses: WorkflowStatus[];
   grantWorkflowStatuses: WorkflowStatus[];
   disbursementWorkflowStatuses: WorkflowStatus[];
   reportTransitions: WorkflowTransition[];
+  closureTransitions: WorkflowTransition[];
   releaseVersion: string;
   public appConfig: AppConfig = {
     appName: '',
@@ -83,15 +89,18 @@ export class AppComponent implements AfterViewChecked {
     granteeOrgs: [],
     workflowStatuses: [],
     reportWorkflowStatuses: [],
+    closureWorkflowStatuses: [],
     grantWorkflowStatuses: [],
     transitions: [],
     reportTransitions: [],
+    closureTransitions: [],
     tenantUsers: [],
     daysBeforePublishingReport: 30,
     templateLibrary: []
   };
 
   reportUpdated = new BehaviorSubject<any>({ status: false, reportId: 0 });
+  closureUpdated = new BehaviorSubject<any>({ status: false, closureId: 0 });
 
   subMenu = {};
 
@@ -263,6 +272,9 @@ export class AppComponent implements AfterViewChecked {
       }
       if (this.appConfig.reportWorkflowStatuses) {
         this.reportWorkflowStatuses = this.appConfig.reportWorkflowStatuses;
+      }
+      if (this.appConfig.closureWorkflowStatuses) {
+        this.closureWorkflowStatuses = this.appConfig.closureWorkflowStatuses;
       }
       //localStorage.setItem('X-TENANT-CODE', this.appConfig.tenantCode);
 

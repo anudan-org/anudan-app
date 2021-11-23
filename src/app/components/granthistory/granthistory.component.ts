@@ -1,3 +1,4 @@
+import { ClosureHistory } from './../../model/closures';
 import { Component, Inject, OnInit, ViewChild, ElementRef, Renderer2, HostListener } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef, MatButtonModule } from '@angular/material';
 import { Grant, GrantHistory } from '../../model/dahsboard';
@@ -27,6 +28,7 @@ export class GranthistoryComponent implements OnInit {
   grantHistory: GrantHistory[] = [];
   reportHistory: ReportHistory[] = [];
   disbursementHistory: DisbursementHistory[] = [];
+  closureHistory: ClosureHistory[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<GranthistoryComponent>
@@ -64,6 +66,12 @@ export class GranthistoryComponent implements OnInit {
 
       this.http.get<DisbursementHistory[]>(url, httpOptions).subscribe((history: DisbursementHistory[]) => {
         this.disbursementHistory = history;
+      });
+    } else if (this.data.type === 'grant-closure') {
+      const url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/closure/' + this.data.data.id + '/history/';
+
+      this.http.get<ClosureHistory[]>(url, httpOptions).subscribe((history: ClosureHistory[]) => {
+        this.closureHistory = history;
       });
     }
 

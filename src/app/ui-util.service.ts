@@ -1,3 +1,4 @@
+import { GrantClosure } from 'app/model/closures';
 import { Disbursement } from 'app/model/disbursement';
 import { Report } from './model/report';
 import { AppComponent } from 'app/app.component';
@@ -43,6 +44,19 @@ export class UiUtilService {
     } else if (Number(appComp.loggedInUser.id) === Number(report.ownerId) && (report.status.internalStatus === 'ACTIVE' || report.status.internalStatus === 'CLOSED')) {
       return this.ownerWithNoEdit();
     } else if (report.workflowAssignments && report.workflowAssignments.findIndex(g => Number(g.assignmentId) === Number(appComp.loggedInUser.id)) >= 0) {
+      return this.inWorkflow();
+    } else {
+      return this.notInWorkflow();
+    }
+  }
+
+  public getClosureCardStyle(closure: GrantClosure, appComp: AppComponent) {
+
+    if (Number(appComp.loggedInUser.id) === Number(closure.ownerId) && (closure.status.internalStatus === 'DRAFT' || closure.status.internalStatus === 'REVIEW')) {
+      return this.ownerWithEdit();
+    } else if (Number(appComp.loggedInUser.id) === Number(closure.ownerId) && (closure.status.internalStatus === 'ACTIVE' || closure.status.internalStatus === 'CLOSED')) {
+      return this.ownerWithNoEdit();
+    } else if (closure.workflowAssignment && closure.workflowAssignment.findIndex(g => Number(g.assignmentId) === Number(appComp.loggedInUser.id)) >= 0) {
       return this.inWorkflow();
     } else {
       return this.notInWorkflow();
