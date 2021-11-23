@@ -119,10 +119,9 @@
           "
           >{{ item.status.name }}</span
         >
-        <b
+        <strong
           >{{ item.noteAddedByUser.firstName }}
-          {{ item.noteAddedByUser.lastName }}</b
-        >
+          {{ item.noteAddedByUser.lastName }}</strong>
         <small> ({{ item.noteAdded | date: "dd-MMM-yyyy hh:mm a" }})</small>
       </p>
       <p class="p-1">{{ item.note }}</p>
