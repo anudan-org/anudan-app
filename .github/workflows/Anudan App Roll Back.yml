@@ -25,3 +25,30 @@ jobs:
           host: ${{ secrets.HOST_QA }}
           user: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_DEPLOY_KEY }} 
+
+  Notify-on-email:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [ Anudan-Roll-Back-To-Previous-Version ]
+    name: Notify Via Email
+    steps:
+      - name: Send mail
+        if: always()
+        uses: wadeww/send-email-action@master
+        with:
+          server_address: smtp.gmail.com
+          port: ${{ secrets.SMTP_SERVER_PORT }}
+          username: ${{ secrets.AUTH_USER }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Anudan App Roll Back
+          body: Organization Name/Repository - ${{github.repository}} 
+                
+                
+              
+
+                1. App Roll Back - ${{needs.Anudan-Roll-Back-To-Previous-Version}} 
+
+                
+
+          to: ${{ secrets.TO_ADDRESSES }} 
+          from: ${{ secrets.FROM_ADDRESS }}                
