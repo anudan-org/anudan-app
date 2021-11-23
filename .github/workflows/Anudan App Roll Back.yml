@@ -17,7 +17,8 @@ jobs:
         with:
           command: |
             cd /home/anudan/github
-            BuildNO=1.1.2
+
+            BuildNO=1.1.3
             /home/anudan/github/s3cmd/s3cmd-2.0.1/s3cmd --recursive --force get s3://anudan-certified-uat-artifacts-test/"$BuildNO"/
             ls -a
             #!/bin/bash
