@@ -88,8 +88,9 @@ export class ClosureHeaderComponent implements OnInit {
         if (this.currentClosure &&
           !this.appComp.closureSaved
         ) {
+          this.appComp.closureSaved = true;
           this.saveClosure();
-          this.appComp.closureSaved = false;
+
         }
 
         if (val.url === "/grants/active") {
@@ -307,6 +308,7 @@ export class ClosureHeaderComponent implements OnInit {
       .put(url, this.currentClosure, httpOptions)
       .subscribe((closure: GrantClosure) => {
         this.closureService.changeMessage(closure, this.appComp.loggedInUser.id);
+        this.appComp.closureSaved = false;
         this.appComp.autosaveDisplay =
           "Last saved @ " +
           this.datePipe.transform(new Date(), "hh:mm:ss a") +
