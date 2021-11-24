@@ -43,15 +43,6 @@
               <span *ngIf="currentGrant.closureInProgress">Closure In-Progress</span>
             </button>
           </div>
-        <!-- <ng-container *ngIf="currentGrant.closureInProgress">
-          <strong class="text-subheader text-grey d-flex align-items-center mt-1"><mat-icon [inline]="true" class="material-icons-outlined text-grey mr-1">
-            info_outline
-          </mat-icon>{{'Closure in-progress'}}</strong>
-        </ng-container> -->
-          <ng-container *ngIf="currentGrant.grantStatus.internalStatus==='ACTIVE' && currentGrant.currentAssignment===appComp.loggedInUser.id">
-            <!-- <button mat-stroked-button [class]="'mr-1 btn btn-sm btn-green-primary'" disabled>Terminate</button>
-            <button mat-stroked-button [class]="'mr-1 btn btn-sm btn-green-primary'" disabled>On Hold</button> -->
-          </ng-container>
         </div>
       </h4>
       <div
