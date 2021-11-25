@@ -18,9 +18,8 @@ jobs:
             repository: anudan-org/release   
             token: ${{ secrets.MY_PAT }}  
       - name: creating variable 
-        run: |
-         echo "BuildNO=`cat Anudan_backup_Recovery.js | cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV  
-         echo "variable=`cat Anudan_backup_Recovery.js | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV 
+        run: | 
+          echo "variable=`cat Anudan_backup_Recovery.js | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV 
       
       - name: uploading Anudan_backup_Recovery.js artifact to github. 
         uses: actions/upload-artifact@v2
