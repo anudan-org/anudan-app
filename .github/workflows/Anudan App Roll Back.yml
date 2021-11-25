@@ -21,15 +21,37 @@ jobs:
         run: |
          echo "BuildNO=`cat Anudan_backup_Recovery.js | cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV  
          echo "variable=`cat Anudan_backup_Recovery.js | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV 
-
+      
+      - name: uploading Anudan_backup_Recovery.js artifact to github. 
+        uses: actions/upload-artifact@v2
+        with:
+              name: Anudan-App-Backup
+              path: Anudan_backup_Recovery.js
+              retention-days: 1 
+      - name: Anudan-App-Backup artifact downloading from github.   
+        uses: actions/download-artifact@v2
+        with:
+            name: Anudan-App-Backup 
+      - name: copying Anudan_backup_Recovery.js file to remote server 
+        uses: burnett01/rsync-deployments@4.1
+        with:
+              switches: -avzr -q
+              path: .
+              remote_path: /home/anudan/github
+              remote_host: ${{ secrets.HOST_PROD }}
+              remote_port: ${{ secrets.SSH_PORT }}
+              remote_user: ${{ secrets.SSH_USER }}
+              remote_key: ${{ secrets.SSH_DEPLOY_KEY }} 
       - name: Roll Back To Previous Version
         uses: fifsky/ssh-action@master
         if: ${{ env.variable }} == 'yes' 
         with:
           command: |
             cd /home/anudan/github
-            /home/anudan/github/s3cmd/s3cmd-2.0.1/s3cmd --recursive --force get s3://anudan-certified-uat-artifacts-test/${{ env.BuildNO }}/
+            BuildNO=`cat Anudan_backup_Recovery.js | cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`
+            /home/anudan/github/s3cmd/s3cmd-2.0.1/s3cmd --recursive --force get s3://anudan-certified-uat-artifacts-test/"$BuildNO"/
             ls -a
+            rm Anudan_backup_Recovery.js
           host: ${{ secrets.HOST_QA }}
           user: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_DEPLOY_KEY }} 
