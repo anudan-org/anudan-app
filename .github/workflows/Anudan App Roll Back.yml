@@ -16,23 +16,12 @@ jobs:
         uses: actions/checkout@v2
         with:
             repository: anudan-org/release   
-            token: ${{ secrets.MY_PAT }}  
-
-      - name: uploading Anudan_backup_Recovery.js artifact to github. 
-        uses: actions/upload-artifact@v2
-        with:
-              name: Anudan-App-Backup
-              path: Anudan_backup_Recovery.js
-              retention-days: 1 
-      - name: Anudan-App-Backup artifact downloading from github.   
-        uses: actions/download-artifact@v2
-        with:
-            name: Anudan-App-Backup 
+            token: ${{ secrets.MY_PAT }}   
       - name: copying Anudan_backup_Recovery.js file to remote server 
         uses: burnett01/rsync-deployments@4.1
         with:
               switches: -avzr -q
-              path: .
+              path: Anudan_backup_Recovery.js
               remote_path: /home/anudan/github
               remote_host: ${{ secrets.HOST_QA }}
               remote_port: ${{ secrets.SSH_PORT }}
