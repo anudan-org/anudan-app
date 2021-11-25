@@ -1,3 +1,4 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core';
 
@@ -9,13 +10,28 @@ import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core'
 export class ClosureSelectionComponent implements OnInit {
 
   @ViewChild("closureSelection") closureSelection: ElementRef;
+  warnings: any;
 
   constructor(public dialogRef: MatDialogRef<ClosureSelectionComponent>
-    , @Inject(MAT_DIALOG_DATA) public message: any) {
+    , @Inject(MAT_DIALOG_DATA) public message: any
+    , private httpClient: HttpClient) {
     dialogRef.disableClose = true;
   }
 
   ngOnInit() {
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'X-TENANT-CODE': localStorage.getItem('X-TENANT-CODE'),
+        'Authorization': localStorage.getItem('AUTH_TOKEN')
+      })
+    };
+
+    let url = "/api/user/" + this.message.userId + "/closure/" + this.message.grant.id + "/warnings";
+    this.httpClient.get<any>(url, httpOptions).subscribe((response: any) => {
+      this.warnings = response;
+    });
   }
 
   onNoClick(): void {
