@@ -9,7 +9,7 @@ jobs:
   #https://github.com/marketplace/actions/remote-ssh-commands
   Anudan-Roll-Back-To-Previous-Version:
     runs-on: ubuntu-latest
-    if: ${{ github.actor }} == 'karni-prabhu' 
+    if: ${{ github.actor }} == 'ranjitsocial' 
     name: App Roll Back
     steps:   
       - name: checkout Anudan_backup_Recovery.js file from release repo    
@@ -29,7 +29,6 @@ jobs:
               remote_key: ${{ secrets.SSH_DEPLOY_KEY }} 
       - name: Roll Back To Previous Version
         uses: fifsky/ssh-action@master
-        if: ${{ env.var }} == 'yes' 
         with:
           command: |
             cd /home/anudan/github
