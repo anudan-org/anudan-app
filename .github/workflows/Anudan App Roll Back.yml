@@ -34,7 +34,7 @@ jobs:
               switches: -avzr -q
               path: .
               remote_path: /home/anudan/github
-              remote_host: ${{ secrets.HOST_PROD }}
+              remote_host: ${{ secrets.HOST_QA }}
               remote_port: ${{ secrets.SSH_PORT }}
               remote_user: ${{ secrets.SSH_USER }}
               remote_key: ${{ secrets.SSH_DEPLOY_KEY }} 
