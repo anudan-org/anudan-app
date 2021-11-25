@@ -9,7 +9,7 @@ jobs:
   #https://github.com/marketplace/actions/remote-ssh-commands
   Anudan-Roll-Back-To-Previous-Version:
     runs-on: ubuntu-latest
-    if: ${{ github.actor }} == 'ranjitsocial' 
+    if: ${{ github.actor }} == "ranjitsocial"
     name: App Roll Back
     steps:   
       - name: checkout Anudan_backup_Recovery.js file from release repo    
