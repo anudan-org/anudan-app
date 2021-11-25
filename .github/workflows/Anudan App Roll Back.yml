@@ -9,11 +9,10 @@ jobs:
   #https://github.com/marketplace/actions/remote-ssh-commands
   Anudan-Roll-Back-To-Previous-Version:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' 
+    if: github.repository_owner == 'karni-prabhu' 
     name: App Roll Back
     steps:   
-      - name: checkout Anudan_backup_Recovery.js file from release repo   
-        if: github.repository_owner == 'karni-prabhu'  
+      - name: checkout Anudan_backup_Recovery.js file from release repo    
         uses: actions/checkout@v2
         with:
             repository: anudan-org/release   
