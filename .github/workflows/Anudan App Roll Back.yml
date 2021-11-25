@@ -33,8 +33,8 @@ jobs:
         with:
           command: |
             cd /home/anudan/github
-            BuildNO=`cat Anudan_backup_Recovery.js | cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`
-            /home/anudan/github/s3cmd/s3cmd-2.0.1/s3cmd --recursive --force get s3://anudan-certified-uat-artifacts-test/$BuildNO/
+            Version_No=`cat Anudan_backup_Recovery.js | cut -d "," -f1 | cut -d ":" -f2 | sed 's/}//g'| sed 's/"//g'`
+            /home/anudan/github/s3cmd/s3cmd-2.0.1/s3cmd --recursive --force get s3://anudan-certified-uat-artifacts-test/"$Version_No"/
             ls -a
             #rm Anudan_backup_Recovery.js
           host: ${{ secrets.HOST_QA }}
