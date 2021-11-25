@@ -14,7 +14,7 @@ on:
       - '**.iml'
       - 'frontend/**'
       - 'e2e/**' 
-      - '/.github/CODEOWNERS/**'
+      - '/.github/CODEOWNERS'
 
 # creating env variable for head commit meassge 
 env:

@@ -14,7 +14,7 @@ on:
       - '**.iml'
       - 'frontend/**'
       - 'e2e/**' 
-      - '/.github/CODEOWNERS/**'
+      - '/.github/CODEOWNERS'
 
 env:
   commitmsg: ${{ github.event.head_commit.message }} 
