@@ -9,33 +9,21 @@ jobs:
   #https://github.com/marketplace/actions/remote-ssh-commands
   Anudan-Roll-Back-To-Previous-Version:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' 
+    if: ${{ github.actor }} == 'karni-prabhu' 
     name: App Roll Back
     steps:   
-      - name: checkout Anudan_backup_Recovery.js file from release repo   
-        if: github.repository_owner == 'karni-prabhu'  
+      - name: checkout Anudan_backup_Recovery.js file from release repo    
         uses: actions/checkout@v2
         with:
             repository: anudan-org/release   
-            token: ${{ secrets.MY_PAT }}  
-
-      - name: uploading Anudan_backup_Recovery.js artifact to github. 
-        uses: actions/upload-artifact@v2
-        with:
-              name: Anudan-App-Backup
-              path: Anudan_backup_Recovery.js
-              retention-days: 1 
-      - name: Anudan-App-Backup artifact downloading from github.   
-        uses: actions/download-artifact@v2
-        with:
-            name: Anudan-App-Backup 
+            token: ${{ secrets.MY_PAT }}   
       - name: copying Anudan_backup_Recovery.js file to remote server 
         uses: burnett01/rsync-deployments@4.1
         with:
               switches: -avzr -q
-              path: .
+              path: Anudan_backup_Recovery.js
               remote_path: /home/anudan/github
-              remote_host: ${{ secrets.HOST_PROD }}
+              remote_host: ${{ secrets.HOST_QA }}
               remote_port: ${{ secrets.SSH_PORT }}
               remote_user: ${{ secrets.SSH_USER }}
               remote_key: ${{ secrets.SSH_DEPLOY_KEY }} 
@@ -45,8 +33,8 @@ jobs:
         with:
           command: |
             cd /home/anudan/github
-            BuildNO=`cat Anudan_backup_Recovery.js | cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`
-            /home/anudan/github/s3cmd/s3cmd-2.0.1/s3cmd --recursive --force get s3://anudan-certified-uat-artifacts-test/"$BuildNO"/
+            Version_No=`cat Anudan_backup_Recovery.js | cut -d "," -f1 | cut -d ":" -f2 | sed 's/}//g'| sed 's/"//g'`
+            /home/anudan/github/s3cmd/s3cmd-2.0.1/s3cmd --recursive --force get s3://anudan-certified-uat-artifacts-test/"$Version_No"/
             ls -a
             rm Anudan_backup_Recovery.js
           host: ${{ secrets.HOST_QA }}
