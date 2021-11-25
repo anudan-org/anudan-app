@@ -38,6 +38,9 @@ import { ClosedDisbursementsComponent } from 'app/disbursements/closed-disbursem
 import { DisbursementComponent } from 'app/disbursements/disbursement/disbursement.component';
 import { DisbursementPreviewComponent } from 'app/disbursements/disbursement/disbursement-preview/disbursement-preview.component';
 import { DataApiComponent } from 'app/data-api/data-api.component';
+import { ClosureHeaderComponent } from 'app/closure/closure-header/closure-header.component';
+import { ClosureSectionsComponent } from 'app/closure/closure-sections/closure-sections.component';
+import { ClosurePreviewComponent } from 'app/closure/closure-preview/closure-preview.component';
 export const AdminLayoutRoutes: Routes = [
   // {
   //   path: '',
@@ -92,10 +95,13 @@ export const AdminLayoutRoutes: Routes = [
   { path: 'organization/administration', component: OrgadminComponent },
   { path: 'rfps', component: RfpsComponent },
   { path: 'grant/basic-details', component: BasicComponent },
+  { path: 'grant-closure/header', component: ClosureHeaderComponent },
   { path: 'grant/sections', component: SectionsComponent },
   { path: 'grant/section/:action', component: SectionsComponent },
+  { path: 'grant-closure/section/:action', component: ClosureSectionsComponent },
   { path: 'grant/reporting', component: ReportingComponent },
   { path: 'grant/preview', component: PreviewComponent },
+  { path: 'grant-closure/preview', component: ClosurePreviewComponent },
   { path: 'reports/upcoming', component: UpcomingReportsComponent },
   { path: 'reports/submitted', component: SubmittedReportsComponent },
   { path: 'reports/approved', component: ApprovedReportsComponent },

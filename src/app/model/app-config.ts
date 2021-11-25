@@ -12,10 +12,12 @@ export class AppConfig {
   granteeOrgs: Organization[];
   workflowStatuses: WorkflowStatus[];
   reportWorkflowStatuses: WorkflowStatus[];
+  closureWorkflowStatuses: WorkflowStatus[];
   grantWorkflowStatuses: WorkflowStatus[];
   tenantUsers: User[];
   transitions: WorkflowTransition[];
   reportTransitions: WorkflowTransition[];
+  closureTransitions: WorkflowTransition[];
   daysBeforePublishingReport: number;
   templateLibrary: TemplateLibrary[];
 }
@@ -33,7 +35,9 @@ export class Colors {
 export class Configuration {
   tenantUsers: User[];
   reportWorkflowStatuses: WorkflowStatus[];
+  closureWorkflowStatuses: WorkflowStatus[];
   grantWorkflowStatuses: WorkflowStatus[];
   reportTransitions: WorkflowTransition[];
+  closureTransitions: WorkflowTransition[];
   disbursementWorkflowStatuses: WorkflowStatus[];
 }

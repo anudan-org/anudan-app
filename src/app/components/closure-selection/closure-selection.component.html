@@ -1,0 +1,49 @@
+<h1 mat-dialog-title class="text-header mb-4" style="font-weight: normal">
+  {{ message.title }}
+</h1>
+<div *ngIf="warnings.reportsInProgress && warnings.reportsInProgress.length>0">
+  <div class="text-subheader">Reports in-progress:<span class="text-subheader ml-2">{{warnings.reportsInProgress.length}}</span></div>
+</div>
+<div *ngIf="warnings.disbursementsInProgress && warnings.disbursementsInProgress.length>0">
+  <div class="text-subheader">Disbursements in-progress:<span class="text-subheader ml-2">{{warnings.disbursementsInProgress}}</span></div>
+</div>
+<div *ngIf="warnings.grantInAmendment">
+  <div class="text-subheader">Amendments in-progress:<span class="text-subheader ml-2">1</span></div>
+</div>
+<div *ngIf="message.subTitle" class="my-4" [innerHTML]="message.subTitle"></div>
+<pre *ngIf="message.content" class="my-4"  [innerHtml]="message.content"></pre>
+<div
+  mat-dialog-actions
+  class="row px-3"
+  *ngIf="message.btnSecondary === undefined && message.btnMain === undefined"
+>
+
+  <button
+    *ngIf="!message.type"
+    (click)="onYesClick()"
+    class="btn btn-sm btn-green-primary"
+  >
+    Close
+  </button>
+  <button disabled
+    *ngIf="!message.type"
+    (click)="onYesClick()"
+    class="btn btn-sm btn-green-primary"
+  >
+    Terminate
+  </button>
+  <button disabled
+    *ngIf="!message.type"
+    (click)="onYesClick()"
+    class="btn btn-sm btn-green-primary"
+  >
+    Put on hold
+  </button>
+  <button
+    *ngIf="!message.type"
+    (click)="onNoClick()"
+    class="btn btn-sm btn-green"
+  >
+    Not now
+  </button>
+</div>

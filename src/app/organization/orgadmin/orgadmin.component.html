@@ -22,6 +22,9 @@
           <button mat-menu-item *ngIf="selectedMenu.getValue().item!=='library'" (click)="switchMenu('library','Library')">
             <mat-icon class="ml-1">library_books</mat-icon>Library
           </button>
+          <button mat-menu-item *ngIf="selectedMenu.getValue().item!=='closure-reasons'" (click)="switchMenu('closure-reasons','closure-reasons')">
+            <mat-icon class="ml-1">do_not_disturb</mat-icon>Closure Reasons
+          </button>
           <button mat-menu-item *ngIf="selectedMenu.getValue().item!=='tags'" (click)="switchMenu('tags','Tags')">
             <mat-icon class="ml-1">bookmark</mat-icon>Grant Tags
           </button>
@@ -55,6 +58,9 @@
             <div *ngIf="selectedMenu.getValue().item==='config'" class="anu-container text-left mx-0 px-0">
                 <app-settings></app-settings>
             </div>
+            <div *ngIf="selectedMenu.getValue().item==='closure-reasons'" class="anu-container text-left mx-0 px-0">
+              <app-settings></app-settings>
+          </div>
           </mat-tab>
         </mat-tab-group>
         

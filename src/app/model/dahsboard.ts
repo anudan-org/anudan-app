@@ -197,6 +197,7 @@ export class Attribute {
   frequency: string;
   deletable: boolean;
   required: boolean;
+  canEdit: boolean;
 }
 
 export class Attachment {
@@ -289,6 +290,7 @@ export class Grant {
   tags: GrantTag[];
   ownerName: string;
   ownerId: number;
+  closureInProgress: boolean;
 }
 
 export class GrantTag {

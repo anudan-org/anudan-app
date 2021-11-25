@@ -456,6 +456,110 @@
     </ng-container>
     <!--END-->
 
+    <!--THIS IS FOR THE SINGLE CLOSURE-->
+    <ng-container *ngIf="appComponent.currentView === 'grant-closure' && currentClosure">
+      <li
+        tabindex="{{ i }}"
+        routerLinkActive="active"
+        *ngFor="let menuItem of singleClosureMenuItems; let i = index"
+        class="{{ menuItem.class }} nav-item text-left"
+      >
+        <ng-container *ngIf="menuItem.title !== 'Closure Details'">
+          <a
+            class="nav-link mb-2"
+            [routerLink]="[menuItem.path]"
+            *ngIf="currentClosure.canManage"
+          >
+            <p style="font-size: 14px">
+              <img alt="img"src="./assets/img/{{ menuItem.icon }}" class="mr-2" />{{
+                menuItem.title
+              }}
+            </p>
+          </a>
+          <a
+            class="nav-link mb-2"
+            [routerLink]="[menuItem.path]"
+            *ngIf="
+              !currentClosure.canManage && menuItem.title === 'Preview & Submit'
+            "
+          >
+            <p style="font-size: 14px">
+              <img alt="img"src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Preview
+            </p>
+          </a>
+        </ng-container>
+
+        <ng-container
+          *ngIf="menuItem.title === 'Closure Details' && currentClosure.canManage"
+        >
+          <mat-expansion-panel cdkDropList (cdkDropListDropped)="drop($event)">
+            <mat-expansion-panel-header
+              (click)="buildSectionsSideNav()"
+              style="padding: 14px"
+            >
+              <mat-panel-title style="display: flex; align-items: center">
+                <em class="material-icons">list</em>Closure Details
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+            <li
+              tabindex="{{ i }}"
+              cdkDrag
+              (cdkDragStarted)="dragStarted($event)"
+              routerLinkActive="active"
+              *ngFor="let menuItem1 of closureSectionMenuItems; let i = index"
+              class="{{ menuItem1.class }} nav-item text-left"
+              style="cursor: move"
+            >
+              <i
+                *ngIf="
+                  this.currentClosure.canManage && !currentClosure.forGranteeUse
+                "
+                cdkDragHandle
+                class="material-icons"
+                style="margin: 0px 14px 0px 20px"
+                >drag_indicator</i
+              >
+              <p *cdkDragPreview style="color: #fff">{{ menuItem1.title }}</p>
+              <a
+                class="nav-link py-0"
+                [routerLink]="[menuItem1.path]"
+                style="padding-top: 0; padding-bottom: 0; padding-left: 30px"
+              >
+                <i
+                  *ngIf="!this.currentClosure.canManage"
+                  class="material-icons"
+                  style="font-size: 18px"
+                  >{{ menuItem1.icon }}</i
+                >
+                <p>{{ menuItem1.title }}</p>
+              </a>
+            </li>
+            <li
+              *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse"
+              tabindex="{{ i }}"
+            >
+              <button
+                (click)="createNewClosureSection()"
+                class="btn btn-sm btn-white"
+                style="
+                  margin: 7px 0 0px 63px;
+                  border-radius: 2px !important;
+                  padding: 1px 10px 1px 10px;
+                "
+              >
+                Add a section<img alt="Add section button"
+                  src="./assets/img/add.svg"
+                  class="ml-2"
+                  style="width: 24px"
+                />
+              </button>
+            </li>
+          </mat-expansion-panel>
+        </ng-container>
+      </li>
+    </ng-container>
+    <!--END-->
+
     <!--THIS IS FOR THE SINGLE DISBURSEMENT-->
     <ng-container *ngIf="appComponent.currentView === 'disbursement'">
       <li

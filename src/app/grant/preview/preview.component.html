@@ -11,9 +11,8 @@
       >
         <div style="display: flex">
           <div *ngFor="let flow of currentGrant.flowAuthorities">
-            <button
+            <button *ngIf="currentGrant.grantStatus.internalStatus!=='ACTIVE'"
               [disabled]="
-                currentGrant.grantStatus.internalStatus === 'ACTIVE' ||
                 wfDisabled
               "
               mat-stroked-button
@@ -26,6 +25,22 @@
               "
             >
               {{ flow.action }}
+            </button>
+            <button *ngIf="currentGrant.grantStatus.internalStatus==='ACTIVE'"
+              [disabled]="
+                wfDisabled || currentGrant.closureInProgress
+              "
+              mat-stroked-button
+              (click)="submitGrant(flow.toStateId)"
+              id="{{ flow.action }}"
+              [class]="
+                flow.seqOrder === 0
+                  ? 'mr-1 btn btn-sm btn-green-primary'
+                  : 'mr-1 btn btn-sm btn-green'
+              "
+            >
+              <span *ngIf="!currentGrant.closureInProgress">Initiate Closure</span>
+              <span *ngIf="currentGrant.closureInProgress">Closure In-Progress</span>
             </button>
           </div>
         </div>
@@ -171,9 +186,9 @@
                 'GRANTEE'
             "
             (click)="amendGrant(currentGrant.id)"
-            [disabled]="currentGrant.amendGrantId"
+            [disabled]="currentGrant.amendGrantId || currentGrant.closureInProgress"
           >
-            <mat-icon class="ml-1">file_copy</mat-icon>Amend this Grant
+            <mat-icon class="ml-1">file_copy</mat-icon>Amend this Grant<small *ngIf="currentGrant.closureInProgress"> (under closure)</small>
           </button>
 
           <button
