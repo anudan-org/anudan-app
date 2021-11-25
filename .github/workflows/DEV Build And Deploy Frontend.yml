@@ -15,6 +15,7 @@ on:
       - '**.iml'
       - 'frontend/**'
       - 'e2e/**' 
+      - 'CODEOWNERS'
 
 
 # creating env variable for head commit meassge 
