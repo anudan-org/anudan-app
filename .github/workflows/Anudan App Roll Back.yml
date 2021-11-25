@@ -36,7 +36,7 @@ jobs:
             BuildNO=`cat Anudan_backup_Recovery.js | cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`
             /home/anudan/github/s3cmd/s3cmd-2.0.1/s3cmd --recursive --force get s3://anudan-certified-uat-artifacts-test/$BuildNO/
             ls -a
-            rm Anudan_backup_Recovery.js
+            #rm Anudan_backup_Recovery.js
           host: ${{ secrets.HOST_QA }}
           user: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_DEPLOY_KEY }} 
