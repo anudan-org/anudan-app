@@ -28,7 +28,7 @@ jobs:
         with:
           command: |
             cd /home/anudan/github
-            /home/anudan/github/s3cmd/s3cmd-2.0.1/s3cmd --recursive --force get s3://anudan-certified-uat-artifacts-test/"${{ env.BuildNO }}"/
+            /home/anudan/github/s3cmd/s3cmd-2.0.1/s3cmd --recursive --force get s3://anudan-certified-uat-artifacts-test/${{ env.BuildNO }}/
             ls -a
           host: ${{ secrets.HOST_QA }}
           user: ${{ secrets.SSH_USER }}
