@@ -135,8 +135,8 @@ export class ClosureHistory {
 export class ClosureDiff {
   oldClosureReason: string;
   newClosureReason: string;
-  oldClosureDescription: Date;
-  newClosureDescription: Date;
+  oldClosureDescription: string;
+  newClosureDescription: string;
   sectionDiffs: SectionDiff[];
   orderDiffs: any[];
 }
