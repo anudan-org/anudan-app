@@ -17,11 +17,7 @@ jobs:
         with:
             repository: anudan-org/release   
             token: ${{ secrets.MY_PAT }}   
-      - name: setup variable
-        run: |
-          echo "BuildNO=`cat Anudan_backup_Recovery.js | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'` "  >> $GITHUB_ENV
       - name: copying Anudan_backup_Recovery.js file to remote server 
-        if:  no  == ${{ env.BuildNO }}
         uses: burnett01/rsync-deployments@4.1
         with:
               switches: -avzr -q
