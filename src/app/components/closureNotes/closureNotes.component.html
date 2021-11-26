@@ -44,7 +44,7 @@
         <small>View changes</small>
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <app-grant-compare *ngIf="current && original" [newItem]="current" [oldItem]="original" [standAlone]="false" [title]="'Report Changes'" [compare1Title]="'Current State'" [compare2Title]="'Previous State'" [for]="'Report'" (hasChanges)="checkIfHasDifferences($event)"></app-grant-compare>
+    <app-grant-compare *ngIf="current && original" [newItem]="current" [oldItem]="original" [standAlone]="false" [title]="'Closure Changes'" [compare1Title]="'Current State'" [compare2Title]="'Previous State'" [for]="'Closure'" (hasChanges)="checkIfHasDifferences($event)"></app-grant-compare>
     <!-- <div *ngIf="reportDiff" style="background:#fff;padding:5px;max-height:200px;min-width:600px;overflow:scroll;">
       <div *ngIf="reportDiff.oldReportName || reportDiff.newReportName" class="mb-2 change-box">
         <span class="change-title">Report name changed</span>

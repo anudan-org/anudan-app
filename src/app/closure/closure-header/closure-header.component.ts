@@ -313,7 +313,6 @@ export class ClosureHeaderComponent implements OnInit {
           "Last saved @ " +
           this.datePipe.transform(new Date(), "hh:mm:ss a") +
           "     ";
-        //this.appComp.showSaving = false;
       });
   }
 
@@ -327,7 +326,6 @@ export class ClosureHeaderComponent implements OnInit {
       newReason.id = 0 - Math.round(Math.random() * 1000000000);
       newReason.organizationId = this.appComp.loggedInUser.organization.id;
       newReason.reason = 'Add a new Closure Reason: "' + value + '"';
-      //this.currentGrant.organization = newOrg;
       selectedReason.push(newReason);
     }
 

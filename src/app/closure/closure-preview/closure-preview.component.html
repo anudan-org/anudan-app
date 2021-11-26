@@ -2,7 +2,6 @@
     class="col-12 bg-white"
     style="position: sticky; top: 80px; z-index: 1040"
   >
-    <!--<span class="badge badge-dark text-white pull-right mt-2" matBadgeSize="medium">{{currentGrant.grantStatus.displayName}}</span>-->
     <div class="row">
       <h4 class="col-11 text-left my-3 section-header">
         <div *ngIf="currentClosure.canManage" style="display: flex">
@@ -27,8 +26,6 @@
         class="col-1 text-right"
         style="display: flex; align-items: center; justify-content: flex-start"
       >
-        <!--<button *ngIf="canManage" class="btn btn-sm btn-green float-right">
-          <em class="fas fa-plus-square mr-2"></em>Add new Section</button>-->
         <mat-icon
           mat-button
           [matMenuTriggerFor]="menu"
@@ -384,17 +381,6 @@
                             </td>
                           </tr>
                         </table>
-                        <!--<div class="row mx-2">
-                            <div class="col-8">
-                                <div></div>
-                            </div>
-                            <div class="col-2">
-                                <div placeholder="Target/Goal"></div>
-                            </div>
-                            <div class="col-2">
-                                <div placeholder="Frequency"></div>
-                            </div>
-                        </div>-->
                       </div>
                     </ng-container>
                     <ng-container *ngIf="attribute.fieldType === 'document'">
@@ -801,90 +787,6 @@
           <div class="pageNum">Page {{ pageNum }} of {{ totalPages }}</div>
         </ng-template>
       </kendo-pdf-export>
-
-      <!--<div class="accordion" id="accordionExample">
-        <ng-container *ngFor="let submission of currentClosure.submissions">
-          <div class="card mb-0">
-            <div class="card-header" id="heading_{{submission.id}}">
-              <div class="row">
-                <div class="col-sm-9">
-                  <strong class="mb-0 submission-header">
-
-                    <div data-toggle="collapse" [attr.data-target]="'#collapse_'+submission.id">
-                      Submission
-                      for {{submission.title}} | Submit By: {{submission.submitBy | date}} |
-                      Status: {{submission.submissionStatus.displayName}}</div>
-                  </strong>
-                </div>
-                <div class="col-sm-3 text-right">
-                  <button *ngIf="submission.flowAuthorities" class="btn btn-sm btn-primary"
-                          (click)="viewKpisToSubmit(submission.id)">View Submissions
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div id="collapse_{{submission.id}}" class="collapse"
-               [attr.aria-labelledby]="'heading_'+submission.id"
-               data-parent="#accordionExample">
-            <div class="card-body">
-              <div *ngFor="let quantKpi of submission.quantitiaveKpisubmissions">
-
-                <div class="row border-bottom">
-                  <div class="col-sm-8 submission-title"><strong>{{quantKpi.grantKpi.title}}</strong></div>
-                  <div class="col-sm-2 text-center">
-                    <circle-progress
-                        [backgroundStrokeWidth]="5"
-                        [percent]="quantKpi.actuals * 100 / quantKpi.goal"
-                        [backgroundPadding]="0"
-                        [radius]="40"
-                        [space]="-1"
-                        [outerStrokeWidth]="10"
-                        [outerStrokeColor]="'#3de033'"
-                        [outerStrokeLinecap]="'square'"
-                        [innerStrokeColor]="'#828282'"
-                        [titleFontSize]="15"
-                        [animateTitle]=false
-                        [title]="[quantKpi.actuals]"
-                        [animationDuration]="100"
-                        [subtitle]="['-&#45;&#45;',quantKpi.goal]"
-                        [showUnits]=false
-                    ></circle-progress>
-                  </div>
-                </div>
-              </div>
-              <div *ngFor="let qualKpi of submission.qualitativeKpiSubmissions">
-                <div class="row">
-                  <div class="col-sm-12"><strong>{{qualKpi.grantKpi.title}}</strong></div>
-                  <div class="col-sm-12 mb-5 border-left">{{qualKpi.actuals}}</div>
-                </div>
-              </div>
-              <div *ngFor="let docKpi of submission.documentKpiSubmissions">
-                <div class="row">
-                  <div class="col-sm-12"><strong>{{docKpi.grantKpi.title}}</strong></div>
-                  <div class="col-sm-12 mb-5">
-                    <ng-container *ngFor="let doc of docKpi.submissionDocs">
-                      <a target="_blank"
-                         href="/api/submission/{{submission.id}}/kpi/{{docKpi.grantKpi.id}}/file/{{doc.id}}">
-                        <p>
-                          <em *ngIf="doc.fileType==='pdf'"
-                             class="fa fa-2x fa-file-pdf-o text-rose"></em>
-                          <em *ngIf="doc.fileType==='jpg'" class="fa fa-2x fa-file-image-o"></em>
-                          <em *ngIf="doc.fileType==='jpeg'" class="fa fa-2x fa-file-image-o"></em>
-                          <em *ngIf="doc.fileType==='png'" class="fa fa-2x fa-file-image-o"></em>
-                          <em *ngIf="doc.fileType==='doc'" class="fa fa-2x fa-file"></em>
-                          {{doc.fileName}}
-                        </p>
-                      </a>
-                    </ng-container>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ng-container>
-
-      </div>-->
     </div>
   </div>
 </div>

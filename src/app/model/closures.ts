@@ -107,14 +107,7 @@ export class ClosureNote {
   validationResult: any;
 }
 
-export class ClosureDiff {
-  oldClosureReason: string;
-  newClosureReason: string;
-  oldClosureDesc: string;
-  newClosureDesc: string;
-  sectionDiffs: SectionDiff[];
-  orderDiffs: any[];
-}
+
 
 export class Reason {
   id: number;
@@ -137,4 +130,13 @@ export class ClosureHistory {
   noteAddedByUser: User;
   noteAdded: Date;
   canManage: boolean;
+}
+
+export class ClosureDiff {
+  oldClosureReason: string;
+  newClosureReason: string;
+  oldClosureDescription: Date;
+  newClosureDescription: Date;
+  sectionDiffs: SectionDiff[];
+  orderDiffs: any[];
 }
