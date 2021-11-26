@@ -10,7 +10,7 @@ jobs:
   Anudan-Roll-Back-To-Previous-Version:
     runs-on: ubuntu-latest
     name: App Roll Back
-    if:  github.actor  == 'karni-prabhu'
+    if:  github.actor  == 'prabhu'
     steps:   
       - name: checkout Anudan_backup_Recovery.js file from release repo    
         uses: actions/checkout@v2
