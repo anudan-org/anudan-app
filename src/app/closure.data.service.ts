@@ -1,10 +1,9 @@
-import { HttpHeaders } from '@angular/common/http';
+import { AppComponent } from 'app/app.component';
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
-import { HttpClient } from '@angular/common/http';
 import { GrantClosure } from './model/closures';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Grant } from './model/dahsboard';
 import {
   HumanizeDurationLanguage,
   HumanizeDuration,
@@ -21,7 +20,10 @@ export class ClosureDataService {
   url: string = "/api/user/%USERID%/closure";
 
   constructor(private httpClient: HttpClient,
-    private userService: UserService) { }
+    private userService: UserService) {
+
+
+  }
 
   changeMessage(message: GrantClosure, userId: number) {
 
@@ -44,14 +46,13 @@ export class ClosureDataService {
   }
 
   private getHeader() {
-    const httpOptions = {
+    return {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
         "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
         Authorization: localStorage.getItem("AUTH_TOKEN"),
       }),
-    };
-    return httpOptions;
+    }
   }
 
   deleteClosure(closure: GrantClosure): Promise<void> {
@@ -73,5 +74,28 @@ export class ClosureDataService {
     } else {
       return Promise.resolve(null);
     }
+  }
+
+  updateClosure(closureId: number, appComp: AppComponent): GrantClosure {
+    let grantClosure: GrantClosure;
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+    let urlNew =
+      "/api/user/" + appComp.loggedInUser.id + "/closure/" + closureId;
+
+
+    this.httpClient.get(urlNew, httpOptions).subscribe((closure: GrantClosure) => {
+      if (closure) {
+        grantClosure = closure;
+      }
+    });
+
+
+    return grantClosure;
   }
 }

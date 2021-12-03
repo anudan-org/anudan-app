@@ -1,14 +1,15 @@
+import { User } from './../../model/user';
+import { Configuration } from './../../model/app-config';
 import { startWith, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { Grant } from './../../model/dahsboard';
+import { Grant, WorkflowStatus } from './../../model/dahsboard';
 import { APP_DATE_FORMATS } from './../../reports/report/report-sections/report-sections.component';
 import { SectionUtilService } from './../../section-util.service';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
 import { SidebarComponent } from './../../components/sidebar/sidebar.component';
 import { ClosureDataService } from './../../closure.data.service';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { ToastrService, IndividualConfig } from 'ngx-toastr';
 import { TitleCasePipe, DatePipe } from '@angular/common';
 import { AdminLayoutComponent } from 'app/layouts/admin-layout/admin-layout.component';
@@ -48,6 +49,9 @@ export class ClosureHeaderComponent implements OnInit {
   myControl: FormControl;
   options: Reason[];
   filteredOptions: Observable<Reason[]>;
+  closureWorkflowStatuses: WorkflowStatus[];
+  tenantUsers: User[];
+
 
   @ViewChild("createSectionModal") createSectionModal: ElementRef;
 
@@ -98,9 +102,43 @@ export class ClosureHeaderComponent implements OnInit {
         }
       }
     });
+
+
+    this.appComp.closureUpdated.subscribe((statusUpdate) => {
+      if (statusUpdate.status && statusUpdate.closureId && this.appComp.loggedInUser !== undefined) {
+        let closure = closureService.updateClosure(statusUpdate.closureId, this.appComp);
+        if (closure) {
+          closureService.changeMessage(closure, this.appComp.loggedInUser.id);
+        }
+      }
+    });
+
+
+
   }
 
   ngOnInit() {
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
+    this.closureService.currentMessage.subscribe((closure) => {
+      this.currentClosure = closure;
+      let url = '/api/app/config/closure/' + this.currentClosure.id;
+
+      this.http.get(url, httpOptions).subscribe((config: Configuration) => {
+        this.closureWorkflowStatuses = config.closureWorkflowStatuses;
+        this.appComp.closureWorkflowStatuses = config.closureWorkflowStatuses;
+        this.tenantUsers = config.tenantUsers;
+        this.appComp.tenantUsers = config.tenantUsers;
+        this.appComp.closureTransitions = config.reportTransitions;
+      });
+    });
 
     this.getClosureReasons();
 
@@ -156,7 +194,7 @@ export class ClosureHeaderComponent implements OnInit {
   }
 
   showClosureDocuments() {
-
+    //Intentionally left blank
   }
 
   manageGrant() {
@@ -313,7 +351,6 @@ export class ClosureHeaderComponent implements OnInit {
           "Last saved @ " +
           this.datePipe.transform(new Date(), "hh:mm:ss a") +
           "     ";
-        //this.appComp.showSaving = false;
       });
   }
 
@@ -327,7 +364,6 @@ export class ClosureHeaderComponent implements OnInit {
       newReason.id = 0 - Math.round(Math.random() * 1000000000);
       newReason.organizationId = this.appComp.loggedInUser.organization.id;
       newReason.reason = 'Add a new Closure Reason: "' + value + '"';
-      //this.currentGrant.organization = newOrg;
       selectedReason.push(newReason);
     }
 

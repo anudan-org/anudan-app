@@ -85,8 +85,8 @@ export class ClosureNotesComponent implements OnInit {
         if (oldClosure.description !== newClosure.description) {
             this._getClosureDiff();
             resultHeader.push({ 'order': 1, 'category': 'Closure Header', 'name': 'Closure Description changed', 'change': [{ 'old': oldClosure.description, 'new': newClosure.description }] });
-            this.closureDiff.oldClosureDesc = oldClosure.description;
-            this.closureDiff.newClosureDesc = newClosure.description;
+            this.closureDiff.oldClosureDescription = oldClosure.description;
+            this.closureDiff.newClosureDescription = newClosure.description;
         }
 
         for (const section of newClosure.closureDetails.sections) {

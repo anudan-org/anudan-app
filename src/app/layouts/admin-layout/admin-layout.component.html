@@ -1,70 +1,38 @@
 <div class="wrapper">
-  <div
-    class="sidebar"
-    data-color="danger"
-    data-background-color="white"
-    data-image="./assets/img/sidebar-1.jpg"
-  >
+  <div class="sidebar" data-color="danger" data-background-color="white" data-image="./assets/img/sidebar-1.jpg">
     <app-sidebar></app-sidebar>
-    <div
-      class="sidebar-background"
-      style="background-image: url(./assets/img/sidebar-4.jpg)"
-    ></div>
+    <div class="sidebar-background" style="background-image: url(./assets/img/sidebar-4.jpg)"></div>
   </div>
 
   <div class="main-panel">
-    <div
-      *ngIf="appComponent.notifications.length > 0"
-      style="
+    <div *ngIf="appComponent.notifications.length > 0" style="
         position: sticky;
         top: 0;
         z-index: 3;
         color: #000;
         background-color: #fff;
-      "
-    >
+      ">
       <div style="position: absolute; right: 20px; z-index: 3">
-        <p
-          style="
+        <p style="
             display: flex;
             align-items: center;
             text-align: right !important;
             justify-content: flex-end;
-          "
-          class="float-right mr-3 mt-3 text-white"
-        >
-          <mat-icon
-            style="cursor: pointer"
-            (click)="showMessages()"
-            *ngIf="msgCount > 0"
-            class="float-left mr-5 text-white"
-            [matBadge]="msgCount"
-            matBadgeColor="warn"
-            >notifications
+          " class="float-right mr-3 mt-3 text-white">
+          <mat-icon style="cursor: pointer" (click)="showMessages()" *ngIf="msgCount > 0"
+            class="float-left mr-5 text-white" [matBadge]="msgCount" matBadgeColor="warn">notifications
           </mat-icon>
-          <mat-icon
-            style="cursor: pointer"
-            (click)="showMessages()"
-            *ngIf="msgCount === 0"
-            class="float-left mr-5 text-white"
-            >notifications</mat-icon
-          >
-          <img
-            *ngIf="appComponent.profile.length>0"
-            [src]="appComponent.profile"
+          <mat-icon style="cursor: pointer" (click)="showMessages()" *ngIf="msgCount === 0"
+            class="float-left mr-5 text-white">notifications</mat-icon>
+          <img alt="profile pic" *ngIf="appComponent.profile.length>0" [src]="appComponent.profile"
             class="img-fluid w-10 mr-2 rounded-circle"
-            style="width: 50px;max-width: 50px;height: 50px;object-fit: cover;"
-          />
-          <img
-            *ngIf="appComponent.profile.length===0"
-            src="./assets/img/profile-avatar.png"
+            style="width: 50px;max-width: 50px;height: 50px;object-fit: cover;" />
+          <img alt="logout" *ngIf="appComponent.profile.length===0" src="./assets/img/profile-avatar.png"
             class="img-fluid w-10 mr-2 rounded-circle"
-            style="width: 50px;max-width: 50px;height: 50px;object-fit: cover;"
-          />{{ appComponent.loggedInUser.lastName }},
+            style="width: 50px;max-width: 50px;height: 50px;object-fit: cover;" />{{ appComponent.loggedInUser.lastName
+          }},
           {{ appComponent.loggedInUser.firstName }}
-          <mat-icon mat-button [matMenuTriggerFor]="profilemenu"
-            >arrow_drop_down</mat-icon
-          >
+          <mat-icon mat-button [matMenuTriggerFor]="profilemenu">arrow_drop_down</mat-icon>
           <mat-menu #profilemenu>
             <span mat-menu-item (click)="showProfile()">Profile</span>
             <span mat-menu-item (click)="logout()">Logout</span>
@@ -73,45 +41,30 @@
       </div>
     </div>
 
-    <div
-      *ngIf="appComponent.notifications.length === 0"
-      style="
+    <div *ngIf="appComponent.notifications.length === 0" style="
         position: sticky;
         top: 0;
         z-index: 3;
         color: #000;
         background-color: #fff;
-      "
-    >
+      ">
       <div style="position: absolute; right: 20px; z-index: 3">
-        <p
-          style="
+        <p style="
             display: flex;
             align-items: center;
             text-align: right !important;
             justify-content: flex-end;
-          "
-          class="float-right mr-3 mt-3 text-white"
-        >
-          <mat-icon class="float-left mr-5 text-light"
-            >notifications_none</mat-icon
-          >
-          <img
-          *ngIf="appComponent.profile.length>0"
-          [src]="appComponent.profile"
+          " class="float-right mr-3 mt-3 text-white">
+          <mat-icon class="float-left mr-5 text-light">notifications_none</mat-icon>
+          <img alt="profile pic" *ngIf="appComponent.profile.length>0" [src]="appComponent.profile"
             class="img-fluid w-10 mr-2 rounded-circle"
-            style="width: 50px;max-width: 50px;height: 50px;object-fit: cover;"
-          />
-          <img
-          *ngIf="appComponent.profile.length===0"
-          src="./assets/img/profile-avatar.png"
+            style="width: 50px;max-width: 50px;height: 50px;object-fit: cover;" />
+          <img alt="logout" *ngIf="appComponent.profile.length===0" src="./assets/img/profile-avatar.png"
             class="img-fluid w-10 mr-2 rounded-circle"
-            style="width: 50px;max-width: 50px;height: 50px;object-fit: cover;"
-          />{{ appComponent.loggedInUser.lastName }},
+            style="width: 50px;max-width: 50px;height: 50px;object-fit: cover;" />{{ appComponent.loggedInUser.lastName
+          }},
           {{ appComponent.loggedInUser.firstName }}
-          <mat-icon mat-button [matMenuTriggerFor]="profilemenu"
-            >arrow_drop_down</mat-icon
-          >
+          <mat-icon mat-button [matMenuTriggerFor]="profilemenu">arrow_drop_down</mat-icon>
           <mat-menu #profilemenu="matMenu">
             <span mat-menu-item (click)="showProfile()">Profile</span>
             <span mat-menu-item (click)="logout()">Logout</span>
@@ -119,15 +72,12 @@
         </p>
       </div>
     </div>
-    <div
-      *ngIf="
+    <div *ngIf="
         appComponent.currentView !== 'grant' &&
         appComponent.currentView !== 'report' &&
         appComponent.currentView !== 'disbursement' &&
         appComponent.currentView !== 'grant-closure'
-      "
-      class="p-4 text-left"
-      style="
+      " class="p-4 text-left" style="
         width: 100%;
         min-height: 80px;
         position: sticky;
@@ -135,16 +85,11 @@
         z-index: 2;
         background-color: #424652;
         color: #4dc251;
-      "
-    >
+      ">
       &nbsp;
     </div>
 
-    <!--<app-navbar></app-navbar>-->
-    <div
-      *ngIf="appComponent.currentView === 'grant'"
-      class="px-4 pt-4 pb-4 text-left"
-      style="
+    <div *ngIf="appComponent.currentView === 'grant'" class="px-4 pt-4 pb-4 text-left" style="
         position: sticky;
         top: 0;
         max-height: 80px;
@@ -155,48 +100,17 @@
         display: flex;
         flex-direction: row;
         align-items: flex-start;
-      "
-    >
-      <a
-        (click)="goToDashboard(currentGrant, 'GRANT')"
-        class="mr-1"
-        style="color: #4dc251"
-        >Home</a
+      ">
+      <a (click)="goToDashboard(currentGrant, 'GRANT')" class="mr-1" style="color: #4dc251">Home</a>
       >
-      >
-      <span
-        style="color: #4dc251; cursor: pointer"
-        class="ml-1 mr-1"
-        (click)="navigateToGrants(appComponent.subMenu)"
-        >{{ appComponent.subMenu.name }}</span
-      >
+      <span style="color: #4dc251; cursor: pointer" class="ml-1 mr-1"
+        (click)="navigateToGrants(appComponent.subMenu)">{{ appComponent.subMenu.name }}</span>
       <span style="color: #f4f4f4"> > </span>
       <ng-container *ngIf="currentGrant">
         <div class="ml-1" style="color: #fff; max-width: 500px">
-          <span
-            class="text-white mr-2" style="font-weight: 600; font-size: 12px;display: flex;"
-            *ngIf="
-              (currentGrant.grantStatus.internalStatus === 'DRAFT' ||
-                currentGrant.grantStatus.internalStatus === 'REVIEW') &&
-              currentGrant.origGrantId
-            "
-          >
-          <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
-            info_outline
-          </mat-icon>
-            <span
-              >Amendment in-progress [<strong>{{ currentGrant.origGrantRefNo }}</strong
-              >]</span
-            >
-          </span>
-          <span *ngIf="currentGrant.referenceNo"
-            >{{ currentGrant.referenceNo }} | </span
-          >{{ currentGrant.name }}
+          <span *ngIf="currentGrant.referenceNo">{{ currentGrant.referenceNo }} | </span>{{ currentGrant.name }}
         </div>
-        <p
-          *ngIf="appComponent.showSaving"
-          class="m-0"
-          style="
+        <p *ngIf="appComponent.showSaving" class="m-0" style="
             position: absolute;
             color: #f2f2f2;
             left: 23px;
@@ -204,16 +118,12 @@
             font-weight: normal;
             font-style: oblique;
             font-size: 10px;
-          "
-        >
+          ">
           {{ appComponent.autosaveDisplay }}
         </p>
       </ng-container>
     </div>
-    <div
-      *ngIf="appComponent.currentView === 'report'"
-      class="px-4 pt-4 pb-4 text-left"
-      style="
+    <div *ngIf="appComponent.currentView === 'report'" class="px-4 pt-4 pb-4 text-left" style="
         position: sticky;
         top: 0;
         max-height: 80px;
@@ -224,39 +134,27 @@
         display: flex;
         flex-direction: row;
         align-items: baseline;
-      "
-    >
-      <a
-        (click)="goToDashboard(currentReport, 'REPORT')"
-        class="mr-1"
-        style="color: #4dc251"
-        >Home</a
+      ">
+      <a (click)="goToDashboard(currentReport, 'REPORT')" class="mr-1" style="color: #4dc251">Home</a>
       >
-      >
-      <span
-        class="ml-1 mr-1"
-        style="color: #4dc251; cursor: pointer"
-        (click)="navigateToReports(appComponent.subMenu)"
-        >{{ appComponent.subMenu.name }}</span
-      >
+      <span class="ml-1 mr-1" style="color: #4dc251; cursor: pointer"
+        (click)="navigateToReports(appComponent.subMenu)">{{ appComponent.subMenu.name }}</span>
       <span style="color: #f4f4f4"> > </span>
       <ng-container *ngIf="currentReport">
         <div class="m-1" style="color: #fff; max-width: 500px">
           <ng-container *ngIf="currentReport.status.internalStatus!=='CLOSED' && currentReport.disabledByAmendment">
             <p class="mb-0 text-subheader text-white d-flex align-items-center text-left"
-            style="font-weight: 600; font-size: 12px">
-            <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
-              info_outline
-            </mat-icon>
-            Underlying grant has been amended. Please check if this report is still valid.</p>
+              style="font-weight: 600; font-size: 12px">
+              <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
+                info_outline
+              </mat-icon>
+              Underlying grant has been amended. Please check if this report is still valid.
+            </p>
           </ng-container>
           {{ currentReport.name }}
         </div>
       </ng-container>
-      <p
-        *ngIf="appComponent.showSaving"
-        class="m-0"
-        style="
+      <p *ngIf="appComponent.showSaving" class="m-0" style="
           position: absolute;
           color: #f2f2f2;
           left: 23px;
@@ -264,16 +162,12 @@
           font-weight: normal;
           font-style: oblique;
           font-size: 10px;
-        "
-      >
+        ">
         {{ appComponent.autosaveDisplay }}
       </p>
     </div>
 
-    <div
-      *ngIf="appComponent.currentView === 'grant-closure'"
-      class="px-4 pt-4 pb-4 text-left"
-      style="
+    <div *ngIf="appComponent.currentView === 'grant-closure'" class="px-4 pt-4 pb-4 text-left" style="
         position: sticky;
         top: 0;
         max-height: 80px;
@@ -284,131 +178,85 @@
         display: flex;
         flex-direction: row;
         align-items: baseline;
-      "
-    >
-      <a
-        (click)="goToDashboard(currentClosure, 'CLOSURE')"
-        class="mr-1"
-        style="color: #4dc251"
-        >Home</a
+      ">
+      <a (click)="goToDashboard(currentClosure, 'CLOSURE')" class="mr-1" style="color: #4dc251">Home</a>
       >
-      >
-      <span
-        class="ml-1 mr-1"
-        style="color: #4dc251; cursor: pointer"
-        (click)="navigateToGrants(appComponent.subMenu)"
-        >{{ appComponent.subMenu.name }}</span
-      >
+      <span class="ml-1 mr-1" style="color: #4dc251; cursor: pointer"
+        (click)="navigateToGrants(appComponent.subMenu)">{{ appComponent.subMenu.name }}</span>
       <span style="color: #f4f4f4"> > </span>
       <ng-container *ngIf="currentClosure">
         <div class="m-1" style="color: #fff; max-width: 500px">
-          <!-- <ng-container *ngIf="currentClosure.status.internalStatus!=='CLOSED'">
-            <p class="mb-0 text-subheader text-white d-flex align-items-center text-left"
+          {{ 'Closure Request for Grant' + currentClosure.grant.name }}
+        </div>
+      </ng-container>
+      <p *ngIf="appComponent.showSaving" class="m-0" style="
+          position: absolute;
+          color: #f2f2f2;
+          left: 23px;
+          bottom: 0px;
+          font-weight: normal;
+          font-style: oblique;
+          font-size: 10px;
+        ">
+        {{ appComponent.autosaveDisplay }}
+      </p>
+    </div>
+
+    <div *ngIf="appComponent.currentView === 'disbursement'" class="px-4 pt-4 pb-4 text-left" style="
+        position: sticky;
+        top: 0;
+        max-height: 80px;
+        min-height: 80px;
+        z-index: 2;
+        color: #fff;
+        background-color: #424652;
+        display: flex;
+        flex-direction: row;
+        align-items: baseline;
+      ">
+      <a (click)="goToDashboard(currentDisbursement, 'DISBURSEMENT')" class="mr-1" style="color: #4dc251">Home</a>
+      >
+      <span class="ml-1 mr-1" style="color: #4dc251; cursor: pointer"
+        (click)="navigateToDisbursements(appComponent.subMenu)">{{ appComponent.subMenu.name }}</span>
+      <span style="color: #f4f4f4"> > </span>
+
+      <ng-container *ngIf="
+          currentDisbursement &&
+          currentDisbursement.status.internalStatus !== 'ACTIVE' &&
+          currentDisbursement.status.internalStatus !== 'CLOSED'
+        ">
+        <div class="m-1" style="color: #fff; max-width: 500px">
+          <p *ngIf="currentDisbursement.disabledByAmendment && currentDisbursement.status.internalStatus!=='CLOSED'"
+            class="mb-0 text-subheader text-white d-flex align-items-center text-left"
             style="font-weight: 600; font-size: 12px">
             <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
               info_outline
             </mat-icon>
-            Underlying grant has been amended. Please check if this report is still valid.</p>
-          </ng-container> -->
-          {{ 'Closure Request for Grant' + currentClosure.grant.name }}
-        </div>
-      </ng-container>
-      <p
-        *ngIf="appComponent.showSaving"
-        class="m-0"
-        style="
-          position: absolute;
-          color: #f2f2f2;
-          left: 23px;
-          bottom: 0px;
-          font-weight: normal;
-          font-style: oblique;
-          font-size: 10px;
-        "
-      >
-        {{ appComponent.autosaveDisplay }}
-      </p>
-    </div>
-
-    <div
-      *ngIf="appComponent.currentView === 'disbursement'"
-      class="px-4 pt-4 pb-4 text-left"
-      style="
-        position: sticky;
-        top: 0;
-        max-height: 80px;
-        min-height: 80px;
-        z-index: 2;
-        color: #fff;
-        background-color: #424652;
-        display: flex;
-        flex-direction: row;
-        align-items: baseline;
-      "
-    >
-      <a
-        (click)="goToDashboard(currentDisbursement, 'DISBURSEMENT')"
-        class="mr-1"
-        style="color: #4dc251"
-        >Home</a
-      >
-      >
-      <span
-        class="ml-1 mr-1"
-        style="color: #4dc251; cursor: pointer"
-        (click)="navigateToDisbursements(appComponent.subMenu)"
-        >{{ appComponent.subMenu.name }}</span
-      >
-      <span style="color: #f4f4f4"> > </span>
-
-      <ng-container
-        *ngIf="
-          currentDisbursement &&
-          currentDisbursement.status.internalStatus !== 'ACTIVE' &&
-          currentDisbursement.status.internalStatus !== 'CLOSED'
-        "
-      >
-        <div class="m-1" style="color: #fff; max-width: 500px">
-          <p
-            *ngIf="currentDisbursement.disabledByAmendment && currentDisbursement.status.internalStatus!=='CLOSED'"
-            class="mb-0 text-subheader text-white d-flex align-items-center text-left"
-            style="font-weight: 600; font-size: 12px"
-          >
-          <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
-            info_outline
-          </mat-icon>
-          Underlying grant has been amended. Please check if this disbursement is still valid.
+            Underlying grant has been amended. Please check if this disbursement is still valid.
           </p>
           Approval Request Note for Grant
           <strong>{{ currentDisbursement.grant.name }}</strong>
         </div>
       </ng-container>
-      <ng-container
-        *ngIf="
+      <ng-container *ngIf="
           currentDisbursement &&
           (currentDisbursement.status.internalStatus === 'ACTIVE' ||
             currentDisbursement.status.internalStatus === 'CLOSED')
-        "
-      >
+        ">
         <div class="m-1" style="color: #fff; max-width: 500px">
-          <p
-            *ngIf="currentDisbursement.disabledByAmendment && currentDisbursement.status.internalStatus!=='CLOSED'"
+          <p *ngIf="currentDisbursement.disabledByAmendment && currentDisbursement.status.internalStatus!=='CLOSED'"
             class="mb-0 text-subheader text-white d-flex align-items-center text-left"
-            style="font-weight: 600; font-size: 12px"
-          >
-          <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
-            info_outline
-          </mat-icon>
-          Underlying grant has been amended. Please check if this disbursement is still valid.
+            style="font-weight: 600; font-size: 12px">
+            <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
+              info_outline
+            </mat-icon>
+            Underlying grant has been amended. Please check if this disbursement is still valid.
           </p>
           Disbursement Record against Approved Note for Grant
           <strong>{{ currentDisbursement.grant.name }}</strong>
         </div>
       </ng-container>
-      <p
-        *ngIf="appComponent.showSaving"
-        class="m-0"
-        style="
+      <p *ngIf="appComponent.showSaving" class="m-0" style="
           position: absolute;
           color: #f2f2f2;
           left: 23px;
@@ -416,35 +264,11 @@
           font-weight: normal;
           font-style: oblique;
           font-size: 10px;
-        "
-      >
+        ">
         {{ appComponent.autosaveDisplay }}
       </p>
     </div>
-    <!--div *ngIf="appComponent.currentView !== 'grants' && appComponent.currentView !== 'upcoming' && appComponent.currentView !== 'user-profile'" class="row" style="background: #fff; padding: 10px; margin: 0 30px; position: sticky; top: 67px; z-index: 3;">
-            <div class="col-12">
-                <div class="float-right ml-2">
-                    <a (click)="showWorkflowAssigments()"><img alt="img"src="./assets/img/wfassignmnet.svg" style="width:25px;"></a>
-                </div>
-                <div class="float-right ml-4">
-                    <a *ngIf="appComponent.currentView==='grant'" (click)="showHistory('grant',currentGrant)"><img alt="img"src="./assets/img/note.svg" style="width:25px;"></a>
-                    <a *ngIf="appComponent.currentView==='report'" (click)="showHistory('report',currentReport)"><img alt="img"src="./assets/img/note.svg" style="width:25px;"></a>
-                </div>
-
-
-                <div class="float-left" >
-                    <strong>{{ appComponent.autosaveDisplay}}</strong>
-                </div>
-                <br>
-                <div class="float-left" *ngIf="appComponent.action !== 'preview'">
-                    <strong><small *ngIf="appComponent.selectedTemplate">Based on template '{{appComponent.selectedTemplate.name}}'</small></strong>
-                </div>
-            </div>
-        </div>-->
     <router-outlet></router-outlet>
-    <!-- <div *ngIf="isMaps('maps')">
-      <app-footer style="padding-bottom: 0;"></app-footer>
-    </div> -->
   </div>
   <app-footer style="padding-bottom: 0;"></app-footer>
 </div>

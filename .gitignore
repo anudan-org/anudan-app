@@ -19,6 +19,8 @@
 .settings/
 *.sublime-workspace
 /frontend
+anudan-app.iml
+
 
 # IDE - VSCode
 .vscode/*

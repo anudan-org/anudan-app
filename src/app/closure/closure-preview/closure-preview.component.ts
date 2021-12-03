@@ -12,8 +12,7 @@ import { WfvalidationService } from './../../wfvalidation.service';
 import { Configuration } from './../../model/app-config';
 import { FieldDialogComponent } from './../../components/field-dialog/field-dialog.component';
 import { MatDialog } from '@angular/material';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { AppComponent } from 'app/app.component';
 import { WorkflowStatus, Grant, TableData, Attribute, Section } from './../../model/dahsboard';
 import { ClosureWorkflowAssignmentModel, GrantClosure } from 'app/model/closures';
@@ -49,7 +48,7 @@ export class ClosurePreviewComponent implements OnInit {
   logoUrl: string;
 
   constructor(private closureService: ClosureDataService,
-    private appComp: AppComponent,
+    public appComp: AppComponent,
     private http: HttpClient,
     private dialog: MatDialog,
     private wfvalidationService: WfvalidationService,
@@ -66,19 +65,21 @@ export class ClosurePreviewComponent implements OnInit {
       console.log(this.currentClosure);
     });
 
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
     this.appComp.closureUpdated.subscribe((statusUpdate) => {
       if (statusUpdate.status && statusUpdate.closureId && this.appComp.loggedInUser !== undefined) {
-        let url =
+        let urlNew =
           "/api/user/" + this.appComp.loggedInUser.id + "/closure/" + statusUpdate.closureId;
-        const httpOptions = {
-          headers: new HttpHeaders({
-            "Content-Type": "application/json",
-            "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-            Authorization: localStorage.getItem("AUTH_TOKEN"),
-          }),
-        };
 
-        this.http.get(url, httpOptions).subscribe((closure: GrantClosure) => {
+
+        this.http.get(urlNew, httpOptions).subscribe((closure: GrantClosure) => {
           if (closure) {
             if (this.currentClosure && this.currentClosure.id === Number(closure.id)) {
               this.closureService.changeMessage(closure, appComp.loggedInUser.id);
@@ -88,13 +89,6 @@ export class ClosurePreviewComponent implements OnInit {
       }
     });
 
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'X-TENANT-CODE': localStorage.getItem('X-TENANT-CODE'),
-        'Authorization': localStorage.getItem('AUTH_TOKEN')
-      })
-    };
     let url = '/api/app/config/closure/' + this.currentClosure.id;
 
     this.http.get(url, httpOptions).subscribe((config: Configuration) => {
@@ -179,12 +173,9 @@ export class ClosurePreviewComponent implements OnInit {
           this.submitClosure(toStateId);
         }, error => {
           const errorMsg = error as HttpErrorResponse;
-          const x = { 'enableHtml': true, 'preventDuplicates': true, 'positionClass': 'toast-top-full-width', 'progressBar': true } as Partial<IndividualConfig>;
-          const y = { 'enableHtml': true, 'preventDuplicates': true, 'positionClass': 'toast-top-right', 'progressBar': true } as Partial<IndividualConfig>;
-          const errorconfig: Partial<IndividualConfig> = x;
-          const config: Partial<IndividualConfig> = y;
+
+          const config: Partial<IndividualConfig> = { 'enableHtml': true, 'preventDuplicates': true, 'positionClass': 'toast-top-right', 'progressBar': true } as Partial<IndividualConfig>;
           if (errorMsg.error.message === 'Token Expired') {
-            //this.toastr.error('Logging you out now...',"Your session has expired", errorconfig);
             alert("Your session has timed out. Please sign in again.")
             this.appComp.logout();
           } else {
@@ -205,16 +196,16 @@ export class ClosurePreviewComponent implements OnInit {
       panelClass: 'grant-notes-class'
     });
 
-    _bSheet.afterClosed().subscribe(result => {
-      if (result.result) {
-        this.submitAndSaveClosure(toStateId, result.message);
+    _bSheet.afterClosed().subscribe(resultx => {
+      if (resultx.result) {
+        this.submitAndSaveClosure(toStateId, resultx.message);
       } else {
         this.wfDisabled = false;
       }
     });
   }
 
-  submitAndSaveClosure(toStateId: number, message: String) {
+  submitAndSaveClosure(toStateId: number, message: string) {
 
     if (!message) {
       message = '';
@@ -229,7 +220,6 @@ export class ClosurePreviewComponent implements OnInit {
       })
     };
 
-    const origStatus = this.currentClosure.status.name;
     let url = '/api/user/' + this.appComp.loggedInUser.id + '/closure/'
       + this.currentClosure.id + '/flow/'
       + this.currentClosure.status.id + '/' + toStateId;
@@ -252,16 +242,16 @@ export class ClosurePreviewComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
           if (result.result) {
-            let url = '/api/user/' + this.appComp.loggedInUser.id + '/closure/' + this.currentClosure.id + '/template/' + this.currentClosure.template.id + '/' + result.name;
-            this.http.put(url, { description: result.desc, publish: true, privateToGrant: false }, httpOptions).subscribe((closure: GrantClosure) => {
-              this.closureService.changeMessage(closure, this.appComp.loggedInUser.id);
+            let url1 = '/api/user/' + this.appComp.loggedInUser.id + '/closure/' + this.currentClosure.id + '/template/' + this.currentClosure.template.id + '/' + result.name;
+            this.http.put(url1, { description: result.desc, publish: true, privateToGrant: false }, httpOptions).subscribe((closureA: GrantClosure) => {
+              this.closureService.changeMessage(closureA, this.appComp.loggedInUser.id);
               this.fetchCurrentClosure();
             });
 
           } else {
-            let url = '/api/user/' + this.appComp.loggedInUser.id + '/closure/' + this.currentClosure.id + '/template/' + this.currentClosure.template.id + '/' + result.name;
-            this.http.put(url, { description: result.desc, publish: true, privateToGrant: true }, httpOptions).subscribe((closure: GrantClosure) => {
-              this.closureService.changeMessage(closure, this.appComp.loggedInUser.id);
+            let url2 = '/api/user/' + this.appComp.loggedInUser.id + '/closure/' + this.currentClosure.id + '/template/' + this.currentClosure.template.id + '/' + result.name;
+            this.http.put(url2, { description: result.desc, publish: true, privateToGrant: true }, httpOptions).subscribe((closureB: GrantClosure) => {
+              this.closureService.changeMessage(closureB, this.appComp.loggedInUser.id);
               dialogRef.close();
               this.fetchCurrentClosure();
             });
@@ -273,16 +263,7 @@ export class ClosurePreviewComponent implements OnInit {
       }
 
     }, error => {
-      const errorMsg = error as HttpErrorResponse;
-      console.log(error);
-      const x = { 'enableHtml': true, 'preventDuplicates': true } as Partial<IndividualConfig>;
-      const config: Partial<IndividualConfig> = x;
-      if (errorMsg.error.message === 'Token Expired') {
-        this.toastr.error("Your session has expired", 'Logging you out now...', config);
-        setTimeout(() => { this.appComp.logout(); }, 4000);
-      } else {
-        this.toastr.error(errorMsg.error.message, "We encountered an error", config);
-      }
+      this.showError(error);
     });
   }
 
@@ -447,20 +428,23 @@ export class ClosurePreviewComponent implements OnInit {
       this.appComp.sectionAdded = true;
       this.sidebar.buildSectionsSideNav(null);
       this.appComp.sectionInModification = false;
-      //  this.appComp.selectedTemplate = info.report.template;
       this.router.navigate(['grant-closure/section/' + this.getCleanText(info.closure.closureDetails.sections.filter((a) => a.id === info.sectionId)[0])]);
     }, error => {
-      const errorMsg = error as HttpErrorResponse;
-      console.log(error);
-      const x = { 'enableHtml': true, 'preventDuplicates': true } as Partial<IndividualConfig>;
-      const config: Partial<IndividualConfig> = x;
-      if (errorMsg.error.message === 'Token Expired') {
-        this.toastr.error("Your session has expired", 'Logging you out now...', config);
-        setTimeout(() => { this.appComp.logout(); }, 4000);
-      } else {
-        this.toastr.error(errorMsg.error.message, "We encountered an error", config);
-      }
+      this.showError(error);
     });
+  }
+
+  showError(error) {
+    const errorMsg = error as HttpErrorResponse;
+    console.log(error);
+    const x = { 'enableHtml': true, 'preventDuplicates': true } as Partial<IndividualConfig>;
+    const config: Partial<IndividualConfig> = x;
+    if (errorMsg.error.message === 'Token Expired') {
+      this.toastr.error("Your session has expired", 'Logging you out now...', config);
+      setTimeout(() => { this.appComp.logout(); }, 4000);
+    } else {
+      this.toastr.error(errorMsg.error.message, "We encountered an error", config);
+    }
   }
 
   getCleanText(section: Section): string {

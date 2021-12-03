@@ -1,938 +1,614 @@
-<div
-    class="col-12 bg-white"
-    style="position: sticky; top: 80px; z-index: 1040"
-  >
-    <!--<span class="badge badge-dark text-white pull-right mt-2" matBadgeSize="medium">{{currentGrant.grantStatus.displayName}}</span>-->
-    <div class="row">
-      <h4 class="col-11 text-left my-3 section-header">
-        <div *ngIf="currentClosure.canManage" style="display: flex">
-          <div *ngFor="let flow of currentClosure.flowAuthorities">
-            <button
-              [disabled]="wfDisabled"
-              mat-stroked-button
-              (click)="submitClosure(flow.toStateId)"
-              id="{{ flow.action }}"
-              [class]="
+<div class="col-12 bg-white" style="position: sticky; top: 80px; z-index: 1040">
+  <div class="row">
+    <h4 class="col-11 text-left my-3 section-header">
+      <div *ngIf="currentClosure.canManage" style="display: flex">
+        <div *ngFor="let flow of currentClosure.flowAuthorities">
+          <button [disabled]="wfDisabled" mat-stroked-button (click)="submitClosure(flow.toStateId)"
+            id="{{ flow.action }}" [class]="
                 flow.seqOrder === 0
                   ? 'mr-1 btn btn-sm btn-green-primary'
                   : 'mr-1 btn btn-sm btn-green'
-              "
-            >
-              {{ flow.action }}
-            </button>
-          </div>
+              ">
+            {{ flow.action }}
+          </button>
         </div>
-      </h4>
-      <div
-        class="col-1 text-right"
-        style="display: flex; align-items: center; justify-content: flex-start"
-      >
-        <!--<button *ngIf="canManage" class="btn btn-sm btn-green float-right">
-          <em class="fas fa-plus-square mr-2"></em>Add new Section</button>-->
-        <mat-icon
-          mat-button
-          [matMenuTriggerFor]="menu"
-          class="float-right"
-          style="cursor: pointer"
-          >more_vert</mat-icon
-        >
-        <mat-menu #menu="matMenu">
-          <button mat-menu-item (click)="showWFAssigments()">
-            <mat-icon class="ml-1">assignment</mat-icon>View Assignments
-          </button>
-          <button mat-menu-item (click)="showHistory('grant-closure', currentClosure)">
-            <mat-icon class="ml-1">comment</mat-icon>View Notes
-          </button>
-          <hr>
-          <button mat-menu-item (click)="saveAs('closure_'+currentClosure.grant.name+'.pdf')">
-            <mat-icon class="ml-1">picture_as_pdf</mat-icon>Export for Offline
-            Viewing
-          </button>
-
-          <ng-container>
-            <hr />
-            <button mat-menu-item (click)="manageGrant()">
-              <img
-                class="ml-2 mr-3" alt="View Grant Link"
-                style="width: 20px; height: 20px"
-                src="./assets/img/dp.svg"
-              />View Grant
-            </button>
-          </ng-container>
-        </mat-menu>
       </div>
+    </h4>
+    <div class="col-1 text-right" style="display: flex; align-items: center; justify-content: flex-start">
+      <mat-icon mat-button [matMenuTriggerFor]="menu" class="float-right" style="cursor: pointer">more_vert</mat-icon>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="showWFAssigments()">
+          <mat-icon class="ml-1">assignment</mat-icon>View Assignments
+        </button>
+        <button mat-menu-item (click)="showHistory('grant-closure', currentClosure)">
+          <mat-icon class="ml-1">comment</mat-icon>View Notes
+        </button>
+        <hr>
+        <button mat-menu-item (click)="saveAs('closure_'+currentClosure.grant.name+'.pdf')">
+          <mat-icon class="ml-1">picture_as_pdf</mat-icon>Export for Offline
+          Viewing
+        </button>
+
+        <ng-container>
+          <hr />
+          <button mat-menu-item (click)="manageGrant()">
+            <img class="ml-2 mr-3" alt="View Grant Link" style="width: 20px; height: 20px"
+              src="./assets/img/dp.svg" />View Grant
+          </button>
+        </ng-container>
+      </mat-menu>
     </div>
   </div>
+</div>
 
-  <div [ngClass]="currentClosure.canManage?'main-content no-top-margin1':'main-content no-top-margin3'" style="margin-top: 40px;">
-    <div class="container-fluid anudan-scrollable" style="background: #fff;">
-  <div class="row anu-container">
-  <div #reportSummary class="col-lg-12">
-    <div #container class="container text-left mt-5 px-5 py-5">
-      <!--MANAGEMENT SECTION-->
+<div [ngClass]="currentClosure.canManage?'main-content no-top-margin1':'main-content no-top-margin3'"
+  style="margin-top: 40px;">
+  <div class="container-fluid anudan-scrollable" style="background: #fff;">
+    <div class="row anu-container">
+      <div #reportSummary class="col-lg-12">
+        <div #container class="container text-left mt-5 px-5 py-5">
+          <!--MANAGEMENT SECTION-->
 
-      <kendo-pdf-export
-        #pdf
-        paperSize="A4"
-        forcePageBreak=".page-break"
-        [margin]="{ top: '2cm', bottom: '3cm', right: '2cm', left: '2cm' }"
-        [imageResolution]="200"
-        [scale]="0.7"
-        [repeatHeaders]="true"
-      >
-        <div class="row w-100" id="reportSummary">
-          <div
-            class="col-11 mb-2 pb-2"
-            style="border-bottom: 3px solid #a6a6a6"
-          >
-            <div class="row">
-              <div class="col-3">
-                <img alt="img"[src]="logoUrl" alt="logo" class="img-fluid" />
-              </div>
-              <div
-                class="col-9 text-left pl-3"
-                style="display: flex; align-items: center"
-              >
+          <kendo-pdf-export #pdf paperSize="A4" forcePageBreak=".page-break"
+            [margin]="{ top: '2cm', bottom: '3cm', right: '2cm', left: '2cm' }" [imageResolution]="200" [scale]="0.7"
+            [repeatHeaders]="true">
+            <div class="row w-100" id="reportSummary">
+              <div class="col-11 mb-2 pb-2" style="border-bottom: 3px solid #a6a6a6">
                 <div class="row">
-                  <div class="col-12">
-                    <h4 class="m-0" type="text" autocomplete="off">
-                      <strong>{{ 'Closure Request for ' + currentClosure.grant.name }}</strong>
-                    </h4>
+                  <div class="col-3">
+                    <img alt="img" [src]="logoUrl" alt="logo" class="img-fluid" />
                   </div>
-                  <div class="col-12 text-left">
-                    <div [ngClass]="isExternalGrant(currentClosure.grant)?'status-indicator3':'status-indicator2'" style="justify-content: flex-start !important;">
-                      <div [class]="'text-center status-icon state-'+(isExternalGrant(currentClosure.grant)?'ext-':'')+currentClosure.status.internalStatus.toLowerCase()">
-                      </div>{{currentClosure.status.name | uppercase}}
+                  <div class="col-9 text-left pl-3" style="display: flex; align-items: center">
+                    <div class="row">
+                      <div class="col-12">
+                        <h4 class="m-0" type="text" autocomplete="off">
+                          <strong>{{ 'Closure Request for ' + currentClosure.grant.name }}</strong>
+                        </h4>
+                      </div>
+                      <div class="col-12 text-left">
+                        <div [ngClass]="isExternalGrant(currentClosure.grant)?'status-indicator3':'status-indicator2'"
+                          style="justify-content: flex-start !important;">
+                          <div
+                            [class]="'text-center status-icon state-'+(isExternalGrant(currentClosure.grant)?'ext-':'')+currentClosure.status.internalStatus.toLowerCase()">
+                          </div>{{currentClosure.status.name | uppercase}}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <hr />
-          <div class="col-12 mb-2 m-2" style="background: #f9f9f9">
-            <div class="row">
-              <div class="col-12 mb-0">
-                <span
-                  style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;"
-                  >Grant Name:</span
-                >
-                <div class="ml-0 mb-2">
-                  <strong>{{
-                    (currentClosure.grant.referenceNo
-                      ? currentClosure.grant.referenceNo + " | "
-                      : "") + currentClosure.grant.name
-                  }}</strong>
-                </div>
-              </div>
-              <div class="col-6 mb-2">
-                <span
-                  style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;"
-                  >Implementing Organization:</span
-                >
-                <div class="ml-0 mb-0">
-                  <strong>{{ currentClosure.grant.organization.name }}</strong>
-                </div>
-              </div>
-              <div class="col-6 mb-0">
-                <span
-                  style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;"
-                  >Implementing Organization Representative:</span
-                >
-                <div class="ml-0 mb-0">
-                  <strong>{{ currentClosure.grant.representative }}</strong>
-                </div>
-              </div>
-              <div class="col-3 mb-2">
-                <span
-                  style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;"
-                  >Grant Start Date:</span
-                >
-                <div class="ml-0 mb-0">
-                  <strong>{{ currentClosure.grant.stDate | date: "dd-MMM-yyyy" }}</strong>
-                </div>
-              </div>
-              <div class="col-3 mb-2">
-                <span
-                  style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;"
-                  >Grant End Date:</span
-                >
-                <div class="ml-0 mb-3">
-                  <strong>{{ currentClosure.grant.enDate | date: "dd-MMM-yyyy" }}</strong>
-                </div>
-              </div>
-              <div class="col-6 mb-2">
-                <span
-                  style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;"
-                  >Grant Amount:</span
-                >
-                <div
-                  class="ml-0 mb-3"
-                  style="display: flex; align-items: center"
-                >
-                  <strong
-                    >{{
-                      getFormattedGrantAmount(currentClosure.grant.amount)
-                    }}&nbsp;&nbsp;&nbsp;
-                    <small>{{
-                      getGrantAmountInWords(currentClosure.grant.amount)
-                    }}</small></strong>
-                </div>
-              </div>
-              
-              
-            </div>
-          </div>
-          
-          <div class="col-4 mb-2">
-            <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;"
-              >Closure Reason:</span
-            >
-            <div class="ml-0 mb-3">
-              <strong>{{ currentClosure.reason.reason }}</strong>
-            </div>
-          </div>
-          <div class="col-12 mb-2">
-            <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;"
-              >Closure Description:</span
-            >
-            <div class="ml-0 mb-3">
-              <strong>{{ currentClosure.description}}</strong>
-            </div>
-          </div>
-          <div class="col-12">
-            <ng-container
-              *ngFor="let section of currentClosure.closureDetails.sections"
-            >
               <hr />
-              <h5>
-                <span
-                  style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;"
-                  >{{ section.sectionName.toLocaleUpperCase() }}</span
-                >
-              </h5>
+              <div class="col-12 mb-2 m-2" style="background: #f9f9f9">
+                <div class="row">
+                  <div class="col-12 mb-0">
+                    <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Grant Name:</span>
+                    <div class="ml-0 mb-2">
+                      <strong>{{
+                        (currentClosure.grant.referenceNo
+                        ? currentClosure.grant.referenceNo + " | "
+                        : "") + currentClosure.grant.name
+                        }}</strong>
+                    </div>
+                  </div>
+                  <div class="col-6 mb-2">
+                    <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Implementing
+                      Organization:</span>
+                    <div class="ml-0 mb-0">
+                      <strong>{{ currentClosure.grant.organization.name }}</strong>
+                    </div>
+                  </div>
+                  <div class="col-6 mb-0">
+                    <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Implementing
+                      Organization Representative:</span>
+                    <div class="ml-0 mb-0">
+                      <strong>{{ currentClosure.grant.representative }}</strong>
+                    </div>
+                  </div>
+                  <div class="col-3 mb-2">
+                    <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Grant Start
+                      Date:</span>
+                    <div class="ml-0 mb-0">
+                      <strong>{{ currentClosure.grant.stDate | date: "dd-MMM-yyyy" }}</strong>
+                    </div>
+                  </div>
+                  <div class="col-3 mb-2">
+                    <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Grant End
+                      Date:</span>
+                    <div class="ml-0 mb-3">
+                      <strong>{{ currentClosure.grant.enDate | date: "dd-MMM-yyyy" }}</strong>
+                    </div>
+                  </div>
+                  <div class="col-6 mb-2">
+                    <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Grant Amount:</span>
+                    <div class="ml-0 mb-3" style="display: flex; align-items: center">
+                      <strong>{{
+                        getFormattedGrantAmount(currentClosure.grant.amount)
+                        }}&nbsp;&nbsp;&nbsp;
+                        <small>{{
+                          getGrantAmountInWords(currentClosure.grant.amount)
+                          }}</small></strong>
+                    </div>
+                  </div>
 
-              <div>
-                <div class="row mb-2 mt-2">
-                  <ng-container *ngFor="let attribute of section.attributes">
-                    <ng-container
-                      *ngIf="
+
+                </div>
+              </div>
+
+              <div class="col-4 mb-2">
+                <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Closure Reason:</span>
+                <div class="ml-0 mb-3">
+                  <strong>{{ currentClosure.reason.reason }}</strong>
+                </div>
+              </div>
+              <div class="col-12 mb-2">
+                <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Closure
+                  Description:</span>
+                <div class="ml-0 mb-3">
+                  <strong>{{ currentClosure.description}}</strong>
+                </div>
+              </div>
+              <div class="col-12">
+                <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
+                  <hr />
+                  <h5>
+                    <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">{{
+                      section.sectionName.toLocaleUpperCase() }}</span>
+                  </h5>
+
+                  <div>
+                    <div class="row mb-2 mt-2">
+                      <ng-container *ngFor="let attribute of section.attributes">
+                        <ng-container *ngIf="
                         attribute.fieldType === 'multiline' ||
                         attribute.fieldType === 'text'
-                      "
-                      class="mb-2"
-                    >
-                      <div
-                        class="col-sm-12 col-lg-12 text-left mb-3 text-justify"
-                      >
-                        <span
-                          style="
+                      " class="mb-2">
+                          <div class="col-sm-12 col-lg-12 text-left mb-3 text-justify">
+                            <span style="
                             color: #929292;
                             font-size: 13px;
-                            font-family: Roboto, sans-serif;;
-                          "
-                          >{{ attribute.fieldName }}</span
-                        >
-                        <pre
-                          class="mt-1 text-justify"
-                        ><strong><p style="font-size:14px;" [innerHtml]="attribute.fieldValue"></p></strong></pre>
-                      </div>
-                    </ng-container>
+                            font-family: Roboto, sans-serif;
+                          ">{{ attribute.fieldName }}</span>
+                            <pre
+                              class="mt-1 text-justify"><strong><p style="font-size:14px;" [innerHtml]="attribute.fieldValue"></p></strong></pre>
+                          </div>
+                        </ng-container>
 
-                    <ng-container
-                      *ngIf="attribute.fieldType === 'kpi'"
-                      class="mb-2"
-                    >
-                      <div class="col-sm-12 col-lg-12 text-left mb-3">
-                        <table width="100%" border="1">
-                          <tr>
-                            <th id="kpi" colspan="5" style="padding: 5px">KPI</th>
-                          </tr>
-                          <tr>
-                            <td
-                              width="40%"
-                              style="
+                        <ng-container *ngIf="attribute.fieldType === 'kpi'" class="mb-2">
+                          <div class="col-sm-12 col-lg-12 text-left mb-3">
+                            <table border="1">
+                              <caption></caption>
+                              <tr>
+                                <th id="kpi" colspan="5" style="padding: 5px">KPI</th>
+                              </tr>
+                              <tr>
+                                <td style="
                                 padding: 5px;
                                 font-size: 14px;
-                                font-family: Roboto, sans-serif;;
-                              "
-                            >
-                              <strong>{{ attribute.fieldName }}</strong>
-                            </td>
-                            <td
-                              style="
+                                font-family: Roboto, sans-serif;
+                              ">
+                                  <strong>{{ attribute.fieldName }}</strong>
+                                </td>
+                                <td style="
                                 font-size: 14px;
-                                font-family: Roboto, sans-serif;;
+                                font-family: Roboto, sans-serif;
                                 padding: 5px;
-                              "
-                              valign="top"
-                            >
-                              <table>
-                                <tr>
-                                  <th id="grant_level_goal_2">
-                                    <span
-                                      style="
+                              ">
+                                  <table>
+                                    <caption></caption>
+                                    <tr>
+                                      <th id="grant_level_goal_2">
+                                        <span style="
                                         color: #929292;
                                         font-size: 13px;
-                                        font-family: Roboto, sans-serif;;
-                                      "
-                                      >Grant Level Goal:</span
-                                    >
-                                  </th>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <strong>{{
-                                      !attribute.grantLevelTarget
-                                        ? "Not Set"
-                                        : attribute.grantLevelTarget
-                                    }}</strong>
-                                  </td>
-                                </tr>
-                              </table>
-                            </td>
-                            <td
-                              style="
+                                        font-family: Roboto, sans-serif;
+                                      ">Grant Level Goal:</span>
+                                      </th>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <strong>{{
+                                          !attribute.grantLevelTarget
+                                          ? "Not Set"
+                                          : attribute.grantLevelTarget
+                                          }}</strong>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                                <td style="
                                 font-size: 14px;
-                                font-family: Roboto, sans-serif;;
+                                font-family: Roboto, sans-serif;
                                 padding: 5px;
-                              "
-                              valign="top"
-                            >
-                              <table>
-                                <tr>
-                                  <th id="repror_level_goal">
-                                    <span
-                                      style="
+                              ">
+                                  <table>
+                                    <caption></caption>
+                                    <tr>
+                                      <th id="repror_level_goal">
+                                        <span style="
                                         color: #929292;
                                         font-size: 13px;
-                                        font-family: Roboto, sans-serif;;
-                                      "
-                                      >Report Level Goal:</span
-                                    >
-                                  </th>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <strong>{{ attribute.target }}</strong>
-                                  </td>
-                                </tr>
-                              </table>
-                            </td>
-                            <td
-                              style="
+                                        font-family: Roboto, sans-serif;
+                                      ">Report Level Goal:</span>
+                                      </th>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <strong>{{ attribute.target }}</strong>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                                <td style="
                                 font-size: 14px;
-                                font-family: Roboto, sans-serif;;
+                                font-family: Roboto, sans-serif;
                                 padding: 5px;
-                              "
-                              valign="top"
-                            >
-                              <table>
-                                <tr>
-                                  <th id="actual_target">
-                                    <span
-                                      style="
+                              ">
+                                  <table>
+                                    <caption></caption>
+                                    <tr>
+                                      <th id="actual_target">
+                                        <span style="
                                         color: #929292;
                                         font-size: 13px;
-                                        font-family: Roboto, sans-serif;;
-                                      "
-                                      >Actual Goal Achieved:</span
-                                    >
-                                  </th>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <strong>{{ attribute.actualTarget }}</strong>
-                                  </td>
-                                </tr>
-                              </table>
-                            </td>
-                            <td
-                              width="10%"
-                              style="
+                                        font-family: Roboto, sans-serif;
+                                      ">Actual Goal Achieved:</span>
+                                      </th>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <strong>{{ attribute.actualTarget }}</strong>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                                <td style="
                                 font-size: 14px;
-                                font-family: Roboto, sans-serif;;
+                                font-family: Roboto, sans-serif;
                                 padding: 5px;
-                              "
-                              valign="top"
-                            >
-                              <table>
-                                <tr>
-                                  <th id="frequency_2">
-                                    <span
-                                      style="
+                              ">
+                                  <table>
+                                    <caption></caption>
+                                    <tr>
+                                      <th id="frequency_2">
+                                        <span style="
                                         color: #929292;
                                         font-size: 13px;
-                                        font-family: Roboto, sans-serif;;
-                                      "
-                                      >Frequency:</span
-                                    >
-                                  </th>
-                                </tr>
-                                <tr>
-                                  <td>
-                                    <strong>{{
-                                        attribute.frequency === "Half-yearly"
+                                        font-family: Roboto, sans-serif;
+                                      ">Frequency:</span>
+                                      </th>
+                                    </tr>
+                                    <tr>
+                                      <td>
+                                        <strong>{{
+                                          attribute.frequency === "Half-yearly"
                                           ? "Half-Yearly"
                                           : attribute.frequency === "adhoc"
                                           ? "N/A"
                                           : (attribute.frequency | titlecase)
-                                      }}</strong>
-                                  </td>
-                                </tr>
-                              </table>
-                            </td>
-                          </tr>
-                        </table>
-                        <!--<div class="row mx-2">
-                            <div class="col-8">
-                                <div></div>
-                            </div>
-                            <div class="col-2">
-                                <div placeholder="Target/Goal"></div>
-                            </div>
-                            <div class="col-2">
-                                <div placeholder="Frequency"></div>
-                            </div>
-                        </div>-->
-                      </div>
-                    </ng-container>
-                    <ng-container *ngIf="attribute.fieldType === 'document'">
-                      <div class="col-sm-12 col-lg-12 mb-3">
-                        <span
-                          style="
+                                          }}</strong>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                            </table>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="attribute.fieldType === 'document'">
+                          <div class="col-sm-12 col-lg-12 mb-3">
+                            <span style="
                             color: #929292;
                             font-size: 13px;
-                            font-family: Roboto, sans-serif;;
-                          "
-                          >{{ attribute.fieldName }}</span
-                        >
-                        <ul>
-                          <li
-                            *ngFor="
+                            font-family: Roboto, sans-serif;
+                          ">{{ attribute.fieldName }}</span>
+                            <ul>
+                              <li *ngFor="
                               let doc of getDocumentName(attribute.fieldValue)
-                            "
-                            style="list-style-type: none"
-                          >
-                            <p
-                              class="m-0"
-                              style="font-family: Roboto, sans-serif;; font-size: 14px"
-                            >
-                              <strong>
-                                <ng-container *ngIf="doc.type === 'pdf'">
-                                  <em
-                                    class="far fa-file-pdf text-danger ml-1"
-                                  ></em>
-                                </ng-container>
-                                <ng-container
-                                  *ngIf="
+                            " style="list-style-type: none">
+                                <p class="m-0" style="font-family: Roboto, sans-serif; font-size: 14px">
+                                  <strong>
+                                    <ng-container *ngIf="doc.type === 'pdf'">
+                                      <em class="far fa-file-pdf text-danger ml-1"></em>
+                                    </ng-container>
+                                    <ng-container *ngIf="
                                     doc.type === 'xls' || doc.type === 'xlsx'
-                                  "
-                                >
-                                  <em
-                                    class="far fa-file-excel text-success ml-1"
-                                  ></em>
-                                </ng-container>
-                                <ng-container
-                                  *ngIf="
+                                  ">
+                                      <em class="far fa-file-excel text-success ml-1"></em>
+                                    </ng-container>
+                                    <ng-container *ngIf="
                                     doc.type === 'doc' || doc.type === 'docx'
-                                  "
-                                >
-                                  <em
-                                    class="far fa-file-word text-primary ml-1"
-                                  ></em>
-                                </ng-container>
-                                <ng-container
-                                  *ngIf="
+                                  ">
+                                      <em class="far fa-file-word text-primary ml-1"></em>
+                                    </ng-container>
+                                    <ng-container *ngIf="
                                     doc.type === 'ppt' || doc.type === 'pptx'
-                                  "
-                                >
-                                  <em
-                                    class="far fa-file-powerpoint text-danger ml-1"
-                                  ></em>
-                                </ng-container>
-                                {{ doc.name }}
-                              </strong>
-                            </p>
-                          </li>
-                        </ul>
-                      </div>
-                    </ng-container>
-                    <ng-container *ngIf="attribute.fieldType == 'table'">
-                      <div class="col-sm-12 col-lg-12 mb-3">
-                        <span
-                          style="
+                                  ">
+                                      <em class="far fa-file-powerpoint text-danger ml-1"></em>
+                                    </ng-container>
+                                    {{ doc.name }}
+                                  </strong>
+                                </p>
+                              </li>
+                            </ul>
+                          </div>
+                        </ng-container>
+                        <ng-container *ngIf="attribute.fieldType == 'table'">
+                          <div class="col-sm-12 col-lg-12 mb-3">
+                            <span style="
                             color: #929292;
                             font-size: 13px;
-                            font-family: Roboto, sans-serif;;
-                          "
-                          >{{ attribute.fieldName }}</span
-                        >
-                        <table
-                          width="100%"
-                          border="1"
-                          class="mb-3"
-                          style="font-family: Roboto, sans-serif;"
-                        >
-                          <tr>
-                            <th id="col_canton">&nbsp;</th>
-                            <ng-container *ngIf="attribute.fieldTableValue[0]">
-                              <th id="'col_head_'+i"
-                                style="
+                            font-family: Roboto, sans-serif;
+                          ">{{ attribute.fieldName }}</span>
+                            <table border="1" class="mb-3" style="font-family: Roboto, sans-serif;">
+                              <caption></caption>
+                              <tr>
+                                <th id="col_canton">&nbsp;</th>
+                                <ng-container *ngIf="attribute.fieldTableValue[0]">
+                                  <th id="'col_head_'+i" style="
                                   font-size: 14px;
-                                  font-family: Roboto, sans-serif;;
+                                  font-family: Roboto, sans-serif;
                                   padding: 5px;
                                   text-align: center;
-                                "
-                                *ngFor="
+                                " *ngFor="
                                   let col of attribute.fieldTableValue[0]
                                     .columns;let i=index
-                                "
-                              >
-                                <strong>{{ col.name }}</strong>
-                              </th>
-                            </ng-container>
-                          </tr>
-                          <tr *ngFor="let row of attribute.fieldTableValue">
-                            <td
-                              style="
+                                ">
+                                    <strong>{{ col.name }}</strong>
+                                  </th>
+                                </ng-container>
+                              </tr>
+                              <tr *ngFor="let row of attribute.fieldTableValue">
+                                <td style="
                                 padding: 5px;
                                 font-size: 14px;
-                                font-family: Roboto, sans-serif;;
-                              "
-                            >
-                              <strong>{{ row.name }}</strong>
-                            </td>
-                            <td
-                              style="
+                                font-family: Roboto, sans-serif;
+                              ">
+                                  <strong>{{ row.name }}</strong>
+                                </td>
+                                <td style="
                                 padding: 5px;
                                 font-size: 14px;
-                                font-family: Roboto, sans-serif;;
-                              "
-                              *ngFor="let rowVal of row.columns"
-                            >
-                              <strong>{{ rowVal.value }}</strong>
-                            </td>
-                          </tr>
-                        </table>
-                      </div>
-                    </ng-container>
+                                font-family: Roboto, sans-serif;
+                              " *ngFor="let rowVal of row.columns">
+                                  <strong>{{ rowVal.value }}</strong>
+                                </td>
+                              </tr>
+                            </table>
+                          </div>
+                        </ng-container>
 
-                    <div
-                      class="col-sm-12 col-lg-12 mb-3"
-                      *ngIf="attribute.fieldType == 'disbursement'"
-                    >
-                      <span
-                        style="
+                        <div class="col-sm-12 col-lg-12 mb-3" *ngIf="attribute.fieldType == 'disbursement'">
+                          <span style="
                           color: #929292;
                           font-size: 15px;
-                          font-family: Roboto, sans-serif;;
-                        "
-                        >{{ attribute.fieldName }}</span
-                      >
-                      <table
-                        width="100%"
-                        border="1"
-                        class="mb-3"
-                        style="font-family: Roboto, sans-serif;"
-                      >
-                        <tr>
-                          <ng-container *ngIf="attribute.fieldTableValue">
-                            <th id="col#1"
-                              align="center"
-                              valign="middle"
-                              width="15%"
-                              style="
+                          font-family: Roboto, sans-serif;
+                        ">{{ attribute.fieldName }}</span>
+                          <table border="1" class="mb-3" style="font-family: Roboto, sans-serif;">
+                            <caption></caption>
+                            <tr>
+                              <ng-container *ngIf="attribute.fieldTableValue">
+                                <th id="col#1" style="
                                 padding: 5px;
                                 font-size: 16px;
-                                font-family: Roboto, sans-serif;;
-                              "
-                            >
-                              <strong>#</strong>
-                            </th>
-                          </ng-container>
-                          <ng-container
-                            *ngIf="
+                                font-family: Roboto, sans-serif;
+                              ">
+                                  <strong>#</strong>
+                                </th>
+                              </ng-container>
+                              <ng-container *ngIf="
                               attribute.fieldTableValue &&
                               attribute.fieldTableValue[0]
-                            "
-                          >
-                            <ng-container
-                              *ngFor="
+                            ">
+                                <ng-container *ngFor="
                                 let column of attribute.fieldTableValue[0]
                                   .columns;
                                 let i = index
-                              "
-                            >
-                              <th [id]="'col#2_'+i"
-                                class="pl-2"
-                                style="
+                              ">
+                                  <th [id]="'col#2_'+i" class="pl-2" style="
                                   padding: 5px;
                                   font-size: 16px;
-                                  font-family: Roboto, sans-serif;;
-                                "
-                                align="center"
-                              >
-                                <strong>{{
-                                  column.name === "Notes"
-                                    ? "Milestones/Notes"
-                                    : column.name
-                                }}</strong>
-                              </th>
-                            </ng-container>
-                          </ng-container>
-                        </tr>
-                        <ng-container *ngIf="attribute.fieldTableValue">
-                          <ng-container
-                            *ngFor="
+                                  font-family: Roboto, sans-serif;
+                                ">
+                                    <strong>{{
+                                      column.name === "Notes"
+                                      ? "Milestones/Notes"
+                                      : column.name
+                                      }}</strong>
+                                  </th>
+                                </ng-container>
+                              </ng-container>
+                            </tr>
+                            <ng-container *ngIf="attribute.fieldTableValue">
+                              <ng-container *ngFor="
                               let row of attribute.fieldTableValue;
                               let i = index
-                            "
-                          >
-                            <tr
-                              *ngIf="
+                            ">
+                                <tr *ngIf="
                                 (row.showForGrantee &&
                                   appComp.loggedInUser.organization
                                     .organizationType === 'GRANTEE') ||
                                 appComp.loggedInUser.organization
                                   .organizationType === 'GRANTER'
-                              "
-                            >
-                              <td
-                                style="
+                              ">
+                                  <td style="
                                   padding: 5px;
                                   font-size: 16px;
-                                  font-family: Roboto, sans-serif;;
-                                "
-                                align="center"
-                              >
-                              <ng-container *ngIf="row.enteredByGrantee &&
+                                  font-family: Roboto, sans-serif;
+                                ">
+                                    <ng-container *ngIf="row.enteredByGrantee &&
                               row.status && row.reportId===currentClosure.id">* </ng-container>
-                              <ng-container *ngIf="row.enteredByGrantee &&
+                                    <ng-container *ngIf="row.enteredByGrantee &&
                               row.status && row.reportId!==currentClosure.id">** </ng-container>{{ row.name }}
-                              </td>
-                              <ng-container
-                                *ngFor="
+                                  </td>
+                                  <ng-container *ngFor="
                                   let column of row.columns;
                                   let j = index
-                                "
-                              >
-                                <td
-                                  align="right"
-                                  *ngIf="j === 1 || j === 2"
-                                  style="
+                                ">
+                                    <td *ngIf="j === 1 || j === 2" style="
                                     min-width: 150px;
                                     padding: 5px;
                                     font-size: 16px;
-                                    font-family: Roboto, sans-serif;;
-                                  "
-                                >
-                                  <ng-container
-                                    *ngIf="column.dataType === 'currency'"
-                                  >
-                                    {{
-                                      getFormattedCurrency(column.value)
-                                    }}</ng-container
-                                  >
-                                </td>
-                                <td
-                                  *ngIf="
+                                    font-family: Roboto, sans-serif;
+                                  ">
+                                      <ng-container *ngIf="column.dataType === 'currency'">
+                                        {{
+                                        getFormattedCurrency(column.value)
+                                        }}</ng-container>
+                                    </td>
+                                    <td *ngIf="
                                     j !== 1 &&
                                     j !== 2 &&
                                     column.name !== 'Notes'
-                                  "
-                                  style="
+                                  " style="
                                     padding: 5px;
                                     font-size: 16px;
-                                    font-family: Roboto, sans-serif;;
-                                  "
-                                >
-                                  <ng-container>{{
-                                    column.value
-                                  }}</ng-container>
-                                </td>
-                                <td
-                                  *ngIf="
+                                    font-family: Roboto, sans-serif;
+                                  ">
+                                      <ng-container>{{
+                                        column.value
+                                        }}</ng-container>
+                                    </td>
+                                    <td *ngIf="
                                     j !== 1 &&
                                     j !== 2 &&
                                     column.name === 'Notes'
-                                  "
-                                  width="35%"
-                                  style="
+                                  " style="
                                     padding: 5px;
                                     font-size: 16px;
-                                    font-family: Roboto, sans-serif;;
-                                  "
-                                >
-                                  <ng-container>{{
-                                    column.value
-                                  }}</ng-container>
-                                </td>
+                                    font-family: Roboto, sans-serif;
+                                  ">
+                                      <ng-container>{{
+                                        column.value
+                                        }}</ng-container>
+                                    </td>
+                                  </ng-container>
+                                </tr>
                               </ng-container>
-                            </tr>
-                          </ng-container>
-                        </ng-container>
-                        <ng-container *ngIf="attribute.fieldTableValue">
-                          <tr
-                            *ngIf="
+                            </ng-container>
+                            <ng-container *ngIf="attribute.fieldTableValue">
+                              <tr *ngIf="
                               attribute.fieldTableValue.length > 1 ||
                               currentClosure.grant.approvedReportsDisbursements
                                 .length > 1
-                            "
-                            style="background: #f4f4f4"
-                          >
-                            <td
-                              style="
+                            " style="background: #f4f4f4">
+                                <td style="
                                 padding: 5px;
                                 font-size: 16px;
-                                font-family: Roboto, sans-serif;;
-                              "
-                            >
-                              <strong>Totals:</strong>
-                            </td>
-                            <ng-container *ngIf="attribute.fieldTableValue[0]">
-                              <td
-                                align="right"
-                                style="
+                                font-family: Roboto, sans-serif;
+                              ">
+                                  <strong>Totals:</strong>
+                                </td>
+                                <ng-container *ngIf="attribute.fieldTableValue[0]">
+                                  <td style="
                                   padding: 5px;
                                   font-size: 16px;
-                                  font-family: Roboto, sans-serif;;
-                                "
-                                *ngFor="
+                                  font-family: Roboto, sans-serif;
+                                " *ngFor="
                                   let column of attribute.fieldTableValue[0]
                                     .columns;
                                   let j = index
-                                "
-                                valign="middle"
-                              >
-                                <strong *ngIf="column.dataType === 'currency'">{{
-                                  getDisbursementTotals(
-                                    j,
-                                    attribute.fieldTableValue
-                                  )
-                                }}</strong>
-                              </td>
+                                ">
+                                    <strong *ngIf="column.dataType === 'currency'">{{
+                                      getDisbursementTotals(
+                                      j,
+                                      attribute.fieldTableValue
+                                      )
+                                      }}</strong>
+                                  </td>
+                                </ng-container>
+                              </tr>
                             </ng-container>
-                          </tr>
-                        </ng-container>
-                        <tr *ngIf="showUnapprovedIndicator(attribute)"><td colspan="5" [innerHTML]="showUnapprovedIndicator(attribute)"></td></tr>
-                      </table>
+                            <tr *ngIf="showUnapprovedIndicator(attribute)">
+                              <td colspan="5" [innerHTML]="showUnapprovedIndicator(attribute)"></td>
+                            </tr>
+                          </table>
+                        </div>
+                      </ng-container>
                     </div>
-                  </ng-container>
-                </div>
+                  </div>
+                </ng-container>
               </div>
-            </ng-container>
-          </div>
-          <div data-html2canvas-ignore class="col-12">
-            <hr />
-            <h5>ATTACHMENTS</h5>
-            <ng-container
-              *ngFor="let section of currentClosure.closureDetails.sections"
-            >
-              <div>
-                <div class="row mb-2 mt-2">
-                  <ng-container *ngFor="let attribute of section.attributes">
-                    <ng-container *ngIf="attribute.fieldType === 'document'">
-                      <div class="col-sm-12 col-lg-12 mb-3">
-                        <ng-container
-                          *ngFor="
+              <div data-html2canvas-ignore class="col-12">
+                <hr />
+                <h5>ATTACHMENTS</h5>
+                <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
+                  <div>
+                    <div class="row mb-2 mt-2">
+                      <ng-container *ngFor="let attribute of section.attributes">
+                        <ng-container *ngIf="attribute.fieldType === 'document'">
+                          <div class="col-sm-12 col-lg-12 mb-3">
+                            <ng-container *ngFor="
                             let doc of getDocumentName(attribute.fieldValue)
-                          "
-                        >
-                          <a
-                            (click)="
+                          ">
+                              <a (click)="
                               downloadAttachment(
                                 currentClosure.id,
                                 doc.id,
                                 doc.name,
                                 doc.type
                               )
-                            "
-                          >
-                            <span class="ml-3">
-                              <ng-container *ngIf="doc.type === 'pdf'">
-                                <em class="far fa-file-pdf text-danger ml-1"></em>
-                              </ng-container>
-                              <ng-container
-                                *ngIf="
+                            ">
+                                <span class="ml-3">
+                                  <ng-container *ngIf="doc.type === 'pdf'">
+                                    <em class="far fa-file-pdf text-danger ml-1"></em>
+                                  </ng-container>
+                                  <ng-container *ngIf="
                                   doc.type === 'xls' || doc.type === 'xlsx'
-                                "
-                              >
-                                <em
-                                  class="far fa-file-excel text-success ml-1"
-                                ></em>
-                              </ng-container>
-                              <ng-container
-                                *ngIf="
+                                ">
+                                    <em class="far fa-file-excel text-success ml-1"></em>
+                                  </ng-container>
+                                  <ng-container *ngIf="
                                   doc.type === 'doc' || doc.type === 'docx'
-                                "
-                              >
-                                <em
-                                  class="far fa-file-word text-primary ml-1"
-                                ></em>
-                              </ng-container>
-                              <ng-container
-                                *ngIf="
+                                ">
+                                    <em class="far fa-file-word text-primary ml-1"></em>
+                                  </ng-container>
+                                  <ng-container *ngIf="
                                   doc.type === 'ppt' || doc.type === 'pptx'
-                                "
-                              >
-                                <em
-                                  class="far fa-file-powerpoint text-danger ml-1"
-                                ></em>
-                              </ng-container>
-                              {{ doc.name }}
-                            </span></a
-                          ><br />
+                                ">
+                                    <em class="far fa-file-powerpoint text-danger ml-1"></em>
+                                  </ng-container>
+                                  {{ doc.name }}
+                                </span></a><br />
+                            </ng-container>
+                          </div>
                         </ng-container>
-                      </div>
-                    </ng-container>
-                  </ng-container>
-                </div>
+                      </ng-container>
+                    </div>
+                  </div>
+                </ng-container>
+
               </div>
-            </ng-container>
-            
-          </div>
+            </div>
+            <ng-template kendoPDFTemplate let-pageNum="pageNum" let-totalPages="totalPages">
+              <div class="pageNum">Page {{ pageNum }} of {{ totalPages }}</div>
+            </ng-template>
+          </kendo-pdf-export>
         </div>
-        <ng-template
-          kendoPDFTemplate
-          let-pageNum="pageNum"
-          let-totalPages="totalPages"
-        >
-          <div class="pageNum">Page {{ pageNum }} of {{ totalPages }}</div>
-        </ng-template>
-      </kendo-pdf-export>
-
-      <!--<div class="accordion" id="accordionExample">
-        <ng-container *ngFor="let submission of currentClosure.submissions">
-          <div class="card mb-0">
-            <div class="card-header" id="heading_{{submission.id}}">
-              <div class="row">
-                <div class="col-sm-9">
-                  <strong class="mb-0 submission-header">
-
-                    <div data-toggle="collapse" [attr.data-target]="'#collapse_'+submission.id">
-                      Submission
-                      for {{submission.title}} | Submit By: {{submission.submitBy | date}} |
-                      Status: {{submission.submissionStatus.displayName}}</div>
-                  </strong>
-                </div>
-                <div class="col-sm-3 text-right">
-                  <button *ngIf="submission.flowAuthorities" class="btn btn-sm btn-primary"
-                          (click)="viewKpisToSubmit(submission.id)">View Submissions
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div id="collapse_{{submission.id}}" class="collapse"
-               [attr.aria-labelledby]="'heading_'+submission.id"
-               data-parent="#accordionExample">
-            <div class="card-body">
-              <div *ngFor="let quantKpi of submission.quantitiaveKpisubmissions">
-
-                <div class="row border-bottom">
-                  <div class="col-sm-8 submission-title"><strong>{{quantKpi.grantKpi.title}}</strong></div>
-                  <div class="col-sm-2 text-center">
-                    <circle-progress
-                        [backgroundStrokeWidth]="5"
-                        [percent]="quantKpi.actuals * 100 / quantKpi.goal"
-                        [backgroundPadding]="0"
-                        [radius]="40"
-                        [space]="-1"
-                        [outerStrokeWidth]="10"
-                        [outerStrokeColor]="'#3de033'"
-                        [outerStrokeLinecap]="'square'"
-                        [innerStrokeColor]="'#828282'"
-                        [titleFontSize]="15"
-                        [animateTitle]=false
-                        [title]="[quantKpi.actuals]"
-                        [animationDuration]="100"
-                        [subtitle]="['-&#45;&#45;',quantKpi.goal]"
-                        [showUnits]=false
-                    ></circle-progress>
-                  </div>
-                </div>
-              </div>
-              <div *ngFor="let qualKpi of submission.qualitativeKpiSubmissions">
-                <div class="row">
-                  <div class="col-sm-12"><strong>{{qualKpi.grantKpi.title}}</strong></div>
-                  <div class="col-sm-12 mb-5 border-left">{{qualKpi.actuals}}</div>
-                </div>
-              </div>
-              <div *ngFor="let docKpi of submission.documentKpiSubmissions">
-                <div class="row">
-                  <div class="col-sm-12"><strong>{{docKpi.grantKpi.title}}</strong></div>
-                  <div class="col-sm-12 mb-5">
-                    <ng-container *ngFor="let doc of docKpi.submissionDocs">
-                      <a target="_blank"
-                         href="/api/submission/{{submission.id}}/kpi/{{docKpi.grantKpi.id}}/file/{{doc.id}}">
-                        <p>
-                          <em *ngIf="doc.fileType==='pdf'"
-                             class="fa fa-2x fa-file-pdf-o text-rose"></em>
-                          <em *ngIf="doc.fileType==='jpg'" class="fa fa-2x fa-file-image-o"></em>
-                          <em *ngIf="doc.fileType==='jpeg'" class="fa fa-2x fa-file-image-o"></em>
-                          <em *ngIf="doc.fileType==='png'" class="fa fa-2x fa-file-image-o"></em>
-                          <em *ngIf="doc.fileType==='doc'" class="fa fa-2x fa-file"></em>
-                          {{doc.fileName}}
-                        </p>
-                      </a>
-                    </ng-container>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ng-container>
-
-      </div>-->
+      </div>
     </div>
   </div>
 </div>
-</div>
-</div>
 
-<div
-  #createSectionModal
-  class="modal fade mt-5"
-  id="createSectionModal"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
+<div #createSectionModal class="modal fade mt-5" id="createSectionModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog center-class mt-5" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="createSectionLabel"></h5>
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close"
-        >
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label for="fieldTitleInput" class="mat-form-field-label pull-left"
-            >Section Name:</label
-          >
+          <label for="fieldTitleInput" class="mat-form-field-label pull-left">Section Name:</label>
           <input id="sectionTitleInput" class="form-control" value="" />
         </div>
         <div class="row px-3">
-          <button
-            type="button"
-            class="btn btn-sm btn-green-primary"
-            (click)="saveSection()"
-          >
+          <button type="button" class="btn btn-sm btn-green-primary" (click)="saveSection()">
             Done
           </button>
-          <button
-            type="button"
-            class="btn btn-sm btn-green"
-            data-dismiss="modal"
-          >
+          <button type="button" class="btn btn-sm btn-green" data-dismiss="modal">
             Close
           </button>
         </div>
