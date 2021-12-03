@@ -51,10 +51,12 @@ export class ClosureHeaderComponent implements OnInit {
   filteredOptions: Observable<Reason[]>;
   closureWorkflowStatuses: WorkflowStatus[];
   tenantUsers: User[];
-  logoUrl:string;
 
 
   @ViewChild("createSectionModal") createSectionModal: ElementRef;
+
+
+
 
   constructor(public appComp: AppComponent,
     private adminComp: AdminLayoutComponent,
@@ -67,10 +69,6 @@ export class ClosureHeaderComponent implements OnInit {
     private sectionUtilService: SectionUtilService,
     private route: ActivatedRoute,
     private datePipe: DatePipe,) {
-
-    this.closureService.currentMessage.subscribe((closure) => {
-      this.currentClosure = closure;
-    });
 
     this.route.params.subscribe((p) => {
       this.action = p["action"];
@@ -105,6 +103,22 @@ export class ClosureHeaderComponent implements OnInit {
       }
     });
 
+
+    this.appComp.closureUpdated.subscribe((statusUpdate) => {
+      if (statusUpdate.status && statusUpdate.closureId && this.appComp.loggedInUser !== undefined) {
+        let closure = closureService.updateClosure(statusUpdate.closureId, this.appComp);
+        if (closure) {
+          closureService.changeMessage(closure, this.appComp.loggedInUser.id);
+        }
+      }
+    });
+
+
+
+  }
+
+  ngOnInit() {
+
     const httpOptions = {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
@@ -112,38 +126,19 @@ export class ClosureHeaderComponent implements OnInit {
         Authorization: localStorage.getItem("AUTH_TOKEN"),
       }),
     };
-    this.appComp.closureUpdated.subscribe((statusUpdate) => {
-      if (statusUpdate.status && statusUpdate.closureId && this.appComp.loggedInUser !== undefined) {
-        let urlNew =
-          "/api/user/" + this.appComp.loggedInUser.id + "/closure/" + statusUpdate.closureId;
 
+    this.closureService.currentMessage.subscribe((closure) => {
+      this.currentClosure = closure;
+      let url = '/api/app/config/closure/' + this.currentClosure.id;
 
-        this.http.get(urlNew, httpOptions).subscribe((closure: GrantClosure) => {
-          if (closure) {
-            if (this.currentClosure && this.currentClosure.id === Number(closure.id)) {
-              this.closureService.changeMessage(closure, appComp.loggedInUser.id);
-            }
-          }
-        });
-      }
+      this.http.get(url, httpOptions).subscribe((config: Configuration) => {
+        this.closureWorkflowStatuses = config.closureWorkflowStatuses;
+        this.appComp.closureWorkflowStatuses = config.closureWorkflowStatuses;
+        this.tenantUsers = config.tenantUsers;
+        this.appComp.tenantUsers = config.tenantUsers;
+        this.appComp.closureTransitions = config.reportTransitions;
+      });
     });
-
-
-
-
-    let url = '/api/app/config/closure/' + this.currentClosure.id;
-
-    this.http.get(url, httpOptions).subscribe((config: Configuration) => {
-      this.closureWorkflowStatuses = config.closureWorkflowStatuses;
-      this.appComp.closureWorkflowStatuses = config.closureWorkflowStatuses;
-      this.tenantUsers = config.tenantUsers;
-      this.appComp.tenantUsers = config.tenantUsers;
-      this.appComp.closureTransitions = config.reportTransitions;
-    });
-  }
-
-  ngOnInit() {
-  this.logoUrl = "/api/public/images/" + this.currentClosure.grant.grantorOrganization.code + "/logo";
 
     this.getClosureReasons();
 
