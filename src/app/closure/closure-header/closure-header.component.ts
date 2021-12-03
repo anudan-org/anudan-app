@@ -51,6 +51,7 @@ export class ClosureHeaderComponent implements OnInit {
   filteredOptions: Observable<Reason[]>;
   closureWorkflowStatuses: WorkflowStatus[];
   tenantUsers: User[];
+  logoUrl:string;
 
 
   @ViewChild("createSectionModal") createSectionModal: ElementRef;
