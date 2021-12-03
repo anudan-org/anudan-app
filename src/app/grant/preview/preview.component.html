@@ -59,7 +59,8 @@
               this.appComp.loggedInUser.organization.organizationType !==
                 'GRANTEE'
             " (click)="showActiveReports(currentGrant)" [disabled]="!hasApprovedReports">
-            <img class="ml-2 mr-3" style="width: 20px; height: 20px" src="./assets/img/rp.svg" />View Approved Reports
+            <img class="ml-2 mr-3" alt="reports menu" style="width: 20px; height: 20px" src="./assets/img/rp.svg" />View
+            Approved Reports
           </button>
           <button mat-menu-item *ngIf="
               (currentGrant.grantStatus.internalStatus === 'ACTIVE' ||
@@ -100,7 +101,8 @@
               this.appComp.loggedInUser.organization.organizationType !==
                 'GRANTEE'
             " (click)="copyGrant(currentGrant.id)">
-            <img class="ml-2 mr-3" style="width: 20px; height: 20px" src="./assets/img/dp.svg" />Make a Similar Grant
+            <img class="ml-2 mr-3" alt="disbursments menu" style="width: 20px; height: 20px"
+              src="./assets/img/dp.svg" />Make a Similar Grant
           </button>
           <hr *ngIf="
               currentGrant.grantStatus.internalStatus === 'ACTIVE' &&
@@ -273,7 +275,7 @@
                           <span style="
                             color: #929292;
                             font-size: 15px;
-                            font-family: Roboto, sans-serif;;
+                            font-family: Roboto, sans-serif;
                           ">{{ attribute.fieldName }}</span>
                           <pre
                             class="mt-1 text-justify"><strong><p style="font-size:16px;text-align:justify;" [innerHtml]="attribute.fieldValue"></p></strong></pre>
@@ -282,30 +284,34 @@
 
                       <ng-container *ngIf="attribute.fieldType === 'kpi'" class="mb-2">
                         <div class="col-sm-12 col-lg-12 text-left mb-3">
-                          <table width="100%" border="1">
+                          <table border="1" style="width:100%;">
+                            <caption></caption>
                             <tr>
                               <th id="kpi_column" colspan="3" style="padding: 5px">KPI</th>
                             </tr>
                             <tr>
-                              <td width="50%" style="
+                              <td style="
                                 padding: 5px;
+                                width: 50%;
                                 font-size: 16px;
-                                font-family: Roboto, sans-serif;;
+                                font-family: Roboto, sans-serif;
                               ">
                                 <strong>{{ attribute.fieldName }}</strong>
                               </td>
-                              <td width="25%" style="
+                              <td style="
                                 font-size: 16px;
-                                font-family: Roboto, sans-serif;;
+                                width: 25%;
+                                font-family: Roboto, sans-serif;
                                 padding: 5px;
-                              " valign="top">
+                              ">
                                 <table>
+                                  <caption></caption>
                                   <tr>
                                     <th id="grant_level_goal">
                                       <span style="
                                         color: #929292;
                                         font-size: 13px;
-                                        font-family: Roboto, sans-serif;;
+                                        font-family: Roboto, sans-serif;
                                       ">Grant Level Goal:</span>
                                     </th>
                                   </tr>
@@ -320,18 +326,20 @@
                                   </tr>
                                 </table>
                               </td>
-                              <td width="25%" style="
+                              <td style="
                                 font-size: 16px;
-                                font-family: Roboto, sans-serif;;
+                                width: 25%;
+                                font-family: Roboto, sans-serif;
                                 padding: 5px;
-                              " valign="top">
+                              ">
                                 <table>
+                                  <caption></caption>
                                   <tr>
                                     <th id="frequency">
                                       <span style="
                                         color: #929292;
                                         font-size: 13px;
-                                        font-family: Roboto, sans-serif;;
+                                        font-family: Roboto, sans-serif;
                                       ">Frequency:</span>
                                     </th>
                                   </tr>
@@ -348,17 +356,6 @@
                               </td>
                             </tr>
                           </table>
-                          <!--<div class="row mx-2">
-                                                <div class="col-8">
-                                                    <div></div>
-                                                </div>
-                                                <div class="col-2">
-                                                    <div placeholder="Target/Goal"></div>
-                                                </div>
-                                                <div class="col-2">
-                                                    <div placeholder="Frequency"></div>
-                                                </div>
-                                            </div>-->
                         </div>
                       </ng-container>
                       <ng-container *ngIf="attribute.fieldType === 'document'">
@@ -366,11 +363,11 @@
                           <span style="
                             color: #929292;
                             font-size: 15px;
-                            font-family: Roboto, sans-serif;;
+                            font-family: Roboto, sans-serif;
                           ">{{ attribute.fieldName }}</span>
                           <ul>
                             <li *ngFor="let doc of attribute.attachments" style="list-style-type: none">
-                              <p class="m-0" style="font-family: Roboto, sans-serif;; font-size: 16px">
+                              <p class="m-0" style="font-family: Roboto, sans-serif; font-size: 16px">
                                 <strong>
                                   <ng-container *ngIf="doc.type === 'pdf'">
                                     <em class="far fa-file-pdf text-danger ml-1"></em>
@@ -402,20 +399,21 @@
                           <span style="
                             color: #929292;
                             font-size: 15px;
-                            font-family: Roboto, sans-serif;;
+                            font-family: Roboto, sans-serif;
                           ">{{ attribute.fieldName }}</span>
-                          <table width="100%" border="1" class="mb-3" style="font-family: Roboto, sans-serif;">
+                          <table border="1" class="mb-3" style="font-family: Roboto, sans-serif;width:100%;">
+                            <caption></caption>
                             <tr>
                               <th id="header_col" class="pl-2" style="
                                 padding: 5px;
                                 font-size: 16px;
-                                font-family: Roboto, sans-serif;;
+                                font-family: Roboto, sans-serif;
                               ">
                                 <strong>{{ attribute.fieldTableValue[0].header }}</strong>
                               </th>
                               <th id="'col_'+i" style="
                                 font-size: 16px;
-                                font-family: Roboto, sans-serif;;
+                                font-family: Roboto, sans-serif;
                                 padding: 5px;
                                 text-align: center;
                               " *ngFor="
@@ -428,14 +426,14 @@
                               <td style="
                                 padding: 5px;
                                 font-size: 16px;
-                                font-family: Roboto, sans-serif;;
+                                font-family: Roboto, sans-serif;
                               ">
                                 <strong>{{ row.name }}</strong>
                               </td>
                               <td style="
                                 padding: 5px;
                                 font-size: 16px;
-                                font-family: Roboto, sans-serif;;
+                                font-family: Roboto, sans-serif;
                               " *ngFor="let rowVal of row.columns">
                                 {{ rowVal.value }}
                               </td>
@@ -447,14 +445,16 @@
                         <span style="
                           color: #929292;
                           font-size: 15px;
-                          font-family: Roboto, sans-serif;;
+                          font-family: Roboto, sans-serif;
                         ">{{ attribute.fieldName }}</span>
-                        <table width="100%" border="1" class="mb-3" style="font-family: Roboto, sans-serif;">
+                        <table border="1" class="mb-3" style="font-family: Roboto, sans-serif;width:100%">
+                          <caption></caption>
                           <tr>
-                            <th id="planned_installment" align="center" valign="middle" width="15%" style="
+                            <th id="planned_installment" style="
                               padding: 5px;
+                              width: 15%;
                               font-size: 16px;
-                              font-family: Roboto, sans-serif;;
+                              font-family: Roboto, sans-serif;
                             ">
                               <strong>Planned Installment #</strong>
                             </th>
@@ -467,7 +467,7 @@
                                 <th id="'col1_'+i" class="pl-2" style="
                                   padding: 5px;
                                   font-size: 16px;
-                                  font-family: Roboto, sans-serif;;
+                                  font-family: Roboto, sans-serif;
                                 " align="center">
                                   <strong>{{
                                     column.name === "Notes"
@@ -486,16 +486,16 @@
                               <td style="
                                 padding: 5px;
                                 font-size: 16px;
-                                font-family: Roboto, sans-serif;;
-                              " align="center">
+                                font-family: Roboto, sans-serif;
+                              ">
                                 {{ row.name }}
                               </td>
                               <ng-container *ngFor="let column of row.columns; let j = index">
-                                <td align="right" *ngIf="j === 1 || j === 2" style="
+                                <td *ngIf="j === 1 || j === 2" style="
                                   min-width: 150px;
                                   padding: 5px;
                                   font-size: 16px;
-                                  font-family: Roboto, sans-serif;;
+                                  font-family: Roboto, sans-serif;
                                 ">
                                   <ng-container *ngIf="column.dataType === 'currency'">₹
                                     {{ getFormattedCurrency(column.value) }}
@@ -506,16 +506,17 @@
                                 " style="
                                   padding: 5px;
                                   font-size: 16px;
-                                  font-family: Roboto, sans-serif;;
+                                  font-family: Roboto, sans-serif;
                                 ">
                                   <ng-container>{{ column.value }}</ng-container>
                                 </td>
                                 <td *ngIf="
                                   j !== 1 && j !== 2 && column.name === 'Notes'
-                                " width="35%" style="
+                                " style="
                                   padding: 5px;
+                                  width:35%;
                                   font-size: 16px;
-                                  font-family: Roboto, sans-serif;;
+                                  font-family: Roboto, sans-serif;
                                 ">
                                   <ng-container>{{ column.value }}</ng-container>
                                 </td>
@@ -526,19 +527,19 @@
                             <td style="
                               padding: 5px;
                               font-size: 16px;
-                              font-family: Roboto, sans-serif;;
+                              font-family: Roboto, sans-serif;
                             ">
                               <strong>Total:</strong>
                             </td>
-                            <td align="right" style="
+                            <td style="
                               padding: 5px;
                               font-size: 16px;
-                              font-family: Roboto, sans-serif;;
+                              font-family: Roboto, sans-serif;
                             " *ngFor="
                               let column of attribute.fieldTableValue[0]
                                 .columns;
                               let j = index
-                            " valign="middle">
+                            ">
                               <strong *ngIf="column.dataType === 'currency'">{{
                                 getTotals(j, attribute.fieldTableValue)
                                 }}</strong>
@@ -649,7 +650,7 @@
                     color: #000;
                     font-weight: 800;
                     font-size: 15px;
-                    font-family: Roboto, sans-serif;;
+                    font-family: Roboto, sans-serif;
                   " class="bolded">Start Date:</span>
                   <div class="ml-0 mb-3">
                     <strong>{{ currentGrant.stDate | date: "dd-MMM-yyyy" }}</strong>
@@ -660,7 +661,7 @@
                     color: #000;
                     font-weight: 800;
                     font-size: 15px;
-                    font-family: Roboto, sans-serif;;
+                    font-family: Roboto, sans-serif;
                   " class="bolded">End Date:</span>
                   <div class="ml-0 mb-3">
                     <strong>{{ currentGrant.enDate | date: "dd-MMM-yyyy" }}</strong>
@@ -671,7 +672,7 @@
                     color: #000;
                     font-weight: 800;
                     font-size: 15px;
-                    font-family: Roboto, sans-serif;;
+                    font-family: Roboto, sans-serif;
                   " class="bolded">Duration:</span>
                   <div class="ml-0 mb-3">
                     <strong (change)="trackChange($event)">{{
@@ -684,7 +685,7 @@
                     color: #000;
                     font-weight: 800;
                     font-size: 15px;
-                    font-family: Roboto, sans-serif;;
+                    font-family: Roboto, sans-serif;
                   " class="bolded">Amount:</span>
                   <div class="ml-0 mb-3" style="display: flex; align-items: center">
                     <img alt="img" src="./assets/img/rupee.png" style="width: 12px" /><strong>{{
@@ -697,7 +698,7 @@
                     color: #000;
                     font-weight: 800;
                     font-size: 15px;
-                    font-family: Roboto, sans-serif;;
+                    font-family: Roboto, sans-serif;
                   " class="bolded">Amount (In Words):</span>
                   <div class="ml-0 mb-3" style="display: flex; align-items: center">
                     <strong>{{ getGrantAmountInWords(currentGrant.amount) }}</strong>
@@ -708,7 +709,7 @@
                     color: #000;
                     font-weight: 800;
                     font-size: 15px;
-                    font-family: Roboto, sans-serif;;
+                    font-family: Roboto, sans-serif;
                   " class="bolded">Implementing Organization:</span>
                   <div *ngIf="currentGrant.organization" class="ml-0 mb-3">
                     <strong>{{ currentGrant.organization.name }}</strong>
@@ -719,7 +720,7 @@
                     color: #000;
                     font-weight: 800;
                     font-size: 15px;
-                    font-family: Roboto, sans-serif;;
+                    font-family: Roboto, sans-serif;
                   " class="bolded">Implementing Organization Representative:</span>
                   <div class="ml-0 mb-3">
                     <strong>{{ currentGrant.representative }}</strong>
@@ -734,7 +735,7 @@
                         color: #000;
                         font-weight: bold;
                         font-size: 18px;
-                        font-family: Roboto, sans-serif;;
+                        font-family: Roboto, sans-serif;
                       " class="bolded">{{ section.sectionName.toLocaleUpperCase() }}</span>
                     </h5>
 
@@ -750,7 +751,7 @@
                                 color: #000;
                                 font-weight: bold;
                                 font-size: 16px;
-                                font-family: Roboto, sans-serif;;
+                                font-family: Roboto, sans-serif;
                               " class="bolded">{{ attribute.fieldName }}</span>
                               <pre
                                 class="mt-1 text-justify"><strong><p style="font-size:15px;font-weight: 400;text-align:justify;" class="mb-0" [innerHtml]="attribute.fieldValue"></p></strong></pre>
@@ -759,24 +760,27 @@
 
                           <ng-container *ngIf="attribute.fieldType === 'kpi'" class="mb-2">
                             <div class="col-sm-12 col-lg-12 text-left mb-3">
-                              <table width="100%" border="1">
+                              <table border="1" style="width:100%;">
+                                <caption></caption>
                                 <tr>
                                   <th id="col2_kpi" colspan="3" style="padding: 5px">KPI</th>
                                 </tr>
                                 <tr>
-                                  <td width="50%" style="
+                                  <td style="
                                     padding: 5px;
+                                    width: 50%;
                                     font-size: 16px;
-                                    font-family: Roboto, sans-serif;;
+                                    font-family: Roboto, sans-serif;
                                   ">
                                     <strong>{{ attribute.fieldName }}</strong>
                                   </td>
-                                  <td width="25%" style="
+                                  <td style="
                                     font-size: 15px;
-                                    font-family: Roboto, sans-serif;;
+                                    width: 25%;
+                                    font-family: Roboto, sans-serif;
                                     padding: 5px;
                                     font-weight: 400;
-                                  " valign="top">
+                                  ">
                                     <table>
                                       <tr>
                                         <th id="grant_level_goal_1">
@@ -784,7 +788,7 @@
                                             color: #000;
                                             font-weight: 800;
                                             font-size: 13px;
-                                            font-family: Roboto, sans-serif;;
+                                            font-family: Roboto, sans-serif;
                                           " class="bolded">Grant Level Goal:</span>
                                         </th>
                                       </tr>
@@ -799,20 +803,22 @@
                                       </tr>
                                     </table>
                                   </td>
-                                  <td width="25%" style="
+                                  <td style="
                                     font-size: 15px;
-                                    font-family: Roboto, sans-serif;;
+                                    width:25%; 
+                                    font-family: Roboto, sans-serif;
                                     padding: 5px;
                                     font-weight: 400;
-                                  " valign="top">
+                                  ">
                                     <table>
+                                      <caption></caption>
                                       <tr>
                                         <th id="frquency1">
                                           <span style="
                                             color: #000;
                                             font-weight: 800;
                                             font-size: 13px;
-                                            font-family: Roboto, sans-serif;;
+                                            font-family: Roboto, sans-serif;
                                           " class="bolded">Frequency:</span>
                                         </th>
                                       </tr>
@@ -829,17 +835,6 @@
                                   </td>
                                 </tr>
                               </table>
-                              <!--<div class="row mx-2">
-                                                <div class="col-8">
-                                                    <div></div>
-                                                </div>
-                                                <div class="col-2">
-                                                    <div placeholder="Target/Goal"></div>
-                                                </div>
-                                                <div class="col-2">
-                                                    <div placeholder="Frequency"></div>
-                                                </div>
-                                            </div>-->
                             </div>
                           </ng-container>
                           <ng-container *ngIf="attribute.fieldType === 'document'">
@@ -848,12 +843,12 @@
                                 color: #000;
                                 font-weight: 800;
                                 font-size: 15px;
-                                font-family: Roboto, sans-serif;;
+                                font-family: Roboto, sans-serif;
                               " class="bolded">{{ attribute.fieldName }}</span>
                               <ul>
                                 <li *ngFor="let doc of attribute.attachments" style="list-style-type: none">
                                   <p class="m-0" style="
-                                    font-family: Roboto, sans-serif;;
+                                    font-family: Roboto, sans-serif;
                                     font-size: 15px;
                                     font-weight: 400;
                                   ">
@@ -892,14 +887,15 @@
                                 color: #000;
                                 font-weight: 800;
                                 font-size: 15px;
-                                font-family: Roboto, sans-serif;;
+                                font-family: Roboto, sans-serif;
                               " class="bolded">{{ attribute.fieldName }}</span>
-                              <table width="100%" border="1" class="mb-3" style="font-family: Roboto, sans-serif;">
+                              <table border="1" class="mb-3" style="font-family: Roboto, sans-serif;width: 100%;">
+                                <caption></caption>
                                 <tr>
                                   <th id="field_header" class="pl-2" style="
                                     padding: 5px;
                                     font-size: 15px;
-                                    font-family: Roboto, sans-serif;;
+                                    font-family: Roboto, sans-serif;
                                     font-weight: 400;
                                   ">
                                     <strong>{{
@@ -908,7 +904,7 @@
                                   </th>
                                   <th id="'colx_'+i" style="
                                     font-size: 15px;
-                                    font-family: Roboto, sans-serif;;
+                                    font-family: Roboto, sans-serif;
                                     padding: 5px;
                                     text-align: center;
                                     font-weight: 400;
@@ -923,7 +919,7 @@
                                   <td style="
                                     padding: 5px;
                                     font-size: 15px;
-                                    font-family: Roboto, sans-serif;;
+                                    font-family: Roboto, sans-serif;
                                     font-weight: 400;
                                   ">
                                     <strong>{{ row.name }}</strong>
@@ -931,7 +927,7 @@
                                   <td style="
                                     padding: 5px;
                                     font-size: 15px;
-                                    font-family: Roboto, sans-serif;;
+                                    font-family: Roboto, sans-serif;
                                     font-weight: 400;
                                   " *ngFor="let rowVal of row.columns">
                                     {{ rowVal.value }}
@@ -945,14 +941,16 @@
                               color: #000;
                               font-weight: 800;
                               font-size: 15px;
-                              font-family: Roboto, sans-serif;;
+                              font-family: Roboto, sans-serif;
                             " class="bolded">{{ attribute.fieldName }}</span>
-                            <table width="100%" border="1" class="mb-3" style="font-family: Roboto, sans-serif;">
+                            <table border="1" class="mb-3" style="font-family: Roboto, sans-serif;width:100%;">
+                              <caption></caption>
                               <tr>
-                                <th id="planned_installment_2" align="center" valign="middle" width="15%" style="
+                                <th id="planned_installment_2" align="center" style="
                                   padding: 5px;
+                                  width: 15%;
                                   font-size: 15px;
-                                  font-family: Roboto, sans-serif;;
+                                  font-family: Roboto, sans-serif;
                                   font-weight: 400;
                                 ">
                                   <strong>Planned Installment #</strong>
@@ -966,9 +964,9 @@
                                     <th id="'cola_'+i" class="pl-2" style="
                                       padding: 5px;
                                       font-size: 15px;
-                                      font-family: Roboto, sans-serif;;
+                                      font-family: Roboto, sans-serif;
                                       font-weight: 400;
-                                    " align="center">
+                                    ">
                                       <strong>{{
                                         column.name === "Notes"
                                         ? "Milestones/Notes"
@@ -986,20 +984,20 @@
                                   <td style="
                                     padding: 5px;
                                     font-size: 15px;
-                                    font-family: Roboto, sans-serif;;
+                                    font-family: Roboto, sans-serif;
                                     font-weight: 400;
-                                  " align="center">
+                                  ">
                                     {{ row.name }}
                                   </td>
                                   <ng-container *ngFor="
                                     let column of row.columns;
                                     let j = index
                                   ">
-                                    <td align="right" *ngIf="j === 1 || j === 2" style="
+                                    <td *ngIf="j === 1 || j === 2" style="
                                       min-width: 150px;
                                       padding: 5px;
                                       font-size: 15px;
-                                      font-family: Roboto, sans-serif;;
+                                      font-family: Roboto, sans-serif;
                                       font-weight: 400;
                                     ">
                                       <ng-container *ngIf="column.dataType === 'currency'">₹
@@ -1013,7 +1011,7 @@
                                     " style="
                                       padding: 5px;
                                       font-size: 15px;
-                                      font-family: Roboto, sans-serif;;
+                                      font-family: Roboto, sans-serif;
                                       font-weight: 400;
                                     ">
                                       <ng-container>{{
@@ -1024,10 +1022,11 @@
                                       j !== 1 &&
                                       j !== 2 &&
                                       column.name === 'Notes'
-                                    " width="35%" style="
+                                    " style="
                                       padding: 5px;
+                                      width:35%;
                                       font-size: 15px;
-                                      font-family: Roboto, sans-serif;;
+                                      font-family: Roboto, sans-serif;
                                       font-weight: 400;
                                     ">
                                       <ng-container>{{
@@ -1041,21 +1040,21 @@
                                 <td style="
                                   padding: 5px;
                                   font-size: 15px;
-                                  font-family: Roboto, sans-serif;;
+                                  font-family: Roboto, sans-serif;
                                   font-weight: 400;
                                 ">
                                   <strong>Total:</strong>
                                 </td>
-                                <td align="right" style="
+                                <td style="
                                   padding: 5px;
                                   font-size: 15px;
-                                  font-family: Roboto, sans-serif;;
+                                  font-family: Roboto, sans-serif;
                                   font-weight: 400;
                                 " *ngFor="
                                   let column of attribute.fieldTableValue[0]
                                     .columns;
                                   let j = index
-                                " valign="middle">
+                                ">
                                   <strong *ngIf="column.dataType === 'currency'">{{
                                     getTotals(j, attribute.fieldTableValue)
                                     }}</strong>

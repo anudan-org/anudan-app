@@ -24,10 +24,10 @@
           </mat-icon>
           <mat-icon style="cursor: pointer" (click)="showMessages()" *ngIf="msgCount === 0"
             class="float-left mr-5 text-white">notifications</mat-icon>
-          <img *ngIf="appComponent.profile.length>0" [src]="appComponent.profile"
+          <img alt="profile pic" *ngIf="appComponent.profile.length>0" [src]="appComponent.profile"
             class="img-fluid w-10 mr-2 rounded-circle"
             style="width: 50px;max-width: 50px;height: 50px;object-fit: cover;" />
-          <img *ngIf="appComponent.profile.length===0" src="./assets/img/profile-avatar.png"
+          <img alt="logout" *ngIf="appComponent.profile.length===0" src="./assets/img/profile-avatar.png"
             class="img-fluid w-10 mr-2 rounded-circle"
             style="width: 50px;max-width: 50px;height: 50px;object-fit: cover;" />{{ appComponent.loggedInUser.lastName
           }},
@@ -56,10 +56,10 @@
             justify-content: flex-end;
           " class="float-right mr-3 mt-3 text-white">
           <mat-icon class="float-left mr-5 text-light">notifications_none</mat-icon>
-          <img *ngIf="appComponent.profile.length>0" [src]="appComponent.profile"
+          <img alt="profile pic" *ngIf="appComponent.profile.length>0" [src]="appComponent.profile"
             class="img-fluid w-10 mr-2 rounded-circle"
             style="width: 50px;max-width: 50px;height: 50px;object-fit: cover;" />
-          <img *ngIf="appComponent.profile.length===0" src="./assets/img/profile-avatar.png"
+          <img alt="logout" *ngIf="appComponent.profile.length===0" src="./assets/img/profile-avatar.png"
             class="img-fluid w-10 mr-2 rounded-circle"
             style="width: 50px;max-width: 50px;height: 50px;object-fit: cover;" />{{ appComponent.loggedInUser.lastName
           }},
@@ -89,7 +89,6 @@
       &nbsp;
     </div>
 
-    <!--<app-navbar></app-navbar>-->
     <div *ngIf="appComponent.currentView === 'grant'" class="px-4 pt-4 pb-4 text-left" style="
         position: sticky;
         top: 0;
@@ -187,14 +186,6 @@
       <span style="color: #f4f4f4"> > </span>
       <ng-container *ngIf="currentClosure">
         <div class="m-1" style="color: #fff; max-width: 500px">
-          <!-- <ng-container *ngIf="currentClosure.status.internalStatus!=='CLOSED'">
-            <p class="mb-0 text-subheader text-white d-flex align-items-center text-left"
-            style="font-weight: 600; font-size: 12px">
-            <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
-              info_outline
-            </mat-icon>
-            Underlying grant has been amended. Please check if this report is still valid.</p>
-          </ng-container> -->
           {{ 'Closure Request for Grant' + currentClosure.grant.name }}
         </div>
       </ng-container>
@@ -277,30 +268,7 @@
         {{ appComponent.autosaveDisplay }}
       </p>
     </div>
-    <!--div *ngIf="appComponent.currentView !== 'grants' && appComponent.currentView !== 'upcoming' && appComponent.currentView !== 'user-profile'" class="row" style="background: #fff; padding: 10px; margin: 0 30px; position: sticky; top: 67px; z-index: 3;">
-            <div class="col-12">
-                <div class="float-right ml-2">
-                    <a (click)="showWorkflowAssigments()"><img alt="img"src="./assets/img/wfassignmnet.svg" style="width:25px;"></a>
-                </div>
-                <div class="float-right ml-4">
-                    <a *ngIf="appComponent.currentView==='grant'" (click)="showHistory('grant',currentGrant)"><img alt="img"src="./assets/img/note.svg" style="width:25px;"></a>
-                    <a *ngIf="appComponent.currentView==='report'" (click)="showHistory('report',currentReport)"><img alt="img"src="./assets/img/note.svg" style="width:25px;"></a>
-                </div>
-
-
-                <div class="float-left" >
-                    <strong>{{ appComponent.autosaveDisplay}}</strong>
-                </div>
-                <br>
-                <div class="float-left" *ngIf="appComponent.action !== 'preview'">
-                    <strong><small *ngIf="appComponent.selectedTemplate">Based on template '{{appComponent.selectedTemplate.name}}'</small></strong>
-                </div>
-            </div>
-        </div>-->
     <router-outlet></router-outlet>
-    <!-- <div *ngIf="isMaps('maps')">
-      <app-footer style="padding-bottom: 0;"></app-footer>
-    </div> -->
   </div>
   <app-footer style="padding-bottom: 0;"></app-footer>
 </div>

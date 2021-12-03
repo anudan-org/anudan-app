@@ -4,10 +4,7 @@
 
 <ng-container
   *ngIf="message.type==='doc' || message.type==='docx' || message.type==='xls' || message.type==='xlsx' || message.type==='ppt' || message.type==='pptx'">
-  here
-  <iframe title="Preview"
-    src='https://view.officeapps.live.com/op/embed.aspx?src=https://uat.anudan.org/temp/DLxRVGRHzykMEpzKbtubqRrGZwYJLSedVoEdgztGAGYVRhIKFgbcKTiKcFxOdRJrnUEXlROEKrKhSharwSgRBKFLTnLIhlhWIFblMbmPCQHkrgvYLvymPjvFpbavdfg.docx'
-    width='100%' height='100%'>This is
+  <iframe title="Preview" [src]='message.url' width='100%' height='100%'>This is
     an embedded <a target='_blank' href='http://office.com'>Microsoft Office</a> document, powered by <a target='_blank'
       href='http://office.com/webapps'>Office Online</a>.</iframe>
 </ng-container>

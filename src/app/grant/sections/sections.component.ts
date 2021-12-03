@@ -13,20 +13,14 @@ import {
   AfterViewChecked,
   AfterViewInit,
   HostListener,
-  ChangeDetectorRef,
 } from "@angular/core";
 import {
   AttachmentTemplates,
   Doc,
-  DocumentKpiSubmission,
   FileTemplates,
   Grant,
-  GrantKpi,
-  Kpi,
   Note,
   NoteTemplates,
-  QuantitiaveKpisubmission,
-  QualitativeKpiSubmission,
   Section,
   Submission,
   SubmissionStatus,
@@ -62,7 +56,7 @@ import {
 } from "@angular/material";
 import { DatePipe } from "@angular/common";
 import { Colors, Configuration } from "../../model/app-config";
-import { interval, Observable, Subject } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { FieldDialogComponent } from "../../components/field-dialog/field-dialog.component";
 import { SectionEditComponent } from "../../components/section-edit/section-edit.component";
 import { BottomsheetComponent } from "../../components/bottomsheet/bottomsheet.component";
@@ -1141,8 +1135,8 @@ export class SectionsComponent
     );
     row.header = attr.fieldTableValue[0].header;
     row.columns = JSON.parse(JSON.stringify(attr.fieldTableValue[0].columns));
-    for (let i = 0; i < row.columns.length; i++) {
-      row.columns[i].value = "";
+    for (let i of row.columns) {
+      i.value = "";
     }
 
     attr.fieldTableValue.push(row);
@@ -1449,11 +1443,9 @@ export class SectionsComponent
       filterValue = value.name;
     }
 
-    const selectedDoc = this.options.filter((option) =>
+    return this.options.filter((option) =>
       option.name.toLowerCase().includes(filterValue)
     );
-
-    return selectedDoc;
   }
 
   displayFn = (doc) => {
@@ -1946,10 +1938,15 @@ export class SectionsComponent
   previewDocument(_for, attach) {
 
     this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentGrant.id, attach).then((result: any) => {
+      let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
+      let docUrl;
+      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/embed.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
+      }
       this.dialog.open(DocpreviewComponent, {
         data: {
-          url: this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/embed.aspx?src=" + location.origin + "/api/public/doc/" + result.url),
-          type: result.url.substring(result.url.lastIndexOf(".") + 1)
+          url: docUrl,
+          type: docType
         },
         panelClass: "wf-assignment-class"
       });
