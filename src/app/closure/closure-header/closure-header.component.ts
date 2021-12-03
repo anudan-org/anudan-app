@@ -55,9 +55,6 @@ export class ClosureHeaderComponent implements OnInit {
 
   @ViewChild("createSectionModal") createSectionModal: ElementRef;
 
-
-
-
   constructor(public appComp: AppComponent,
     private adminComp: AdminLayoutComponent,
     private titlecasePipe: TitleCasePipe,
