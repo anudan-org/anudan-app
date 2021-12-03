@@ -127,21 +127,7 @@ export class ClosureHeaderComponent implements OnInit {
       }
     });
 
-    this.appComp.closureUpdated.subscribe((statusUpdate) => {
-          if (statusUpdate.status && statusUpdate.closureId && this.appComp.loggedInUser !== undefined) {
-            let urlNew =
-              "/api/user/" + this.appComp.loggedInUser.id + "/closure/" + statusUpdate.closureId;
 
-
-            this.http.get(urlNew, httpOptions).subscribe((closure: GrantClosure) => {
-              if (closure) {
-                if (this.currentClosure && this.currentClosure.id === Number(closure.id)) {
-                  this.closureService.changeMessage(closure, appComp.loggedInUser.id);
-                }
-              }
-            });
-          }
-        });
 
 
     let url = '/api/app/config/closure/' + this.currentClosure.id;
@@ -156,6 +142,7 @@ export class ClosureHeaderComponent implements OnInit {
   }
 
   ngOnInit() {
+  this.logoUrl = "/api/public/images/" + this.currentClosure.grant.grantorOrganization.code + "/logo";
 
     this.getClosureReasons();
 
