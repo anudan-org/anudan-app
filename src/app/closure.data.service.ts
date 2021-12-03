@@ -1,3 +1,4 @@
+import { AppComponent } from 'app/app.component';
 import { HttpHeaders } from '@angular/common/http';
 import { UserService } from './user.service';
 import { HttpClient } from '@angular/common/http';
@@ -21,7 +22,10 @@ export class ClosureDataService {
   url: string = "/api/user/%USERID%/closure";
 
   constructor(private httpClient: HttpClient,
-    private userService: UserService) { }
+    private userService: UserService) {
+
+
+  }
 
   changeMessage(message: GrantClosure, userId: number) {
 
@@ -73,5 +77,31 @@ export class ClosureDataService {
     } else {
       return Promise.resolve(null);
     }
+  }
+
+  updateClosure(appComp: AppComponent): GrantClosure {
+    let grantClosure: GrantClosure;
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+    appComp.closureUpdated.subscribe((statusUpdate) => {
+      if (statusUpdate.status && statusUpdate.closureId && appComp.loggedInUser !== undefined) {
+        let urlNew =
+          "/api/user/" + appComp.loggedInUser.id + "/closure/" + statusUpdate.closureId;
+
+
+        this.httpClient.get(urlNew, httpOptions).subscribe((closure: GrantClosure) => {
+          if (closure) {
+            this.changeMessage(closure, appComp.loggedInUser.id);
+            grantClosure = closure;
+          }
+        });
+      }
+    });
+    return grantClosure;
   }
 }
