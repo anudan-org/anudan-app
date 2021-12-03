@@ -1561,7 +1561,7 @@ export class GrantCompareComponent implements OnInit {
   getDisbursementTabularDataNew(oldData, data) {
     let html = '<table width="100%" border="1" class="bg-white"><tr>';
     const tabData = data;
-    if (tabData) {
+    if (oldData && tabData) {
       html += '<td>' + this.getTheDifference(oldData[0].header ? oldData[0].header : '', tabData[0].header ? tabData[0].header : '').after + '</td>';
       for (let i = 0; i < tabData[0].columns.length; i++) {
 

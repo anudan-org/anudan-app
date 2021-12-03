@@ -47,6 +47,7 @@
             <input id='attachment_{{attachment.id}}' mat-list-icon class="attachment-checkbox" type="checkbox" (change)="
                                     handleSelection(attachment.id)
                                   " style="width: 18px;" />
+                                  <a (click)="previewDocument('project',attachment.id)"><mat-icon class="float-right" style="color: #676767; font-size: 1.5em;">remove_red_eye</mat-icon></a>
           </mat-list-item>
         </ng-container>
         <mat-list-item *ngIf="

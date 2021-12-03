@@ -1,0 +1,18 @@
+<span class="" style="position:absolute; right: 10px; left: auto;top: 10px;" (click)="onNoClick()">
+  <mat-icon>close</mat-icon>
+</span>
+
+<ng-container
+  *ngIf="message.type==='doc' || message.type==='docx' || message.type==='xls' || message.type==='xlsx' || message.type==='ppt' || message.type==='pptx'">
+  here
+  <iframe title="Preview"
+    src='https://view.officeapps.live.com/op/embed.aspx?src=https://uat.anudan.org/temp/DLxRVGRHzykMEpzKbtubqRrGZwYJLSedVoEdgztGAGYVRhIKFgbcKTiKcFxOdRJrnUEXlROEKrKhSharwSgRBKFLTnLIhlhWIFblMbmPCQHkrgvYLvymPjvFpbavdfg.docx'
+    width='100%' height='100%'>This is
+    an embedded <a target='_blank' href='http://office.com'>Microsoft Office</a> document, powered by <a target='_blank'
+      href='http://office.com/webapps'>Office Online</a>.</iframe>
+</ng-container>
+<ng-container *ngIf="message.type==='pdf' || message.type==='txt'">
+  <iframe title="Preview" src='https://uat.anudan.org/temp/lmno.pdf' width='100%' height='100%'>This is
+    an embedded <a target='_blank' href='http://office.com'>Microsoft Office</a> document, powered by <a target='_blank'
+      href='http://office.com/webapps'>Office Online</a>.</iframe>
+</ng-container>

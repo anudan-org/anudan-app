@@ -1,21 +1,15 @@
+import { DocpreviewComponent } from './docpreview/docpreview.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, NO_ERRORS_SCHEMA, LOCALE_ID, ErrorHandler } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA, ErrorHandler } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app.routing';
 import { ComponentsModule } from './components/components.module';
 import { AppComponent } from './app.component';
 import { WelcomeComponent } from './welcome/welcome.component';
-import { UserProfileComponent } from './user-profile/user-profile.component';
-import { TableListComponent } from './table-list/table-list.component';
-import { TypographyComponent } from './typography/typography.component';
-import { IconsComponent } from './icons/icons.component';
-import { MapsComponent } from './maps/maps.component';
-import { NotificationsComponent } from './notifications/notifications.component';
-import { UpgradeComponent } from './upgrade/upgrade.component';
 import { LoginComponent } from './login/login.component';
 import { PasswordResetComponent } from './password-reset/password-reset.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
@@ -33,8 +27,7 @@ import {
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { KpisubmissionComponent } from './kpisubmission/kpisubmission.component';
 import { RegistrationComponent } from './registration/registration.component';
-import { SocialLoginModule, AuthServiceConfig } from 'ng-social-login-module';
-import { GoogleLoginProvider, LinkedinLoginProvider } from 'ng-social-login-module';
+import { SocialLoginModule, AuthServiceConfig, GoogleLoginProvider, LinkedinLoginProvider } from 'ng-social-login-module';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { ToastrModule } from 'ngx-toastr';
@@ -54,7 +47,9 @@ import { ClosureSelectionComponent } from './components/closure-selection/closur
 
 
 export class AnudanErrorHandler implements ErrorHandler {
-  constructor() { }
+  constructor() {
+    // This is intentional
+  }
   handleError(error: Error) {
     if (Error) {
       console.log(error);
@@ -95,6 +90,7 @@ export function provideConfig() {
     GranthistoryComponent,
     MessagingComponent,
     FieldDialogComponent,
+    DocpreviewComponent,
     ClosureSelectionComponent,
     ProjectDocumentsComponent,
     OwnersPopupComponent,
@@ -163,7 +159,7 @@ export function provideConfig() {
     MatMenuModule,
     { provide: ErrorHandler, useClass: AnudanErrorHandler }
   ],
-  entryComponents: [WfassignmentComponent, GranthistoryComponent, NotificationspopupComponent, MessagingComponent, FieldDialogComponent, OwnersPopupComponent, ProjectDocumentsComponent, ClosureSelectionComponent],
+  entryComponents: [WfassignmentComponent, GranthistoryComponent, NotificationspopupComponent, MessagingComponent, FieldDialogComponent, OwnersPopupComponent, ProjectDocumentsComponent, ClosureSelectionComponent, DocpreviewComponent],
   schemas: [NO_ERRORS_SCHEMA],
   bootstrap: [AppComponent]
 })

@@ -1,7 +1,10 @@
+import { DomSanitizer } from '@angular/platform-browser';
+import { DocpreviewComponent } from './../../docpreview/docpreview.component';
+import { DocpreviewService } from './../../docpreview.service';
 import { Component, Inject, OnInit, ElementRef } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef, MatButtonModule, MatDialog } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
-import { DocInfo, AttachmentDownloadRequest } from 'app/model/dahsboard';
+import { AttachmentDownloadRequest } from 'app/model/dahsboard';
 import { ProjectDoc } from 'app/model/project-doc';
 import { saveAs } from "file-saver";
 import { FieldDialogComponent } from '../field-dialog/field-dialog.component';
@@ -28,7 +31,9 @@ export class ProjectDocumentsComponent implements OnInit {
     , @Inject(MAT_DIALOG_DATA) public message: any,
     private http: HttpClient,
     private elem: ElementRef,
-    private dialog: MatDialog) {
+    private dialog: MatDialog,
+    private docPreviewService: DocpreviewService,
+    private sanitizer: DomSanitizer,) {
     this.dialogRef.disableClose = true;
 
     const endpoint =
@@ -53,6 +58,7 @@ export class ProjectDocumentsComponent implements OnInit {
   }
 
   ngOnInit() {
+    //Left blank intentionally
   }
 
   onNoClick(): void {
@@ -209,6 +215,16 @@ export class ProjectDocumentsComponent implements OnInit {
         const index = this.projectDocs.findIndex(a => a.id === Number(attachmentId));
         this.projectDocs.splice(index, 1);
       });
+  }
+
+  previewDocument(_for, attach) {
+
+    this.docPreviewService.previewDoc(_for, this.message.loggedInUser.id, this.message.currentGrant.id, attach).then((result: any) => {
+      this.dialog.open(DocpreviewComponent, {
+        data: { url: this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/embed.aspx?src=" + location.origin + "/api/public/doc/" + result.url) },
+        panelClass: "wf-assignment-class"
+      });
+    });
   }
 
 }

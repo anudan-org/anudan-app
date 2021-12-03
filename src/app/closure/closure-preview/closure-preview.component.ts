@@ -12,8 +12,7 @@ import { WfvalidationService } from './../../wfvalidation.service';
 import { Configuration } from './../../model/app-config';
 import { FieldDialogComponent } from './../../components/field-dialog/field-dialog.component';
 import { MatDialog } from '@angular/material';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { AppComponent } from 'app/app.component';
 import { WorkflowStatus, Grant, TableData, Attribute, Section } from './../../model/dahsboard';
 import { ClosureWorkflowAssignmentModel, GrantClosure } from 'app/model/closures';
@@ -49,7 +48,7 @@ export class ClosurePreviewComponent implements OnInit {
   logoUrl: string;
 
   constructor(private closureService: ClosureDataService,
-    private appComp: AppComponent,
+    public appComp: AppComponent,
     private http: HttpClient,
     private dialog: MatDialog,
     private wfvalidationService: WfvalidationService,
@@ -66,17 +65,19 @@ export class ClosurePreviewComponent implements OnInit {
       console.log(this.currentClosure);
     });
 
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
     this.appComp.closureUpdated.subscribe((statusUpdate) => {
       if (statusUpdate.status && statusUpdate.closureId && this.appComp.loggedInUser !== undefined) {
         let urlNew =
           "/api/user/" + this.appComp.loggedInUser.id + "/closure/" + statusUpdate.closureId;
-        const httpOptions = {
-          headers: new HttpHeaders({
-            "Content-Type": "application/json",
-            "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-            Authorization: localStorage.getItem("AUTH_TOKEN"),
-          }),
-        };
+
 
         this.http.get(urlNew, httpOptions).subscribe((closure: GrantClosure) => {
           if (closure) {
@@ -88,13 +89,6 @@ export class ClosurePreviewComponent implements OnInit {
       }
     });
 
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'X-TENANT-CODE': localStorage.getItem('X-TENANT-CODE'),
-        'Authorization': localStorage.getItem('AUTH_TOKEN')
-      })
-    };
     let url = '/api/app/config/closure/' + this.currentClosure.id;
 
     this.http.get(url, httpOptions).subscribe((config: Configuration) => {
@@ -179,9 +173,8 @@ export class ClosurePreviewComponent implements OnInit {
           this.submitClosure(toStateId);
         }, error => {
           const errorMsg = error as HttpErrorResponse;
-          const x = { 'enableHtml': true, 'preventDuplicates': true, 'positionClass': 'toast-top-full-width', 'progressBar': true } as Partial<IndividualConfig>;
-          const y = { 'enableHtml': true, 'preventDuplicates': true, 'positionClass': 'toast-top-right', 'progressBar': true } as Partial<IndividualConfig>;
-          const config: Partial<IndividualConfig> = y;
+
+          const config: Partial<IndividualConfig> = { 'enableHtml': true, 'preventDuplicates': true, 'positionClass': 'toast-top-right', 'progressBar': true } as Partial<IndividualConfig>;
           if (errorMsg.error.message === 'Token Expired') {
             alert("Your session has timed out. Please sign in again.")
             this.appComp.logout();
@@ -212,7 +205,7 @@ export class ClosurePreviewComponent implements OnInit {
     });
   }
 
-  submitAndSaveClosure(toStateId: number, message: String) {
+  submitAndSaveClosure(toStateId: number, message: string) {
 
     if (!message) {
       message = '';
