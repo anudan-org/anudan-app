@@ -7,7 +7,7 @@ import { GrantCompareComponent } from './../../grant-compare/grant-compare.compo
 import { GrantApiService } from './../../grant-api.service';
 import { WfvalidationService } from './../../wfvalidation.service';
 import { WorkflowValidationService } from './../../workflow-validation-service';
-import { GrantTag, OrgTag } from './../../model/dahsboard';
+import { OrgTag } from './../../model/dahsboard';
 import { GrantTagsComponent } from './../../grant-tags/grant-tags.component';
 import { AdminService } from './../../admin.service';
 import { GranttypeSelectionDialogComponent } from 'app/components/granttype-selection-dialog/granttype-selection-dialog.component';
@@ -16,28 +16,12 @@ import {
   ElementRef,
   OnInit,
   ViewChild,
-  OnDestroy,
 } from "@angular/core";
 import {
-  ActionAuthorities,
-  AttachmentTemplates,
   Attribute,
-  Doc,
-  DocumentKpiSubmission,
-  FileTemplates,
   Grant,
-  GrantDetails,
-  GrantKpi,
-  Kpi,
-  Note,
-  NoteTemplates,
-  QualitativeKpiSubmission,
-  QuantitiaveKpisubmission,
   Section,
   Submission,
-  SubmissionStatus,
-  Template,
-  TableData,
   TemplateLibrary,
   WorkflowStatus,
   WorkflowAssignmentModel,
@@ -64,24 +48,17 @@ import { DatePipe, TitleCasePipe } from "@angular/common";
 import { Colors, Configuration } from "../../model/app-config";
 import { User } from "../../model/user";
 import { SidebarComponent } from "../../components/sidebar/sidebar.component";
-import { interval, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { FieldDialogComponent } from "../../components/field-dialog/field-dialog.component";
 import { InviteDialogComponent } from "../../components/invite-dialog/invite-dialog.component";
-import { BottomsheetComponent } from "../../components/bottomsheet/bottomsheet.component";
 import { WfassignmentComponent } from "../../components/wfassignment/wfassignment.component";
-import { BottomsheetAttachmentsComponent } from "../../components/bottomsheetAttachments/bottomsheetAttachments.component";
-import { BottomsheetNotesComponent } from "../../components/bottomsheetNotes/bottomsheetNotes.component";
 import { GrantNotesComponent } from "../../components/grantNotes/grantNotes.component";
-import { PdfDocument } from "../../model/pdf-document";
 import { TemplateDialogComponent } from "../../components/template-dialog/template-dialog.component";
 import {
   HumanizeDurationLanguage,
   HumanizeDuration,
 } from "humanize-duration-ts";
-import html2canvas from "html2canvas";
-import html2pdf from "html2pdf.js";
 import { PDFExportComponent } from "@progress/kendo-angular-pdf-export";
-import { PDFMarginComponent } from "@progress/kendo-angular-pdf-export";
 import { AdminLayoutComponent } from "../../layouts/admin-layout/admin-layout.component";
 import { saveAs } from "file-saver";
 import { GrantComponent } from "../grant.component";
@@ -90,11 +67,9 @@ import * as inf from "indian-number-format";
 import { Subscription } from "rxjs/Subscription";
 import { takeUntil } from "rxjs/operators";
 import { GrantValidationService } from "app/grant-validation-service";
-import { MessagingComponent } from "app/components/messaging/messaging.component";
 import { CurrencyService } from "app/currency-service";
 import { ProjectDocumentsComponent } from "app/components/project-documents/project-documents.component";
 import { ClosureSelectionComponent } from 'app/components/closure-selection/closure-selection.component';
-import { template } from '@angular/core/src/render3';
 
 @Component({
   selector: "app-preview",
@@ -173,7 +148,6 @@ export class PreviewComponent implements OnInit {
   @ViewChild("pdf2") pdf2;
   orgTags: OrgTag[] = [];
   currentClosure: GrantClosure;
-  //@ViewChild("pdf2Content") pdf2Content: ElementRef;
 
   constructor(
     private grantData: GrantDataService,
@@ -199,7 +173,8 @@ export class PreviewComponent implements OnInit {
     public currencyService: CurrencyService,
     private adminService: AdminService,
     private wfValidationService: WfvalidationService,
-    private grantApiService: GrantApiService
+    private grantApiService: GrantApiService,
+    private closureService: ClosureDataService,
   ) {
     this.colors = new Colors();
 
@@ -267,23 +242,10 @@ export class PreviewComponent implements OnInit {
         }
       });
 
-    const tenantCode = localStorage.getItem("X-TENANT-CODE");
     this.logoUrl =
       "/api/public/images/" +
       this.currentGrant.grantorOrganization.code +
       "/logo";
-
-    /*interval(3000).pipe(takeUntil(this.ngUnsubscribe)).subscribe(t => {
-
-      console.log('Came here');
-      if (this.editMode) {
-        this.appComp.autosave = true;
-        this.grantToUpdate = JSON.parse(JSON.stringify(this.currentGrant));
-        this.saveGrant();
-      } else {
-        this.appComp.autosave = false;
-      }
-    });*/
 
     if (this.currentGrant.startDate && this.currentGrant.endDate) {
       var time =
@@ -311,8 +273,8 @@ export class PreviewComponent implements OnInit {
             }
             if (docs.length > 0) {
               attribute.docs = new Array<TemplateLibrary>();
-              for (let i = 0; i < docs.length; i++) {
-                attribute.docs.push(docs[i]);
+              for (let d of docs) {
+                attribute.docs.push(d);
               }
             }
           }
@@ -327,10 +289,6 @@ export class PreviewComponent implements OnInit {
     console.log(this.currentGrant);
 
     this.originalGrant = JSON.parse(JSON.stringify(this.currentGrant));
-    //this.submissionData.currentMessage.pipe(takeUntil(this.ngUnsubscribe)).subscribe(submission => this.currentSubmission = submission);
-
-    //this.checkGrantPermissions();
-    //this.checkCurrentSubmission();
 
     $("#editFieldModal").on("shown.bs.modal", function (event) {
       $("#editFieldInput").focus();
@@ -394,18 +352,6 @@ export class PreviewComponent implements OnInit {
     }
   }
 
-  /*ngAfterViewInit(): void {
-    const firstCol = $('.first-column');
-    if (firstCol.length) {
-      this.firstColumnInitialPosition = firstCol.position().left;
-    }
-  }*/
-
-  /*ngAfterContentChecked(): void {
-    this._adjustHeights();
-    //this._setFlowButtonColors();
-  }*/
-
   rememberScrollPosition(event: Event) {
     console.log(event);
   }
@@ -439,7 +385,6 @@ export class PreviewComponent implements OnInit {
   confirm(
     sectionId: number,
     attributeId: number,
-    submissios: Submission[],
     kpiId: number,
     func: string,
     title: string,
@@ -469,9 +414,6 @@ export class PreviewComponent implements OnInit {
             case "wfassignment":
               this.showWorkflowAssigments(sectionId);
               break;
-            case "kpi":
-              this.deleteKpi(kpiId);
-              break;
           }
         } else {
           dialogRef.close();
@@ -491,45 +433,6 @@ export class PreviewComponent implements OnInit {
     }
   }
 
-  saveTemplate(templateId: number, templateName: string) { }
-
-  deleteKpi(kpiId: number) {
-    for (const kpi of this.currentGrant.kpis) {
-      if (kpi.id === kpiId) {
-        const index = this.currentGrant.kpis.findIndex((k) => k.id === kpiId);
-        this.currentGrant.kpis.splice(index, 1);
-      }
-    }
-
-    for (const sub of this.currentGrant.submissions) {
-      for (const kpiData of sub.quantitiaveKpisubmissions) {
-        if (kpiData.grantKpi.id === kpiId) {
-          const index = sub.quantitiaveKpisubmissions.findIndex(
-            (k) => k.grantKpi.id === kpiId
-          );
-          sub.quantitiaveKpisubmissions.splice(index, 1);
-        }
-      }
-      for (const kpiData of sub.qualitativeKpiSubmissions) {
-        if (kpiData.grantKpi.id === kpiId) {
-          const index = sub.qualitativeKpiSubmissions.findIndex(
-            (k) => k.grantKpi.id === kpiId
-          );
-          sub.qualitativeKpiSubmissions.splice(index, 1);
-        }
-      }
-      for (const kpiData of sub.documentKpiSubmissions) {
-        if (kpiData.grantKpi.id === kpiId) {
-          const index = sub.documentKpiSubmissions.findIndex(
-            (k) => k.grantKpi.id === kpiId
-          );
-          sub.qualitativeKpiSubmissions.splice(index, 1);
-        }
-      }
-    }
-
-    this.checkGrant();
-  }
 
   saveField() {
     const identifier = $("#editFieldIdHolder").val();
@@ -569,40 +472,13 @@ export class PreviewComponent implements OnInit {
     $(editFieldModal).modal("hide");
   }
 
-  updateGrant(event: any) {
-    /*console.log(this.currentGrant);
-    const fieldElem = event.targetElement;
-    const fielId = fieldElem.id;
-    const fieldVal = fieldElem.value;
-    switch (fielId) {
-      case 'grantName':
-        this.currentGrant.name = fieldVal;
-        break;
-      case 'grantDesc':
-        this.currentGrant.description = fieldVal;
-        break;
-      case 'grantStart':
-        this.currentGrant.startDate = new Date(fieldVal);
-        break;
-      case 'grantEnd':
-        this.currentGrant.endDate = new Date(fieldVal);
-        break;
-    }
-    this._setEditMode(true);
-    this.grantData.changeMessage(this.currentGrant);
-    console.log(this.currentGrant);*/
-  }
 
   saveGrant() {
     if (!this.currentGrant.canManage) {
       return;
     }
 
-    /*const errors = this.validateFields();
-    if (errors) {
-        this.toastr.error($(this.erroredElement).attr('placeholder') + ' is required', 'Missing entries');
-        $(this.erroredElement).focus();
-    } else {*/
+
     const httpOptions = {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
@@ -642,7 +518,6 @@ export class PreviewComponent implements OnInit {
           this.currentGrant = grant;
           this._setEditMode(false);
           this.currentSubmission = null;
-          //this.checkGrantPermissions();
           this.checkCurrentSubmission();
           this.appComp.autosave = false;
         },
@@ -679,57 +554,8 @@ export class PreviewComponent implements OnInit {
     return false;
   }
 
-  saveSubmissionAndMove(toStateId: number) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-        Authorization: localStorage.getItem("AUTH_TOKEN"),
-      }),
-    };
-
-    for (const sub of this.currentGrant.submissions) {
-      if (sub.id === this.currentSubmission.id) {
-        const subStatus = new SubmissionStatus();
-        subStatus.id = toStateId;
-        sub.submissionStatus = subStatus;
-      }
-    }
-
-    this.saveGrant();
-
-    /*let url = '/api/user/' + this.appComp.loggedInUser.id + '/grant/'
-        + this.currentGrant.id + '/submission/flow/'
-        + this.currentSubmission.submissionStatus.id + '/' + toStateId;
-
-    this.http.put(url, this.currentSubmission, httpOptions).pipe(takeUntil(this.ngUnsubscribe)).subscribe((submission: Submission) => {
-          this.submissionData.changeMessage(submission);
-
-          url = '/api/user/' + this.appComp.loggedInUser.id + '/grant/' + this.currentGrant.id;
-          this.http.get(url, httpOptions).pipe(takeUntil(this.ngUnsubscribe)).subscribe((updatedGrant: Grant) => {
-            this.grantData.changeMessage(updatedGrant);
-            this.editMode = false;
-            this.toastr.info('Submission saved with status <b>'
-                + this.currentSubmission.submissionStatus.displayName
-                + '</b>', 'Submission Saved')
-          });
-        },
-        error => {
-          const errorMsg = error as HttpErrorResponse;
-          console.log(error);
-          this.toastr.error(errorMsg.error.message, errorMsg.error.messageTitle, {
-            enableHtml: true
-          });
-        });*/
-  }
 
   addNewFieldToSection(sectionId: string, sectionName: string) {
-    /*const createFieldModal = this.createFieldModal.nativeElement;
-    const titleElem = $(createFieldModal).find('#createFieldLabel');
-    const idHolderElem = $(createFieldModal).find('#sectionIdHolder');
-    $(titleElem).html(sectionName + ' - Create new field');
-    $(idHolderElem).val(sectionId);
-    $(createFieldModal).modal('show');*/
     for (const section of this.currentGrant.grantDetails.sections) {
       if (section.id === Number(sectionId)) {
         const newAttr = new Attribute();
@@ -822,7 +648,6 @@ export class PreviewComponent implements OnInit {
           );
 
           sectionName.val("");
-          //$('#section_' + newSection.id).css('display', 'block');
           this._setEditMode(true);
           $(createSectionModal).modal("hide");
           this.appComp.sectionAdded = true;
@@ -874,7 +699,6 @@ export class PreviewComponent implements OnInit {
       return;
     }
 
-    const createSectionModal = this.createSectionModal.nativeElement;
     const currentSections = this.currentGrant.grantDetails.sections;
     const newSection = new Section();
     newSection.attributes = [];
@@ -906,159 +730,9 @@ export class PreviewComponent implements OnInit {
     }
   }
 
-  addNewKpi() {
-    const kpiModal = this.createKpiModal.nativeElement;
-    $(kpiModal).modal("show");
-  }
 
-  saveKpi() {
-    const kpiModal = this.createKpiModal.nativeElement;
-    //const kpiTypeElem = $(this.kpiTypeElem.nativeElement);
-    const kpiDesc = $(this.kpiDescriptionelem.nativeElement);
-    const id = 0 - Math.round(Math.random() * 10000000000);
 
-    const kpi = new Kpi();
-    kpi.id = id;
-    kpi.kpiType = this.currentKPIType.toUpperCase();
-    kpi.kpiReportingType =
-      this.currentKPIReportingType === null
-        ? null
-        : this.currentKPIReportingType.toUpperCase();
-    kpi.description = kpiDesc.val();
-    kpi.templates = [];
-    kpi.title = kpiDesc.val();
 
-    this.currentGrant.kpis.push(kpi);
-
-    const submissions = this.currentGrant.submissions;
-    const grantKpi = new GrantKpi();
-
-    grantKpi.id = id;
-    grantKpi.kpiType = this.currentKPIType.toUpperCase();
-    grantKpi.kpiReportingType =
-      this.currentKPIReportingType === null
-        ? null
-        : this.currentKPIReportingType.toUpperCase();
-    grantKpi.title = kpiDesc.val();
-    grantKpi.description = kpiDesc.val();
-    grantKpi.frequency = "YEARLY";
-    grantKpi.periodicity = 0;
-    grantKpi.scheduled = true;
-
-    for (const sub of this.currentGrant.submissions) {
-      if (this.currentKPIType === "Quantitative") {
-        const quantKpi = new QuantitiaveKpisubmission();
-        quantKpi.goal = 0;
-        quantKpi.toReport = true;
-        quantKpi.id = 0 - Math.round(Math.random() * 10000000000);
-        quantKpi.grantKpi = grantKpi;
-
-        sub.quantitiaveKpisubmissions.push(quantKpi);
-      } else if (this.currentKPIType === "Qualitative") {
-        const qualKpi = new QualitativeKpiSubmission();
-        qualKpi.goal = "";
-        qualKpi.toReport = true;
-        qualKpi.id = 0 - Math.round(Math.random() * 10000000000);
-        qualKpi.grantKpi = grantKpi;
-
-        sub.qualitativeKpiSubmissions.push(qualKpi);
-      } else if (this.currentKPIType === "Document") {
-        const docKpi = new DocumentKpiSubmission();
-        docKpi.goal = "";
-        docKpi.toReport = true;
-        docKpi.id = 0 - Math.round(Math.random() * 10000000000);
-        docKpi.grantKpi = grantKpi;
-
-        sub.documentKpiSubmissions.push(docKpi);
-      }
-    }
-    this.grantData.changeMessage(
-      this.currentGrant,
-      this.appComp.loggedInUser.id
-    );
-
-    this._setEditMode(true);
-    kpiDesc.val("");
-    $(kpiModal).modal("hide");
-  }
-
-  toggleCheckBox(
-    event: Event,
-    type: string,
-    submissionId: number,
-    kpiDataId: number
-  ) {
-    this._setEditMode(true);
-    const checkBoxVal = (<HTMLInputElement>event.currentTarget).checked;
-    const submissions = this.currentGrant.submissions;
-    switch (type) {
-      case "quantitative":
-        for (const submission of submissions) {
-          if (submissionId === submission.id) {
-            const quantitativeKpis = submission.quantitiaveKpisubmissions;
-            for (const quantKpiData of quantitativeKpis) {
-              if (kpiDataId === quantKpiData.id) {
-                quantKpiData.toReport = checkBoxVal;
-              }
-            }
-          }
-        }
-        break;
-      case "qualitative":
-        for (const submission of submissions) {
-          if (submissionId === submission.id) {
-            const qualitativeKpis = submission.qualitativeKpiSubmissions;
-            for (const qualKpiData of qualitativeKpis) {
-              if (kpiDataId === qualKpiData.id) {
-                qualKpiData.toReport = checkBoxVal;
-              }
-            }
-          }
-        }
-        break;
-      case "document":
-        for (const submission of submissions) {
-          if (submissionId === submission.id) {
-            const docKpis = submission.documentKpiSubmissions;
-            for (const docKpiData of docKpis) {
-              if (kpiDataId === docKpiData.id) {
-                docKpiData.toReport = checkBoxVal;
-              }
-            }
-          }
-        }
-        break;
-    }
-
-    this.grantData.changeMessage(
-      this.currentGrant,
-      this.appComp.loggedInUser.id
-    );
-    console.log();
-  }
-
-  updateGoal(
-    event: Event,
-    type: string,
-    submissionId: number,
-    kpiDataId: number
-  ) {
-    this._setEditMode(true);
-    const submissions = this.currentGrant.submissions;
-
-    for (const submission of submissions) {
-      if (submissionId === submission.id) {
-        const quantitativeKpis = submission.quantitiaveKpisubmissions;
-        for (const quantKpiData of quantitativeKpis) {
-          if (kpiDataId === quantKpiData.id) {
-            quantKpiData.goal = Number(
-              (<HTMLInputElement>event.currentTarget).value
-            );
-          }
-        }
-      }
-    }
-  }
 
   submitGrant(toStateId: number) {
 
@@ -1090,14 +764,14 @@ export class PreviewComponent implements OnInit {
             if (templates.length === 1) {
               this.createClosure(templates[0]);
             } else {
-              let dialogRef = this.dialog.open(ClosureTemplateDialogComponent, {
+              let dialogRef2 = this.dialog.open(ClosureTemplateDialogComponent, {
                 data: templates,
                 panelClass: 'grant-template-class'
               });
 
-              dialogRef.afterClosed().subscribe(result => {
-                if (result.result) {
-                  this.createClosure(result.selectedTemplate);
+              dialogRef2.afterClosed().subscribe(result1 => {
+                if (result1.result) {
+                  this.createClosure(result1.selectedTemplate);
 
                 } else {
                   dialogRef.close();
@@ -1126,7 +800,6 @@ export class PreviewComponent implements OnInit {
         this.confirm(
           toStateId,
           0,
-          [],
           0,
           "wfassignment",
           "Would you like to assign users responsible for this workflow?",
@@ -1141,64 +814,6 @@ export class PreviewComponent implements OnInit {
       this.openBottomSheetForGrantNotes(toStateId, result);
       this.wfDisabled = true;
     });
-    /* if (
-      this.workflowValidationService.getStatusByStatusIdForGrant(
-        toStateId,
-        this.appComp
-      ).internalStatus === "ACTIVE" &&
-      this.grantValidationService.checkIfHeaderHasMissingEntries(
-        this.currentGrant
-      )
-    ) {
-      const dialogRef = this.dialog.open(MessagingComponent, {
-        data: "Grant has missing header information.",
-        panelClass: "center-class",
-      });
-      return;
-    }
-
-    if (
-      this.workflowValidationService.getStatusByStatusIdForGrant(
-        toStateId,
-        this.appComp
-      ).internalStatus === "ACTIVE" &&
-      this.getGrantPlannedDisbursementTotals() !== this.currentGrant.amount
-    ) {
-      const dialogRef = this.dialog.open(MessagingComponent, {
-        data:
-          "Planned Disbursement of Project Funds is not equal to the Grant Amount of " +
-          this.currencyService.getFormattedAmount(this.currentGrant.amount),
-        panelClass: "center-class",
-      });
-      return;
-    } */
-
-    /* if (
-      this.workflowValidationService.getStatusByStatusIdForGrant(
-        toStateId,
-        this.appComp
-      ).internalStatus === "ACTIVE" &&
-      this.getGrantPlannedDisbursementTotals() === 0
-    ) {
-      const dialogRef = this.dialog.open(MessagingComponent, {
-        data: "There are no Planned Funds for this project",
-        panelClass: "center-class",
-      });
-      return;
-    } */
-
-
-
-    /*  const statusTransition = this.appComp.appConfig.transitions.filter(
-       (transition) =>
-         transition.fromStateId === this.currentGrant.grantStatus.id &&
-         transition.toStateId === toStateId
-     ); */
-
-    //if (statusTransition && statusTransition[0].noteRequired) {
-    /* this.openBottomSheetForGrantNotes(toStateId);
-    this.wfDisabled = true; */
-    //}
   }
 
   createClosure(template: any) {
@@ -1236,7 +851,6 @@ export class PreviewComponent implements OnInit {
         closure.canManage = false;
       }
 
-      //grant.templateId = template.id;
       const savedClosure = closure;
       this.appComp.originalClosure = JSON.parse(JSON.stringify(closure));
       this.currentClosure = closure;
@@ -1312,7 +926,7 @@ export class PreviewComponent implements OnInit {
               .pipe(takeUntil(this.ngUnsubscribe))
               .subscribe((result) => {
                 if (result.result) {
-                  let url =
+                  let url1 =
                     "/api/user/" +
                     this.appComp.loggedInUser.id +
                     "/grant/" +
@@ -1323,7 +937,7 @@ export class PreviewComponent implements OnInit {
                     result.name;
                   this.http
                     .put(
-                      url,
+                      url1,
                       {
                         description: result.desc,
                         publish: true,
@@ -1332,12 +946,12 @@ export class PreviewComponent implements OnInit {
                       httpOptions
                     )
                     .pipe(takeUntil(this.ngUnsubscribe))
-                    .subscribe((grant: Grant) => {
+                    .subscribe((grant1: Grant) => {
                       this.grantData.changeMessage(
-                        grant,
+                        grant1,
                         this.appComp.loggedInUser.id
                       );
-                      this.appComp.selectedTemplate = grant.grantTemplate;
+                      this.appComp.selectedTemplate = grant1.grantTemplate;
                       this.fetchCurrentGrant();
                     });
                 } else {
@@ -1406,64 +1020,10 @@ export class PreviewComponent implements OnInit {
   fetchCurrentGrant() {
     this.appComp.currentView = "grants";
     this.router.navigate(["grants/draft"]);
-
-    /* const httpOptions = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-        Authorization: localStorage.getItem("AUTH_TOKEN"),
-      }),
-    };
-
-    const url =
-      "/api/user/" +
-      this.appComp.loggedInUser.id +
-      "/grant/" +
-      this.currentGrant.id;
-    this.http
-      .get(url, httpOptions)
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((updatedGrant: Grant) => {
-        this.grantData.changeMessage(
-          updatedGrant,
-          this.appComp.loggedInUser.id
-        );
-        this.currentGrant = updatedGrant;
-        if (this.currentGrant.startDate && this.currentGrant.endDate) {
-          var time =
-            new Date(this.currentGrant.endDate).getTime() -
-            new Date(this.currentGrant.startDate).getTime();
-          time = time + 86400001;
-          this.currentGrant.duration = this.humanizer.humanize(time, {
-            largest: 2,
-            units: ["y", "mo"],
-            round: true,
-          });
-        } else {
-          this.currentGrant.duration = "No end date";
-        }
-
-        if (
-          this.currentGrant.workflowAssignments.filter(
-            (a) => a.assignments === this.appComp.loggedInUser.id && a.anchor
-          ).length === 0
-        ) {
-          this.appComp.currentView = "grants";
-          this.router.navigate(["grants/draft"]);
-        }
-
-        //this.checkGrantPermissions();
-        // this.router.navigate(['grant']);
-      }); */
   }
 
   private _setEditMode(state: boolean) {
     this.editMode = state;
-    /*if (state) {
-      $(this.actionBlock.nativeElement).prop('disabled',true);
-    } else {
-      $(this.actionBlock.nativeElement).prop('disabled',false);
-    }*/
   }
 
   updateSubmission(event: Event, kpiType: string, kpiDataId: number) {
@@ -1493,79 +1053,10 @@ export class PreviewComponent implements OnInit {
     console.log(this.currentSubmission);
   }
 
-  updateTitle(event: Event, kpiId: number, kpiType: string) {
-    const kpiTitleElem = event.target;
-    for (const kpi of this.currentGrant.kpis) {
-      if (kpi.id === kpiId) {
-        kpi.title = (<HTMLInputElement>kpiTitleElem).value;
-        kpi.description = (<HTMLInputElement>kpiTitleElem).value;
-      }
-    }
-    switch (kpiType) {
-      case "QUANTITATIVE":
-        for (const sub of this.currentGrant.submissions) {
-          for (const quantKpi of sub.quantitiaveKpisubmissions) {
-            if (quantKpi.grantKpi.id === kpiId) {
-              quantKpi.grantKpi.title = (<HTMLInputElement>kpiTitleElem).value;
-              quantKpi.grantKpi.description = (<HTMLInputElement>(
-                kpiTitleElem
-              )).value;
-            }
-          }
-        }
-        break;
-
-      case "QUALITATIVE":
-        for (const sub of this.currentGrant.submissions) {
-          for (const qualKpi of sub.qualitativeKpiSubmissions) {
-            if (qualKpi.grantKpi.id === kpiId) {
-              qualKpi.grantKpi.title = (<HTMLInputElement>kpiTitleElem).value;
-              qualKpi.grantKpi.description = (<HTMLInputElement>(
-                kpiTitleElem
-              )).value;
-            }
-          }
-        }
-        break;
-
-      case "DOCUMENT":
-        for (const sub of this.currentGrant.submissions) {
-          for (const docKpi of sub.documentKpiSubmissions) {
-            if (docKpi.grantKpi.id === kpiId) {
-              docKpi.grantKpi.title = (<HTMLInputElement>kpiTitleElem).value;
-              docKpi.grantKpi.description = (<HTMLInputElement>(
-                kpiTitleElem
-              )).value;
-            }
-          }
-        }
-        break;
-    }
-    this._setEditMode(true);
-    this.grantData.changeMessage(
-      this.currentGrant,
-      this.appComp.loggedInUser.id
-    );
-    console.log(this.currentGrant);
-  }
-
-  selectGrantSchedule() {
-    const scheduleModal = this.selectScheduleModal.nativeElement;
-    $(scheduleModal).modal("show");
-  }
-
-  private _adjustHeights() {
-    console.log("adjusting heights");
-    /*for (const elem of $('[data-id]')) {
-        $(elem).css('height', $('#kpi_title_' + $(elem).attr('data-id')).outerHeight() + 'px');
-        // console.log($(elem).css('height'));
-    }*/
-  }
 
   private _setFlowButtonColors() {
     const flowActionBtns = $('[name="flowActionBtn"]');
     for (let elem = 0; elem < flowActionBtns.length; elem++) {
-      // this.colors = new Colors();
       const color = this.colors.colorArray[elem];
       $(flowActionBtns[elem]).css("background-color", color);
     }
@@ -1605,24 +1096,6 @@ export class PreviewComponent implements OnInit {
       });
   }
 
-
-
-  clearSubmissions() {
-    this.currentGrant.submissions = [];
-  }
-
-  openAttachmentsNav() {
-    const attachmentsSN = this.attachmentsSideNav._elementRef.nativeElement;
-    this.attachmentsSideNavOpened = true;
-  }
-
-  closeAttachmentsSideNav() {
-    this.attachmentsSideNavOpened = false;
-  }
-
-  setNewOrg(event: Event) {
-    console.log(event);
-  }
 
   deleteSection(secId: number) {
     const index = this.currentGrant.grantDetails.sections.findIndex(
@@ -2082,6 +1555,32 @@ export class PreviewComponent implements OnInit {
         data: { checkType: grantsToCompare.checkType, compareItems: grantsToCompare.grants },
         panelClass: "wf-assignment-class",
       });
+    });
+  }
+
+  showClosure(closureId: number) {
+
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'X-TENANT-CODE': localStorage.getItem('X-TENANT-CODE'),
+        'Authorization': localStorage.getItem('AUTH_TOKEN')
+      })
+    };
+
+    const user = JSON.parse(localStorage.getItem('USER'));
+    let url = '/api/user/' + user.id + '/closure/' + closureId;
+    this.http.get<GrantClosure>(url, httpOptions).subscribe((closure: GrantClosure) => {
+      this.appComp.currentView = 'grant-closure';
+      this.closureService.changeMessage(closure, this.appComp.loggedInUser.id);
+      if (closure.canManage && closure.status.internalStatus != 'CLOSED') {
+        this.appComp.action = 'grant-closure';
+        this.router.navigate(['grant-closure/header']);
+      } else {
+        this.appComp.action = 'grant-closure';
+        this.router.navigate(['grant-closure/preview']);
+      }
     });
   }
 

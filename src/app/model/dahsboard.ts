@@ -1,3 +1,4 @@
+import { GrantClosure } from 'app/model/closures';
 import { User } from "./user";
 import * as moment from "moment";
 import _date = moment.unitOfTime._date;
@@ -291,6 +292,8 @@ export class Grant {
   ownerName: string;
   ownerId: number;
   closureInProgress: boolean;
+  hashClosure: boolean;
+  closureId: number;
 }
 
 export class GrantTag {

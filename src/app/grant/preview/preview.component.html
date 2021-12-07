@@ -71,6 +71,15 @@
             <img alt="approved disbursements" class="ml-2 mr-3" style="width: 20px; height: 20px"
               src="./assets/img/rp.svg" />View Disbursements
           </button>
+          <button mat-menu-item *ngIf="
+              (currentGrant.grantStatus.internalStatus === 'ACTIVE' ||
+                currentGrant.grantStatus.internalStatus === 'CLOSED') &&
+              this.appComp.loggedInUser.organization.organizationType !==
+                'GRANTEE'
+            " (click)="showClosure(currentGrant.closureId)" [disabled]="!(currentGrant.hashClosure)">
+            <img alt="approved disbursements" class="ml-2 mr-3" style="width: 20px; height: 20px"
+              src="./assets/img/rp.svg" />View Closure Request
+          </button>
           <hr />
           <button mat-menu-item (click)="saveAs(currentGrant.name + '.pdf')">
             <mat-icon class="ml-1">picture_as_pdf</mat-icon>Export for Offline
