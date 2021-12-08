@@ -1,3 +1,4 @@
+import { TableData } from 'app/model/dahsboard';
 import { ClosureDataService } from './../../closure.data.service';
 import { ClosureTemplateDialogComponent } from './../../components/closure-template-dialog/closure-template-dialog.component';
 import { ClosureTemplate, GrantClosure } from './../../model/closures';
@@ -408,9 +409,6 @@ export class PreviewComponent implements OnInit {
             case "section":
               this.deleteSection(Number(sectionId));
               break;
-            case "clearSubmissions":
-              this.clearSubmissions();
-              break;
             case "wfassignment":
               this.showWorkflowAssigments(sectionId);
               break;
@@ -533,25 +531,6 @@ export class PreviewComponent implements OnInit {
           );
         }
       );
-    // }
-  }
-
-  private validateFields() {
-    const containerFormLements = this.container.nativeElement.querySelectorAll(
-      "input[required]:not(:disabled):not([readonly]):not([type=hidden])" +
-      ",select[required]:not(:disabled):not([readonly])" +
-      ",textarea[required]:not(:disabled):not([readonly])"
-    );
-    for (let elem of containerFormLements) {
-      if (elem.value.trim() === "") {
-        this.erroredElement = elem;
-        switch ($(this.erroredElement).attr("placeholder")) {
-          case "Field Value":
-        }
-        return true;
-      }
-    }
-    return false;
   }
 
 
@@ -731,9 +710,6 @@ export class PreviewComponent implements OnInit {
   }
 
 
-
-
-
   submitGrant(toStateId: number) {
 
     if (this.currentGrant.grantStatus.internalStatus === 'ACTIVE') {
@@ -851,7 +827,6 @@ export class PreviewComponent implements OnInit {
         closure.canManage = false;
       }
 
-      const savedClosure = closure;
       this.appComp.originalClosure = JSON.parse(JSON.stringify(closure));
       this.currentClosure = closure;
       this.closureData.changeMessage(closure, this.appComp.loggedInUser.id);
@@ -878,7 +853,6 @@ export class PreviewComponent implements OnInit {
       }),
     };
 
-    const origStatus = this.currentGrant.grantStatus.name;
     let url =
       "/api/user/" +
       this.appComp.loggedInUser.id +
@@ -955,7 +929,7 @@ export class PreviewComponent implements OnInit {
                       this.fetchCurrentGrant();
                     });
                 } else {
-                  let url =
+                  let url1 =
                     "/api/user/" +
                     this.appComp.loggedInUser.id +
                     "/grant/" +
@@ -966,7 +940,7 @@ export class PreviewComponent implements OnInit {
                     result.name;
                   this.http
                     .put(
-                      url,
+                      url1,
                       {
                         description: result.desc,
                         publish: true,
@@ -975,12 +949,12 @@ export class PreviewComponent implements OnInit {
                       httpOptions
                     )
                     .pipe(takeUntil(this.ngUnsubscribe))
-                    .subscribe((grant: Grant) => {
+                    .subscribe((grant1: Grant) => {
                       this.grantData.changeMessage(
-                        grant,
+                        grant1,
                         this.appComp.loggedInUser.id
                       );
-                      this.appComp.selectedTemplate = grant.grantTemplate;
+                      this.appComp.selectedTemplate = grant1.grantTemplate;
                       dialogRef.close();
                       this.fetchCurrentGrant();
                     });
@@ -1087,8 +1061,8 @@ export class PreviewComponent implements OnInit {
     _bSheet
       .afterClosed()
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe((result) => {
-        if (result.result) {
+      .subscribe((result1) => {
+        if (result1.result) {
           this.submitAndSaveGrant(toStateId, result.message);
         } else {
           this.wfDisabled = false;
@@ -1136,43 +1110,31 @@ export class PreviewComponent implements OnInit {
   }
 
   saveAsPrintable(filename) {
-    //this.pdf2Content.nativeElement.style.display = "block";
     this.pdf2.saveAs(filename);
-    //this.pdf2Content.nativeElement.style.display = "none";
   }
 
   getTabularData(elemId: number, data: TableData[]) {
     let html = '<table width="100%" border="1"><tr>';
     const tabData = data;
     html += "<td>&nbsp;</td>";
-    for (let i = 0; i < tabData[0].columns.length; i++) {
-      //if(tabData[0].columns[i].name.trim() !== ''){
+    for (let i of tabData[0].columns) {
       html +=
         '<td style="padding:5px;font-weight:600px;">' +
-        tabData[0].columns[i].name +
+        i.name +
         "</td>";
-      //}
     }
     html += "</tr>";
-    for (let i = 0; i < tabData.length; i++) {
-      html += '<tr><td style="padding:5px;">' + tabData[i].name + "</td>";
-      for (let j = 0; j < tabData[i].columns.length; j++) {
-        //if(tabData[i].columns[j].name.trim() !== ''){
+    for (let i of tabData) {
+      html += '<tr><td style="padding:5px;">' + i.name + "</td>";
+      for (let j of i.columns) {
         html +=
-          '<td style="padding:5px;">' + tabData[i].columns[j].value + "</td>";
-        //}
+          '<td style="padding:5px;">' + j.value + "</td>";
       }
       html += "</tr>";
     }
 
     html += "</table>";
-    //document.getElementById('attribute_' + elemId).innerHTML = '';
-    //document.getElementById('attribute_' + elemId).append('<H1>Hello</H1>');
     return html;
-  }
-
-  datePickerSelected(event: Event) {
-    console.log(event);
   }
 
   showWorkflowAssigments(toStateId) {
@@ -1309,7 +1271,9 @@ export class PreviewComponent implements OnInit {
               httpOptions
             )
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe((grant: Grant) => { });
+            .subscribe((grant: Grant) => {
+              //do nothing
+            });
         }
       });
   }
@@ -1489,7 +1453,7 @@ export class PreviewComponent implements OnInit {
   }
 
   showProjectDocuments() {
-    const dgRef = this.dialog.open(ProjectDocumentsComponent, {
+    this.dialog.open(ProjectDocumentsComponent, {
       data: {
         title: "Project Documents",
         loggedInUser: this.appComp.loggedInUser,
@@ -1538,12 +1502,10 @@ export class PreviewComponent implements OnInit {
   showGrantTags() {
     this.adminService.getOrgTags(this.appComp.loggedInUser).then((tags: OrgTag[]) => {
 
-      const dg = this.dialog.open(GrantTagsComponent, {
+      this.dialog.open(GrantTagsComponent, {
         data: { orgTags: tags, grantTags: this.currentGrant.tags, grant: this.currentGrant, appComp: this.appComp, type: 'grant' },
         panelClass: "grant-template-class"
       });
-
-
     });
 
   }
@@ -1551,7 +1513,7 @@ export class PreviewComponent implements OnInit {
   compareGrants(currentGrantId, origGrantId) {
     this.grantApiService.compareGrants(currentGrantId, origGrantId, this.appComp.loggedInUser.id).then((grantsToCompare: any) => {
       console.log(grantsToCompare);
-      const dg = this.dialog.open(GrantCompareComponent, {
+      this.dialog.open(GrantCompareComponent, {
         data: { checkType: grantsToCompare.checkType, compareItems: grantsToCompare.grants },
         panelClass: "wf-assignment-class",
       });
