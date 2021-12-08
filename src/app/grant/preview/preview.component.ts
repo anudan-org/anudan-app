@@ -765,7 +765,7 @@ export class PreviewComponent implements OnInit {
     }
 
     for (let assignment of this.currentGrant.workflowAssignments) {
-      const status1 = this.appComp.appConfig.workflowStatuses.filter(
+      const status1 = this.appComp.grantWorkflowStatuses.filter(
         (status) => status.id === assignment.stateId
       );
       if (
@@ -1140,7 +1140,7 @@ export class PreviewComponent implements OnInit {
   showWorkflowAssigments(toStateId) {
     const wfModel = new WorkflowAssignmentModel();
     wfModel.users = this.appComp.tenantUsers;
-    wfModel.workflowStatuses = this.appComp.appConfig.workflowStatuses;
+    wfModel.workflowStatuses = this.appComp.grantWorkflowStatuses;
     wfModel.workflowAssignment = this.currentGrant.workflowAssignments;
     wfModel.type = this.appComp.currentView;
     wfModel.grant = this.currentGrant;
