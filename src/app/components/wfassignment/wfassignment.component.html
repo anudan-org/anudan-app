@@ -2,7 +2,10 @@
   (scroll)="redrawOnScroll()">
   <mat-icon>close</mat-icon>
 </span>
-<h4 mat-dialog-title class="text-center" style="font-size:18px;">User assignment for <strong>{{title}}</strong></h4>
+<div mat-dialog-title class="text-center w-100" style="font-size:18px;">
+  <div [innerHTML]="title">
+  </div>
+</div>
 <div #flowContainer id="flowContainer" (scroll)="redrawOnScroll()" class="text-center">
 
 </div>

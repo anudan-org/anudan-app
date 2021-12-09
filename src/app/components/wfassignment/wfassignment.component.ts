@@ -76,7 +76,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
         window.addEventListener('scroll', this.redrawOnScroll.bind(this), true);
         if (this.data.model.type === 'grant') {
-            this.title = this.data.model.grant.name;
+            this.title = `<p>Workflow for grant <strong>` + this.data.model.grant.name + `</strong></p>`;
             const httpOptions = {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
@@ -277,7 +277,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     this.dialogRef.close(false);
                 });
         } else if (this.data.model.type === 'report') {
-            this.title = this.data.model.report.name;
+            this.title = `<p class="text-subheader">Workflow for Report <strong>` + this.data.model.report.name + `</strong></p>` + `<p class="text-subheader">Grant: <strong>` + this.data.model.report.grant.name + `</strong></p>`;
             const httpOptions = {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
@@ -510,7 +510,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     this.dialogRef.close(false);
                 });
         } else if (this.data.model.type === 'grant-closure') {
-            this.title = this.data.model.closure.grant.name;
+            this.title = `<p class="text-subheader">Workflow for Closure Request</p>` + `<p class="text-subheader">Grant: <strong>` + this.data.model.closure.grant.name + `</strong></p>`;
             const httpOptions = {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
@@ -743,7 +743,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     this.dialogRef.close(false);
                 });
         } else if (this.data.model.type === 'disbursement') {
-            this.title = 'Disbursement Approval Request Workflow';
+            this.title = `<p class="text-subheader">Workflow for Disbursement Approval Request</p>` + `<p class="text-subheader">Grant: <strong>` + this.data.model.report.grant.name + `</strong></p>`;
             this.workflowDataService.getDisbursementWorkflow(this.data.model.disbursement).then(transitions => {
 
                 this.transitions = transitions;
