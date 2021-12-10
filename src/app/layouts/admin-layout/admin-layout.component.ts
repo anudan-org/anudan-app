@@ -655,7 +655,7 @@ export class AdminLayoutComponent implements OnInit {
       });
     } else if (this.appComponent.currentView === "disbursement") {
       this.workflowDataService
-        .getDisbursementWorkflowStatuses(this.currentDisbursement)
+        .getDisbursementWorkflowStatuses(this.currentDisbursement, this.appComponent)
         .then((workflowStatuses) => {
           const wfModel = new DisbursementWorkflowAssignmentModel();
           wfModel.users = this.appComponent.tenantUsers;

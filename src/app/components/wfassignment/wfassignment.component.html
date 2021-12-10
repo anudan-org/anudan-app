@@ -2,6 +2,24 @@
   (scroll)="redrawOnScroll()">
   <mat-icon>close</mat-icon>
 </span>
+<!-- <ng-container *ngIf="this.data.model.type==='grant'">
+  <label class="workflow-info p-1">Workflow Type: <strong>Grant Workflow</strong></label>
+  <label class="workflow-info p-2">Grant Type:
+    <strong>{{getGrantTypeName(data.model.grant.grantTypeId)}}</strong></label>
+</ng-container>
+<ng-container *ngIf="this.data.model.type==='report'">
+  <div class="workflow-info p-1">Workflow Type: Report Workflow</div>
+  <div class="workflow-info p-2">Grant Type: {{getGrantTypeName(data.model.report.grant.grantTypeId)}}</div>
+</ng-container>
+<ng-container *ngIf="this.data.model.type==='disbursement'">
+  <div class="workflow-info p-1">Workflow Type: Disbursement Approval Request Workflow</div>
+  <div class="workflow-info p-2">Grant Type: {{getGrantTypeName(data.model.disbursement.grant.grantTypeId)}}</div>
+</ng-container>
+<ng-container *ngIf="this.data.model.type==='grant-closure'">
+  <div class="workflow-info p-1">Workflow Type: Grant Closure Workflow</div>
+  <div class="workflow-info p-2">Grant Type: {{getGrantTypeName(data.model.closure.grant.grantTypeId)}}</div>
+
+</ng-container> -->
 <div mat-dialog-title class="text-center w-100" style="font-size:18px;">
   <div [innerHTML]="title">
   </div>

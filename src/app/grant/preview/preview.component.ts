@@ -1063,7 +1063,7 @@ export class PreviewComponent implements OnInit {
       .pipe(takeUntil(this.ngUnsubscribe))
       .subscribe((result1) => {
         if (result1.result) {
-          this.submitAndSaveGrant(toStateId, result.message);
+          this.submitAndSaveGrant(toStateId, result1.message);
         } else {
           this.wfDisabled = false;
         }

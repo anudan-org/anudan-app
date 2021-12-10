@@ -76,7 +76,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
         window.addEventListener('scroll', this.redrawOnScroll.bind(this), true);
         if (this.data.model.type === 'grant') {
-            this.title = `<p>Workflow for grant <strong>` + this.data.model.grant.name + `</strong></p>`;
+            this.title = `<p class="mb-0  text-header">Workflow for Grant ` + this.data.model.grant.name + `</p>`;
             const httpOptions = {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         const ownerNode = this.renderer.createElement('div');
                         this.renderer.addClass(ownerNode, 'col-6');
                         const nodeOwner = this.renderer.createElement('select');
-                        this.renderer.addClass(nodeOwner, 'anu-input');
+                        this.renderer.addClass(nodeOwner, 'anu-wf-input');
                         this.renderer.addClass(nodeOwner, 'anu-select');
 
 
@@ -183,7 +183,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                         }
 
-                        //this.renderer.addClass(nodeOwner,'anu-input');
+                        //this.renderer.addClass(nodeOwner,'anu-wf-input');
                         this.renderer.appendChild(ownerNode, nodeOwner);
                         this.renderer.appendChild(node, ownerNode);
 
@@ -230,7 +230,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             this.renderer.addClass(ownerNodeHolder, 'col-6');
                             const ownerNode = this.renderer.createElement('div');
                             this.renderer.addClass(ownerNode, 'px-2');
-                            this.renderer.addClass(ownerNode, 'anu-input');
+                            this.renderer.addClass(ownerNode, 'anu-wf-input');
                             this.renderer.addClass(ownerNode, 'closed-state-owner');
                             this.renderer.addClass(ownerNodeHolder, 'text-center');
                             const ownerName = this.renderer.createText(ass[0].assignmentUser.firstName + " " + ass[0].assignmentUser.lastName);
@@ -277,7 +277,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     this.dialogRef.close(false);
                 });
         } else if (this.data.model.type === 'report') {
-            this.title = `<p class="text-subheader">Workflow for Report <strong>` + this.data.model.report.name + `</strong></p>` + `<p class="text-subheader">Grant: <strong>` + this.data.model.report.grant.name + `</strong></p>`;
+            this.title = `<p class="mb-0 text-header">Workflow for ` + this.data.model.report.name + ` Report for Grant ` + this.data.model.report.grant.name + `</p>`;
             const httpOptions = {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
@@ -331,7 +331,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(ownerNode, 'col-6');
                         const nodeOwner = this.renderer.createElement('select');
                         this.renderer.setAttribute(nodeOwner, 'style', 'max-width: 240px;');
-                        this.renderer.addClass(nodeOwner, 'anu-input');
+                        this.renderer.addClass(nodeOwner, 'anu-wf-input');
                         this.renderer.addClass(nodeOwner, 'anu-select');
                         const currentUserAssignment = this.data.model.workflowAssignments.filter((assignment) => assignment.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment.stateId === this.data.model.report.status.id && JSON.parse(localStorage.getItem('USER')).organization.organizationType !== 'GRANTEE');
                         const ownerUser = this.data.model.workflowAssignments.filter((assignment) => assignment.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment.anchor);
@@ -381,7 +381,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             if (this.canManage) {
                                 const nodeInvite = this.renderer.createElement('input');
                                 this.renderer.setAttribute(nodeInvite, 'placeholder', 'Invite Grantee/Partner User');
-                                this.renderer.addClass(nodeInvite, 'anu-input');
+                                this.renderer.addClass(nodeInvite, 'anu-wf-input');
                                 this.renderer.addClass(nodeOwner, 'anu-select');
                                 this.renderer.setAttribute(nodeInvite, 'style', 'width: 100%; text-align: center;');
                                 this.renderer.setAttribute(nodeInvite, 'id', 'custom_assignment');
@@ -425,7 +425,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             }
                         }
 
-                        //this.renderer.addClass(nodeOwner,'anu-input');
+                        //this.renderer.addClass(nodeOwner,'anu-wf-input');
                         this.renderer.appendChild(ownerNode, nodeOwner);
                         this.renderer.appendChild(node, ownerNode);
 
@@ -466,7 +466,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             this.renderer.addClass(ownerNodeHolder, 'col-6');
                             const ownerNode = this.renderer.createElement('div');
                             this.renderer.addClass(ownerNode, 'px-2');
-                            this.renderer.addClass(ownerNode, 'anu-input');
+                            this.renderer.addClass(ownerNode, 'anu-wf-input');
                             this.renderer.addClass(ownerNode, 'closed-state-owner');
                             this.renderer.addClass(ownerNodeHolder, 'text-center');
                             const ownerName = this.renderer.createText(ass[0].assignmentUser.firstName + " " + ass[0].assignmentUser.lastName);
@@ -510,7 +510,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     this.dialogRef.close(false);
                 });
         } else if (this.data.model.type === 'grant-closure') {
-            this.title = `<p class="text-subheader">Workflow for Closure Request</p>` + `<p class="text-subheader">Grant: <strong>` + this.data.model.closure.grant.name + `</strong></p>`;
+            this.title = `<p class="mb-0 text-header">Closure Request Workflow for Grant ` + this.data.model.closure.grant.name + `</p>`;
             const httpOptions = {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
@@ -564,7 +564,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(ownerNode, 'col-6');
                         const nodeOwner = this.renderer.createElement('select');
                         this.renderer.setAttribute(nodeOwner, 'style', 'max-width: 240px;');
-                        this.renderer.addClass(nodeOwner, 'anu-input');
+                        this.renderer.addClass(nodeOwner, 'anu-wf-input');
                         this.renderer.addClass(nodeOwner, 'anu-select');
                         const currentUserAssignment = this.data.model.workflowAssignments.filter((assignment) => assignment.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment.stateId === this.data.model.closure.status.id && JSON.parse(localStorage.getItem('USER')).organization.organizationType !== 'GRANTEE');
                         const ownerUser = this.data.model.workflowAssignments.filter((assignment) => assignment.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment.anchor);
@@ -614,7 +614,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             if (this.canManage) {
                                 const nodeInvite = this.renderer.createElement('input');
                                 this.renderer.setAttribute(nodeInvite, 'placeholder', 'Invite Grantee/Partner User');
-                                this.renderer.addClass(nodeInvite, 'anu-input');
+                                this.renderer.addClass(nodeInvite, 'anu-wf-input');
                                 this.renderer.addClass(nodeOwner, 'anu-select');
                                 this.renderer.setAttribute(nodeInvite, 'style', 'width: 100%; text-align: center;');
                                 this.renderer.setAttribute(nodeInvite, 'id', 'custom_assignment');
@@ -658,7 +658,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             }
                         }
 
-                        //this.renderer.addClass(nodeOwner,'anu-input');
+                        //this.renderer.addClass(nodeOwner,'anu-wf-input');
                         this.renderer.appendChild(ownerNode, nodeOwner);
                         this.renderer.appendChild(node, ownerNode);
 
@@ -699,7 +699,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             this.renderer.addClass(ownerNodeHolder, 'col-6');
                             const ownerNode = this.renderer.createElement('div');
                             this.renderer.addClass(ownerNode, 'px-2');
-                            this.renderer.addClass(ownerNode, 'anu-input');
+                            this.renderer.addClass(ownerNode, 'anu-wf-input');
                             this.renderer.addClass(ownerNode, 'closed-state-owner');
                             this.renderer.addClass(ownerNodeHolder, 'text-center');
                             const ownerName = this.renderer.createText(ass[0].assignmentUser.firstName + " " + ass[0].assignmentUser.lastName);
@@ -743,7 +743,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     this.dialogRef.close(false);
                 });
         } else if (this.data.model.type === 'disbursement') {
-            this.title = `<p class="text-subheader">Workflow for Disbursement Approval Request</p>` + `<p class="text-subheader">Grant: <strong>` + this.data.model.report.grant.name + `</strong></p>`;
+            this.title = `<p class="mb-0 text-header">Disbursement Approval Request Workflow for Grant ` + this.data.model.disbursement.grant.name + `</p>`;
             this.workflowDataService.getDisbursementWorkflow(this.data.model.disbursement).then(transitions => {
 
                 this.transitions = transitions;
@@ -777,7 +777,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(ownerNode, 'col-6');
                         const nodeOwner = this.renderer.createElement('select');
                         this.renderer.setAttribute(nodeOwner, 'style', 'max-width: 240px;');
-                        this.renderer.addClass(nodeOwner, "anu-input");
+                        this.renderer.addClass(nodeOwner, "anu-wf-input");
                         this.renderer.addClass(nodeOwner, 'anu-select');
                         const currentUserAssignment = this.data.model.workflowAssignments.filter((assignment) => assignment.owner === JSON.parse(localStorage.getItem('USER')).id && assignment.stateId === this.data.model.disbursement.status.id);
                         const ownerUser = this.data.model.workflowAssignments.filter((assignment) => assignment.owner === JSON.parse(localStorage.getItem('USER')).id && assignment.anchor);
@@ -841,7 +841,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                         }
 
-                        //this.renderer.addClass(nodeOwner,'anu-input');
+                        //this.renderer.addClass(nodeOwner,'anu-wf-input');
                         this.renderer.appendChild(ownerNode, nodeOwner);
                         this.renderer.appendChild(node, ownerNode);
 
@@ -882,7 +882,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             this.renderer.addClass(ownerNodeHolder, 'col-6');
                             const ownerNode = this.renderer.createElement('div');
                             this.renderer.addClass(ownerNode, 'px-2');
-                            this.renderer.addClass(ownerNode, 'anu-input');
+                            this.renderer.addClass(ownerNode, 'anu-wf-input');
                             this.renderer.addClass(ownerNode, 'closed-state-owner');
                             this.renderer.addClass(ownerNodeHolder, 'text-center');
                             const ownerName = this.renderer.createText(ass[0].assignmentUser.firstName + " " + ass[0].assignmentUser.lastName);
@@ -1461,5 +1461,9 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
     triggerDrowpDown(event, node) {
         node.click();
+    }
+
+    public getGrantTypeName(typeId): string {
+        return this.data.appComp.grantTypes.filter(t => t.id === typeId)[0].name;
     }
 }

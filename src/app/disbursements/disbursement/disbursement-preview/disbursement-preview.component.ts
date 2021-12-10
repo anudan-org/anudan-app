@@ -246,7 +246,7 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
 
   showWorkflowAssigmentAndSubmit(toState: number) {
     this.workflowDataService
-      .getDisbursementWorkflowStatuses(this.currentDisbursement)
+      .getDisbursementWorkflowStatuses(this.currentDisbursement, this.appComponent)
       .then((workflowStatuses) => {
         const wfModel = new DisbursementWorkflowAssignmentModel();
         wfModel.users = this.appComponent.tenantUsers;
@@ -332,7 +332,7 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
         } */
 
     this.workflowDataService
-      .getDisbursementWorkflowStatuses(this.currentDisbursement)
+      .getDisbursementWorkflowStatuses(this.currentDisbursement, this.appComponent)
       .then((workflowStatuses) => {
         this.appComponent.disbursementWorkflowStatuses = workflowStatuses;
 
