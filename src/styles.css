@@ -1340,3 +1340,18 @@ footer{
 .workflow-info{
   position: absolute; transform: rotate( 270deg); bottom: 65%; left: -50px;
 }
+
+.single-doc{
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.singledoc-ico-enabled{
+  color: #676767; 
+  font-size: 1.5em;
+}
+.singledoc-ico-disabled{
+  color: #a3a3a3; 
+  font-size: 1.5em;
+}

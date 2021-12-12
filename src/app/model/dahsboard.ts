@@ -481,6 +481,7 @@ export class TemplateLibrary {
   version: number;
   granterId: number;
   editMode: boolean = false;
+  fileType: string;
 }
 
 export class FieldInfo {

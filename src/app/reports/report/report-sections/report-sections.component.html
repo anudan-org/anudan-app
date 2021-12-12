@@ -1511,10 +1511,23 @@
                                   }}" mat-list-icon class="attachment-checkbox" type="checkbox" (change)="
                                     handleSelection(attribute.id, attachment.id)
                                   " />
-                                    <a (click)="previewDocument('report',attachment.id)">
-                                      <mat-icon class="float-right" style="color: #676767; font-size: 1.5em;">
+                                    <button [disabled]="noSingleDocAction" class='single-doc'
+                                      (click)="previewDocument('report',attachment.id)">
+                                      <mat-icon class="float-right"
+                                        [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
                                         remove_red_eye</mat-icon>
-                                    </a>
+                                    </button>
+                                    <button [disabled]="noSingleDocAction" class='single-doc'>
+                                      <mat-icon class=" float-right" (click)="downloadSingleDoc(attachment.id)"
+                                        [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                        file_download</mat-icon>
+                                    </button>
+                                    <button [disabled]="noSingleDocAction" class='single-doc'
+                                      (click)="deleteSingleDoc(attribute.id,attachment.id)">
+                                      <mat-icon class="float-right"
+                                        [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                        delete_outlined</mat-icon>
+                                    </button>
                                   </mat-list-item>
                                 </ng-container>
                                 <mat-list-item *ngIf="
@@ -1522,7 +1535,7 @@
                                 attribute.attachments.length > 0
                               ">
                                   <button id="attachments_download_{{ attribute.id }}" class="btn btn-sm btn-blue"
-                                    disabled (click)="downloadSelection(attribute.id)">
+                                    [disabled]="!downloadAndDeleteAllowed" (click)="downloadSelection(attribute.id)">
                                     <mat-icon style="
                                     cursor: pointer;
                                     top: 5px;
@@ -1535,7 +1548,7 @@
                                   </button>
 
                                   <button id="attachments_delete_{{ attribute.id }}" class="btn btn-sm btn-blue ml-4"
-                                    disabled (click)="deleteSelection(attribute.id)">
+                                    [disabled]="!downloadAndDeleteAllowed" (click)="deleteSelection(attribute.id)">
                                     <mat-icon style='display:flex;align-items:center;justify-content: center;'>_outlined
                                     </mat-icon>Delete Selected Documents
                                   </button>

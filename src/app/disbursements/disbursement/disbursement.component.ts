@@ -1,3 +1,7 @@
+import { DocManagementService } from './../../doc-management.service';
+import { DocpreviewComponent } from './../../docpreview/docpreview.component';
+import { DomSanitizer } from '@angular/platform-browser';
+import { DocpreviewService } from './../../docpreview.service';
 import { FieldDialogComponent } from './../../components/field-dialog/field-dialog.component';
 import { DisbursementtDoc } from './../../model/disbursement-doc';
 import { HttpClient } from '@angular/common/http';
@@ -40,11 +44,13 @@ export class DisbursementComponent implements OnInit, OnDestroy {
   disbursementAmountFormatted: ElementRef;
   @ViewChild("disbursementAmount") disbursementAmount: ElementRef;
   disbursementDocs: DisbursementtDoc[] = [];
+  noSingleDocAction: boolean = false;
+  downloadAndDeleteAllowed: boolean = false;
+
 
   constructor(
     public disbursementService: DisbursementDataService,
     public appComponent: AppComponent,
-    private titlecasePipe: TitleCasePipe,
     private router: Router,
     public currencyService: CurrencyService,
     private adminComp: AdminLayoutComponent,
@@ -53,6 +59,11 @@ export class DisbursementComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private http: HttpClient,
     private elem: ElementRef,
+    private docPreviewService: DocpreviewService,
+    private sanitizer: DomSanitizer,
+    private docManagementService: DocManagementService
+
+
   ) {
     this.subscribers = this.router.events.subscribe((val) => {
       if (val instanceof NavigationStart && this.currentDisbursement) {
@@ -194,6 +205,7 @@ export class DisbursementComponent implements OnInit, OnDestroy {
     this.http
       .post<DisbursementtDoc[]>(endpoint, formData, httpOptions)
       .subscribe((info: DisbursementtDoc[]) => {
+        this.noSingleDocAction = false;
         for (let pDoc of info) {
           this.disbursementDocs.push(pDoc);
         }
@@ -201,26 +213,22 @@ export class DisbursementComponent implements OnInit, OnDestroy {
   }
 
   handleSelection(attachmentId) {
-    const elems = this.elem.nativeElement.querySelectorAll(
-      '[id^="attachment_' + attachmentId + '"]'
-    );
-    if (elems.length > 0) {
-      for (let singleElem of elems) {
-        if (singleElem.checked) {
-          this.elem.nativeElement.querySelector(
-            '[id="downloadBtn"]'
-          ).disabled = false;
-          this.elem.nativeElement.querySelector(
-            '[id="deleteBtn"]'
-          ).disabled = false;
-          return;
+
+    const docElems = this.elem.nativeElement.querySelectorAll('[id^="attachment_"]');
+    if (docElems.length > 0) {
+      let found = false;
+      for (let docElem of docElems) {
+        if (docElem.checked) {
+          found = true;
         }
-        this.elem.nativeElement.querySelector(
-          '[id="downloadBtn"]'
-        ).disabled = true;
-        this.elem.nativeElement.querySelector(
-          '[id="deleteBtn"]'
-        ).disabled = true;
+      }
+
+      if (found) {
+        this.noSingleDocAction = true;
+        this.downloadAndDeleteAllowed = true;
+      } else {
+        this.noSingleDocAction = false;
+        this.downloadAndDeleteAllowed = false;
       }
     }
   }
@@ -237,26 +245,7 @@ export class DisbursementComponent implements OnInit, OnDestroy {
           selectedAttachments.attachmentIds.push(singleElem.id.split("_")[1]);
         }
       }
-      const httpOptions = {
-        responseType: "blob" as "json",
-        headers: new HttpHeaders({
-          "Content-Type": "application/json",
-          "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-          Authorization: localStorage.getItem("AUTH_TOKEN"),
-        }),
-      };
-
-      let url =
-        "/api/user/" +
-        this.appComponent.loggedInUser.id +
-        "/disbursements/" +
-        this.currentDisbursement.id +
-        "/documents/download";
-      this.http
-        .post(url, selectedAttachments, httpOptions)
-        .subscribe((data) => {
-          saveAs(data, this.currentDisbursement.grant.name + "_disbursement_docs.zip");
-        });
+      this.docManagementService.callDisbursementDocDownload(selectedAttachments, this.appComponent, this.currentDisbursement);
     }
   }
 
@@ -292,26 +281,54 @@ export class DisbursementComponent implements OnInit, OnDestroy {
   }
 
   deleteAttachment(attachmentId) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-        Authorization: localStorage.getItem("AUTH_TOKEN"),
-      }),
-    };
-
-    const url =
-      "/api/user/" +
-      this.appComponent.loggedInUser.id +
-      "/disbursements/" +
-      this.currentDisbursement.id +
-      "/document/" +
-      attachmentId;
-    this.http
-      .delete(url, httpOptions)
-      .subscribe(() => {
+    this.docManagementService.deleteDisbursementAttachment(attachmentId, this.appComponent, this.currentDisbursement)
+      .then(() => {
         const index = this.disbursementDocs.findIndex(a => a.id === Number(attachmentId));
         this.disbursementDocs.splice(index, 1);
       });
+  }
+
+  previewDocument(_for, attach) {
+
+    this.docPreviewService.previewDoc(_for, this.appComponent.loggedInUser.id, attach, this.currentDisbursement.id).then((result: any) => {
+      let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
+      let docUrl;
+      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/embed.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
+      } else if (docType === 'pdf' || docType === 'txt') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
+      }
+      this.dialog.open(DocpreviewComponent, {
+        data: {
+          url: docUrl,
+          type: docType
+        },
+        panelClass: "wf-assignment-class"
+      });
+    });
+  }
+
+  downloadSingleDoc(attachmentId: number) {
+    const selectedAttachments = new AttachmentDownloadRequest();
+    selectedAttachments.attachmentIds = [];
+    selectedAttachments.attachmentIds.push(attachmentId);
+    this.docManagementService.callDisbursementDocDownload(selectedAttachments, this.appComponent, this.currentDisbursement);
+  }
+
+  deleteSingleDoc(attachmentId) {
+    const dReg = this.dialog.open(FieldDialogComponent, {
+      data: {
+        title: "Are you sure you want to delete the selected document?",
+        btnMain: "Delete Document",
+        btnSecondary: "Not Now"
+      },
+      panelClass: "grant-template-class",
+    });
+
+    dReg.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteAttachment(attachmentId);
+      }
+    });
   }
 }

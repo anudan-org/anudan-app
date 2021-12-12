@@ -1,3 +1,4 @@
+import { DocManagementService } from './../../../doc-management.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DocpreviewService } from './../../../docpreview.service';
 import { DocpreviewComponent } from './../../../docpreview/docpreview.component';
@@ -143,6 +144,9 @@ export class ReportSectionsComponent implements OnInit {
   tenantUsers: User[];
   selectedDateField: any;
   selectedColumn: ColumnData;
+  noSingleDocAction: boolean = false;
+  downloadAndDeleteAllowed: boolean = false;
+
 
   constructor(
     private router: Router,
@@ -162,7 +166,8 @@ export class ReportSectionsComponent implements OnInit {
     private disbursementService: DisbursementDataService,
     private adminService: AdminService,
     private docPreviewService: DocpreviewService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private docManagementService: DocManagementService,
   ) {
     this.route.params.subscribe((p) => {
       this.action = p["action"];
@@ -536,6 +541,7 @@ export class ReportSectionsComponent implements OnInit {
         attribute.fieldValue = JSON.stringify(attribute.docs);
         this.fruitInput.nativeElement.value = "";
         this.fruitCtrl.setValue(null);
+        this.noSingleDocAction = false;
       });
   }
 
@@ -625,6 +631,7 @@ export class ReportSectionsComponent implements OnInit {
     this.http
       .post<ReportDocInfo>(endpoint, formData, httpOptions)
       .subscribe((info: ReportDocInfo) => {
+        this.noSingleDocAction = false;
         this.singleReportDataService.changeMessage(info.report);
         this.currentReport = info.report;
         this.newField =
@@ -924,26 +931,21 @@ export class ReportSectionsComponent implements OnInit {
   }
 
   handleSelection(attribId, attachmentId) {
-    const elems = this.elem.nativeElement.querySelectorAll(
-      '[id^="attriute_' + attribId + '_attachment_"]'
-    );
-    if (elems.length > 0) {
-      for (let singleElem of elems) {
-        if (singleElem.checked) {
-          this.elem.nativeElement.querySelector(
-            '[id^="attachments_download_' + attribId + '"]'
-          ).disabled = false;
-          this.elem.nativeElement.querySelector(
-            '[id^="attachments_delete_' + attribId + '"]'
-          ).disabled = false;
-          return;
+    const docElems = this.elem.nativeElement.querySelectorAll('[id^=attriute_' + attribId + '_attachment_]');
+    if (docElems.length > 0) {
+      let found = false;
+      for (let docElem of docElems) {
+        if (docElem.checked) {
+          found = true;
         }
-        this.elem.nativeElement.querySelector(
-          '[id^="attachments_download_' + attribId + '"]'
-        ).disabled = true;
-        this.elem.nativeElement.querySelector(
-          '[id^="attachments_delete_' + attribId + '"]'
-        ).disabled = true;
+      }
+
+      if (found) {
+        this.noSingleDocAction = true;
+        this.downloadAndDeleteAllowed = true;
+      } else {
+        this.noSingleDocAction = false;
+        this.downloadAndDeleteAllowed = false;
       }
     }
   }
@@ -960,32 +962,7 @@ export class ReportSectionsComponent implements OnInit {
           selectedAttachments.attachmentIds.push(singleElem.id.split("_")[3]);
         }
       }
-      const httpOptions = {
-        responseType: "blob" as "json",
-        headers: new HttpHeaders({
-          "Content-Type": "application/json",
-          "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-          Authorization: localStorage.getItem("AUTH_TOKEN"),
-        }),
-      };
-
-      let url =
-        "/api/user/" +
-        this.appComp.loggedInUser.id +
-        "/report/" +
-        this.currentReport.id +
-        "/attachments";
-      this.http
-        .post(url, selectedAttachments, httpOptions)
-        .subscribe((data) => {
-          saveAs(
-            data,
-            this.currentReport.grant.name +
-            "_" +
-            this.currentReport.name +
-            ".zip"
-          );
-        });
+      this.docManagementService.callReportDocDownload(selectedAttachments, this.appComp, this.currentReport);
     }
   }
 
@@ -1021,26 +998,8 @@ export class ReportSectionsComponent implements OnInit {
   }
 
   deleteAttachment(attributeId, attachmentId) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-        Authorization: localStorage.getItem("AUTH_TOKEN"),
-      }),
-    };
-
-    const url =
-      "/api/user/" +
-      this.appComp.loggedInUser.id +
-      "/report/" +
-      this.currentReport.id +
-      "/attribute/" +
-      attributeId +
-      "/attachment/" +
-      attachmentId;
-    this.http
-      .post<Report>(url, this.currentReport, httpOptions)
-      .subscribe((report: Report) => {
+    this.docManagementService.deleteReportAttachment(attributeId, attachmentId, this.appComp, this.currentReport)
+      .then((report: Report) => {
         this.singleReportDataService.changeMessage(report);
         this.currentReport = report;
         for (let section of this.currentReport.reportDetails.sections) {
@@ -1458,12 +1417,45 @@ export class ReportSectionsComponent implements OnInit {
   }
 
   previewDocument(_for, attach) {
-
     this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentReport.id, attach).then((result: any) => {
+      let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
+      let docUrl;
+      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/embed.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
+      } else if (docType === 'pdf' || docType === 'txt') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
+      }
       this.dialog.open(DocpreviewComponent, {
-        data: { url: this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/embed.aspx?src=" + location.origin + "/api/public/doc/" + result.url) },
+        data: {
+          url: docUrl,
+          type: docType
+        },
         panelClass: "wf-assignment-class"
       });
+    });
+  }
+
+  downloadSingleDoc(attachmentId: number) {
+    const selectedAttachments = new AttachmentDownloadRequest();
+    selectedAttachments.attachmentIds = [];
+    selectedAttachments.attachmentIds.push(attachmentId);
+    this.docManagementService.callReportDocDownload(selectedAttachments, this.appComp, this.currentReport);
+  }
+
+  deleteSingleDoc(attributeId, attachmentId) {
+    const dReg = this.dialog.open(FieldDialogComponent, {
+      data: {
+        title: "Are you sure you want to delete the selected document?",
+        btnMain: "Delete Document",
+        btnSecondary: "Not Now"
+      },
+      panelClass: "grant-template-class",
+    });
+
+    dReg.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteAttachment(attributeId, attachmentId);
+      }
     });
   }
 }

@@ -1,3 +1,4 @@
+import { DocManagementService } from './../../doc-management.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DocpreviewComponent } from './../../docpreview/docpreview.component';
 import { DocpreviewService } from './../../docpreview.service';
@@ -26,6 +27,8 @@ export class ProjectDocumentsComponent implements OnInit {
 
 
   projectDocs: ProjectDoc[] = [];
+  noSingleDocAction: boolean = false;
+  downloadAndDeleteAllowed: boolean = false;
 
   constructor(public dialogRef: MatDialogRef<ProjectDocumentsComponent>
     , @Inject(MAT_DIALOG_DATA) public message: any,
@@ -33,7 +36,8 @@ export class ProjectDocumentsComponent implements OnInit {
     private elem: ElementRef,
     private dialog: MatDialog,
     private docPreviewService: DocpreviewService,
-    private sanitizer: DomSanitizer,) {
+    private sanitizer: DomSanitizer,
+    private docManagementService: DocManagementService) {
     this.dialogRef.disableClose = true;
 
     const endpoint =
@@ -103,26 +107,22 @@ export class ProjectDocumentsComponent implements OnInit {
 
 
   handleSelection(attachmentId) {
-    const elems = this.elem.nativeElement.querySelectorAll(
-      '[id^="attachment_' + attachmentId + '"]'
-    );
-    if (elems.length > 0) {
-      for (let singleElem of elems) {
-        if (singleElem.checked) {
-          this.elem.nativeElement.querySelector(
-            '[id="downloadBtn"]'
-          ).disabled = false;
-          this.elem.nativeElement.querySelector(
-            '[id="deleteBtn"]'
-          ).disabled = false;
-          return;
+
+    const docElems = this.elem.nativeElement.querySelectorAll('[id^="attachment_' + attachmentId + '"]');
+    if (docElems.length > 0) {
+      let found = false;
+      for (let docElem of docElems) {
+        if (docElem.checked) {
+          found = true;
         }
-        this.elem.nativeElement.querySelector(
-          '[id="downloadBtn"]'
-        ).disabled = true;
-        this.elem.nativeElement.querySelector(
-          '[id="deleteBtn"]'
-        ).disabled = true;
+      }
+
+      if (found) {
+        this.noSingleDocAction = true;
+        this.downloadAndDeleteAllowed = true;
+      } else {
+        this.noSingleDocAction = false;
+        this.downloadAndDeleteAllowed = false;
       }
     }
   }
@@ -139,26 +139,8 @@ export class ProjectDocumentsComponent implements OnInit {
           selectedAttachments.attachmentIds.push(singleElem.id.split("_")[1]);
         }
       }
-      const httpOptions = {
-        responseType: "blob" as "json",
-        headers: new HttpHeaders({
-          "Content-Type": "application/json",
-          "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-          Authorization: localStorage.getItem("AUTH_TOKEN"),
-        }),
-      };
+      this.docManagementService.callProjectDocDownload(selectedAttachments, this.message.loggedInUser.id, this.message.currentGrant.id, this.message.currentGrant.name);
 
-      let url =
-        "/api/user/" +
-        this.message.loggedInUser.id +
-        "/grant/" +
-        this.message.currentGrant.id +
-        "/documents/download";
-      this.http
-        .post(url, selectedAttachments, httpOptions)
-        .subscribe((data) => {
-          saveAs(data, this.message.currentGrant.name + ".zip");
-        });
     }
   }
 
@@ -194,37 +176,53 @@ export class ProjectDocumentsComponent implements OnInit {
   }
 
   deleteAttachment(attachmentId) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-        Authorization: localStorage.getItem("AUTH_TOKEN"),
-      }),
-    };
-
-    const url =
-      "/api/user/" +
-      this.message.loggedInUser.id +
-      "/grant/" +
-      this.message.currentGrant.id +
-      "/document/" +
-      attachmentId;
-    this.http
-      .delete(url, httpOptions)
-      .subscribe(() => {
+    this.docManagementService.deleteProjectAttachment(attachmentId, this.message.loggedInUser.id, this.message.currentGrant.id)
+      .then(() => {
         const index = this.projectDocs.findIndex(a => a.id === Number(attachmentId));
         this.projectDocs.splice(index, 1);
       });
   }
 
   previewDocument(_for, attach) {
-
     this.docPreviewService.previewDoc(_for, this.message.loggedInUser.id, this.message.currentGrant.id, attach).then((result: any) => {
+      let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
+      let docUrl;
+      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/embed.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
+      } else if (docType === 'pdf' || docType === 'txt') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
+      }
       this.dialog.open(DocpreviewComponent, {
-        data: { url: this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/embed.aspx?src=" + location.origin + "/api/public/doc/" + result.url) },
+        data: {
+          url: docUrl,
+          type: docType
+        },
         panelClass: "wf-assignment-class"
       });
     });
   }
 
+  downloadSingleDoc(attachmentId: number) {
+    const selectedAttachments = new AttachmentDownloadRequest();
+    selectedAttachments.attachmentIds = [];
+    selectedAttachments.attachmentIds.push(attachmentId);
+    this.docManagementService.callProjectDocDownload(selectedAttachments, this.message.loggedInUser.id, this.message.currentGrant.id, this.message.currentGrant.name);
+  }
+
+  deleteSingleDoc(attachmentId) {
+    const dReg = this.dialog.open(FieldDialogComponent, {
+      data: {
+        title: "Are you sure you want to delete the selected document?",
+        btnMain: "Delete Document",
+        btnSecondary: "Not Now"
+      },
+      panelClass: "grant-template-class",
+    });
+
+    dReg.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteAttachment(attachmentId);
+      }
+    });
+  }
 }

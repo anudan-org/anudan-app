@@ -7,11 +7,15 @@
     <div class="row" style="background:#f6f6f6; height: 95px;">
       <div class="col-6" style="display: flex;align-items: center;">
         <button class="btn btn-sm btn-green w-100" disabled>
-          <mat-icon style='display:flex;align-items:center;justify-content: center;'>business</mat-icon>Browse from library
+          <mat-icon style='display:flex;align-items:center;justify-content: center;'>business</mat-icon>Browse from
+          library
         </button>
       </div>
       <div class="col-6" style="display: flex;align-items: center;">
-        <label for="uploadFile" class="btn btn-sm btn-green w-100"><mat-icon style='display:flex;align-items:center;justify-content: center;'>computer</mat-icon>Browse from system</label>
+        <label for="uploadFile" class="btn btn-sm btn-green w-100">
+          <mat-icon style='display:flex;align-items:center;justify-content: center;'>computer</mat-icon>Browse from
+          system
+        </label>
         <input #uploadFile id="uploadFile" type="file" style="height: 0;width:0; visibility: hidden;"
           (change)="processSelectedFile($event)" accept=".pdf,.xls,.xlsx,.doc,.docx,.ppt,.pptx" />
       </div>
@@ -30,21 +34,38 @@
               border-bottom: 1px solid #d4d4d4;
               padding-left: 0;
             ">
-            {{ doc.name}}
+            {{ doc.name+'.'+doc.fileType}}
           </p>
           <input id="attachment_{{doc.id}}" mat-list-icon class="attachment-checkbox" type="checkbox" (change)="
               handleSelection(doc)
             " />
+          <button [disabled]="noSingleDocAction" class='single-doc' (click)="previewDocument('library',doc.id)">
+            <mat-icon class="float-right"
+              [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+              remove_red_eye</mat-icon>
+          </button>
+          <button [disabled]="noSingleDocAction" class='single-doc'>
+            <mat-icon class=" float-right" (click)="downloadSingleDoc(doc.id)"
+              [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+              file_download</mat-icon>
+          </button>
+          <button [disabled]="noSingleDocAction" class='single-doc' (click)="deleteSingleDoc(doc.id)">
+            <mat-icon class="float-right"
+              [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+              delete_outlined</mat-icon>
+          </button>
         </mat-list-item>
       </ng-container>
 
       <mat-list-item *ngIf="docs">
-        <button id="attachments_download" class="btn btn-sm btn-blue" disabled (click)="downloadSelection()">
+        <button id="attachments_download" class="btn btn-sm btn-blue" [disabled]="!downloadAndDeleteAllowed"
+          (click)="downloadSelection()">
           <mat-icon style='display:flex;align-items:center;justify-content: center;'>system_update_alt</mat-icon>
           Download Selected Documents
         </button>
 
-        <button id="attachments_delete" class="btn btn-sm btn-blue ml-4" disabled (click)="deleteSelection()">
+        <button id="attachments_delete" class="btn btn-sm btn-blue ml-4" [disabled]="!downloadAndDeleteAllowed"
+          (click)="deleteSelection()">
           <mat-icon style='display:flex;align-items:center;justify-content: center;'>delete_outlined</mat-icon>Delete
           Selected Documents
         </button>

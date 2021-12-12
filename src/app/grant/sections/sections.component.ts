@@ -1,3 +1,4 @@
+import { DocManagementService } from './../../doc-management.service';
 import { DocpreviewService } from './../../docpreview.service';
 import { DocpreviewComponent } from './../../docpreview/docpreview.component';
 import { GrantCompareComponent } from './../../grant-compare/grant-compare.component';
@@ -118,7 +119,8 @@ export class SectionsComponent
   filesToUpload = FileList;
   grantWorkflowStatuses: WorkflowStatus[];
   tenantUsers: User[];
-
+  noSingleDocAction: boolean = false;
+  downloadAndDeleteAllowed: boolean = false;
   myControl: FormControl;
   options: TemplateLibrary[];
   filteredOptions: Observable<TemplateLibrary[]>;
@@ -182,6 +184,7 @@ export class SectionsComponent
     private grantApiService: GrantApiService,
     private sanitizer: DomSanitizer,
     private docPreviewService: DocpreviewService,
+    private docManagementService: DocManagementService
   ) {
     this.colors = new Colors();
 
@@ -1528,6 +1531,7 @@ export class SectionsComponent
         attribute.fieldValue = JSON.stringify(attribute.docs);
         this.fruitInput.nativeElement.value = "";
         this.fruitCtrl.setValue(null);
+        this.noSingleDocAction = false;
       });
   }
 
@@ -1540,26 +1544,21 @@ export class SectionsComponent
   }
 
   handleSelection(attribId, attachmentId) {
-    const elems = this.elem.nativeElement.querySelectorAll(
-      '[id^="attriute_' + attribId + '_attachment_"]'
-    );
-    if (elems.length > 0) {
-      for (let singleElem of elems) {
-        if (singleElem.checked) {
-          this.elem.nativeElement.querySelector(
-            '[id^="attachments_download_' + attribId + '"]'
-          ).disabled = false;
-          this.elem.nativeElement.querySelector(
-            '[id^="attachments_delete_' + attribId + '"]'
-          ).disabled = false;
-          return;
+    const docElems = this.elem.nativeElement.querySelectorAll('[id^=attriute_' + attribId + '_attachment_]');
+    if (docElems.length > 0) {
+      let found = false;
+      for (let docElem of docElems) {
+        if (docElem.checked) {
+          found = true;
         }
-        this.elem.nativeElement.querySelector(
-          '[id^="attachments_download_' + attribId + '"]'
-        ).disabled = true;
-        this.elem.nativeElement.querySelector(
-          '[id^="attachments_delete_' + attribId + '"]'
-        ).disabled = true;
+      }
+
+      if (found) {
+        this.noSingleDocAction = true;
+        this.downloadAndDeleteAllowed = true;
+      } else {
+        this.noSingleDocAction = false;
+        this.downloadAndDeleteAllowed = false;
       }
     }
   }
@@ -1576,28 +1575,18 @@ export class SectionsComponent
           selectedAttachments.attachmentIds.push(singleElem.id.split("_")[3]);
         }
       }
-      const httpOptions = {
-        responseType: "blob" as "json",
-        headers: new HttpHeaders({
-          "Content-Type": "application/json",
-          "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-          Authorization: localStorage.getItem("AUTH_TOKEN"),
-        }),
-      };
-
-      let url =
-        "/api/user/" +
-        this.appComp.loggedInUser.id +
-        "/grant/" +
-        this.currentGrant.id +
-        "/attachments";
-      this.http
-        .post(url, selectedAttachments, httpOptions)
-        .subscribe((data) => {
-          saveAs(data, this.currentGrant.name + ".zip");
-        });
+      this.docManagementService.callGrantDocDownload(selectedAttachments, this.appComp, this.currentGrant);
     }
   }
+
+  downloadSingleDoc(attachmentId: number) {
+    const selectedAttachments = new AttachmentDownloadRequest();
+    selectedAttachments.attachmentIds = [];
+    selectedAttachments.attachmentIds.push(attachmentId);
+    this.docManagementService.callGrantDocDownload(selectedAttachments, this.appComp, this.currentGrant);
+  }
+
+
 
   deleteSelection(attribId, msg: string) {
     const dReg = this.dialog.open(FieldDialogComponent, {
@@ -1634,27 +1623,27 @@ export class SectionsComponent
     });
   }
 
-  deleteAttachment(attributeId, attachmentId) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-        Authorization: localStorage.getItem("AUTH_TOKEN"),
-      }),
-    };
+  deleteSingleDoc(attributeId, attachmentId) {
+    const dReg = this.dialog.open(FieldDialogComponent, {
+      data: {
+        title: "Are you sure you want to delete the selected document?",
+        btnMain: "Delete Document",
+        btnSecondary: "Not Now"
+      },
+      panelClass: "grant-template-class",
+    });
 
-    const url =
-      "/api/user/" +
-      this.appComp.loggedInUser.id +
-      "/grant/" +
-      this.currentGrant.id +
-      "/attribute/" +
-      attributeId +
-      "/attachment/" +
-      attachmentId;
-    this.http
-      .post<Grant>(url, this.currentGrant, httpOptions)
-      .subscribe((grant: Grant) => {
+    dReg.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteAttachment(attributeId, attachmentId);
+      }
+    });
+  }
+
+
+  deleteAttachment(attributeId, attachmentId) {
+    this.docManagementService.deleteGrantAttachment(attributeId, attachmentId, this.appComp, this.currentGrant)
+      .then((grant: Grant) => {
         this.grantData.changeMessage(grant, this.appComp.loggedInUser.id);
         this.currentGrant = grant;
         for (let section of this.currentGrant.grantDetails.sections) {
@@ -1741,6 +1730,7 @@ export class SectionsComponent
       .post<DocInfo>(endpoint, formData, httpOptions)
       .subscribe((info: DocInfo) => {
         this.grantData.changeMessage(info.grant, this.appComp.loggedInUser.id);
+        this.noSingleDocAction = false;
         this.currentGrant = info.grant;
         this.newField =
           "attriute_" + attribute.id + "_attachment_" + info.attachmentId;
