@@ -1,4 +1,8 @@
-import { TableData } from 'app/model/dahsboard';
+import { DomSanitizer } from '@angular/platform-browser';
+import { DocpreviewService } from './../../docpreview.service';
+import { DocpreviewComponent } from './../../docpreview/docpreview.component';
+import { DocManagementService } from './../../doc-management.service';
+import { TableData, AttachmentDownloadRequest } from 'app/model/dahsboard';
 import { ClosureDataService } from './../../closure.data.service';
 import { ClosureTemplateDialogComponent } from './../../components/closure-template-dialog/closure-template-dialog.component';
 import { ClosureTemplate, GrantClosure } from './../../model/closures';
@@ -176,6 +180,9 @@ export class PreviewComponent implements OnInit {
     private wfValidationService: WfvalidationService,
     private grantApiService: GrantApiService,
     private closureService: ClosureDataService,
+    private docManagementService: DocManagementService,
+    private docPreviewService: DocpreviewService,
+    private sanitizer: DomSanitizer
   ) {
     this.colors = new Colors();
 
@@ -1546,4 +1553,31 @@ export class PreviewComponent implements OnInit {
     });
   }
 
+
+  downloadSingleDoc(attachmentId: number) {
+    const selectedAttachments = new AttachmentDownloadRequest();
+    selectedAttachments.attachmentIds = [];
+    selectedAttachments.attachmentIds.push(attachmentId);
+    this.docManagementService.callGrantDocDownload(selectedAttachments, this.appComp, this.currentGrant);
+  }
+
+  previewDocument(_for, attach) {
+
+    this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentGrant.id, attach).then((result: any) => {
+      let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
+      let docUrl;
+      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/embed.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
+      } else if (docType === 'pdf' || docType === 'txt') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
+      }
+      this.dialog.open(DocpreviewComponent, {
+        data: {
+          url: docUrl,
+          type: docType
+        },
+        panelClass: "wf-assignment-class"
+      });
+    });
+  }
 }
