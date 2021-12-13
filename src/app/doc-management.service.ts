@@ -1,3 +1,4 @@
+import { GrantClosure } from 'app/model/closures';
 import { Disbursement } from 'app/model/disbursement';
 import { Report } from './model/report';
 import { GrantDataService } from './grant.data.service';
@@ -201,4 +202,54 @@ export class DocManagementService {
   }
 
 
+  callClosureDocDownload(selectedAttachments: AttachmentDownloadRequest, appComp: AppComponent, currentClosure: GrantClosure) {
+    const httpOptions = {
+      responseType: "blob" as "json",
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
+    let url =
+      "/api/user/" +
+      appComp.loggedInUser.id +
+      "/closure/" +
+      currentClosure.id +
+      "/attachments";
+    this.http
+      .post(url, selectedAttachments, httpOptions)
+      .subscribe((data) => {
+        saveAs(
+          data,
+          currentClosure.grant.name +
+          "_closure" +
+          ".zip"
+        );
+      });
+  }
+
+  deleteClosureAttachment(attachmentId, userId: number, attributeId: number, closureId: number, currentClosure: GrantClosure): Promise<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
+    const url =
+      "/api/user/" +
+      userId +
+      "/closure/" +
+      closureId +
+      "/attribute/" +
+      attributeId +
+      "/attachment/" +
+      attachmentId;
+    return this.http
+      .post<GrantClosure>(url, currentClosure, httpOptions)
+      .toPromise().then();
+  }
 }

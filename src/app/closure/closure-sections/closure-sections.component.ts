@@ -1,3 +1,7 @@
+import { DomSanitizer } from '@angular/platform-browser';
+import { DocpreviewComponent } from './../../docpreview/docpreview.component';
+import { DocpreviewService } from './../../docpreview.service';
+import { DocManagementService } from './../../doc-management.service';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { startWith, map } from 'rxjs/operators';
@@ -91,7 +95,8 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   separatorKeysCodes: number[] = [ENTER, COMMA];
   fruitCtrl = new FormControl();
   allowScroll = true;
-
+  noSingleDocAction: boolean = false;
+  downloadAndDeleteAllowed: boolean = false;
 
   constructor(public appComp: AppComponent,
     private closureService: ClosureDataService,
@@ -108,7 +113,10 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     private datepipe: DatePipe,
     public amountValidator: AmountValidator,
     private adminService: AdminService,
-    private elem: ElementRef,) {
+    private elem: ElementRef,
+    private docManagementService: DocManagementService,
+    private docPreviewService: DocpreviewService,
+    private sanitizer: DomSanitizer) {
     this.route.params.subscribe((p) => {
       this.action = p["action"];
       this.appComp.action = this.action;
@@ -943,26 +951,23 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   }
 
   handleSelection(attribId, attachmentId) {
-    const elems = this.elem.nativeElement.querySelectorAll(
+    const docElems = this.elem.nativeElement.querySelectorAll(
       '[id^="attriute_' + attribId + '_attachment_"]'
     );
-    if (elems.length > 0) {
-      for (let singleElem of elems) {
-        if (singleElem.checked) {
-          this.elem.nativeElement.querySelector(
-            '[id^="attachments_download_' + attribId + '"]'
-          ).disabled = false;
-          this.elem.nativeElement.querySelector(
-            '[id^="attachments_delete_' + attribId + '"]'
-          ).disabled = false;
-          return;
+    if (docElems.length > 0) {
+      let found = false;
+      for (let docElem of docElems) {
+        if (docElem.checked) {
+          found = true;
         }
-        this.elem.nativeElement.querySelector(
-          '[id^="attachments_download_' + attribId + '"]'
-        ).disabled = true;
-        this.elem.nativeElement.querySelector(
-          '[id^="attachments_delete_' + attribId + '"]'
-        ).disabled = true;
+      }
+
+      if (found) {
+        this.noSingleDocAction = true;
+        this.downloadAndDeleteAllowed = true;
+      } else {
+        this.noSingleDocAction = false;
+        this.downloadAndDeleteAllowed = false;
       }
     }
   }
@@ -979,31 +984,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
           selectedAttachments.attachmentIds.push(singleElem.id.split("_")[3]);
         }
       }
-      const httpOptions = {
-        responseType: "blob" as "json",
-        headers: new HttpHeaders({
-          "Content-Type": "application/json",
-          "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-          Authorization: localStorage.getItem("AUTH_TOKEN"),
-        }),
-      };
-
-      let url =
-        "/api/user/" +
-        this.appComp.loggedInUser.id +
-        "/closure/" +
-        this.currentClosure.id +
-        "/attachments";
-      this.http
-        .post(url, selectedAttachments, httpOptions)
-        .subscribe((data) => {
-          saveAs(
-            data,
-            this.currentClosure.grant.name +
-            "_closure" +
-            ".zip"
-          );
-        });
+      this.docManagementService.callClosureDocDownload(selectedAttachments, this.appComp, this.currentClosure);
     }
   }
 
@@ -1038,26 +1019,8 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   }
 
   deleteAttachment(attributeId, attachmentId) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-        Authorization: localStorage.getItem("AUTH_TOKEN"),
-      }),
-    };
-
-    const url =
-      "/api/user/" +
-      this.appComp.loggedInUser.id +
-      "/closure/" +
-      this.currentClosure.id +
-      "/attribute/" +
-      attributeId +
-      "/attachment/" +
-      attachmentId;
-    this.http
-      .post<GrantClosure>(url, this.currentClosure, httpOptions)
-      .subscribe((closure: GrantClosure) => {
+    this.docManagementService.deleteClosureAttachment(attachmentId, this.appComp.loggedInUser.id, attributeId, this.currentClosure.id, this.currentClosure)
+      .then((closure: GrantClosure) => {
         this.closureService.changeMessage(closure, this.appComp.loggedInUser.id);
         this.currentClosure = closure;
         for (let section of this.currentClosure.closureDetails.sections) {
@@ -1231,5 +1194,49 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
           }
         }
       );
+  }
+
+
+  previewDocument(_for, attach) {
+    this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentClosure.id, attach).then((result: any) => {
+      let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
+      let docUrl;
+      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/embed.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
+      } else if (docType === 'pdf' || docType === 'txt') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
+      }
+      this.dialog.open(DocpreviewComponent, {
+        data: {
+          url: docUrl,
+          type: docType
+        },
+        panelClass: "wf-assignment-class"
+      });
+    });
+  }
+
+  downloadSingleDoc(attachmentId: number) {
+    const selectedAttachments = new AttachmentDownloadRequest();
+    selectedAttachments.attachmentIds = [];
+    selectedAttachments.attachmentIds.push(attachmentId);
+    this.docManagementService.callClosureDocDownload(selectedAttachments, this.appComp, this.currentClosure);
+  }
+
+  deleteSingleDoc(attributeId, attachmentId) {
+    const dReg = this.dialog.open(FieldDialogComponent, {
+      data: {
+        title: "Are you sure you want to delete the selected document?",
+        btnMain: "Delete Document",
+        btnSecondary: "Not Now"
+      },
+      panelClass: "grant-template-class",
+    });
+
+    dReg.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteAttachment(attributeId, attachmentId);
+      }
+    });
   }
 }
