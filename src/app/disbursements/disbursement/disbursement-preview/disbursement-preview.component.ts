@@ -1,8 +1,12 @@
+import { DomSanitizer } from '@angular/platform-browser';
+import { DocManagementService } from './../../../doc-management.service';
+import { DocpreviewService } from './../../../docpreview.service';
+import { DocpreviewComponent } from './../../../docpreview/docpreview.component';
 import { HttpHeaders } from '@angular/common/http';
 import { WfvalidationService } from './../../../wfvalidation.service';
 import { AdminService } from './../../../admin.service';
 import { GrantTagsComponent } from './../../../grant-tags/grant-tags.component';
-import { Grant, OrgTag, ColumnData } from './../../../model/dahsboard';
+import { Grant, OrgTag, ColumnData, AttachmentDownloadRequest } from './../../../model/dahsboard';
 import {
   Component,
   OnInit,
@@ -119,7 +123,10 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
     public currencyService: CurrencyService,
     public amountValidator: AmountValidator,
     private adminService: AdminService,
-    private wfValidationService: WfvalidationService
+    private wfValidationService: WfvalidationService,
+    private docPreviewService: DocpreviewService,
+    private docManagementService: DocManagementService,
+    private sanitizer: DomSanitizer
   ) {
     this.disbursementService.currentMessage.subscribe(
       (disbursement) => (this.currentDisbursement = disbursement)
@@ -290,47 +297,6 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
 
   submitDisbursement(toState: number) {
     this.disableRecordButton = true;
-    /* if (this.currentDisbursement.requestedAmount < this.getTotals()) {
-      this.dialog.open(FieldDialogComponent, {
-        data: {
-          title:
-            "The disbursed total cannot be greater than the approved amount of " +
-            this.currencyService.getFormattedAmount(
-              this.currentDisbursement.requestedAmount
-            ),
-          type: "simple",
-        },
-        panelClass: "center-class",
-      });
-      this.disableRecordButton = false;
-      return;
-    } */
-
-    /* this.workflowDataService
-      .getDisbursementWorkflowStatuses(this.currentDisbursement)
-      .then((workflowStatuses) => {
-        this.appComponent.disbursementWorkflowStatuses = workflowStatuses;
-        if (
-          (this.workflowValidationService.getStatusByStatusIdForDisbursement(
-            toState,
-            this.appComponent
-          ).internalStatus === "ACTIVE" ||
-            this.workflowValidationService.getStatusByStatusIdForDisbursement(
-              toState,
-              this.appComponent
-            ).internalStatus === "CLOSED") &&
-          this.disbursementService.checkIfHeaderHasMissingEntries(
-            this.currentDisbursement
-          )
-        ) {
-          const dialogRef = this.dialog.open(MessagingComponent, {
-            data: "Approval Request has missing header information.",
-            panelClass: "center-class",
-          });
-          this.disableRecordButton = false;
-          return;
-        } */
-
     this.workflowDataService
       .getDisbursementWorkflowStatuses(this.currentDisbursement, this.appComponent)
       .then((workflowStatuses) => {
@@ -376,46 +342,9 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
           this.wfDisabled = true;
         });
       });
-
-
-
-    /* for (let i = 0; i < this.appComponent.disbursementWorkflowStatuses.length; i++) {
-      if (i < this.appComponent.disbursementWorkflowStatuses.length - 1) {
-        const prev = this.currentDisbursement.assignments.filter(a => (a.stateId === this.appComponent.disbursementWorkflowStatuses[i].id))[0];
-        const next = this.currentDisbursement.assignments.filter(a => (a.stateId === this.appComponent.disbursementWorkflowStatuses[i + 1].id))[0];
-        if (prev && next && (prev.owner === next.owner)) {
-          const dialogRef = this.dialog.open(MessagingComponent, {
-            data: "Workflow Assignemnts do not look right. Please review and fix before proceeding.",
-            panelClass: "center-class",
-          });
-          return;
-        }
-      }
-    } */
   }
 
   openBottomSheetForReportNotes(toStateId: number, result): void {
-    /* if(
-      this.workflowValidationService.getStatusByStatusIdForDisbursement(
-        toStateId,
-        this.appComponent
-      ).internalStatus === "ACTIVE" &&
-        this.currentDisbursement.requestedAmount +
-        this.getApprovedActualTotals() >
-        this.currentDisbursement.grant.amount
-      ) {
-    const dialogRef = this.dialog.open(MessagingComponent, {
-      data:
-        "Total requested funds for grant cannot exceed " +
-        this.currencyService.getFormattedAmount(
-          this.currentDisbursement.grant.amount
-        ),
-      panelClass: "center-class",
-    });
-    this.disableRecordButton = false;
-    return;
-  } */
-
     const _bSheet = this.dialog.open(DisbursementNotesComponent, {
       hasBackdrop: true,
       data: {
@@ -592,5 +521,32 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
       docName,
       docId, docLoc
     );
+  }
+
+  previewDocument(_for, attach) {
+
+    this.docPreviewService.previewDoc(_for, this.appComponent.loggedInUser.id, attach, this.currentDisbursement.id).then((result: any) => {
+      let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
+      let docUrl;
+      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/embed.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
+      } else if (docType === 'pdf' || docType === 'txt') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
+      }
+      this.dialog.open(DocpreviewComponent, {
+        data: {
+          url: docUrl,
+          type: docType
+        },
+        panelClass: "wf-assignment-class"
+      });
+    });
+  }
+
+  downloadSingleDoc(attachmentId: number) {
+    const selectedAttachments = new AttachmentDownloadRequest();
+    selectedAttachments.attachmentIds = [];
+    selectedAttachments.attachmentIds.push(attachmentId);
+    this.docManagementService.callDisbursementDocDownload(selectedAttachments, this.appComponent, this.currentDisbursement);
   }
 }

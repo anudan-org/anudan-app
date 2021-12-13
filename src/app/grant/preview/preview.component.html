@@ -397,11 +397,9 @@
                                   ">
                                     <em class="far fa-file-powerpoint text-danger ml-1 mr-2"></em>
                                   </ng-container>
-                                  {{ doc.name + '.' + doc.type }}
+                                  <span style="cursor: pointer;" [matMenuTriggerFor]="menu">{{ doc.name + '.' + doc.type
+                                    }}</span>
                                   <div data-html2canvas-ignore="true">
-                                    <mat-icon mat-button [matMenuTriggerFor]="menu" class="float-right"
-                                      style="cursor: pointer;font-size: 1em;width:1em;height:1em;">more_vert
-                                    </mat-icon>
                                     <mat-menu data-html2canvas-ignore #menu="matMenu">
                                       <button mat-menu-item (click)="previewDocument('grant',doc.id)">
                                         <mat-icon class="ml-1">remove_red_eye</mat-icon>Preview

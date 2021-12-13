@@ -78,6 +78,7 @@ export class AppComponent implements AfterViewChecked {
   reportTransitions: WorkflowTransition[];
   closureTransitions: WorkflowTransition[];
   releaseVersion: string;
+  acceptedFileTypes = [".pdf", ".xls", ".xlsx", ".doc", ".docx", ".ppt", ".pptx", ".txt"]
   public appConfig: AppConfig = {
     appName: '',
     logoUrl: '',

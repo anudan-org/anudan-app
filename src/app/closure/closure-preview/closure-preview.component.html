@@ -303,7 +303,7 @@
                           ">{{ attribute.fieldName }}</span>
                             <ul>
                               <li *ngFor="
-                              let doc of getDocumentName(attribute.fieldValue)
+                              let doc of attribute.attachments
                             " style="list-style-type: none">
                                 <p class="m-0" style="font-family: Roboto, sans-serif; font-size: 14px">
                                   <strong>
@@ -325,7 +325,19 @@
                                   ">
                                       <em class="far fa-file-powerpoint text-danger ml-1"></em>
                                     </ng-container>
-                                    {{ doc.name }}
+                                    <span class="ml-2" style="cursor: pointer;" [matMenuTriggerFor]="menuDoc">{{
+                                      doc.name +
+                                      '.'+doc.type}}</span>
+                                    <div data-html2canvas-ignore="true">
+                                      <mat-menu data-html2canvas-ignore #menuDoc="matMenu">
+                                        <button mat-menu-item (click)="previewDocument('closure',doc.id)">
+                                          <mat-icon class="ml-1">remove_red_eye</mat-icon>Preview
+                                        </button>
+                                        <button mat-menu-item (click)="downloadSingleDoc(doc.id)">
+                                          <mat-icon class="ml-1">file_download</mat-icon>Download
+                                        </button>
+                                      </mat-menu>
+                                    </div>
                                   </strong>
                                 </p>
                               </li>
@@ -527,56 +539,6 @@
                     </div>
                   </div>
                 </ng-container>
-              </div>
-              <div data-html2canvas-ignore class="col-12">
-                <hr />
-                <h5>ATTACHMENTS</h5>
-                <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
-                  <div>
-                    <div class="row mb-2 mt-2">
-                      <ng-container *ngFor="let attribute of section.attributes">
-                        <ng-container *ngIf="attribute.fieldType === 'document'">
-                          <div class="col-sm-12 col-lg-12 mb-3">
-                            <ng-container *ngFor="
-                            let doc of getDocumentName(attribute.fieldValue)
-                          ">
-                              <a (click)="
-                              downloadAttachment(
-                                currentClosure.id,
-                                doc.id,
-                                doc.name,
-                                doc.type
-                              )
-                            ">
-                                <span class="ml-3">
-                                  <ng-container *ngIf="doc.type === 'pdf'">
-                                    <em class="far fa-file-pdf text-danger ml-1"></em>
-                                  </ng-container>
-                                  <ng-container *ngIf="
-                                  doc.type === 'xls' || doc.type === 'xlsx'
-                                ">
-                                    <em class="far fa-file-excel text-success ml-1"></em>
-                                  </ng-container>
-                                  <ng-container *ngIf="
-                                  doc.type === 'doc' || doc.type === 'docx'
-                                ">
-                                    <em class="far fa-file-word text-primary ml-1"></em>
-                                  </ng-container>
-                                  <ng-container *ngIf="
-                                  doc.type === 'ppt' || doc.type === 'pptx'
-                                ">
-                                    <em class="far fa-file-powerpoint text-danger ml-1"></em>
-                                  </ng-container>
-                                  {{ doc.name }}
-                                </span></a><br />
-                            </ng-container>
-                          </div>
-                        </ng-container>
-                      </ng-container>
-                    </div>
-                  </div>
-                </ng-container>
-
               </div>
             </div>
             <ng-template kendoPDFTemplate let-pageNum="pageNum" let-totalPages="totalPages">

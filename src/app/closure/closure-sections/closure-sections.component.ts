@@ -901,7 +901,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   }
 
   processSelectedFiles(section, attribute, event) {
-    const files = event.target.files;
+    let files = event.target.files;
 
     const endpoint =
       "/api/user/" +
@@ -915,6 +915,24 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       "/upload";
     let formData = new FormData();
     for (let i = 0; i < files.length; i++) {
+      if (files.item(i).size === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected a file with no content. Unable to upload.',
+          panelClass: "center-class"
+        });
+        event.target.value = "";
+        break;
+      }
+
+      const ext = files.item(i).name.substr(files.item(i).name.lastIndexOf('.'));
+      if (this.appComp.acceptedFileTypes.filter(d => d === ext).length! > 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected an unsupported file type. Supported file types are <list of file type>. Unable to upload.',
+          panelClass: "center-class"
+        });
+        event.target.value = "";
+        break;
+      }
       formData.append("file", files.item(i));
       const fileExistsCheck = this._checkAttachmentExists(
         files.item(i).name.substring(0, files.item(i).name.lastIndexOf("."))

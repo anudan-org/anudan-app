@@ -1,3 +1,7 @@
+import { DomSanitizer } from '@angular/platform-browser';
+import { DocManagementService } from './../../doc-management.service';
+import { DocpreviewService } from './../../docpreview.service';
+import { DocpreviewComponent } from './../../docpreview/docpreview.component';
 import { PDFExportComponent } from '@progress/kendo-angular-pdf-export';
 import { SidebarComponent } from './../../components/sidebar/sidebar.component';
 import { CurrencyService } from './../../currency-service';
@@ -14,7 +18,7 @@ import { FieldDialogComponent } from './../../components/field-dialog/field-dial
 import { MatDialog } from '@angular/material';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { AppComponent } from 'app/app.component';
-import { WorkflowStatus, Grant, TableData, Attribute, Section } from './../../model/dahsboard';
+import { WorkflowStatus, Grant, TableData, Attribute, Section, AttachmentDownloadRequest } from './../../model/dahsboard';
 import { ClosureWorkflowAssignmentModel, GrantClosure } from 'app/model/closures';
 import { ClosureDataService } from './../../closure.data.service';
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
@@ -57,7 +61,10 @@ export class ClosurePreviewComponent implements OnInit {
     public adminComp: AdminLayoutComponent,
     private currencyService: CurrencyService,
     private titlecasePipe: TitleCasePipe,
-    private sidebar: SidebarComponent,) {
+    private sidebar: SidebarComponent,
+    private docPreviewService: DocpreviewService,
+    private docManagementService: DocManagementService,
+    private sanitizer: DomSanitizer) {
 
     this.closureService.currentMessage.subscribe((closure) => {
       this.currentClosure = closure;
@@ -452,5 +459,31 @@ export class ClosurePreviewComponent implements OnInit {
       return String(section.id);
     }
     return section.sectionName.replace(/[^_0-9a-z]/gi, '');
+  }
+
+  previewDocument(_for, attach) {
+    this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentClosure.id, attach).then((result: any) => {
+      let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
+      let docUrl;
+      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/embed.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
+      } else if (docType === 'pdf' || docType === 'txt') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
+      }
+      this.dialog.open(DocpreviewComponent, {
+        data: {
+          url: docUrl,
+          type: docType
+        },
+        panelClass: "wf-assignment-class"
+      });
+    });
+  }
+
+  downloadSingleDoc(attachmentId: number) {
+    const selectedAttachments = new AttachmentDownloadRequest();
+    selectedAttachments.attachmentIds = [];
+    selectedAttachments.attachmentIds.push(attachmentId);
+    this.docManagementService.callClosureDocDownload(selectedAttachments, this.appComp, this.currentClosure);
   }
 }

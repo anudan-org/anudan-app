@@ -1,3 +1,8 @@
+import { DocManagementService } from './../../../doc-management.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { DocpreviewService } from './../../../docpreview.service';
+import { DocpreviewComponent } from './../../../docpreview/docpreview.component';
+import { AttachmentDownloadRequest } from 'app/model/dahsboard';
 import { WfvalidationService } from './../../../wfvalidation.service';
 import { AdminService } from './../../../admin.service';
 import { GrantTagsComponent } from './../../../grant-tags/grant-tags.component';
@@ -71,7 +76,10 @@ export class ReportPreviewComponent implements OnInit {
         private reportValidationService: ReportValidationService,
         private currencyService: CurrencyService,
         private adminService: AdminService,
-        private wfValidationService: WfvalidationService
+        private wfValidationService: WfvalidationService,
+        private docPreviewService: DocpreviewService,
+        private sanitizer: DomSanitizer,
+        private docManagementService: DocManagementService
     ) {
 
         this.singleReportDataService.currentMessage.subscribe((report) => {
@@ -587,5 +595,31 @@ export class ReportPreviewComponent implements OnInit {
             return indicator.join("<br>");
         }
         return null;
+    }
+
+    previewDocument(_for, attach) {
+        this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentReport.id, attach).then((result: any) => {
+            let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
+            let docUrl;
+            if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
+                docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/embed.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
+            } else if (docType === 'pdf' || docType === 'txt') {
+                docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
+            }
+            this.dialog.open(DocpreviewComponent, {
+                data: {
+                    url: docUrl,
+                    type: docType
+                },
+                panelClass: "wf-assignment-class"
+            });
+        });
+    }
+
+    downloadSingleDoc(attachmentId: number) {
+        const selectedAttachments = new AttachmentDownloadRequest();
+        selectedAttachments.attachmentIds = [];
+        selectedAttachments.attachmentIds.push(attachmentId);
+        this.docManagementService.callReportDocDownload(selectedAttachments, this.appComp, this.currentReport);
     }
 }
