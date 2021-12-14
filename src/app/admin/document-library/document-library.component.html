@@ -39,7 +39,7 @@
           <input id="attachment_{{doc.id}}" mat-list-icon class="attachment-checkbox" type="checkbox" (change)="
               handleSelection(doc)
             " />
-          <button [disabled]="noSingleDocAction" class='single-doc' (click)="previewDocument('library',doc.id)">
+          <button [disabled]="noSingleDocAction" class='single-doc' (click)="previewDocument('library',doc)">
             <mat-icon class="float-right"
               [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
               remove_red_eye</mat-icon>

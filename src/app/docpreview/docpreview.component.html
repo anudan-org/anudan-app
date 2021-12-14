@@ -1,13 +1,13 @@
-<span class="" style="position:absolute; right: 10px; left: auto;top: 10px;" (click)="onNoClick()">
+<span class="" style="position:absolute; right: 30px; left: auto;top: 10px;" (click)="onNoClick()">
   <mat-icon>close</mat-icon>
 </span>
-
+<h1 class="text-header pt-2">Previewing {{message.title}}</h1>
 <ng-container
   *ngIf="message.type==='doc' || message.type==='docx' || message.type==='xls' || message.type==='xlsx' || message.type==='ppt' || message.type==='pptx'">
-  <iframe title="Preview" [src]='message.url' width='100%' height='100%'>This is
+  <iframe class="mt-4" title="Preview" [src]='message.url' width='100%' height='100%'>This is
     an embedded <a target='_blank' href='http://office.com'>Microsoft Office</a> document, powered by <a target='_blank'
       href='http://office.com/webapps'>Office Online</a>.</iframe>
 </ng-container>
 <ng-container *ngIf="message.type==='pdf' || message.type==='txt'">
-  <embed title="Preview" [src]='message.url' width='100%' height='100%' />
+  <embed class="mt-4" title="Preview" [src]='message.url' width='100%' height='100%' />
 </ng-container>

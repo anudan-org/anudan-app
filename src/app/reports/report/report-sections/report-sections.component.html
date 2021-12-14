@@ -1474,7 +1474,7 @@
                                         let doc of filteredOptions | async
                                       ">
                                           <mat-option [value]="doc" [disabled]="checkIfSelected(doc)">
-                                            {{ doc.name }}
+                                            {{ doc.name +'.'+doc.fileType }}
                                           </mat-option>
                                         </ng-container>
                                       </mat-autocomplete>
@@ -1512,7 +1512,7 @@
                                     handleSelection(attribute.id, attachment.id)
                                   " />
                                     <button [disabled]="noSingleDocAction" class='single-doc'
-                                      (click)="previewDocument('report',attachment.id)">
+                                      (click)="previewDocument('report',attachment)">
                                       <mat-icon class="float-right"
                                         [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
                                         remove_red_eye</mat-icon>

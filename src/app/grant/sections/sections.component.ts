@@ -1947,7 +1947,7 @@ export class SectionsComponent
 
   previewDocument(_for, attach) {
 
-    this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentGrant.id, attach).then((result: any) => {
+    this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentGrant.id, attach.id).then((result: any) => {
       let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
       let docUrl;
       if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
@@ -1958,7 +1958,10 @@ export class SectionsComponent
       this.dialog.open(DocpreviewComponent, {
         data: {
           url: docUrl,
-          type: docType
+          type: docType,
+          title: attach.name + '.' + attach.type,
+          userId: this.appComp.loggedInUser.id,
+          tempFileName: result.url
         },
         panelClass: "wf-assignment-class"
       });

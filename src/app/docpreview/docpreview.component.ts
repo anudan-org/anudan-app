@@ -1,3 +1,4 @@
+import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Component, OnInit, Inject } from '@angular/core';
 
@@ -9,7 +10,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 export class DocpreviewComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<DocpreviewComponent>
-    , @Inject(MAT_DIALOG_DATA) public message: any) {
+    , @Inject(MAT_DIALOG_DATA) public message: any, private http: HttpClient) {
     console.log(message.url)
   }
 
@@ -18,7 +19,20 @@ export class DocpreviewComponent implements OnInit {
   }
 
   onNoClick() {
-    this.dialogRef.close(false);
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
+    const url = "/api/user/" + this.message.userId + "/grant/attachments/delete/preview/file/" + this.message.tempFileName;
+    this.http.get(url, httpOptions).subscribe(() => {
+      this.dialogRef.close(false);
+    });
+
+
   }
 }
 

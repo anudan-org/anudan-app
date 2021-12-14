@@ -113,7 +113,6 @@ export class LoginComponent implements OnInit {
       }
     });
 
-
     if (this.parameters.email) {
       this.currentEmail = this.parameters.email;
     }

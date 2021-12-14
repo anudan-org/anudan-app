@@ -309,7 +309,7 @@ export class DisbursementComponent implements OnInit, OnDestroy {
 
   previewDocument(_for, attach) {
 
-    this.docPreviewService.previewDoc(_for, this.appComponent.loggedInUser.id, attach, this.currentDisbursement.id).then((result: any) => {
+    this.docPreviewService.previewDoc(_for, this.appComponent.loggedInUser.id, attach.id, this.currentDisbursement.id).then((result: any) => {
       let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
       let docUrl;
       if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
@@ -320,7 +320,10 @@ export class DisbursementComponent implements OnInit, OnDestroy {
       this.dialog.open(DocpreviewComponent, {
         data: {
           url: docUrl,
-          type: docType
+          type: docType,
+          title: attach.name + "." + attach.extension,
+          userId: this.appComponent.loggedInUser.id,
+          tempFileName: result.url
         },
         panelClass: "wf-assignment-class"
       });
