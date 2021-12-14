@@ -925,9 +925,9 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       }
 
       const ext = files.item(i).name.substr(files.item(i).name.lastIndexOf('.'));
-      if (this.appComp.acceptedFileTypes.filter(d => d === ext).length! > 0) {
+      if (this.appComp.acceptedFileTypes.filter(d => d === ext).length === 0) {
         this.dialog.open(MessagingComponent, {
-          data: 'Detected an unsupported file type. Supported file types are <list of file type>. Unable to upload.',
+          data: 'Detected an unsupported file type. Supported file types are ' + this.appComp.acceptedFileTypes.toString() + '. Unable to upload.',
           panelClass: "center-class"
         });
         event.target.value = "";

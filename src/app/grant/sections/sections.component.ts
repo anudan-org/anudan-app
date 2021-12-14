@@ -1,3 +1,4 @@
+import { MessagingComponent } from 'app/components/messaging/messaging.component';
 import { DocManagementService } from './../../doc-management.service';
 import { DocpreviewService } from './../../docpreview.service';
 import { DocpreviewComponent } from './../../docpreview/docpreview.component';
@@ -1700,6 +1701,24 @@ export class SectionsComponent
       "/upload";
     let formData = new FormData();
     for (let i = 0; i < files.length; i++) {
+      if (files.item(i).size === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected a file with no content. Unable to upload.',
+          panelClass: "center-class"
+        });
+        event.target.value = "";
+        break;
+      }
+
+      const ext = files.item(i).name.substr(files.item(i).name.lastIndexOf('.'));
+      if (this.appComp.acceptedFileTypes.filter(d => d === ext).length === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected an unsupported file type. Supported file types are ' + this.appComp.acceptedFileTypes.toString() + '. Unable to upload.',
+          panelClass: "center-class"
+        });
+        event.target.value = "";
+        break;
+      }
       formData.append("file", files.item(i));
       const fileExistsCheck = this._checkAttachmentExists(
         files.item(i).name.substring(0, files.item(i).name.lastIndexOf("."))
@@ -1894,6 +1913,7 @@ export class SectionsComponent
         title: "Project Documents",
         loggedInUser: this.appComp.loggedInUser,
         currentGrant: this.currentGrant,
+        acceptedFileTypes: this.appComp.acceptedFileTypes
       },
       panelClass: "wf-assignment-class",
     });

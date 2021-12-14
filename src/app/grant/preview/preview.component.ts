@@ -1465,6 +1465,7 @@ export class PreviewComponent implements OnInit {
         title: "Project Documents",
         loggedInUser: this.appComp.loggedInUser,
         currentGrant: this.currentGrant,
+        acceptedFileTypes: this.appComp.acceptedFileTypes
       },
       panelClass: "wf-assignment-class",
     });

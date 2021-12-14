@@ -1,3 +1,4 @@
+import { MessagingComponent } from 'app/components/messaging/messaging.component';
 import { DocManagementService } from './../../doc-management.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DocpreviewComponent } from './../../docpreview/docpreview.component';
@@ -84,6 +85,24 @@ export class ProjectDocumentsComponent implements OnInit {
       "/documents/upload";
     let formData = new FormData();
     for (let i = 0; i < files.length; i++) {
+      if (files.item(i).size === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected a file with no content. Unable to upload.',
+          panelClass: "center-class"
+        });
+        ev.target.value = "";
+        break;
+      }
+
+      const ext = files.item(i).name.substr(files.item(i).name.lastIndexOf('.'));
+      if (this.message.acceptedFileTypes.filter(d => d === ext).length === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected an unsupported file type. Supported file types are ' + this.message.acceptedFileTypes.toString() + '. Unable to upload.',
+          panelClass: "center-class"
+        });
+        ev.target.value = "";
+        break;
+      }
       formData.append("file", files.item(i));
     }
 

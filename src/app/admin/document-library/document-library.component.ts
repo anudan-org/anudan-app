@@ -1,3 +1,4 @@
+import { MessagingComponent } from 'app/components/messaging/messaging.component';
 import { DocpreviewComponent } from './../../docpreview/docpreview.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DocpreviewService } from './../../docpreview.service';
@@ -36,7 +37,7 @@ export class DocumentLibraryComponent implements OnInit {
 
   @ViewChild('createRoleBtn') createRoleBtn: ElementRef;
 
-  constructor(private appComponent: AppComponent,
+  constructor(public appComponent: AppComponent,
     private http: HttpClient,
     private dialog: MatDialog,
     private adminService: AdminService,
@@ -152,6 +153,24 @@ export class DocumentLibraryComponent implements OnInit {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
+      if (file.size === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected a file with no content. Unable to upload.',
+          panelClass: "center-class"
+        });
+        ev.target.value = "";
+        return;
+      }
+
+      const ext = file.name.substr(file.name.lastIndexOf('.'));
+      if (this.appComponent.acceptedFileTypes.filter(d => d === ext).length === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected an unsupported file type. Supported file types are ' + this.appComponent.acceptedFileTypes.toString() + '. Unable to upload.',
+          panelClass: "center-class"
+        });
+        ev.target.value = "";
+        return;
+      }
       this.saveDoc(file);
     };
     reader.onerror = function (error) {

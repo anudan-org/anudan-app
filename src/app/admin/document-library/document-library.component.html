@@ -17,7 +17,7 @@
           system
         </label>
         <input #uploadFile id="uploadFile" type="file" style="height: 0;width:0; visibility: hidden;"
-          (change)="processSelectedFile($event)" accept=".pdf,.xls,.xlsx,.doc,.docx,.ppt,.pptx" />
+          (change)="processSelectedFile($event)" [accept]="appComponent.acceptedFileTypes" />
       </div>
     </div>
 
