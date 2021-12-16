@@ -9,6 +9,6 @@
       href='http://office.com/webapps'>Office Online</a>.</iframe>
 </ng-container>
 <ng-container *ngIf="message.type==='pdf' || message.type==='txt'">
-  <embed class="mt-4" [ngStlye]="message.type==='txt'?{'border': '1px solid'}:{'boder':'none'}" title="Preview"
+  <embed class="mt-4" [ngStlye]="message.type==='txt'?{'border': '1px solid;'}:{'border':'none'}" title="Preview"
     [src]='message.url' width='100%' height='100%' />
 </ng-container>
