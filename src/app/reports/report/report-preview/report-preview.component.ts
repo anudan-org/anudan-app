@@ -303,7 +303,7 @@ export class ReportPreviewComponent implements OnInit {
             } else if (report.status.internalStatus === 'CLOSED') {
                 this.appComp.subMenu = { name: 'Approved Reports', action: 'ar' };
             }
-            if (!report.template.published) {
+            if (!report.template.published && this.appComp.loggedInUser.organization.organizationType !== 'GRANTEE') {
                 const dialogRef = this.dialog.open(TemplateDialogComponent, {
                     data: this.currentReport.template.name,
                     panelClass: 'grant-notes-class'
