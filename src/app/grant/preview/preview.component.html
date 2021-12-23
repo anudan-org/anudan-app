@@ -15,7 +15,7 @@
               {{ flow.action }}
             </button>
             <button *ngIf="currentGrant.grantStatus.internalStatus==='ACTIVE'" [disabled]="
-                wfDisabled || currentGrant.closureInProgress
+                true || wfDisabled || currentGrant.closureInProgress
               " mat-stroked-button (click)="submitGrant(flow.toStateId)" id="{{ flow.action }}" [class]="
                 flow.seqOrder === 0
                   ? 'mr-1 btn btn-sm btn-green-primary'
