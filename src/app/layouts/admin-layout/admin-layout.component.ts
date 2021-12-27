@@ -1,3 +1,4 @@
+import { ClosureDataService } from './../../closure.data.service';
 import {
   Component,
   OnInit,
@@ -62,6 +63,7 @@ import {
 } from "app/model/disbursement";
 import { DisbursementDataService } from "app/disbursement.data.service";
 import { WorkflowDataService } from "app/workflow.data.service";
+import { ClosureWorkflowAssignment, ClosureWorkflowAssignmentModel, GrantClosure } from "app/model/closures";
 
 @Component({
   selector: "app-admin-layout",
@@ -84,6 +86,7 @@ export class AdminLayoutComponent implements OnInit {
   private lastPoppedUrl: string;
   currentGrant: Grant;
   currentReport: Report;
+  currentClosure: GrantClosure;
   currentDisbursement: Disbursement;
   grantToUpdate: Grant;
   private yScrollStack: number[] = [];
@@ -107,6 +110,7 @@ export class AdminLayoutComponent implements OnInit {
     private toastr: ToastrService,
     private dialog: MatDialog,
     private singleReportDataService: SingleReportDataService,
+    private closureService: ClosureDataService,
     private disbursementService: DisbursementDataService,
     private workflowDataService: WorkflowDataService
   ) { }
@@ -117,6 +121,10 @@ export class AdminLayoutComponent implements OnInit {
     );
     this.singleReportDataService.currentMessage.subscribe((report) => {
       this.currentReport = report;
+    });
+
+    this.closureService.currentMessage.subscribe((closure) => {
+      this.currentClosure = closure;
     });
 
     this.grantData.currentMessage.subscribe(
@@ -647,7 +655,7 @@ export class AdminLayoutComponent implements OnInit {
       });
     } else if (this.appComponent.currentView === "disbursement") {
       this.workflowDataService
-        .getDisbursementWorkflowStatuses(this.currentDisbursement)
+        .getDisbursementWorkflowStatuses(this.currentDisbursement, this.appComponent)
         .then((workflowStatuses) => {
           const wfModel = new DisbursementWorkflowAssignmentModel();
           wfModel.users = this.appComponent.tenantUsers;
@@ -689,6 +697,99 @@ export class AdminLayoutComponent implements OnInit {
             }
           });
         });
+    } else if (this.appComponent.currentView === "grant-closure") {
+      const wfModel = new ClosureWorkflowAssignmentModel();
+      wfModel.users = this.appComponent.tenantUsers;
+      //wfModel.granteeUsers = this.currentReport.granteeUsers;
+      wfModel.workflowStatuses = this.appComponent.closureWorkflowStatuses;
+      wfModel.workflowAssignments = this.currentClosure.workflowAssignment;
+      wfModel.type = this.appComponent.currentView;
+      wfModel.closure = this.currentClosure;
+      if (this.appComponent.loggedInUser.organization.organizationType !== 'GRANTEE') {
+        wfModel.closure.grant.isInternal = this.appComponent.grantTypes.filter(gt => gt.id === this.currentClosure.grant.grantTypeId)[0].internal;
+      }
+      wfModel.canManage =
+        this.appComponent.loggedInUser.organization.organizationType ===
+          "GRANTEE"
+          ? false
+          : this.currentClosure.flowAuthorities && this.currentClosure.canManage;
+      const dialogRef = this.dialog.open(WfassignmentComponent, {
+        data: { model: wfModel, userId: this.appComponent.loggedInUser.id, appComp: this.appComponent },
+        panelClass: "wf-assignment-class",
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result.result) {
+          const ass: ClosureWorkflowAssignment[] = [];
+          for (let data of result.data) {
+            const wa = new ClosureWorkflowAssignment();
+            wa.id = data.id;
+            wa.stateId = data.stateId;
+            wa.assignmentId = data.userId;
+            wa.closureId = data.closureId;
+            wa.customAssignments = data.customAssignments;
+            ass.push(wa);
+          }
+
+          const httpOptions = {
+            headers: new HttpHeaders({
+              "Content-Type": "application/json",
+              "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+              Authorization: localStorage.getItem("AUTH_TOKEN"),
+            }),
+          };
+
+          let url =
+            "/api/user/" +
+            this.appComponent.loggedInUser.id +
+            "/closure/" +
+            this.currentClosure.id +
+            "/assignment";
+          this.http
+            .post(
+              url,
+              { closure: this.currentClosure, assignments: ass },
+              httpOptions
+            )
+            .subscribe(
+              (closure: GrantClosure) => {
+                this.closureService.changeMessage(this.currentClosure, this.appComponent.loggedInUser.id);
+                this.currentClosure = closure;
+                this.manageClosure(null, closure.id);
+              },
+              (error) => {
+                const errorMsg = error as HttpErrorResponse;
+                const x = {
+                  enableHtml: true,
+                  preventDuplicates: true,
+                  positionClass: "toast-top-full-width",
+                  progressBar: true,
+                } as Partial<IndividualConfig>;
+                const y = {
+                  enableHtml: true,
+                  preventDuplicates: true,
+                  positionClass: "toast-top-right",
+                  progressBar: true,
+                } as Partial<IndividualConfig>;
+                const errorconfig: Partial<IndividualConfig> = x;
+                const config: Partial<IndividualConfig> = y;
+                if (errorMsg.error.message === "Token Expired") {
+                  //this.toastr.error('Logging you out now...',"Your session has expired", errorconfig);
+                  alert("Your session has timed out. Please sign in again.");
+                  this.appComponent.logout();
+                } else {
+                  this.toastr.error(
+                    errorMsg.error.message,
+                    "19 We encountered an error",
+                    config
+                  );
+                }
+              }
+            );
+        } else {
+          dialogRef.close();
+        }
+      });
     }
   }
 
@@ -884,6 +985,50 @@ export class AdminLayoutComponent implements OnInit {
     });
   }
 
+  manageClosure(notification: Notifications, closureId: number) {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
+    const url =
+      "/api/user/" + this.appComponent.loggedInUser.id + "/closure/" + closureId;
+    this.http.get(url, httpOptions).subscribe((closure: GrantClosure) => {
+      this.closureService.changeMessage(closure, this.appComponent.loggedInUser.id);
+      this.appComponent.currentView = "grant-closure";
+
+      if (
+        closure.status.internalStatus === "DRAFT" ||
+        closure.status.internalStatus === "ACTIVE"
+      ) {
+        this.appComponent.subMenu = { name: "In-Progress Closures", action: "urc" };
+      } else if (closure.status.internalStatus === "REVIEW") {
+        this.appComponent.subMenu = { name: "In-Progress Closures", action: "src" };
+      } else if (closure.status.internalStatus === "CLOSED") {
+        this.appComponent.subMenu = { name: "Closed Requests", action: "arc" };
+      }
+      if (
+        closure.workflowAssignment.filter(
+          (wa) => wa.assignmentId === this.appComponent.loggedInUser.id
+        ).length === 0
+      ) {
+        this.appComponent.currentView = "grant-closure";
+        this.router.navigate(["grant-closure/in-progress"]);
+      } else if (closure.canManage && closure.status.internalStatus != "CLOSED") {
+        this.appComponent.action = "grant-closure";
+        this.router.navigate(["grant-closure/header"]);
+      } else {
+        this.appComponent.action = "grant-closure";
+        this.router.navigate(["grant-closure/preview"]);
+      }
+
+      $("#messagepopover").css("display", "none");
+    });
+  }
+
   getHumanTime(notification): string {
     var time = new Date().getTime() - new Date(notification.postedOn).getTime();
     return this.humanizer.humanize(time, { largest: 1, round: true });
@@ -954,6 +1099,20 @@ export class AdminLayoutComponent implements OnInit {
     }
   }
 
+  showAllClosures(closure: GrantClosure, action: string) {
+    this.appComponent.showSaving = false;
+    this.appComponent.currentView = "upcoming";
+    if (action === "id") {
+      this.router.navigate(["disbursements/in-progress"]);
+    } else if (action === "ad") {
+      this.router.navigate(["disbursements/approved"]);
+    } else if (action === "cd") {
+      this.router.navigate(["disbursements/closed"]);
+    } else if (action === "db") {
+      this.router.navigate(["/dashboard"]);
+    }
+  }
+
   showProfile() {
     this.appComponent.currentView = "user-profile";
     this.router.navigate(["user-profile"]);
@@ -986,6 +1145,8 @@ export class AdminLayoutComponent implements OnInit {
       this.showAllReports(toSave, "db");
     } else if (type === "DISBURSEMENT") {
       this.showAllDisbursements(toSave, "db");
+    } else if (type === "CLOSURE") {
+      this.showAllClosures(toSave, "db");
     }
   }
 }

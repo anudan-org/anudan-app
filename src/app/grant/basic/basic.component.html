@@ -1,186 +1,133 @@
-<div
-    class="col-12 bg-white"
-    style="position: sticky; top: 80px; z-index: 1040"
-  >
-    <!--<span class="badge badge-dark text-white pull-right mt-2" matBadgeSize="medium">{{currentGrant.grantStatus.displayName}}</span>-->
-    <div class="row">
-      <h4 class="col-11 text-left my-3 section-header">Grant Header</h4>
-      <div
-        class="col-1 text-right"
-        style="display: flex; align-items: center; justify-content: flex-start"
-      >
-        <!--<button *ngIf="canManage" class="btn btn-sm btn-green float-right">
-                  <em class="fas fa-plus-square mr-2"></em>Add new Section</button>-->
-        <mat-icon
-          mat-button
-          [matMenuTriggerFor]="menu1"
-          class="float-right"
-          style="cursor: pointer"
-          >more_vert
+<div class="col-12 bg-white" style="position: sticky; top: 80px; z-index: 1040">
+  <!--<span class="badge badge-dark text-white pull-right mt-2" matBadgeSize="medium">{{currentGrant.grantStatus.displayName}}</span>-->
+  <div class="row">
+    <h4 class="col-11 text-left my-3 section-header">Grant Header
+      <span *ngIf="(currentGrant.grantStatus.internalStatus === 'DRAFT' ||
+      currentGrant.grantStatus.internalStatus === 'REVIEW') &&
+    currentGrant.origGrantId" class="text-subheader d-flex align-items-center">
+        <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
+          info_outline
         </mat-icon>
-        <mat-menu #menu1="matMenu">
-          <button mat-menu-item (click)="showWorkflowAssigments()">
-            <mat-icon class="ml-1">assignment</mat-icon>View Assignments
-          </button>
-          <button
-            *ngIf="
+        <span>Amendment in-progress [<strong>{{ currentGrant.origGrantRefNo }}</strong>]</span>
+      </span>
+    </h4>
+    <div class="col-1 text-right" style="display: flex; align-items: center; justify-content: flex-start">
+      <mat-icon mat-button [matMenuTriggerFor]="menu1" class="float-right" style="cursor: pointer">more_vert
+      </mat-icon>
+      <mat-menu #menu1="matMenu">
+        <button mat-menu-item (click)="showWorkflowAssigments()">
+          <mat-icon class="ml-1">assignment</mat-icon>View Assignments
+        </button>
+        <button *ngIf="
               this.appComp.loggedInUser.organization.organizationType !==
               'GRANTEE'
-            "
-            mat-menu-item
-            (click)="showHistory('grant', currentGrant)"
-          >
-            <mat-icon class="ml-1">comment</mat-icon>View Notes
-          </button>
-          <button mat-menu-item (click)="showProjectDocuments()">
-            <mat-icon class="ml-1">attachment</mat-icon>View Project Documents
-          </button>
-          <button mat-menu-item (click)="showGrantTags()" [disabled]="orgTags.length===0">
-            <mat-icon class="ml-1">label</mat-icon>View Tags
-          </button>
-          <hr *ngIf="currentGrant.origGrantId" />
-          <button
-            *ngIf="currentGrant.origGrantId"
-            mat-menu-item
-            (click)="manageGrant()"
-          >
-            <mat-icon class="ml-1">assignment</mat-icon>View Previous Active
-            Grant
-          </button>
-          <button
-            mat-menu-item
-            *ngIf="
+            " mat-menu-item (click)="showHistory('grant', currentGrant)">
+          <mat-icon class="ml-1">comment</mat-icon>View Notes
+        </button>
+        <button mat-menu-item (click)="showProjectDocuments()">
+          <mat-icon class="ml-1">attachment</mat-icon>View Project Documents
+        </button>
+        <button mat-menu-item (click)="showGrantTags()" [disabled]="orgTags.length===0">
+          <mat-icon class="ml-1">label</mat-icon>View Tags
+        </button>
+        <hr *ngIf="currentGrant.origGrantId" />
+        <button *ngIf="currentGrant.origGrantId" mat-menu-item (click)="manageGrant()">
+          <mat-icon class="ml-1">assignment</mat-icon>View Previous Active
+          Grant
+        </button>
+        <button mat-menu-item *ngIf="
               
               this.appComp.loggedInUser.organization.organizationType !==
                 'GRANTEE' && currentGrant.origGrantId
-            "
-            (click)="saveGrant(true)"
-            
-          >
-            <mat-icon class="ml-1">compare_arrows</mat-icon>Compare with Amended Grant
-          </button>
-        </mat-menu>
-      </div>
+            " (click)="saveGrant(true)">
+          <mat-icon class="ml-1">compare_arrows</mat-icon>Compare with Amended Grant
+        </button>
+      </mat-menu>
     </div>
   </div>
+</div>
 <div class="main-content no-top-margin2" style="margin-top: 40px;">
   <div class="container-fluid anudan-scrollable" style="background: #fff;">
-  <div class="col-lg-12">
-    <div
-      #container
-      class="container text-left px-5 py-2"
-      (scroll)="rememberScrollPosition($event)"
-    >
-      <div *ngIf="!canManage">
-        <div class="row">
-          <div class="col-12 mb-4">
-            <strong>Grant Name:</strong>
-            <div>{{ currentGrant.name }}</div>
-          </div>
-          <div class="col-4 mb-4">
-            <strong>Grant Start Date:</strong>
-            <div>{{ currentGrant.startDate | date: "dd-MMM-yyyy" }}</div>
-          </div>
-          <div class="col-4 mb-4">
-            <strong>Grant End Date:</strong>
-            <div>{{ currentGrant.endDate | date: "dd-MMM-yyyy" }}</div>
-          </div>
-          <div class="col-4 mb-4">
-            <strong>Grant Amount (₹):</strong>
-            <div>{{ currentGrant.amount }}</div>
-          </div>
-          <div class="col-6 mb-4">
-            <strong>Implementing Organization:</strong>
-            <div *ngIf="currentGrant.organization">
-              {{ currentGrant.organization.name }}
+    <div class="col-lg-12">
+      <div #container class="container text-left px-5 py-2" (scroll)="rememberScrollPosition($event)">
+        <div *ngIf="!canManage">
+          <div class="row">
+            <div class="col-12 mb-4">
+              <strong>Grant Name:</strong>
+              <div>{{ currentGrant.name }}</div>
             </div>
-          </div>
-          <div class="col-6 mb-4">
-            <strong>Implementing Organization Representative:</strong>
-            <div>{{ currentGrant.representative }}</div>
+            <div class="col-4 mb-4">
+              <strong>Grant Start Date:</strong>
+              <div>{{ currentGrant.startDate | date: "dd-MMM-yyyy" }}</div>
+            </div>
+            <div class="col-4 mb-4">
+              <strong>Grant End Date:</strong>
+              <div>{{ currentGrant.endDate | date: "dd-MMM-yyyy" }}</div>
+            </div>
+            <div class="col-4 mb-4">
+              <strong>Grant Amount (₹):</strong>
+              <div>{{ currentGrant.amount }}</div>
+            </div>
+            <div class="col-6 mb-4">
+              <strong>Implementing Organization:</strong>
+              <div *ngIf="currentGrant.organization">
+                {{ currentGrant.organization.name }}
+              </div>
+            </div>
+            <div class="col-6 mb-4">
+              <strong>Implementing Organization Representative:</strong>
+              <div>{{ currentGrant.representative }}</div>
+            </div>
           </div>
         </div>
-      </div>
-      <!--MANAGEMENT SECTION-->
-      <div *ngIf="canManage">
-        <div class="row">
-          <div class="col-12">
-            <mat-form-field [floatLabel]="'always'">
-              <mat-label>Grant Name</mat-label>
-              <input
-                matInput
-                [disabled]="
+        <!--MANAGEMENT SECTION-->
+        <div *ngIf="canManage">
+          <div class="row">
+            <div class="col-12">
+              <mat-form-field [floatLabel]="'always'">
+                <mat-label>Grant Name</mat-label>
+                <input matInput [disabled]="
                   currentGrant.origGrantId !== undefined &&
                   currentGrant.origGrantId !== null
-                "
-                id="grantName"
-                [(ngModel)]="currentGrant.name"
-                [ngModelOptions]="{ standAlone: true }"
-                (ngModelChange)="checkGrant()"
-                placeholder="Enter grant title ..."
-                
-                type="text"
-                autocomplete="off"
-                class="anu-input"
-              />
-            </mat-form-field>
-          </div>
-          <div class="col-12">
-            <div class="row">
-              <div class="col-4">
-                <mat-form-field [floatLabel]="'always'">
-                  <mat-label>Start Date</mat-label>
-                  <input
-                    style="cursor: pointer"
-                    id="grantStart"
-                    matInput
-                    [(ngModel)]="currentGrant.stDate"
-                    class="anu-input"
-                    (dateInput)="datePickerSelected($event)"
-                    [ngModelOptions]="{ standAlone: true }"
-                    (ngModelChange)="
+                " id="grantName" [(ngModel)]="currentGrant.name" [ngModelOptions]="{ standAlone: true }"
+                  (ngModelChange)="checkGrant()" placeholder="Enter grant title ..." type="text" autocomplete="off"
+                  class="anu-input" />
+              </mat-form-field>
+            </div>
+            <div class="col-12">
+              <div class="row">
+                <div class="col-4">
+                  <mat-form-field [floatLabel]="'always'">
+                    <mat-label>Start Date</mat-label>
+                    <input style="cursor: pointer" id="grantStart" matInput [(ngModel)]="currentGrant.stDate"
+                      class="anu-input" (dateInput)="datePickerSelected($event)" [ngModelOptions]="{ standAlone: true }"
+                      (ngModelChange)="
                       manageDate('start', $event, currentGrant.stDate)
-                    "
-                    [matDatepicker]="pickerStart"
-                    (click)="pickerStart.open()"
-                    placeholder="Select grant start date"
-                    type="text"
-                    readonly
-                    [disabled]="
+                    " [matDatepicker]="pickerStart" (click)="pickerStart.open()" placeholder="Select grant start date"
+                      type="text" readonly [disabled]="
                       currentGrant.origGrantId !== undefined &&
                       currentGrant.origGrantId !== null
-                    "
-                    [matDatepickerFilter]="startDateFilter"
-                  />
-                  <mat-datepicker #pickerStart></mat-datepicker>
-                  <mat-icon
-                    [disabled]="
+                    " [matDatepickerFilter]="startDateFilter" />
+                    <mat-datepicker #pickerStart></mat-datepicker>
+                    <mat-icon [disabled]="
                       currentGrant.origGrantId !== undefined &&
                       currentGrant.origGrantId !== null
-                    "
-                    *ngIf="
+                    " *ngIf="
                       currentGrant.stDate !== undefined &&
                       currentGrant.stDate !== null &&
                       currentGrant.stDate !== ''
-                    "
-                    (click)="clearStartDate()"
-                    style="
+                    " (click)="clearStartDate()" style="
                       transform: scale(0.65);
                       position: absolute;
                       right: 0;
                       top: 27%;
                       cursor: pointer;
                       color: #7f7f7f;
-                    "
-                    >clear</mat-icon
-                  >
-                  <mat-icon
-                    [disabled]="
+                    ">clear</mat-icon>
+                    <mat-icon [disabled]="
                       currentGrant.origGrantId !== undefined &&
                       currentGrant.origGrantId !== null
-                    "
-                    (click)="pickerStart.open()"
-                    [ngStyle]="
+                    " (click)="pickerStart.open()" [ngStyle]="
                       currentGrant.stDate !== undefined &&
                       currentGrant.stDate !== null &&
                       currentGrant.stDate !== ''
@@ -200,52 +147,32 @@
                             top: '27%',
                             cursor: 'pointer'
                           }
-                    "
-                    >calendar_today</mat-icon
-                  >
-                </mat-form-field>
-              </div>
-              <div class="col-4">
-                <mat-form-field [floatLabel]="'always'">
-                  <mat-label>End Date</mat-label>
-                  <input
-                    style="cursor: pointer"
-                    id="grantEnd"
-                    matInput
-                    [(ngModel)]="currentGrant.enDate"
-                    class="anu-input"
-                    (dateInput)="datePickerSelected($event)"
-                    [matDatepickerFilter]="endDateFilter"
-                    [ngModelOptions]="{ standAlone: true }"
-                    (ngModelChange)="
+                    ">calendar_today</mat-icon>
+                  </mat-form-field>
+                </div>
+                <div class="col-4">
+                  <mat-form-field [floatLabel]="'always'">
+                    <mat-label>End Date</mat-label>
+                    <input style="cursor: pointer" id="grantEnd" matInput [(ngModel)]="currentGrant.enDate"
+                      class="anu-input" (dateInput)="datePickerSelected($event)" [matDatepickerFilter]="endDateFilter"
+                      [ngModelOptions]="{ standAlone: true }" (ngModelChange)="
                       manageDate('end', $event, currentGrant.stDate)
-                    "
-                    [matDatepicker]="pickerEnd"
-                    (click)="pickerEnd.open()"
-                    placeholder="Select grant end date"
-                    readonly
-                  />
-                  <mat-datepicker #pickerEnd></mat-datepicker>
-                  <mat-icon
-                    *ngIf="
+                    " [matDatepicker]="pickerEnd" (click)="pickerEnd.open()" placeholder="Select grant end date"
+                      readonly />
+                    <mat-datepicker #pickerEnd></mat-datepicker>
+                    <mat-icon *ngIf="
                       currentGrant.enDate !== undefined &&
                       currentGrant.enDate !== null &&
                       currentGrant.enDate !== ''
-                    "
-                    (click)="clearEndDate()"
-                    style="
+                    " (click)="clearEndDate()" style="
                       transform: scale(0.65);
                       position: absolute;
                       right: 0;
                       top: 27%;
                       cursor: pointer;
                       color: #7f7f7f;
-                    "
-                    >clear</mat-icon
-                  >
-                  <mat-icon
-                    (click)="pickerEnd.open()"
-                    [ngStyle]="
+                    ">clear</mat-icon>
+                    <mat-icon (click)="pickerEnd.open()" [ngStyle]="
                       currentGrant.enDate !== undefined &&
                       currentGrant.enDate !== null &&
                       currentGrant.enDate !== ''
@@ -265,70 +192,40 @@
                             top: '27%',
                             cursor: 'pointer'
                           }
-                    "
-                    >calendar_today</mat-icon
-                  >
-                </mat-form-field>
-              </div>
-              <div class="col-4">
-                <mat-form-field [floatLabel]="'always'">
-                  <mat-label>Duration</mat-label>
-                  <input
-                    matInput
-                    [(ngModel)]="currentGrant.duration"
-                    placeholder="Grant duration"
-                    disabled
-                    readonly
-                    type="text"
-                    autocomplete="off"
-                  />
-                </mat-form-field>
+                    ">calendar_today</mat-icon>
+                  </mat-form-field>
+                </div>
+                <div class="col-4">
+                  <mat-form-field [floatLabel]="'always'">
+                    <mat-label>Duration</mat-label>
+                    <input matInput [(ngModel)]="currentGrant.duration" placeholder="Grant duration" disabled readonly
+                      type="text" autocomplete="off" />
+                  </mat-form-field>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="col-3">
-            <mat-form-field [floatLabel]="'always'">
-              <mat-label>Amount (₹)</mat-label>
-              <input
-                (blur)="showFormattedGrantAmount($event)"
-                #grantAmount
-                id="grantAmount"
-                matInput
-                [(ngModel)]="currentGrant.amount"
-                class="anu-input"
-                type="number"
-                [ngModelOptions]="{ standAlone: true }"
-                (ngModelChange)="checkGrant()"
-                (blur)="validateAmountForAmendedGrant($event)"
-                placeholder="Enter grant amount"
-                autocomplete="false"
-                (keypress)="amountValidator.validatePositive($event)"
-              />
-              <p
-                #grantAmountFormatted
-                (click)="showGrantAmountInput($event)"
-                class="anu-input w-100"
-                style="position: absolute; top: 5px; cursor: text"
-                [innerHtml]="getFormattedGrantAmount(currentGrant.amount)"
-              ></p>
-            </mat-form-field>
-          </div>
-          <div class="col-9">
-            <label
-              style="
+            <div class="col-3">
+              <mat-form-field [floatLabel]="'always'">
+                <mat-label>Amount (₹)</mat-label>
+                <input (blur)="showFormattedGrantAmount($event)" #grantAmount id="grantAmount" matInput
+                  [(ngModel)]="currentGrant.amount" class="anu-input" type="number"
+                  [ngModelOptions]="{ standAlone: true }" (ngModelChange)="checkGrant()"
+                  (blur)="validateAmountForAmendedGrant($event)" placeholder="Enter grant amount" autocomplete="false"
+                  (keypress)="amountValidator.validatePositive($event)" />
+                <p #grantAmountFormatted (click)="showGrantAmountInput($event)" class="anu-input w-100"
+                  style="position: absolute; top: 5px; cursor: text"
+                  [innerHtml]="getFormattedGrantAmount(currentGrant.amount)"></p>
+              </mat-form-field>
+            </div>
+            <div class="col-9">
+              <label style="
                 font-weight: 400;
                 font-family: Lato, sans-serif;
                 color: rgba(0, 0, 0, 0.54);
-              "
-              >Amount (In Words)</label
-            >
-            <p
-              disabled
-              readonly
-              [innerHtml]="getGrantAmountInWords(currentGrant.amount)"
-            ></p>
-          </div>
-          <!--div class="col-12">
+              ">Amount (In Words)</label>
+              <p disabled readonly [innerHtml]="getGrantAmountInWords(currentGrant.amount)"></p>
+            </div>
+            <!--div class="col-12">
                         <mat-form-field>
                             <textarea rows="5" id="grantDesc" matInput type="text"
                                       [(ngModel)]="currentGrant.description"
@@ -336,119 +233,71 @@
                                       placeholder="Grant Description" autocomplete="off" class="anu-input"></textarea>
                         </mat-form-field>
                     </div-->
-        </div>
-        <div class="row">
-          <div class="col-6">
-            <!--mat-form-field>
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <!--mat-form-field>
                             <mat-select placeholder="Implementing Organization" matInput [value]="currentGrant.organization.id"
                                         (selectionChange)="setNewOrg($event)"  class="anu-input">
                                 <mat-option *ngFor="let org of appComp.appConfig.granteeOrgs" [value]="org.id"
                                             (select)="org.id===currentGrant.organization.id">{{org.name}}</mat-option>
                             </mat-select>
                         </mat-form-field-->
-            <form class="example-form">
+              <form class="example-form">
+                <mat-form-field [floatLabel]="'always'">
+                  <mat-label>Implementing Organization</mat-label>
+                  <input *ngIf="isExternalGrant()" type="text" matInput [formControl]="myControl" class="anu-input"
+                    [matAutocomplete]="auto" placeholder="Select or create Implementing organization" />
+                  <input *ngIf="!isExternalGrant()" type="text" matInput class="anu-input" disabled
+                    [value]="currentGrant.grantorOrganization.name" />
+                </mat-form-field>
+
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" autoActiveFirstOption>
+                  <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                    {{ option.name }}
+                  </mat-option>
+                </mat-autocomplete>
+              </form>
+            </div>
+            <div class="col-6">
               <mat-form-field [floatLabel]="'always'">
-                <mat-label>Implementing Organization</mat-label>
-                <input *ngIf="isExternalGrant()"
-                  type="text"
-                  matInput
-                  [formControl]="myControl"
-                  class="anu-input"
-                  [matAutocomplete]="auto"
-                  placeholder="Select or create Implementing organization"
-                />
-                <input *ngIf="!isExternalGrant()"
-                  type="text"
-                  matInput
-                  class="anu-input"
-                  disabled
-                  [value]="currentGrant.grantorOrganization.name"
-                />
+                <mat-label>Implementing Organization Representative</mat-label>
+                <input matInput id="granteeOrgRep" [(ngModel)]="currentGrant.representative"
+                  [ngModelOptions]="{ standAlone: true }" (ngModelChange)="checkGrant()"
+                  placeholder="Representative name" type="text" autocomplete="off" class="anu-input" />
               </mat-form-field>
-
-              <mat-autocomplete
-                #auto="matAutocomplete"
-                [displayWith]="displayFn"
-                autoActiveFirstOption
-              >
-                <mat-option
-                  *ngFor="let option of filteredOptions | async"
-                  [value]="option"
-                >
-                  {{ option.name }}
-                </mat-option>
-              </mat-autocomplete>
-            </form>
-          </div>
-          <div class="col-6">
-            <mat-form-field [floatLabel]="'always'">
-              <mat-label>Implementing Organization Representative</mat-label>
-              <input
-                matInput
-                id="granteeOrgRep"
-                [(ngModel)]="currentGrant.representative"
-                [ngModelOptions]="{ standAlone: true }"
-                (ngModelChange)="checkGrant()"
-                placeholder="Representative name"
-                type="text"
-                autocomplete="off"
-                class="anu-input"
-              />
-            </mat-form-field>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<div
-  #createSectionModal
-  class="modal fade mt-5"
-  id="createSectionModal"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="exampleModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog center-class mt-5" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="createSectionLabel"></h5>
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close"
-        >
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <label for="fieldTitleInput" class="mat-form-field-label pull-left"
-            >Section Name:</label
-          >
-          <input id="sectionTitleInput" class="form-control" value="" />
+  <div #createSectionModal class="modal fade mt-5" id="createSectionModal" tabindex="-1" role="dialog"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog center-class mt-5" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="createSectionLabel"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-        <div class="row px-3">
-          <button
-            type="button"
-            class="btn btn-sm btn-green-primary"
-            (click)="saveSection()"
-          >
-            Done
-          </button>
-          <button
-            type="button"
-            class="btn btn-sm btn-green"
-            data-dismiss="modal"
-          >
-            Close
-          </button>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="fieldTitleInput" class="mat-form-field-label pull-left">Section Name:</label>
+            <input id="sectionTitleInput" class="form-control" value="" />
+          </div>
+          <div class="row px-3">
+            <button type="button" class="btn btn-sm btn-green-primary" (click)="saveSection()">
+              Done
+            </button>
+            <button type="button" class="btn btn-sm btn-green" data-dismiss="modal">
+              Close
+            </button>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 </div>

@@ -1,3 +1,7 @@
+import { DocManagementService } from './../../../doc-management.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { DocpreviewService } from './../../../docpreview.service';
+import { DocpreviewComponent } from './../../../docpreview/docpreview.component';
 import { OrgTag, Grant } from './../../../model/dahsboard';
 import { GrantTagsComponent } from './../../../grant-tags/grant-tags.component';
 import { MessagingComponent } from 'app/components/messaging/messaging.component';
@@ -6,9 +10,6 @@ import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import {
   ActivatedRoute,
   Router,
-  NavigationStart,
-  ActivationEnd,
-  RouterEvent,
 } from "@angular/router";
 import { AppComponent } from "../../../app.component";
 import {
@@ -36,12 +37,11 @@ import {
   HttpClient,
   HttpErrorResponse,
   HttpHeaders,
-  HttpEventType,
 } from "@angular/common/http";
 import { ToastrService, IndividualConfig } from "ngx-toastr";
 import { DatePipe } from "@angular/common";
 import { FormControl } from "@angular/forms";
-import { interval, Observable, Subject } from "rxjs";
+import { Observable } from "rxjs";
 import { map, startWith } from "rxjs/operators";
 import { MatChipInputEvent } from "@angular/material/chips";
 import {
@@ -52,7 +52,6 @@ import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { SidebarComponent } from "../../../components/sidebar/sidebar.component";
 import { SectionEditComponent } from "../../../components/section-edit/section-edit.component";
 import {
-  MatBottomSheet,
   MatDatepickerInputEvent,
   MatDialog,
   MatDatepicker,
@@ -145,6 +144,9 @@ export class ReportSectionsComponent implements OnInit {
   tenantUsers: User[];
   selectedDateField: any;
   selectedColumn: ColumnData;
+  noSingleDocAction: boolean = false;
+  downloadAndDeleteAllowed: boolean = false;
+
 
   constructor(
     private router: Router,
@@ -162,7 +164,10 @@ export class ReportSectionsComponent implements OnInit {
     private currencyService: CurrencyService,
     public amountValidator: AmountValidator,
     private disbursementService: DisbursementDataService,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private docPreviewService: DocpreviewService,
+    private sanitizer: DomSanitizer,
+    private docManagementService: DocManagementService,
   ) {
     this.route.params.subscribe((p) => {
       this.action = p["action"];
@@ -295,7 +300,7 @@ export class ReportSectionsComponent implements OnInit {
   }
 
   scrollTo(uniqueID) {
-    const elmnt = document.getElementById(uniqueID); // let if use typescript
+    const elmnt = document.getElementById(uniqueID);
 
     if (elmnt) {
       const elementRect = elmnt.getBoundingClientRect();
@@ -457,31 +462,25 @@ export class ReportSectionsComponent implements OnInit {
       filterValue = value.name;
     }
 
-    const selectedDoc = this.options.filter((option) =>
+    return this.options.filter((option) =>
       option.name.toLowerCase().includes(filterValue)
     );
-    return selectedDoc;
   }
 
   displayFn = (doc) => {
     return doc ? doc.name : undefined;
   };
 
-  ////////////////////////
   add(attribute: Attribute, event: MatChipInputEvent): void {
-    // Add fruit only when MatAutocomplete is not open
-    // To make sure this does not conflict with OptionSelected Event
     if (!this.matAutocomplete.isOpen) {
       const input = event.input;
       const value = event.value;
 
-      // Add our fruit
       if (value || "") {
         const index = attribute.docs.findIndex((a) => a.name === value);
         attribute.docs.push(this.options[index]);
       }
 
-      // Reset the input value
       if (input) {
         input.value = "";
       }
@@ -542,6 +541,7 @@ export class ReportSectionsComponent implements OnInit {
         attribute.fieldValue = JSON.stringify(attribute.docs);
         this.fruitInput.nativeElement.value = "";
         this.fruitCtrl.setValue(null);
+        this.noSingleDocAction = false;
       });
   }
 
@@ -603,6 +603,24 @@ export class ReportSectionsComponent implements OnInit {
       "/upload";
     let formData = new FormData();
     for (let i = 0; i < files.length; i++) {
+      if (files.item(i).size === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected a file with no content. Unable to upload.',
+          panelClass: "center-class"
+        });
+        event.target.value = "";
+        break;
+      }
+
+      const ext = files.item(i).name.substr(files.item(i).name.lastIndexOf('.'));
+      if (this.appComp.acceptedFileTypes.filter(d => d === ext).length === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected an unsupported file type. Supported file types are ' + this.appComp.acceptedFileTypes.toString() + '. Unable to upload.',
+          panelClass: "center-class"
+        });
+        event.target.value = "";
+        break;
+      }
       formData.append("file", files.item(i));
       const fileExistsCheck = this._checkAttachmentExists(
         files.item(i).name.substring(0, files.item(i).name.lastIndexOf("."))
@@ -631,6 +649,7 @@ export class ReportSectionsComponent implements OnInit {
     this.http
       .post<ReportDocInfo>(endpoint, formData, httpOptions)
       .subscribe((info: ReportDocInfo) => {
+        this.noSingleDocAction = false;
         this.singleReportDataService.changeMessage(info.report);
         this.currentReport = info.report;
         this.newField =
@@ -681,12 +700,10 @@ export class ReportSectionsComponent implements OnInit {
           this.singleReportDataService.changeMessage(info.report);
 
           sectionName.val("");
-          //$('#section_' + newSection.id).css('display', 'block');
           $(createSectionModal).modal("hide");
           this.appComp.sectionAdded = true;
           this.sidebar.buildSectionsSideNav(null);
           this.appComp.sectionInModification = false;
-          //  this.appComp.selectedTemplate = info.report.template;
           this.router.navigate([
             "report/section/" +
             this.getCleanText(
@@ -743,7 +760,7 @@ export class ReportSectionsComponent implements OnInit {
   deleteSection(secId: number, title: string) {
 
     if (this.currentReport.reportDetails.sections.length === 1) {
-      const dg = this.dialog.open(MessagingComponent, {
+      this.dialog.open(MessagingComponent, {
         data: "<p>At least one section is required for a report.</p><p><small>Please rename the current section or create an additional section before deleteing this one.</small></p>",
         panelClass: "center-class"
       });
@@ -902,8 +919,7 @@ export class ReportSectionsComponent implements OnInit {
         scrollLeft: "+=200px",
       },
       "100",
-      "linear",
-      function () { }
+      "linear"
     );
   }
 
@@ -913,8 +929,7 @@ export class ReportSectionsComponent implements OnInit {
         scrollLeft: "-=200px",
       },
       "100",
-      "linear",
-      function () { }
+      "linear"
     );
   }
 
@@ -934,26 +949,21 @@ export class ReportSectionsComponent implements OnInit {
   }
 
   handleSelection(attribId, attachmentId) {
-    const elems = this.elem.nativeElement.querySelectorAll(
-      '[id^="attriute_' + attribId + '_attachment_"]'
-    );
-    if (elems.length > 0) {
-      for (let singleElem of elems) {
-        if (singleElem.checked) {
-          this.elem.nativeElement.querySelector(
-            '[id^="attachments_download_' + attribId + '"]'
-          ).disabled = false;
-          this.elem.nativeElement.querySelector(
-            '[id^="attachments_delete_' + attribId + '"]'
-          ).disabled = false;
-          return;
+    const docElems = this.elem.nativeElement.querySelectorAll('[id^=attriute_' + attribId + '_attachment_]');
+    if (docElems.length > 0) {
+      let found = false;
+      for (let docElem of docElems) {
+        if (docElem.checked) {
+          found = true;
         }
-        this.elem.nativeElement.querySelector(
-          '[id^="attachments_download_' + attribId + '"]'
-        ).disabled = true;
-        this.elem.nativeElement.querySelector(
-          '[id^="attachments_delete_' + attribId + '"]'
-        ).disabled = true;
+      }
+
+      if (found) {
+        this.noSingleDocAction = true;
+        this.downloadAndDeleteAllowed = true;
+      } else {
+        this.noSingleDocAction = false;
+        this.downloadAndDeleteAllowed = false;
       }
     }
   }
@@ -970,32 +980,7 @@ export class ReportSectionsComponent implements OnInit {
           selectedAttachments.attachmentIds.push(singleElem.id.split("_")[3]);
         }
       }
-      const httpOptions = {
-        responseType: "blob" as "json",
-        headers: new HttpHeaders({
-          "Content-Type": "application/json",
-          "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-          Authorization: localStorage.getItem("AUTH_TOKEN"),
-        }),
-      };
-
-      let url =
-        "/api/user/" +
-        this.appComp.loggedInUser.id +
-        "/report/" +
-        this.currentReport.id +
-        "/attachments";
-      this.http
-        .post(url, selectedAttachments, httpOptions)
-        .subscribe((data) => {
-          saveAs(
-            data,
-            this.currentReport.grant.name +
-            "_" +
-            this.currentReport.name +
-            ".zip"
-          );
-        });
+      this.docManagementService.callReportDocDownload(selectedAttachments, this.appComp, this.currentReport);
     }
   }
 
@@ -1031,26 +1016,8 @@ export class ReportSectionsComponent implements OnInit {
   }
 
   deleteAttachment(attributeId, attachmentId) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-        Authorization: localStorage.getItem("AUTH_TOKEN"),
-      }),
-    };
-
-    const url =
-      "/api/user/" +
-      this.appComp.loggedInUser.id +
-      "/report/" +
-      this.currentReport.id +
-      "/attribute/" +
-      attributeId +
-      "/attachment/" +
-      attachmentId;
-    this.http
-      .post<Report>(url, this.currentReport, httpOptions)
-      .subscribe((report: Report) => {
+    this.docManagementService.deleteReportAttachment(attributeId, attachmentId, this.appComp, this.currentReport)
+      .then((report: Report) => {
         this.singleReportDataService.changeMessage(report);
         this.currentReport = report;
         for (let section of this.currentReport.reportDetails.sections) {
@@ -1091,8 +1058,8 @@ export class ReportSectionsComponent implements OnInit {
     row.name = "";
 
     row.columns = JSON.parse(JSON.stringify(attr.fieldTableValue[0].columns));
-    for (let i = 0; i < row.columns.length; i++) {
-      row.columns[i].value = "";
+    for (let i of row.columns) {
+      i.value = "";
     }
 
     attr.fieldTableValue.push(row);
@@ -1173,20 +1140,6 @@ export class ReportSectionsComponent implements OnInit {
       "#label_" + id
     );
     inputElem[0].style.visibility = "visible";
-  }
-
-  showOtherSourcesAmountInput(evt: any) {
-    evt.currentTarget.style.visibility = "hidden";
-    const id = evt.target.attributes.id.value.replace("label_", "");
-    const inputElem = this.dataColumns.nativeElement.querySelectorAll(
-      "#data_" + id
-    );
-    this.otherSourcesAmount.nativeElement.style.visibility = "visible";
-  }
-
-  showFormattedOtherSourcesAmount(evt: any) {
-    evt.currentTarget.style.visibility = "hidden";
-    this.otherSourcesAmountFormatted.nativeElement.style.visibility = "visible";
   }
 
   getTotals(idx: number, fieldTableValue: TableData[]): string {
@@ -1311,40 +1264,13 @@ export class ReportSectionsComponent implements OnInit {
               ? attr.fieldTableValue[attr.fieldTableValue.length - 1].name
               : "0"
           ) + 1
-        ); /* 
-        row.header =
-          attr.fieldTableValue &&
-          attr.fieldTableValue.length > 0 &&
-          attr.fieldTableValue[0]
-            ? attr.fieldTableValue[0].header
-            : "#";
-        row.status = true;
-        row.saved = false;
-        row.columns = JSON.parse(
-          attr.fieldTableValue &&
-            attr.fieldTableValue.length > 0 &&
-            attr.fieldTableValue[0]
-            ? JSON.stringify(attr.fieldTableValue[0].columns)
-            : '[{"name":"Disbursement Date","value":"","dataType":"date"},{"name":"Actual Amount","value":"","dataType":"currency"},{"name":"Funds from Other Sources","value":"","dataType":"currency"},{"name":"Notes","value":""}]'
         );
-        if (this.appComp.loggedInUser.organization.organizationType === "GRANTEE") {
-          row.enteredByGrantee = true;
-        }
-        if (this.appComp.loggedInUser.organization.organizationType === "GRANTER") {
-          row.enteredByGrantee = false;
-        }
-        for (let i = 0; i < row.columns.length; i++) {
-          row.columns[i].value = "";
-        }
-        if (!attr.fieldTableValue) {
-          attr.fieldTableValue = [];
-        } */
+
         if (
           attr.fieldTableValue === undefined ||
           attr.fieldTableValue === null
         ) {
           attr.fieldTableValue = [];
-        } else {
         }
         attr.fieldTableValue.push(row);
       });
@@ -1417,17 +1343,9 @@ export class ReportSectionsComponent implements OnInit {
 
   _checkIfFieldHasData(attr: Attribute): boolean {
     let hasData = false;
-    switch (attr.fieldType) {
-      case "multiline":
-        if (attr.fieldName.trim() !== "" || attr.fieldValue.trim() !== "") {
-          hasData = true;
-        }
-        break;
-
-      default:
-        break;
+    if (attr.fieldType === "multiline" && attr.fieldName.trim() !== "" || attr.fieldValue.trim() !== "") {
+      hasData = true;
     }
-
     return hasData;
   }
 
@@ -1446,7 +1364,7 @@ export class ReportSectionsComponent implements OnInit {
   showGrantTags() {
     this.adminService.getOrgTags(this.appComp.loggedInUser).then((tags: OrgTag[]) => {
 
-      const dg = this.dialog.open(GrantTagsComponent, {
+      this.dialog.open(GrantTagsComponent, {
         data: { orgTags: tags, grantTags: this.currentReport.grant.tags, grant: this.currentReport.grant, appComp: this.appComp, type: 'report' },
         panelClass: "grant-template-class"
       });
@@ -1500,25 +1418,65 @@ export class ReportSectionsComponent implements OnInit {
     let html = '<table width="100%" border="1"><tr>';
     const tabData = JSON.parse(data);
     html += "<td>&nbsp;</td>";
-    for (let i = 0; i < tabData[0].columns.length; i++) {
-      //if(tabData[0].columns[i].name.trim() !== ''){
-      html += "<td>" + tabData[0].columns[i].name + "</td>";
-      //}
+    for (let c of tabData[0].columns) {
+      html += "<td>" + c.name + "</td>";
     }
     html += "</tr>";
-    for (let i = 0; i < tabData.length; i++) {
-      html += "<tr><td>" + tabData[i].name + "</td>";
-      for (let j = 0; j < tabData[i].columns.length; j++) {
-        //if(tabData[i].columns[j].name.trim() !== ''){
-        html += "<td>" + tabData[i].columns[j].value + "</td>";
-        //}
+    for (let i of tabData) {
+      html += "<tr><td>" + i.name + "</td>";
+      for (let j of i.columns) {
+        html += "<td>" + j.value + "</td>";
       }
       html += "</tr>";
     }
 
     html += "</table>";
-    //document.getElementById('attribute_' + elemId).innerHTML = '';
-    //document.getElementById('attribute_' + elemId).append('<H1>Hello</H1>');
     return html;
+  }
+
+  previewDocument(_for, attach) {
+    this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentReport.id, attach.id).then((result: any) => {
+      let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
+      let docUrl;
+      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/view.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
+      } else if (docType === 'pdf' || docType === 'txt') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
+      }
+      this.dialog.open(DocpreviewComponent, {
+        data: {
+          url: docUrl,
+          type: docType,
+          title: attach.name + "." + attach.type,
+          userId: this.appComp.loggedInUser.id,
+          tempFileName: result.url
+        },
+        panelClass: "wf-assignment-class"
+      });
+    });
+  }
+
+  downloadSingleDoc(attachmentId: number) {
+    const selectedAttachments = new AttachmentDownloadRequest();
+    selectedAttachments.attachmentIds = [];
+    selectedAttachments.attachmentIds.push(attachmentId);
+    this.docManagementService.callReportDocDownload(selectedAttachments, this.appComp, this.currentReport);
+  }
+
+  deleteSingleDoc(attributeId, attachmentId) {
+    const dReg = this.dialog.open(FieldDialogComponent, {
+      data: {
+        title: "Are you sure you want to delete the selected document?",
+        btnMain: "Delete Document",
+        btnSecondary: "Not Now"
+      },
+      panelClass: "grant-template-class",
+    });
+
+    dReg.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteAttachment(attributeId, attachmentId);
+      }
+    });
   }
 }

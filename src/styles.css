@@ -209,6 +209,17 @@ body {
   background-image: none !important;
 }
 
+.anu-wf-input {
+  border: 1px solid #d4d4d4 !important;
+  border-radius: 4px !important;
+  line-height: 165% !important;
+  font-size: 14px !important;
+  padding: 8px 12px !important;
+  background: #fff !important;
+  min-height: 25px;
+  background-image: none !important;
+}
+
 .anu-input:focus{
   border: 1px solid #39743c !important;
 }
@@ -228,6 +239,7 @@ body {
   text-overflow: ellipsis;
   padding-right: 23px !important;
 }
+
 
 .anu-select-container {
   position: absolute;
@@ -495,11 +507,11 @@ font-white {
   border: 1px solid #e4e4e4;
   text-align: center;
   margin: 0 auto 25px auto !important;
-  width: 550px !important;
+  width: 600px !important;
   font-size: 12px;
   font-weight: 800;
   text-transform: uppercase;
-  min-height: 55px;
+  min-height: 45px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -1315,4 +1327,31 @@ footer{
     width: calc(100% - 300px) !important;
     right: 0 !important;
     background-color: #f4f4f4 !important;
+}
+
+::ng-deep .progress-summary-class .mat-progress-bar-fill::after {
+  background: #4DC252 !important;
+}
+
+.mat-progress-bar-fill::after {
+  background-color: #4DC252 !important;
+}
+
+.workflow-info{
+  position: absolute; transform: rotate( 270deg); bottom: 65%; left: -50px;
+}
+
+.single-doc{
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.singledoc-ico-enabled{
+  color: #676767; 
+  font-size: 1.5em;
+}
+.singledoc-ico-disabled{
+  color: #a3a3a3; 
+  font-size: 1.5em;
 }

@@ -25,15 +25,9 @@
           grant.name
         }}</mat-option>
       </mat-select>
-      <mat-label *ngIf="singleGrant">Approved Reports for</mat-label>
-      <input
-        class=""
-        *ngIf="singleGrant"
-        matInput
-        [value]="grants[0].name"
-        style="font-weight: bold"
-      />
     </mat-form-field>
+    <div *ngIf="singleGrant" class="text-green mb-0 ng-star-inserted w-100 text-center" style="font-weight: 500;font-size: 1.2em;">Approved reports for {{subtitle}}</div>
+    <div *ngIf="singleGrant"class="text-header text-center">{{(grants[0].referenceNo?'['+grants[0].referenceNo+']':'') + ' ' + grants[0].name}}</div>
   </div>
   <div  class="col-12 scrollable" style="overflow-y: scroll;height: inherit;min-height: calc(100vh - 210px) !important;max-height: calc(100vh - 210px) !important;">
     <div *ngIf="!selectedFilteredReports">

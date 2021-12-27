@@ -1,3 +1,5 @@
+import { ClosureDataService } from './../../closure.data.service';
+import { GrantClosure } from 'app/model/closures';
 import { UiUtilService } from './../../ui-util.service';
 import { CurrencyService } from "./../../currency-service";
 import { Component, OnInit, ViewChild } from "@angular/core";
@@ -80,6 +82,8 @@ export class ActiveGrantsComponent implements OnInit {
   filterReady = false;
   filterCriteria: any;
   @ViewChild("appSearchFilter") appSearchFilter: SearchFilterComponent;
+  closures: GrantClosure[];
+  deleteClosureClicked: boolean = false;
 
   constructor(
     private http: HttpClient,
@@ -93,8 +97,9 @@ export class ActiveGrantsComponent implements OnInit {
     private grantUpdateService: GrantUpdateService,
     private dialog: MatDialog,
     private titlecasePipe: TitleCasePipe,
-    private currencyService: CurrencyService,
-    public uiService: UiUtilService
+    public currencyService: CurrencyService,
+    public uiService: UiUtilService,
+    public closureService: ClosureDataService
   ) { }
 
   ngOnInit() {
@@ -108,6 +113,7 @@ export class ActiveGrantsComponent implements OnInit {
     );
     this.data.currentMessage.subscribe((grant) => (this.currentGrant = grant));
     this.fetchDashboard(user.id, this.currentGrant);
+    this.getGrantsUnderClosure();
     this.grantUpdateService.currentMessage.subscribe((id) => {
       if (id) {
         //this.fetchDashboard(user.id);
@@ -180,6 +186,22 @@ export class ActiveGrantsComponent implements OnInit {
       });
   }
 
+  getGrantsUnderClosure() {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
+    this.appComponent.loggedIn = true;
+
+    const url = "/api/user/" + this.appComponent.loggedInUser.id + "/closure/";
+    this.http.get<GrantClosure[]>(url, httpOptions).subscribe((closures: GrantClosure[]) => {
+      this.closures = closures;
+    });
+  }
   fetchDashboard(userId: string, grant: Grant) {
     grant = null;
     if (grant) {
@@ -504,4 +526,59 @@ export class ActiveGrantsComponent implements OnInit {
       this.appSearchFilter.closeSearch();
     }
   }
+
+  getRoundedFigure(grant) {
+    return Math.round(((grant.approvedDisbursementsTotal / grant.amount) * 100))
+  }
+
+  manageClosure(closure: GrantClosure) {
+    if (this.deleteClosureClicked) {
+      return;
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'X-TENANT-CODE': localStorage.getItem('X-TENANT-CODE'),
+        'Authorization': localStorage.getItem('AUTH_TOKEN')
+      })
+    };
+
+    const user = JSON.parse(localStorage.getItem('USER'));
+    let url = '/api/user/' + user.id + '/closure/' + closure.id;
+    this.http.get<GrantClosure>(url, httpOptions).subscribe((closure: GrantClosure) => {
+      this.appComponent.currentView = 'grant-closure';
+      this.closureService.changeMessage(closure, this.appComponent.loggedInUser.id);
+      if (closure.canManage && closure.status.internalStatus != 'CLOSED') {
+        this.appComponent.action = 'grant-closure';
+        this.router.navigate(['grant-closure/header']);
+      } else {
+        this.appComponent.action = 'grant-closure';
+        this.router.navigate(['grant-closure/preview']);
+      }
+    });
+  }
+
+
+  deleteClosure(closure: GrantClosure) {
+    this.deleteClosureClicked = true;
+    const dialogRef = this.dialog.open(FieldDialogComponent, {
+      data: { title: 'Are you sure you want to delete this closure request?', btnMain: "Delete Closure Request", btnSecondary: "Not Now" },
+      panelClass: 'center-class'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.closureService.deleteClosure(closure)
+          .then(() => {
+            this.getGrantsUnderClosure();
+            this.deleteClosureClicked = false;
+          })
+      } else {
+        this.deleteClosureClicked = false;
+        dialogRef.close();
+      }
+    });
+  }
+
 }

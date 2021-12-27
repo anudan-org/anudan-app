@@ -66,35 +66,12 @@
                 <div class="row">
                   <div class="col-12 mt-0">
                     <div class="row">
-                      <div class="col-6 mb-0 pr-0" style="border-right: 1px solid #d4d4d4">
-                        ₹
-                        <span class="text-header mr-2 search-context">{{
-                          getFormattedGrantAmount(grant.amount)
-                        }}</span><span class="text-subheader"><small>{{getGrantAmountInWords(grant.amount)}}</small></span>
-                      </div>
-                      <div
-                        class="col-6 text-subheader">
-                        Disbursed <small>(till date)</small>:&nbsp;&nbsp;<span class="text-header">
-                          {{
-                            grant.approvedDisbursementsTotal === 0
-                              ? "None"
-                              : currencyService.getFormattedAmount(
-                                  grant.approvedDisbursementsTotal
-                                )
-                          }}</span>
-                          <small
-                      class="ml-2"
-                      *ngIf="grant.approvedDisbursementsTotal > 0"
-                      >{{
-                        currencyService.getAmountInWords(
-                          grant.approvedDisbursementsTotal
-                        )
-                      }}</small
-                    >
+                      <div class="col-12 mb-0 pr-0 mt-1 progress-summary-class">
+                        <small >Disbursed {{currencyService.getFormattedAmount(grant.approvedDisbursementsTotal)}} / <span style="font-weight: 800;">Committed {{currencyService.getFormattedAmount(grant.amount)}}</span> (<span class="text-green mt-2 mb-0" style="font-size:14px;font-weight:800;">{{getRoundedFigure(grant)}}%</span>)<div><mat-progress-bar mode="determinate" [value]="((grant.approvedDisbursementsTotal/grant.amount)*100)" style="height: 8px !important;"></mat-progress-bar></div></small>
                       </div>
                     </div>
                   </div>
-                  <div class="col-12 mt-0">
+                  <div class="col-12 mt-2">
                     <div class="row">
                       <div class="col-6 mb-0 pr-0" style="border-right: 1px solid #d4d4d4">&nbsp;</div>
                       <div class="col-6 mb-0 pr-0 text-subheader">

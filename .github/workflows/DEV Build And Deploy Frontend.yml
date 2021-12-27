@@ -15,6 +15,7 @@ on:
       - '**.iml'
       - 'frontend/**'
       - 'e2e/**' 
+      - '/.github/CODEOWNERS'
 
 
 # creating env variable for head commit meassge 
@@ -98,13 +99,9 @@ jobs:
           -Dsonar.projectVersion=1.0
           -Dsonar.sources=src/app
           -Dsonar.exclusions=src/app/**.spec.ts
-          -Dsonar.sourceEncoding=UTF-8
-    - name: SonarQube Quality Gate check
-      uses: sonarsource/sonarqube-quality-gate-action@master
-      # Force to fail step after specific time
-      timeout-minutes: 5
-      env:
-       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}       
+          -Dsonar.sourceEncoding=UTF-8         
+
+         
        
 
   # this block of code will do checkout anudan-config repo 
@@ -134,7 +131,7 @@ jobs:
   Trigger-Dev-Release:
       runs-on: ubuntu-latest 
       needs: [unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend]
-      if: github.event_name == 'push' 
+      if: github.ref == 'refs/heads/dev' 
       name: Create Dev Release Version
       steps:     
         - name: DEV-deployment  
@@ -148,7 +145,7 @@ jobs:
 
   Release-repo-checkout:
       runs-on: ubuntu-latest
-      if: always()
+      if: github.ref == 'refs/heads/dev' 
       name: Checkout release.json
       needs: [Trigger-Dev-Release]
       steps:
@@ -219,6 +216,7 @@ jobs:
           ls -lrt
           echo "Dev_Version=`cat Dev_release.json| cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV
       - name: Send mail
+        if: always()
         uses: wadeww/send-email-action@master
         with:
           server_address: smtp.gmail.com
@@ -239,11 +237,11 @@ jobs:
 
                 3. Static Code Analysis Result - ${{needs.Static-Code-Analysis-Sonarqube-Frontend.result}} 
 
-                4. Checkout release.json Result - ${{needs.Anudan-config.result}} 
+                4. Checkout application.yaml Result - ${{needs.Anudan-config.result}} 
 
                 5. Copy Artifacts To DEV Server - ${{needs.Rsync-Dev-Deployments.result}} 
 
-                6. Dev Release Result - ${{needs.Trigger-Dev-Release.result}} 
+                6. Dev Version Release Result - ${{needs.Trigger-Dev-Release.result}} 
                
                 7. Anudan - Grant Management System › DEV Build - ${{ env.Dev_Version }}
                 

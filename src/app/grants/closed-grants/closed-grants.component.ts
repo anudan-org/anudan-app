@@ -94,7 +94,7 @@ export class ClosedGrantsComponent implements OnInit {
     private grantUpdateService: GrantUpdateService,
     private dialog: MatDialog,
     private titlecasePipe: TitleCasePipe,
-    private currencyService: CurrencyService,
+    public currencyService: CurrencyService,
     public uiService: UiUtilService
   ) { }
 
@@ -511,5 +511,9 @@ export class ClosedGrantsComponent implements OnInit {
       this.searchClosed = true;
       this.appSearchFilter.closeSearch();
     }
+  }
+
+  getRoundedFigure(grant) {
+    return Math.round(((grant.approvedDisbursementsTotal / grant.amount) * 100))
   }
 }

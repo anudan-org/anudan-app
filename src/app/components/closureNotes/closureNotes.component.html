@@ -1,0 +1,275 @@
+<span class="" style="position:absolute; right: 20px; left: auto;top: 10px;" (click)="close(false)">
+  <mat-icon>close</mat-icon>
+</span>
+<div class="p-2">
+<mat-card-title *ngIf="!validationResult.canMove">Unable to proceed</mat-card-title>
+<ng-container *ngIf="validationResult.error.length>0">
+  <p class="text-header-light mb-1" style="font-size:12px !important;">
+    Warnings:
+  </p>
+  <p *ngFor="let e of validationResult.error" class="d-flex align-items-center text-subheader-light" style="font-size:12px !important;"><mat-icon [inline]="true" class="material-icons-outlined text-danger mr-1">
+    error_outline
+  </mat-icon>{{e.message}}</p>
+</ng-container>
+<ng-container *ngIf="validationResult.info.length>0">
+  <p class="text-header-light mb-1" style="font-size:12px !important;">
+    Information:
+  </p>
+  <p *ngFor="let e of validationResult.info" class="d-flex align-items-center text-subheader-light" style="font-size:12px !important;"><mat-icon [inline]="true" class="material-icons-outlined text-grey mr-1">
+    info_outline
+  </mat-icon>{{e.message}}</p>
+</ng-container>
+<mat-card-title *ngIf="validationResult.canMove">Note</mat-card-title>
+
+<!--<mat-card-subtitle></mat-card-subtitle>-->
+<!--<div #scrollContainer style="min-height: 300px;max-height: 300px;overflow-y: scroll;">
+&lt;!&ndash;<mat-nav-list>
+  <ng-container *ngFor="let note of passedNotesInfo.notes">
+    <mat-list-item>
+      <mat-icon mat-list-icon>person</mat-icon>
+      <p mat-line mat-card-subtitle>{{note.postedBy.firstName +', '+ note.postedBy.lastName}}<small class="ml-2">[{{note.postedOn | date:'dd-MMMM-yyyy'}}]</small></p>
+      <p mat-line>{{note.message}}</p>
+    </mat-list-item>
+  </ng-container>
+</mat-nav-list>&ndash;&gt;
+</div>-->
+<ng-container>
+
+  <mat-form-field *ngIf="validationResult.canMove">
+    <textarea *ngIf="validationResult.canMove" class="anu-input" matInput #inputMessage></textarea>
+  </mat-form-field>
+  <mat-expansion-panel style="background: #f8f8f8;" [expanded]="false" class="mb-3 grants-expansion-panel" *ngIf="current && original" [ngStyle]="hasChanges?{'visibility':'visible','height':'auto'}:{'visibility':'hidden','height':'0'}">
+    <mat-expansion-panel-header class="grant-expansion-panel" style="padding: 15px;">
+      <mat-panel-title style="display: flex; align-items: center">
+        <small>View changes</small>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <app-grant-compare *ngIf="current && original" [newItem]="current" [oldItem]="original" [standAlone]="false" [title]="'Closure Changes'" [compare1Title]="'Current State'" [compare2Title]="'Previous State'" [for]="'Closure'" (hasChanges)="checkIfHasDifferences($event)"></app-grant-compare>
+    <!-- <div *ngIf="reportDiff" style="background:#fff;padding:5px;max-height:200px;min-width:600px;overflow:scroll;">
+      <div *ngIf="reportDiff.oldReportName || reportDiff.newReportName" class="mb-2 change-box">
+        <span class="change-title">Report name changed</span>
+        <div class="change-new" *ngIf="reportDiff.newReportName">{{reportDiff.newReportName}}</div>
+        <div *ngIf="reportDiff.newReportName && !reportDiff.oldReportName" class="text-danger"><em><small>Currently has
+              no value</small></em></div>
+        <div class="change-old" *ngIf="reportDiff.oldReportName">{{reportDiff.oldReportName}}</div>
+        <div *ngIf="reportDiff.oldReportName && !reportDiff.newReportName" class="text-white"><em><small>Previously had
+              no value</small></em></div>
+      </div>
+      <div *ngIf="reportDiff.oldReportStartDate || reportDiff.newReportStartDate" class="mb-2 change-box">
+        <span class="change-title">Report start date changed</span>
+        <div class="change-new" *ngIf="reportDiff.newReportStartDate">
+          {{reportDiff.newReportStartDate | date:'dd-MMM-yyyy'}}</div>
+        <div *ngIf="!reportDiff.newReportStartDate && reportDiff.oldReportStartDate" class="text-danger">
+          <em><small>Currently has no value</small></em></div>
+        <div class="change-old" *ngIf="reportDiff.oldReportStartDate">
+          {{reportDiff.oldReportStartDate | date:'dd-MMM-yyyy'}}</div>
+        <div *ngIf="!reportDiff.oldReportStartDate && reportDiff.newReportStartDate" class="text-white">
+          <em><small>Previously had no value</small></em></div>
+      </div>
+      <div *ngIf="reportDiff.oldReportEndDate || reportDiff.newReportEndDate" class="mb-2 change-box">
+        <span class="change-title">Report end date changed</span>
+        <div class="change-new" *ngIf="reportDiff.newReportEndDate">{{reportDiff.newReportEndDate | date:'dd-MMM-yyyy'}}
+        </div>
+        <div *ngIf="!reportDiff.newReportEndDate && reportDiff.oldReportEndDate" class="text-danger"><em><small>Currently
+              has no value</small></em></div>
+        <div class="change-old" *ngIf="reportDiff.oldReportEndDate">{{reportDiff.oldReportEndDate | date:'dd-MMM-yyyy'}}
+        </div>
+        <div *ngIf="!reportDiff.oldReportEndDate && reportDiff.newReportEndDate" class="text-white"><em><small>Previously
+              had no value</small></em></div>
+      </div>
+      <div *ngIf="reportDiff.oldReportDueDate || reportDiff.newReportDueDate" class="mb-2 change-box">
+        <span class="change-title">Report Due Date changed</span>
+        <div class="change-new" *ngIf="reportDiff.newReportDueDate">{{reportDiff.newReportDueDate | date:'dd-MMM-yyyy'}}
+        </div>
+        <div *ngIf="!reportDiff.newReportDueDate && reportDiff.oldReportDueDate" class="text-danger"><em><small>Currently
+              has no value</small></em></div>
+        <div class="change-old" *ngIf="reportDiff.oldReportDueDate">{{reportDiff.oldReportDueDate | date:'dd-MMM-yyyy'}}
+        </div>
+        <div *ngIf="!reportDiff.oldReportDueDate && reportDiff.newReportDueDate" class="text-white"><em><small>Previously
+              had no value</small></em></div>
+      </div>
+
+      <ng-container *ngIf="reportDiff.sectionDiffs">
+        <ng-container *ngFor="let sectionDiff of reportDiff.sectionDiffs">
+          <ng-container *ngIf="sectionDiff.hasSectionLevelChanges">
+            <div *ngIf="sectionDiff.oldSection && sectionDiff.newSection" class="mb-2 change-box">
+              <span class="change-title">Section name changed</span>
+              <div class="change-new">{{sectionDiff.newSection.sectionName}}</div>
+              <div class="change-old">{{sectionDiff.oldSection.sectionName}}</div>
+            </div>
+            <div *ngIf="sectionDiff.oldSection && !sectionDiff.newSection" class="mb-2 change-box">
+              <span class="change-title">Existing section deleted</span>
+              <div class="change-delete">{{sectionDiff.oldSection.sectionName}}</div>
+            </div>
+            <div *ngIf="!sectionDiff.oldSection && sectionDiff.newSection" class="mb-2 change-box">
+              <span class="change-title">New section added:</span>
+              <div class="change-new">{{sectionDiff.newSection.sectionName}}</div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="!sectionDiff.hasSectionLevelChanges">
+            <ng-container *ngIf="sectionDiff.attributesDiffs">
+              <ng-container *ngFor="let attrDiff of sectionDiff.attributesDiffs">
+                <div *ngIf="attrDiff.oldAttribute && attrDiff.newAttribute" class="mb-2 change-box">
+                  <span class="change-title">Field changes in section <strong>{{attrDiff.section}}</strong></span>
+                  <div class="row change-new m-0" style="display: flex;">
+                    <div class="col-4"><label>Title:</label>
+                      <p>{{attrDiff.newAttribute.fieldName}}</p>
+                    </div>
+                    <div class="col-2"><label>Type:</label>
+                      <p>{{getType(attrDiff.newAttribute.fieldType)}}</p>
+                    </div>
+                    <div *ngIf="attrDiff.newAttribute.fieldType==='multiline'" class="col-6"><label>Field Value:</label>
+                      <p>{{attrDiff.newAttribute.fieldValue}}</p>
+                    </div>
+                    <div *ngIf="attrDiff.newAttribute.fieldType==='kpi'" class="col-2">
+                      <label>Target/Goal:</label>
+                      <p>{{attrDiff.newAttribute.target}}</p>
+                    </div>
+                    <div *ngIf="attrDiff.newAttribute.fieldType==='kpi'" class="col-2">
+                      <label>Actual Achieved:</label>
+                      <p>{{attrDiff.newAttribute.actualTarget}}</p>
+                    </div>
+                    <div *ngIf="attrDiff.newAttribute.fieldType==='kpi'" class="col-2">
+                      <label>Frequency:</label>
+                      <p *ngIf="attrDiff.newAttribute.frequency!=='half-yearly'">
+                        {{attrDiff.newAttribute.frequency | titlecase}}</p>
+                      <p *ngIf="attrDiff.newAttribute.frequency==='half-yearly'">Half Yearly</p>
+                    </div>
+                    <div *ngIf="attrDiff.newAttribute.fieldType==='table'" class="col-12"
+                      [innerHTML]="getTabularData(attrDiff.newAttribute.fieldTableValue)">
+                    </div>
+                    <div *ngIf="attrDiff.newAttribute.fieldType==='disbursement'" class="col-12"
+                      [innerHTML]="getDisbursementTabularData(attrDiff.newAttribute.fieldTableValue)">
+                    </div>
+                    <div *ngIf="attrDiff.newAttribute.fieldType==='document'" class="col-12">
+                      <ul>
+                        <li *ngFor="let doc of getDocumentName(attrDiff.newAttribute.fieldValue)">
+                          {{doc.name}}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="row change-old m-0" style="display: flex;">
+                    <div class="col-4"><label>Title:</label>
+                      <p>{{attrDiff.oldAttribute.fieldName}}</p>
+                    </div>
+                    <div class="col-2"><label>Type:</label>
+                      <p>{{getType(attrDiff.oldAttribute.fieldType)}}</p>
+                    </div>
+                    <div *ngIf="attrDiff.oldAttribute.fieldType==='multiline'" class="col-6"><label>Field Value:</label>
+                      <p>{{attrDiff.oldAttribute.fieldValue}}</p>
+                    </div>
+                    <div *ngIf="attrDiff.oldAttribute.fieldType==='kpi'" class="col-2">
+                      <label>Target/Goal:</label>
+                      <p>{{attrDiff.oldAttribute.target}}</p>
+                    </div>
+                    <div *ngIf="attrDiff.newAttribute.fieldType==='kpi'" class="col-2">
+                      <label>Actual Achieved:</label>
+                      <p>{{attrDiff.oldAttribute.actualTarget}}</p>
+                    </div>
+                    <div *ngIf="attrDiff.oldAttribute.fieldType==='kpi'" class="col-2">
+                      <label>Frequency:</label>
+                      <p *ngIf="attrDiff.newAttribute.frequency!=='half-yearly'">
+                        {{attrDiff.newAttribute.frequency | titlecase}}</p>
+                      <p *ngIf="attrDiff.newAttribute.frequency==='half-yearly'">Half Yearly</p>
+                    </div>
+                    <div *ngIf="attrDiff.oldAttribute.fieldType==='table'" class="col-12"
+                      [innerHTML]="getTabularData(attrDiff.oldAttribute.fieldTableValue)">
+                    </div>
+                    <div *ngIf="attrDiff.oldAttribute.fieldType==='disbursement'" class="col-12"
+                      [innerHTML]="getDisbursementTabularData(attrDiff.oldAttribute.fieldTableValue)">
+                    </div>
+                    <div *ngIf="attrDiff.oldAttribute.fieldType==='document'" class="col-12">
+                      <ul>
+                        <li *ngFor="let doc of getDocumentName(attrDiff.oldAttribute.fieldValue)">
+                          {{doc.name}}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="attrDiff.oldAttribute && !attrDiff.newAttribute" class="mb-2 change-box">
+                  <span class="change-title">Field deleted in section <strong>{{attrDiff.section}}</strong></span>
+                  <div class="row change-delete m-0" style="display: flex;">
+                    <div class="col-4"><label>Title:</label>
+                      <p>{{attrDiff.oldAttribute.fieldName}}</p>
+                    </div>
+                    <div class="col-2"><label>Type:</label>
+                      <p>{{getType(attrDiff.oldAttribute.fieldType)}}</p>
+                    </div>
+                    <div *ngIf="attrDiff.oldAttribute.fieldType==='multiline'" class="col-6"><label>Field Value:</label>
+                      <p>{{attrDiff.oldAttribute.fieldValue}}</p>
+                    </div>
+                    <div *ngIf="attrDiff.oldAttribute.fieldType==='kpi'" class="col-3">
+                      <label>Target/Goal:</label>
+                      <p>{{attrDiff.oldAttribute.target}}</p>
+                    </div>
+                    <div *ngIf="attrDiff.oldAttribute.fieldType==='kpi'" class="col-3">
+                      <label>Frequency:</label>
+                      <p *ngIf="attrDiff.newAttribute.frequency!=='half-yearly'">
+                        {{attrDiff.newAttribute.frequency | titlecase}}</p>
+                      <p *ngIf="attrDiff.newAttribute.frequency==='half-yearly'">Half Yearly</p>
+                    </div>
+                    <div *ngIf="attrDiff.oldAttribute.fieldType==='table'" class="col-12"
+                      [innerHTML]="getTabularData(attrDiff.oldAttribute.fieldTableValue)">
+                    </div>
+                    <div *ngIf="attrDiff.oldAttribute.fieldType==='disbursement'" class="col-12"
+                      [innerHTML]="getDisbursementTabularData(attrDiff.oldAttribute.fieldTableValue)">
+                    </div>
+                    <div *ngIf="attrDiff.oldAttribute.fieldType==='document'" class="col-12">
+                      <ul>
+                        <li *ngFor="let doc of getDocumentName(attrDiff.oldAttribute.fieldValue)">
+                          {{doc.name}}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div *ngIf="!attrDiff.oldAttribute && attrDiff.newAttribute" class="mb-2 change-box">
+                  <span class="change-title">Field added in section <strong>{{attrDiff.section}}</strong></span>
+                  <div class="row change-new m-0" style="display: flex;">
+                    <div class="col-4"><label>Field Name:</label>
+                      <p>{{attrDiff.newAttribute.fieldName}}</p>
+                    </div>
+                    <div class="col-2"><label>Field Type:</label>
+                      <p>{{getType(attrDiff.newAttribute.fieldType)}}</p>
+                    </div>
+                    <div *ngIf="attrDiff.newAttribute.fieldType==='multiline'" class="col-6"><label>Field Value:</label>
+                      <p>{{attrDiff.newAttribute.fieldValue}}</p>
+                    </div>
+                    <div *ngIf="attrDiff.newAttribute.fieldType==='kpi'" class="col-3">
+                      <label>Target/Goal:</label>
+                      <p>{{attrDiff.newAttribute.target}}</p>
+                    </div>
+                    <div *ngIf="attrDiff.newAttribute.fieldType==='kpi'" class="col-3">
+                      <label>Frequency:</label>
+                      <p *ngIf="attrDiff.newAttribute.frequency!=='half-yearly'">
+                        {{attrDiff.newAttribute.frequency | titlecase}}</p>
+                      <p *ngIf="attrDiff.newAttribute.frequency==='half-yearly'">Half Yearly</p>
+                    </div>
+                    <div *ngIf="attrDiff.newAttribute.fieldType==='table'" class="col-12"
+                      [innerHTML]="getTabularData(attrDiff.newAttribute.fieldTableValue)">
+                    </div>
+                    <div *ngIf="attrDiff.newAttribute.fieldType==='document'" class="col-12">
+                      <ul>
+                        <li *ngFor="let doc of getDocumentName(attrDiff.newAttribute.fieldValue)">
+                          {{doc.name}}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+
+
+
+    </div> -->
+  </mat-expansion-panel>
+
+  <button class="btn btn-sm btn-green-primary" [disabled]="!validationResult.canMove" (click)="close(true)">Proceed</button>
+</ng-container>
+</div>

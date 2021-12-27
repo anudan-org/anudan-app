@@ -1,3 +1,6 @@
+import { ClosureNotesComponent } from './../../components/closureNotes/closureNotes.component';
+import { ClosureComponent } from './../../closure/closure.component';
+import { ClosureTemplateDialogComponent } from './../../components/closure-template-dialog/closure-template-dialog.component';
 import { GrantCompareComponent } from './../../grant-compare/grant-compare.component';
 import { GranteeProgressSummaryComponent } from './../../dashboard/grantee-progress-summary/grantee-progress-summary.component';
 import { GranteeSummaryCenteredComponent } from './../../dashboard/grantee-summary-centered/grantee-summary-centered.component';
@@ -108,6 +111,10 @@ import { DisbursementPreviewComponent } from 'app/disbursements/disbursement/dis
 import { DisbursementNotesComponent } from 'app/components/disbursementNotes/disbursementNotes.component';
 import { DataApiComponent } from 'app/data-api/data-api.component';
 import { SearchFilterComponent } from './search-filter/search-filter.component';
+import { ClosureHeaderComponent } from 'app/closure/closure-header/closure-header.component';
+import { ClosureSectionsComponent } from 'app/closure/closure-sections/closure-sections.component';
+import { ClosurePreviewComponent } from 'app/closure/closure-preview/closure-preview.component';
+
 @NgModule({
     imports: [
         CommonModule,
@@ -139,10 +146,15 @@ import { SearchFilterComponent } from './search-filter/search-filter.component';
         NgxGraphModule,
         MatAutocompleteModule,
         MatTabsModule,
-        PDFExportModule
+        PDFExportModule,
+        MatRadioModule
     ],
     declarations: [
         GrantComponent,
+        ClosureComponent,
+        ClosureHeaderComponent,
+        ClosureSectionsComponent,
+        ClosurePreviewComponent,
         DashboardComponent,
         SummaryComponent,
         SummaryCenteredComponent,
@@ -175,9 +187,11 @@ import { SearchFilterComponent } from './search-filter/search-filter.component';
         InviteDialogComponent,
         GrantNotesComponent,
         ReportNotesComponent,
+        ClosureNotesComponent,
         DisbursementNotesComponent,
         GrantTemplateDialogComponent,
         ReportTemplateDialogComponent,
+        ClosureTemplateDialogComponent,
         GrantSelectionDialogComponent,
         ListDialogComponent,
         GranttypeSelectionDialogComponent,
@@ -218,7 +232,7 @@ import { SearchFilterComponent } from './search-filter/search-filter.component';
         SearchFilterComponent,
         GrantCompareComponent
     ],
-    entryComponents: [WelcomePopupComponent, AddnlreportsDialogComponent, InviteDialogComponent, BottomsheetComponent, BottomsheetAttachmentsComponent, BottomsheetNotesComponent, GrantTemplateDialogComponent, ReportTemplateDialogComponent, GrantSelectionDialogComponent, ListDialogComponent, TemplateDialogComponent, GrantNotesComponent, SectionEditComponent, ReportNotesComponent, DisbursementNotesComponent, GranttypeSelectionDialogComponent, GrantTagsComponent, GrantCompareComponent],
+    entryComponents: [WelcomePopupComponent, AddnlreportsDialogComponent, InviteDialogComponent, BottomsheetComponent, BottomsheetAttachmentsComponent, BottomsheetNotesComponent, GrantTemplateDialogComponent, ReportTemplateDialogComponent, ClosureTemplateDialogComponent, GrantSelectionDialogComponent, ListDialogComponent, TemplateDialogComponent, GrantNotesComponent, SectionEditComponent, ReportNotesComponent, ClosureNotesComponent, DisbursementNotesComponent, GranttypeSelectionDialogComponent, GrantTagsComponent, GrantCompareComponent],
     schemas: [NO_ERRORS_SCHEMA],
 
 })

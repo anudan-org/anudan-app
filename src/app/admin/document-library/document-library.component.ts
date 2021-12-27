@@ -1,8 +1,13 @@
+import { MessagingComponent } from 'app/components/messaging/messaging.component';
+import { DocpreviewComponent } from './../../docpreview/docpreview.component';
+import { DomSanitizer } from '@angular/platform-browser';
+import { DocpreviewService } from './../../docpreview.service';
+import { DocManagementService } from './../../doc-management.service';
 import { AdminService } from './../../admin.service';
 import { TemplateLibrary, AttachmentDownloadRequest } from './../../model/dahsboard';
 import { FieldDialogComponent } from './../../components/field-dialog/field-dialog.component';
 import { MatDialog } from '@angular/material';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { AppComponent } from 'app/app.component';
 import { Role } from './../../model/user';
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
@@ -25,37 +30,42 @@ export class DocumentLibraryComponent implements OnInit {
   docName: string;
   docDescription: string;
   itemsSelected: boolean = false;
+  noSingleDocAction: boolean = false;
+  downloadAndDeleteAllowed: boolean = false;
   @ViewChild("uploadFile") uploadFile: ElementRef;
 
 
   @ViewChild('createRoleBtn') createRoleBtn: ElementRef;
 
-  constructor(private appComponent: AppComponent, private http: HttpClient, private dialog: MatDialog, private adminService: AdminService, private elem: ElementRef) { }
+  constructor(public appComponent: AppComponent,
+    private http: HttpClient,
+    private dialog: MatDialog,
+    private adminService: AdminService,
+    private elem: ElementRef,
+    private docPreviewService: DocpreviewService,
+    private sanitizer: DomSanitizer,) { }
 
   ngOnInit() {
     console.log(this.docs);
   }
   handleSelection(doc) {
-    const elems = this.elem.nativeElement.querySelectorAll(
+    const docElems = this.elem.nativeElement.querySelectorAll(
       '[id^="attachment_"]'
     );
-    if (elems.length > 0) {
-      for (let singleElem of elems) {
-        if (singleElem.checked) {
-          this.elem.nativeElement.querySelector(
-            '[id="attachments_download"]'
-          ).disabled = false;
-          this.elem.nativeElement.querySelector(
-            '[id="attachments_delete"]'
-          ).disabled = false;
-          return;
+    if (docElems.length > 0) {
+      let found = false;
+      for (let docElem of docElems) {
+        if (docElem.checked) {
+          found = true;
         }
-        this.elem.nativeElement.querySelector(
-          '[id^="attachments_download"]'
-        ).disabled = true;
-        this.elem.nativeElement.querySelector(
-          '[id^="attachments_delete"]'
-        ).disabled = true;
+      }
+
+      if (found) {
+        this.noSingleDocAction = true;
+        this.downloadAndDeleteAllowed = true;
+      } else {
+        this.noSingleDocAction = false;
+        this.downloadAndDeleteAllowed = false;
       }
     }
   }
@@ -85,7 +95,7 @@ export class DocumentLibraryComponent implements OnInit {
   deleteSelection() {
 
     const dReg = this.dialog.open(FieldDialogComponent, {
-      data: { title: 'Are you sure you want to delete the selected document(s)?',btnMain:"Delete Document(s)",btnSecondary:"Not Now" },
+      data: { title: 'Are you sure you want to delete the selected document(s)?', btnMain: "Delete Document(s)", btnSecondary: "Not Now" },
       panelClass: 'center-class'
     });
 
@@ -143,6 +153,24 @@ export class DocumentLibraryComponent implements OnInit {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
+      if (file.size === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected a file with no content. Unable to upload.',
+          panelClass: "center-class"
+        });
+        ev.target.value = "";
+        return;
+      }
+
+      const ext = file.name.substr(file.name.lastIndexOf('.'));
+      if (this.appComponent.acceptedFileTypes.filter(d => d === ext).length === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected an unsupported file type. Supported file types are ' + this.appComponent.acceptedFileTypes.toString() + '. Unable to upload.',
+          panelClass: "center-class"
+        });
+        ev.target.value = "";
+        return;
+      }
       this.saveDoc(file);
     };
     reader.onerror = function (error) {
@@ -165,32 +193,61 @@ export class DocumentLibraryComponent implements OnInit {
     });
 
   }
-  /* canCreateRole() {
-    if ((this.roleName !== undefined && this.roleName.trim() !== '') && !this.existingRole) {
-      return false;
-    } else {
-      return true;
-    }
-
-  } */
-
-  /* validateRole(ev) {
-    const role = ev.target.value;
-    if (role === undefined || role === null || (role !== null && role.trim() === '')) {
-      return;
-    }
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'X-TENANT-CODE': localStorage.getItem('X-TENANT-CODE'),
-        'Authorization': localStorage.getItem('AUTH_TOKEN')
-      })
-    };
-    const user = this.appComponent.loggedInUser;
-    const url = 'api/admin/user/' + user.id + '/role/validate';
-
-    this.http.post(url, { roleName: role }, httpOptions).subscribe((result: any) => {
-      this.existingRole = result.exists;
+  previewDocument(_for, attach) {
+    this.docPreviewService.previewDoc(_for, this.appComponent.loggedInUser.id, attach.id, 0).then((result: any) => {
+      let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
+      let docUrl;
+      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/view.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
+      } else if (docType === 'pdf' || docType === 'txt') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
+      }
+      this.dialog.open(DocpreviewComponent, {
+        data: {
+          url: docUrl,
+          type: docType,
+          title: attach.name + '.' + attach.fileType,
+          userId: this.appComponent.loggedInUser.id,
+          tempFileName: result.url
+        },
+        panelClass: "wf-assignment-class"
+      });
     });
-  } */
+  }
+
+  downloadSingleDoc(attachmentId: number) {
+    const selectedAttachments = new AttachmentDownloadRequest();
+    selectedAttachments.attachmentIds = [];
+    selectedAttachments.attachmentIds.push(attachmentId);
+    this.adminService.downloadSelectedLibraryDocs(this.appComponent.loggedInUser, selectedAttachments).then((data) => {
+      saveAs(data, "document-library.zip");
+    });
+  }
+
+  deleteSingleDoc(attachmentId) {
+    const dReg = this.dialog.open(FieldDialogComponent, {
+      data: {
+        title: "Are you sure you want to delete the selected document?",
+        btnMain: "Delete Document",
+        btnSecondary: "Not Now"
+      },
+      panelClass: "grant-template-class",
+    });
+
+    dReg.afterClosed().subscribe((result) => {
+      if (result) {
+        const selectedAttachments = new AttachmentDownloadRequest();
+        selectedAttachments.attachmentIds = [];
+        selectedAttachments.attachmentIds.push(attachmentId);
+
+        this.adminService.deleteSelectedLibraryDocs(this.appComponent.loggedInUser, selectedAttachments).then(() => {
+          for (let a of selectedAttachments.attachmentIds) {
+            const index = this.docs.findIndex(d => d.id === Number(a));
+            this.docs.splice(index, 1);
+            this.appComponent.currentTenant.templateLibrary = this.docs;
+          }
+        });
+      }
+    });
+  }
 }

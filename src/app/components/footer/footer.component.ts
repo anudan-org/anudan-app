@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {AppComponent} from'../../app.component'
+import { AppComponent } from '../../app.component'
 declare var require: any
 
 @Component({
@@ -8,8 +8,8 @@ declare var require: any
   styleUrls: ['./footer.component.css']
 })
 export class FooterComponent implements OnInit {
-  test : Date = new Date();
-  logoUrl = "/api/public/images/ANUDAN/logo";
+  test: Date = new Date();
+  logoUrl = "./assets/img/code-alpha.svg";
 
 
   constructor(

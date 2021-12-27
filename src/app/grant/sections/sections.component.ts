@@ -1,35 +1,28 @@
+import { MessagingComponent } from 'app/components/messaging/messaging.component';
+import { DocManagementService } from './../../doc-management.service';
+import { DocpreviewService } from './../../docpreview.service';
+import { DocpreviewComponent } from './../../docpreview/docpreview.component';
 import { GrantCompareComponent } from './../../grant-compare/grant-compare.component';
 import { GrantApiService } from './../../grant-api.service';
-import { GrantTag, OrgTag } from './../../model/dahsboard';
+import { OrgTag, Attribute } from './../../model/dahsboard';
 import { GrantTagsComponent } from './../../grant-tags/grant-tags.component';
-import { MessagingComponent } from "app/components/messaging/messaging.component";
 import { AdminService } from "./../../admin.service";
 import {
   Component,
   ElementRef,
   OnInit,
   ViewChild,
-  Input,
   AfterViewChecked,
   AfterViewInit,
   HostListener,
-  ChangeDetectorRef,
 } from "@angular/core";
 import {
-  ActionAuthorities,
   AttachmentTemplates,
-  Attribute,
   Doc,
-  DocumentKpiSubmission,
   FileTemplates,
   Grant,
-  GrantDetails,
-  GrantKpi,
-  Kpi,
   Note,
   NoteTemplates,
-  QuantitiaveKpisubmission,
-  QualitativeKpiSubmission,
   Section,
   Submission,
   SubmissionStatus,
@@ -50,8 +43,6 @@ import {
   ActivatedRoute,
   Router,
   NavigationStart,
-  ActivationEnd,
-  RouterEvent,
 } from "@angular/router";
 import { AppComponent } from "../../app.component";
 import {
@@ -67,7 +58,7 @@ import {
 } from "@angular/material";
 import { DatePipe } from "@angular/common";
 import { Colors, Configuration } from "../../model/app-config";
-import { interval, Observable, Subject } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { FieldDialogComponent } from "../../components/field-dialog/field-dialog.component";
 import { SectionEditComponent } from "../../components/section-edit/section-edit.component";
 import { BottomsheetComponent } from "../../components/bottomsheet/bottomsheet.component";
@@ -85,12 +76,12 @@ import { MatChipInputEvent } from "@angular/material/chips";
 import { saveAs } from "file-saver";
 import { AdminLayoutComponent } from "../../layouts/admin-layout/admin-layout.component";
 import { User } from "../../model/user";
-import { MatSelectChange } from "@angular/material/select";
 
 import * as inf from "indian-number-format";
 import { AttributeService } from "app/attribute-validation-service";
 import { AmountValidator } from "app/amount-validator";
 import { ProjectDocumentsComponent } from "app/components/project-documents/project-documents.component";
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: "app-sections",
@@ -129,7 +120,8 @@ export class SectionsComponent
   filesToUpload = FileList;
   grantWorkflowStatuses: WorkflowStatus[];
   tenantUsers: User[];
-
+  noSingleDocAction: boolean = false;
+  downloadAndDeleteAllowed: boolean = false;
   myControl: FormControl;
   options: TemplateLibrary[];
   filteredOptions: Observable<TemplateLibrary[]>;
@@ -187,12 +179,13 @@ export class SectionsComponent
     private datepipe: DatePipe,
     public colors: Colors,
     private sidebar: SidebarComponent,
-    private data: DataService,
-    private cdr: ChangeDetectorRef,
     private attributeService: AttributeService,
     public amountValidator: AmountValidator,
     private adminService: AdminService,
-    private grantApiService: GrantApiService
+    private grantApiService: GrantApiService,
+    private sanitizer: DomSanitizer,
+    private docPreviewService: DocpreviewService,
+    private docManagementService: DocManagementService
   ) {
     this.colors = new Colors();
 
@@ -289,9 +282,8 @@ export class SectionsComponent
             if (attribute.fieldValue !== "") {
               let frt = JSON.parse(attribute.fieldValue);
               if (frt.length > 0) {
-                for (let i = 0; i < frt.length; i++) {
-                  attribute.docs.push(frt[i]);
-                  //attribute.attachments.push(frt[i]);
+                for (let f of frt) {
+                  attribute.docs.push(f);
                 }
               }
             }
@@ -306,7 +298,6 @@ export class SectionsComponent
     );
 
     this.checkGrantPermissions();
-    //this.checkCurrentSubmission();
 
     $("#stDateIcon").on("click", function (event) {
       console.log("PICKER CLICKED");
@@ -362,7 +353,6 @@ export class SectionsComponent
   }
 
   ngAfterContentChecked(): void {
-    this._adjustHeights();
     this._setFlowButtonColors();
   }
 
@@ -424,8 +414,7 @@ export class SectionsComponent
         this.http.post<Grant>(url, this.currentGrant, httpOptions).subscribe(
           (grant: Grant) => {
             this.grantData.changeMessage(grant, this.appComp.loggedInUser.id);
-            const path = this.sidebar.buildSectionsSideNav(null);
-            //this.router.navigate([path]);
+            this.sidebar.buildSectionsSideNav(null);
           },
           (error) => {
             const errorMsg = error as HttpErrorResponse;
@@ -456,44 +445,6 @@ export class SectionsComponent
         dialogRef.close();
       }
     });
-  }
-
-  deleteKpi(kpiId: number) {
-    for (const kpi of this.currentGrant.kpis) {
-      if (kpi.id === kpiId) {
-        const index = this.currentGrant.kpis.findIndex((k) => k.id === kpiId);
-        this.currentGrant.kpis.splice(index, 1);
-      }
-    }
-
-    for (const sub of this.currentGrant.submissions) {
-      for (const kpiData of sub.quantitiaveKpisubmissions) {
-        if (kpiData.grantKpi.id === kpiId) {
-          const index = sub.quantitiaveKpisubmissions.findIndex(
-            (k) => k.grantKpi.id === kpiId
-          );
-          sub.quantitiaveKpisubmissions.splice(index, 1);
-        }
-      }
-      for (const kpiData of sub.qualitativeKpiSubmissions) {
-        if (kpiData.grantKpi.id === kpiId) {
-          const index = sub.qualitativeKpiSubmissions.findIndex(
-            (k) => k.grantKpi.id === kpiId
-          );
-          sub.qualitativeKpiSubmissions.splice(index, 1);
-        }
-      }
-      for (const kpiData of sub.documentKpiSubmissions) {
-        if (kpiData.grantKpi.id === kpiId) {
-          const index = sub.documentKpiSubmissions.findIndex(
-            (k) => k.grantKpi.id === kpiId
-          );
-          sub.qualitativeKpiSubmissions.splice(index, 1);
-        }
-      }
-    }
-
-    this.checkGrant(null);
   }
 
   saveField() {
@@ -534,29 +485,6 @@ export class SectionsComponent
     $(editFieldModal).modal("hide");
   }
 
-  updateGrant(event: any) {
-    /*console.log(this.currentGrant);
-    const fieldElem = event.targetElement;
-    const fielId = fieldElem.id;
-    const fieldVal = fieldElem.value;
-    switch (fielId) {
-      case 'grantName':
-        this.currentGrant.name = fieldVal;
-        break;
-      case 'grantDesc':
-        this.currentGrant.description = fieldVal;
-        break;
-      case 'grantStart':
-        this.currentGrant.startDate = new Date(fieldVal);
-        break;
-      case 'grantEnd':
-        this.currentGrant.endDate = new Date(fieldVal);
-        break;
-    }
-    this._setEditMode(true);
-    this.grantData.changeMessage(this.currentGrant);
-    console.log(this.currentGrant);*/
-  }
 
   saveGrant(compare: boolean) {
     if (!this.canManage) {
@@ -565,11 +493,6 @@ export class SectionsComponent
 
     this.appComp.autosaveDisplay = "";
     this.appComp.showSaving = true;
-    /*const errors = this.validateFields();
-        if (errors) {
-            this.toastr.error($(this.erroredElement).attr('placeholder') + ' is required', 'Missing entries');
-            $(this.erroredElement).focus();
-        } else {*/
     const httpOptions = {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
@@ -587,9 +510,6 @@ export class SectionsComponent
     this.http.put(url, this.currentGrant, httpOptions).subscribe(
       (grant: Grant) => {
         this.originalGrant = JSON.parse(JSON.stringify(grant));
-        //this.grantData.changeMessage(grant);
-        //this.dataService.changeMessage(grant.id);
-        //this.currentGrant = grant;
         if (
           this.currentGrant.workflowAssignments.filter(
             (wf) =>
@@ -617,8 +537,6 @@ export class SectionsComponent
           "Last saved @ " +
           this.datepipe.transform(new Date(), "hh:mm:ss a") +
           "     ";
-        //this.appComp.showSaving = false;
-
         if (compare) {
           this.compareGrants(this.currentGrant.id, this.currentGrant.origGrantId);
         }
@@ -650,33 +568,7 @@ export class SectionsComponent
     );
   }
 
-  private validateFields() {
-    const containerFormLements = this.container.nativeElement.querySelectorAll(
-      "input[required]:not(:disabled):not([readonly]):not([type=hidden])" +
-      ",select[required]:not(:disabled):not([readonly])" +
-      ",textarea[required]:not(:disabled):not([readonly])"
-    );
-    for (let elem of containerFormLements) {
-      if (elem.value.trim() === "") {
-        this.erroredElement = elem;
-        switch ($(this.erroredElement).attr("placeholder")) {
-          case "Field Value":
-        }
-        return true;
-      }
-    }
-    return false;
-  }
-
   saveSubmissionAndMove(toStateId: number) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-        Authorization: localStorage.getItem("AUTH_TOKEN"),
-      }),
-    };
-
     for (const sub of this.currentGrant.submissions) {
       if (sub.id === this.currentSubmission.id) {
         const subStatus = new SubmissionStatus();
@@ -684,42 +576,9 @@ export class SectionsComponent
         sub.submissionStatus = subStatus;
       }
     }
-
-    //this.saveGrant();
-
-    /*let url = '/api/user/' + this.appComp.loggedInUser.id + '/grant/'
-        + this.currentGrant.id + '/submission/flow/'
-        + this.currentSubmission.submissionStatus.id + '/' + toStateId;
-
-    this.http.put(url, this.currentSubmission, httpOptions).subscribe((submission: Submission) => {
-          this.submissionData.changeMessage(submission);
-
-          url = '/api/user/' + this.appComp.loggedInUser.id + '/grant/' + this.currentGrant.id;
-          this.http.get(url, httpOptions).subscribe((updatedGrant: Grant) => {
-            this.grantData.changeMessage(updatedGrant);
-            this.editMode = false;
-            this.toastr.info('Submission saved with status <b>'
-                + this.currentSubmission.submissionStatus.displayName
-                + '</b>', 'Submission Saved')
-          });
-        },
-        error => {
-          const errorMsg = error as HttpErrorResponse;
-          console.log(error);
-          this.toastr.error(errorMsg.error.message, errorMsg.error.messageTitle, {
-            enableHtml: true
-          });
-        });*/
   }
 
   addNewFieldToSection(sectionId: string, sectionName: string) {
-    /*const createFieldModal = this.createFieldModal.nativeElement;
-    const titleElem = $(createFieldModal).find('#createFieldLabel');
-    const idHolderElem = $(createFieldModal).find('#sectionIdHolder');
-    $(titleElem).html(sectionName + ' - Create new field');
-    $(idHolderElem).val(sectionId);
-    $(createFieldModal).modal('show');*/
-
     this.appComp.sectionInModification = true;
 
     const httpOptions = {
@@ -741,13 +600,11 @@ export class SectionsComponent
 
     this.http.post<FieldInfo>(url, this.currentGrant, httpOptions).subscribe(
       (info: FieldInfo) => {
-        //this.checkGrant(null);
         this.grantData.changeMessage(info.grant, this.appComp.loggedInUser.id);
         this.currentGrant = info.grant;
         this.appComp.sectionInModification = false;
         this.appComp.selectedTemplate = info.grant.grantTemplate;
         this.newField = "field_" + info.stringAttributeId;
-        //this.scrollTo(this.newField);
       },
       (error) => {
         const errorMsg = error as HttpErrorResponse;
@@ -757,25 +614,10 @@ export class SectionsComponent
         });
       }
     );
-    const id = 0 - Math.round(Math.random() * 1000000000);
-    /* for (const section of this.currentGrant.grantDetails.sections) {
-      if (section.id === Number(sectionId)) {
-        const newAttr = new Attribute();
-        newAttr.fieldType = 'multiline';
-        newAttr.fieldName = '';
-        newAttr.fieldValue = '';
-        newAttr.deletable = true;
-        newAttr.required = false;
-        newAttr.id = id
-        section.attributes.push(newAttr);
-        break;
-      }
-    } */
   }
 
   scrollTo(uniqueID) {
-    const elmnt = document.getElementById(uniqueID); // let if use typescript
-    //elmnt.scrollIntoView(true); // this will scroll elem to the top
+    const elmnt = document.getElementById(uniqueID);
     if (elmnt) {
       const elementRect = elmnt.getBoundingClientRect();
       const absoluteElementTop = elementRect.top + window.pageYOffset;
@@ -856,7 +698,6 @@ export class SectionsComponent
         this.grantData.changeMessage(info.grant, this.appComp.loggedInUser.id);
 
         sectionName.val("");
-        //$('#section_' + newSection.id).css('display', 'block');
         this._setEditMode(true);
         $(createSectionModal).modal("hide");
         this.appComp.sectionAdded = true;
@@ -908,7 +749,6 @@ export class SectionsComponent
       return;
     }
 
-    const createSectionModal = this.createSectionModal.nativeElement;
     const currentSections = this.currentGrant.grantDetails.sections;
     const newSection = new Section();
     newSection.attributes = [];
@@ -940,159 +780,6 @@ export class SectionsComponent
     }
   }
 
-  addNewKpi() {
-    const kpiModal = this.createKpiModal.nativeElement;
-    $(kpiModal).modal("show");
-  }
-
-  saveKpi() {
-    const kpiModal = this.createKpiModal.nativeElement;
-    //const kpiTypeElem = $(this.kpiTypeElem.nativeElement);
-    const kpiDesc = $(this.kpiDescriptionelem.nativeElement);
-    const id = 0 - Math.round(Math.random() * 10000000000);
-
-    const kpi = new Kpi();
-    kpi.id = id;
-    kpi.kpiType = this.currentKPIType.toUpperCase();
-    kpi.kpiReportingType =
-      this.currentKPIReportingType === null
-        ? null
-        : this.currentKPIReportingType.toUpperCase();
-    kpi.description = kpiDesc.val();
-    kpi.templates = [];
-    kpi.title = kpiDesc.val();
-
-    this.currentGrant.kpis.push(kpi);
-
-    const submissions = this.currentGrant.submissions;
-    const grantKpi = new GrantKpi();
-
-    grantKpi.id = id;
-    grantKpi.kpiType = this.currentKPIType.toUpperCase();
-    grantKpi.kpiReportingType =
-      this.currentKPIReportingType === null
-        ? null
-        : this.currentKPIReportingType.toUpperCase();
-    grantKpi.title = kpiDesc.val();
-    grantKpi.description = kpiDesc.val();
-    grantKpi.frequency = "YEARLY";
-    grantKpi.periodicity = 0;
-    grantKpi.scheduled = true;
-
-    for (const sub of this.currentGrant.submissions) {
-      if (this.currentKPIType === "Quantitative") {
-        const quantKpi = new QuantitiaveKpisubmission();
-        quantKpi.goal = 0;
-        quantKpi.toReport = true;
-        quantKpi.id = 0 - Math.round(Math.random() * 10000000000);
-        quantKpi.grantKpi = grantKpi;
-
-        sub.quantitiaveKpisubmissions.push(quantKpi);
-      } else if (this.currentKPIType === "Qualitative") {
-        const qualKpi = new QualitativeKpiSubmission();
-        qualKpi.goal = "";
-        qualKpi.toReport = true;
-        qualKpi.id = 0 - Math.round(Math.random() * 10000000000);
-        qualKpi.grantKpi = grantKpi;
-
-        sub.qualitativeKpiSubmissions.push(qualKpi);
-      } else if (this.currentKPIType === "Document") {
-        const docKpi = new DocumentKpiSubmission();
-        docKpi.goal = "";
-        docKpi.toReport = true;
-        docKpi.id = 0 - Math.round(Math.random() * 10000000000);
-        docKpi.grantKpi = grantKpi;
-
-        sub.documentKpiSubmissions.push(docKpi);
-      }
-    }
-    this.grantData.changeMessage(
-      this.currentGrant,
-      this.appComp.loggedInUser.id
-    );
-
-    this._setEditMode(true);
-    kpiDesc.val("");
-    $(kpiModal).modal("hide");
-  }
-
-  toggleCheckBox(
-    event: Event,
-    type: string,
-    submissionId: number,
-    kpiDataId: number
-  ) {
-    this._setEditMode(true);
-    const checkBoxVal = (<HTMLInputElement>event.currentTarget).checked;
-    const submissions = this.currentGrant.submissions;
-    switch (type) {
-      case "quantitative":
-        for (const submission of submissions) {
-          if (submissionId === submission.id) {
-            const quantitativeKpis = submission.quantitiaveKpisubmissions;
-            for (const quantKpiData of quantitativeKpis) {
-              if (kpiDataId === quantKpiData.id) {
-                quantKpiData.toReport = checkBoxVal;
-              }
-            }
-          }
-        }
-        break;
-      case "qualitative":
-        for (const submission of submissions) {
-          if (submissionId === submission.id) {
-            const qualitativeKpis = submission.qualitativeKpiSubmissions;
-            for (const qualKpiData of qualitativeKpis) {
-              if (kpiDataId === qualKpiData.id) {
-                qualKpiData.toReport = checkBoxVal;
-              }
-            }
-          }
-        }
-        break;
-      case "document":
-        for (const submission of submissions) {
-          if (submissionId === submission.id) {
-            const docKpis = submission.documentKpiSubmissions;
-            for (const docKpiData of docKpis) {
-              if (kpiDataId === docKpiData.id) {
-                docKpiData.toReport = checkBoxVal;
-              }
-            }
-          }
-        }
-        break;
-    }
-
-    this.grantData.changeMessage(
-      this.currentGrant,
-      this.appComp.loggedInUser.id
-    );
-    console.log();
-  }
-
-  updateGoal(
-    event: Event,
-    type: string,
-    submissionId: number,
-    kpiDataId: number
-  ) {
-    this._setEditMode(true);
-    const submissions = this.currentGrant.submissions;
-
-    for (const submission of submissions) {
-      if (submissionId === submission.id) {
-        const quantitativeKpis = submission.quantitiaveKpisubmissions;
-        for (const quantKpiData of quantitativeKpis) {
-          if (kpiDataId === quantKpiData.id) {
-            quantKpiData.goal = Number(
-              (<HTMLInputElement>event.currentTarget).value
-            );
-          }
-        }
-      }
-    }
-  }
 
   submitGrant(toStateId: number) {
     console.log(toStateId);
@@ -1116,10 +803,6 @@ export class SectionsComponent
       toStateId;
     this.http.post(url, this.currentGrant, httpOptions).subscribe(
       (grant: Grant) => {
-        /*this.loading = false;
-      this.grantDataService.changeMessage(grant);
-      this.router.navigate(['grant']);*/
-
         url =
           "/api/user/" +
           this.appComp.loggedInUser.id +
@@ -1133,7 +816,6 @@ export class SectionsComponent
             );
             this.currentGrant = updatedGrant;
             this.checkGrantPermissions();
-            // this.router.navigate(['grant']);
           },
           (error) => {
             const errorMsg = error as HttpErrorResponse;
@@ -1190,11 +872,6 @@ export class SectionsComponent
 
   private _setEditMode(state: boolean) {
     this.editMode = state;
-    /*if (state) {
-      $(this.actionBlock.nativeElement).prop('disabled',true);
-    } else {
-      $(this.actionBlock.nativeElement).prop('disabled',false);
-    }*/
   }
 
   updateSubmission(event: Event, kpiType: string, kpiDataId: number) {
@@ -1224,81 +901,10 @@ export class SectionsComponent
     console.log(this.currentSubmission);
   }
 
-  updateTitle(event: Event, kpiId: number, kpiType: string) {
-    const kpiTitleElem = event.target;
-    for (const kpi of this.currentGrant.kpis) {
-      if (kpi.id === kpiId) {
-        kpi.title = (<HTMLInputElement>kpiTitleElem).value;
-        kpi.description = (<HTMLInputElement>kpiTitleElem).value;
-      }
-    }
-    switch (kpiType) {
-      case "QUANTITATIVE":
-        for (const sub of this.currentGrant.submissions) {
-          for (const quantKpi of sub.quantitiaveKpisubmissions) {
-            if (quantKpi.grantKpi.id === kpiId) {
-              quantKpi.grantKpi.title = (<HTMLInputElement>kpiTitleElem).value;
-              quantKpi.grantKpi.description = (<HTMLInputElement>(
-                kpiTitleElem
-              )).value;
-            }
-          }
-        }
-        break;
-
-      case "QUALITATIVE":
-        for (const sub of this.currentGrant.submissions) {
-          for (const qualKpi of sub.qualitativeKpiSubmissions) {
-            if (qualKpi.grantKpi.id === kpiId) {
-              qualKpi.grantKpi.title = (<HTMLInputElement>kpiTitleElem).value;
-              qualKpi.grantKpi.description = (<HTMLInputElement>(
-                kpiTitleElem
-              )).value;
-            }
-          }
-        }
-        break;
-
-      case "DOCUMENT":
-        for (const sub of this.currentGrant.submissions) {
-          for (const docKpi of sub.documentKpiSubmissions) {
-            if (docKpi.grantKpi.id === kpiId) {
-              docKpi.grantKpi.title = (<HTMLInputElement>kpiTitleElem).value;
-              docKpi.grantKpi.description = (<HTMLInputElement>(
-                kpiTitleElem
-              )).value;
-            }
-          }
-        }
-        break;
-    }
-    this._setEditMode(true);
-    this.grantData.changeMessage(
-      this.currentGrant,
-      this.appComp.loggedInUser.id
-    );
-    console.log(this.currentGrant);
-  }
-
-  selectGrantSchedule() {
-    const scheduleModal = this.selectScheduleModal.nativeElement;
-    $(scheduleModal).modal("show");
-  }
-
-
-
-
-  private _adjustHeights() {
-    /*for (const elem of $('[data-id]')) {
-        $(elem).css('height', $('#kpi_title_' + $(elem).attr('data-id')).outerHeight() + 'px');
-        // console.log($(elem).css('height'));
-    }*/
-  }
 
   private _setFlowButtonColors() {
     const flowActionBtns = $('[name="flowActionBtn"]');
     for (let elem = 0; elem < flowActionBtns.length; elem++) {
-      // this.colors = new Colors();
       const color = this.colors.colorArray[elem];
       $(flowActionBtns[elem]).css("background-color", color);
     }
@@ -1314,21 +920,6 @@ export class SectionsComponent
     ) {
       this._setEditMode(false);
     } else {
-      //this.saveGrant(this.currentGrant);
-
-      //this.grantData.changeMessage(this.currentGrant);
-      /* if(ev!==null && ev!==undefined){
-      this.grantData.changeMessage(this.currentGrant);
-      this.appComp.sectionUpdated = true;
-      this.sidebar.buildSectionsSideNav(null);
-      this.appComp.sectionInModification = false;
-      if(ev.toString()!==''){
-        this.router.navigate(['grant/section/' + this.getCleanText(ev.toString())]);
-      }else{
-        this.router.navigate(['grant/section/_']);
-      }
-    } */
-
       this.appComp.sectionInModification = false;
       this._setEditMode(true);
     }
@@ -1344,9 +935,6 @@ export class SectionsComponent
     ) {
       this._setEditMode(false);
     } else {
-      //this.saveGrant(this.currentGrant);
-
-      //this.grantData.changeMessage(this.currentGrant);
       if (ev !== null || ev !== undefined) {
         this.grantData.changeMessage(
           this.currentGrant,
@@ -1551,8 +1139,8 @@ export class SectionsComponent
     );
     row.header = attr.fieldTableValue[0].header;
     row.columns = JSON.parse(JSON.stringify(attr.fieldTableValue[0].columns));
-    for (let i = 0; i < row.columns.length; i++) {
-      row.columns[i].value = "";
+    for (let i of row.columns) {
+      i.value = "";
     }
 
     attr.fieldTableValue.push(row);
@@ -1719,23 +1307,6 @@ export class SectionsComponent
     });
   }
 
-  clearSubmissions() {
-    this.currentGrant.submissions = [];
-  }
-
-  openAttachmentsNav() {
-    const attachmentsSN = this.attachmentsSideNav._elementRef.nativeElement;
-    this.attachmentsSideNavOpened = true;
-  }
-
-  closeAttachmentsSideNav() {
-    this.attachmentsSideNavOpened = false;
-  }
-
-  setNewOrg(event: Event) {
-    console.log(event);
-  }
-
   deleteSection(secId: number, title: string) {
 
     const dialogRef = this.dialog.open(FieldDialogComponent, {
@@ -1798,12 +1369,6 @@ export class SectionsComponent
         dialogRef.close();
       }
     });
-
-
-    /* const index = this.currentGrant.grantDetails.sections.findIndex(section => section.id === Number(secId));
-    this.currentGrant.grantDetails.sections.splice(index, 1);
-    this.grantData.changeMessage(this.currentGrant);
-    this.checkGrant(null); */
   }
 
   handleSpacebar(ev: Event) {
@@ -1843,62 +1408,36 @@ export class SectionsComponent
     let html = '<table width="100%" border="1"><tr>';
     const tabData = JSON.parse(data);
     html += "<td>&nbsp;</td>";
-    for (let i = 0; i < tabData[0].columns.length; i++) {
-      //if(tabData[0].columns[i].name.trim() !== ''){
-      html += "<td>" + tabData[0].columns[i].name + "</td>";
-      //}
+    for (let c of tabData[0].columns) {
+      html += "<td>" + c.name + "</td>";
     }
     html += "</tr>";
-    for (let i = 0; i < tabData.length; i++) {
-      html += "<tr><td>" + tabData[i].name + "</td>";
-      for (let j = 0; j < tabData[i].columns.length; j++) {
-        //if(tabData[i].columns[j].name.trim() !== ''){
-        html += "<td>" + tabData[i].columns[j].value + "</td>";
+    for (let c of tabData) {
+      html += "<tr><td>" + c.name + "</td>";
+      for (let j of c.columns) {
+        html += "<td>" + j.value + "</td>";
         //}
       }
       html += "</tr>";
     }
 
     html += "</table>";
-    //document.getElementById('attribute_' + elemId).innerHTML = '';
-    //document.getElementById('attribute_' + elemId).append('<H1>Hello</H1>');
     return html;
   }
 
   setTimeout() {
     this.userActivity = setTimeout(() => {
-      this.userInactive.next(undefined);
-
       this.grantToUpdate = JSON.parse(JSON.stringify(this.currentGrant));
-      if (this.currentGrant !== null) {
-        //this.grantComponent.checkGrantPermissions();
-      }
-      if (
-        this.currentGrant !== null &&
-        this.currentGrant.name !== undefined &&
-        !this.appComp.sectionInModification
-      ) {
-        //this.grantToUpdate.id = this.currentGrantId;
-        //this.saveGrant();
-      }
     }, 3000);
   }
 
-  //@HostListener('window:mousemove')
   @HostListener("window:keyup", ["$event"])
-  //@HostListener('window:scroll', ['$event'])
   @HostListener("document:click", ["$event"])
-  refreshUserState() {
+  refreshUserState(): void {
     clearTimeout(this.userActivity);
     this.setTimeout();
   }
 
-  @HostListener("wheel", ["$event"])
-  preventScroll(event) {
-    if (!this.allowScroll) {
-      //event.preventDefault();
-    }
-  }
 
   private _filter(value: any): TemplateLibrary[] {
     let filterValue;
@@ -1908,11 +1447,9 @@ export class SectionsComponent
       filterValue = value.name;
     }
 
-    const selectedDoc = this.options.filter((option) =>
+    return this.options.filter((option) =>
       option.name.toLowerCase().includes(filterValue)
     );
-
-    return selectedDoc;
   }
 
   displayFn = (doc) => {
@@ -1995,6 +1532,7 @@ export class SectionsComponent
         attribute.fieldValue = JSON.stringify(attribute.docs);
         this.fruitInput.nativeElement.value = "";
         this.fruitCtrl.setValue(null);
+        this.noSingleDocAction = false;
       });
   }
 
@@ -2007,26 +1545,21 @@ export class SectionsComponent
   }
 
   handleSelection(attribId, attachmentId) {
-    const elems = this.elem.nativeElement.querySelectorAll(
-      '[id^="attriute_' + attribId + '_attachment_"]'
-    );
-    if (elems.length > 0) {
-      for (let singleElem of elems) {
-        if (singleElem.checked) {
-          this.elem.nativeElement.querySelector(
-            '[id^="attachments_download_' + attribId + '"]'
-          ).disabled = false;
-          this.elem.nativeElement.querySelector(
-            '[id^="attachments_delete_' + attribId + '"]'
-          ).disabled = false;
-          return;
+    const docElems = this.elem.nativeElement.querySelectorAll('[id^=attriute_' + attribId + '_attachment_]');
+    if (docElems.length > 0) {
+      let found = false;
+      for (let docElem of docElems) {
+        if (docElem.checked) {
+          found = true;
         }
-        this.elem.nativeElement.querySelector(
-          '[id^="attachments_download_' + attribId + '"]'
-        ).disabled = true;
-        this.elem.nativeElement.querySelector(
-          '[id^="attachments_delete_' + attribId + '"]'
-        ).disabled = true;
+      }
+
+      if (found) {
+        this.noSingleDocAction = true;
+        this.downloadAndDeleteAllowed = true;
+      } else {
+        this.noSingleDocAction = false;
+        this.downloadAndDeleteAllowed = false;
       }
     }
   }
@@ -2043,28 +1576,18 @@ export class SectionsComponent
           selectedAttachments.attachmentIds.push(singleElem.id.split("_")[3]);
         }
       }
-      const httpOptions = {
-        responseType: "blob" as "json",
-        headers: new HttpHeaders({
-          "Content-Type": "application/json",
-          "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-          Authorization: localStorage.getItem("AUTH_TOKEN"),
-        }),
-      };
-
-      let url =
-        "/api/user/" +
-        this.appComp.loggedInUser.id +
-        "/grant/" +
-        this.currentGrant.id +
-        "/attachments";
-      this.http
-        .post(url, selectedAttachments, httpOptions)
-        .subscribe((data) => {
-          saveAs(data, this.currentGrant.name + ".zip");
-        });
+      this.docManagementService.callGrantDocDownload(selectedAttachments, this.appComp, this.currentGrant);
     }
   }
+
+  downloadSingleDoc(attachmentId: number) {
+    const selectedAttachments = new AttachmentDownloadRequest();
+    selectedAttachments.attachmentIds = [];
+    selectedAttachments.attachmentIds.push(attachmentId);
+    this.docManagementService.callGrantDocDownload(selectedAttachments, this.appComp, this.currentGrant);
+  }
+
+
 
   deleteSelection(attribId, msg: string) {
     const dReg = this.dialog.open(FieldDialogComponent, {
@@ -2101,27 +1624,27 @@ export class SectionsComponent
     });
   }
 
-  deleteAttachment(attributeId, attachmentId) {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
-        Authorization: localStorage.getItem("AUTH_TOKEN"),
-      }),
-    };
+  deleteSingleDoc(attributeId, attachmentId) {
+    const dReg = this.dialog.open(FieldDialogComponent, {
+      data: {
+        title: "Are you sure you want to delete the selected document?",
+        btnMain: "Delete Document",
+        btnSecondary: "Not Now"
+      },
+      panelClass: "grant-template-class",
+    });
 
-    const url =
-      "/api/user/" +
-      this.appComp.loggedInUser.id +
-      "/grant/" +
-      this.currentGrant.id +
-      "/attribute/" +
-      attributeId +
-      "/attachment/" +
-      attachmentId;
-    this.http
-      .post<Grant>(url, this.currentGrant, httpOptions)
-      .subscribe((grant: Grant) => {
+    dReg.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteAttachment(attributeId, attachmentId);
+      }
+    });
+  }
+
+
+  deleteAttachment(attributeId, attachmentId) {
+    this.docManagementService.deleteGrantAttachment(attributeId, attachmentId, this.appComp, this.currentGrant)
+      .then((grant: Grant) => {
         this.grantData.changeMessage(grant, this.appComp.loggedInUser.id);
         this.currentGrant = grant;
         for (let section of this.currentGrant.grantDetails.sections) {
@@ -2178,6 +1701,24 @@ export class SectionsComponent
       "/upload";
     let formData = new FormData();
     for (let i = 0; i < files.length; i++) {
+      if (files.item(i).size === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected a file with no content. Unable to upload.',
+          panelClass: "center-class"
+        });
+        event.target.value = "";
+        break;
+      }
+
+      const ext = files.item(i).name.substr(files.item(i).name.lastIndexOf('.'));
+      if (this.appComp.acceptedFileTypes.filter(d => d === ext).length === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected an unsupported file type. Supported file types are ' + this.appComp.acceptedFileTypes.toString() + '. Unable to upload.',
+          panelClass: "center-class"
+        });
+        event.target.value = "";
+        break;
+      }
       formData.append("file", files.item(i));
       const fileExistsCheck = this._checkAttachmentExists(
         files.item(i).name.substring(0, files.item(i).name.lastIndexOf("."))
@@ -2208,6 +1749,7 @@ export class SectionsComponent
       .post<DocInfo>(endpoint, formData, httpOptions)
       .subscribe((info: DocInfo) => {
         this.grantData.changeMessage(info.grant, this.appComp.loggedInUser.id);
+        this.noSingleDocAction = false;
         this.currentGrant = info.grant;
         this.newField =
           "attriute_" + attribute.id + "_attachment_" + info.attachmentId;
@@ -2242,12 +1784,7 @@ export class SectionsComponent
         scrollLeft: "+=200px",
       },
       "100",
-      "linear",
-      function () {
-        console.log(
-          $("#tablePlaceholder").width() - $("#tableArea").scrollLeft()
-        );
-      }
+      "linear"
     );
   }
 
@@ -2257,17 +1794,8 @@ export class SectionsComponent
         scrollLeft: "-=200px",
       },
       "100",
-      "linear",
-      function () {
-        console.log(
-          $("#tablePlaceholder").width() - $("#tableArea").scrollLeft()
-        );
-      }
+      "linear"
     );
-  }
-
-  checkSectionName(event) {
-    console.log(event);
   }
 
   moveTo(section, fromAttr, toAttr) {
@@ -2336,19 +1864,6 @@ export class SectionsComponent
     inputElem[0].style.visibility = "visible";
   }
 
-  showOtherSourcesAmountInput(evt: any) {
-    evt.currentTarget.style.visibility = "hidden";
-    const id = evt.target.attributes.id.value.replace("label_", "");
-    const inputElem = this.dataColumns.nativeElement.querySelectorAll(
-      "#data_" + id
-    );
-    this.otherSourcesAmount.nativeElement.style.visibility = "visible";
-  }
-
-  showFormattedOtherSourcesAmount(evt: any) {
-    evt.currentTarget.style.visibility = "hidden";
-    this.otherSourcesAmountFormatted.nativeElement.style.visibility = "visible";
-  }
 
   getTotals(idx: number, fieldTableValue: TableData[]): string {
     let total = 0;
@@ -2393,11 +1908,12 @@ export class SectionsComponent
   }
 
   showProjectDocuments() {
-    const dgRef = this.dialog.open(ProjectDocumentsComponent, {
+    this.dialog.open(ProjectDocumentsComponent, {
       data: {
         title: "Project Documents",
         loggedInUser: this.appComp.loggedInUser,
         currentGrant: this.currentGrant,
+        acceptedFileTypes: this.appComp.acceptedFileTypes
       },
       panelClass: "wf-assignment-class",
     });
@@ -2410,7 +1926,7 @@ export class SectionsComponent
   showGrantTags() {
     this.adminService.getOrgTags(this.appComp.loggedInUser).then((tags: OrgTag[]) => {
 
-      const dg = this.dialog.open(GrantTagsComponent, {
+      this.dialog.open(GrantTagsComponent, {
         data: { orgTags: tags, grantTags: this.currentGrant.tags, grant: this.currentGrant, appComp: this.appComp, type: 'grant' },
         panelClass: "grant-template-class"
       });
@@ -2422,9 +1938,32 @@ export class SectionsComponent
   compareGrants(currentGrantId, origGrantId) {
     this.grantApiService.compareGrants(currentGrantId, origGrantId, this.appComp.loggedInUser.id).then((grantsToCompare: any) => {
       console.log(grantsToCompare);
-      const dg = this.dialog.open(GrantCompareComponent, {
+      this.dialog.open(GrantCompareComponent, {
         data: { checkType: grantsToCompare.checkType, compareItems: grantsToCompare.grants },
         panelClass: "wf-assignment-class",
+      });
+    });
+  }
+
+  previewDocument(_for, attach) {
+
+    this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentGrant.id, attach.id).then((result: any) => {
+      let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
+      let docUrl;
+      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/view.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
+      } else if (docType === 'pdf' || docType === 'txt') {
+        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
+      }
+      this.dialog.open(DocpreviewComponent, {
+        data: {
+          url: docUrl,
+          type: docType,
+          title: attach.name + '.' + attach.type,
+          userId: this.appComp.loggedInUser.id,
+          tempFileName: result.url
+        },
+        panelClass: "wf-assignment-class"
       });
     });
   }

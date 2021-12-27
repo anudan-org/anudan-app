@@ -14,6 +14,7 @@ on:
       - '**.iml'
       - 'frontend/**'
       - 'e2e/**' 
+      - '/.github/CODEOWNERS'
 
 # creating env variable for head commit meassge 
 env:
@@ -96,13 +97,9 @@ jobs:
           -Dsonar.projectVersion=1.0
           -Dsonar.sources=src/app
           -Dsonar.exclusions=src/app/**.spec.ts
-          -Dsonar.sourceEncoding=UTF-8  
-    - name: SonarQube Quality Gate check
-      uses: sonarsource/sonarqube-quality-gate-action@master
-      # Force to fail step after specific time
-      timeout-minutes: 5
-      env:
-       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}         
+          -Dsonar.sourceEncoding=UTF-8          
+  
+          
          
   # this block of code will do checkout anudan-config repo 
   # For more information see: https://github.com/actions/checkout
@@ -127,7 +124,7 @@ jobs:
   # For more information see: https://github.com/convictional/trigger-workflow-and-wait    
   Trigger-UAT-release:
       runs-on: ubuntu-latest
-      if: github.event_name == 'push' 
+      if: github.ref == 'refs/heads/master' 
       needs: [unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend]
       name: Create UAT Release Version
       steps:      
@@ -142,7 +139,7 @@ jobs:
 
   Release-repo-checkout:
       runs-on: ubuntu-latest
-      if: always()
+      if: github.ref == 'refs/heads/master' 
       name: Checkout release.json
       needs: [Trigger-UAT-release]
       steps:
@@ -211,6 +208,7 @@ jobs:
           ls -lrt
           echo "UAT_Version=`cat UAT_release.json| cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g' | sed 's/}//g'`" >> $GITHUB_ENV
       - name: Send some mail
+        if: always()
         uses: wadeww/send-email-action@master
         with:
           server_address: smtp.gmail.com
@@ -231,11 +229,11 @@ jobs:
               
                 3. Static Code Analysis Result - ${{needs.Static-Code-Analysis-Sonarqube-Frontend.result}} 
 
-                4. Checkout release.json Result - ${{needs.Anudan-config.result}} 
+                4. Checkout application.yaml Result - ${{needs.Anudan-config.result}} 
  
                 5. Copy Artifacts To Uat Server - ${{needs.Rsync-UAT-Deployments.result}} 
                 
-                6. Uat Release Result - ${{needs.Trigger-UAT-release.result}} 
+                6. Uat Version Release Result - ${{needs.Trigger-UAT-release.result}} 
 
                 7. Anudan - Grant Management System › UAT Build - UAT R-${{ env.UAT_Version }}
                 

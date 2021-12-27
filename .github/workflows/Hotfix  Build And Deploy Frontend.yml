@@ -14,6 +14,7 @@ on:
       - '**.iml'
       - 'frontend/**'
       - 'e2e/**' 
+      - '/.github/CODEOWNERS'
 
 env:
   commitmsg: ${{ github.event.head_commit.message }} 
@@ -123,7 +124,7 @@ jobs:
   Trigger-Hotfix-Release:
       runs-on: ubuntu-latest
       needs: [ unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend]
-      if: github.event_name == 'push'  
+      if: github.ref == 'refs/heads/hotfix/production_bug_fixes'  
       name: Create Hotfix Release Version
       steps:      
         - name: Hotfix-deployment 
@@ -137,7 +138,7 @@ jobs:
 
   Release-repo-checkout:
       runs-on: ubuntu-latest
-      if: always()
+      if: github.ref == 'refs/heads/hotfix/production_bug_fixes' 
       name: Checkout release.json
       needs: [Trigger-Hotfix-Release]
       steps:
@@ -212,6 +213,7 @@ jobs:
          ls -lrt
          echo "Hotfix_Release=`cat release.json | cut -d "," -f3 |cut -d ":" -f2 | sed 's/"//g' |sed 's/}//g'`" >> $GITHUB_ENV
       - name: Send some mail
+        if: always()
         uses: wadeww/send-email-action@master
         with:
           server_address: smtp.gmail.com
@@ -231,11 +233,11 @@ jobs:
 
                 3. Static Code Analysis Result - ${{needs.Static-Code-Analysis-Sonarqube-Frontend.result}}
  
-                4. Checkout release.json Result - ${{needs.Anudan-config.result}}
+                4. Checkout application.yaml Result - ${{needs.Anudan-config.result}}
  
                 5. Copy Artifacts To Hotfix Server - ${{needs.Rsync-Hotfix-Deployments.result}}
 
-                6. Hotfix Release Result - ${{needs.Trigger-Hotfix-Release.result}}
+                6. Hotfix Version Release Result - ${{needs.Trigger-Hotfix-Release.result}}
 
                 7. Anudan - Grant Management System › Hotfix Release - ${{ env.Hotfix_Release }}
           to: ${{ secrets.TO_ADDRESSES }} 

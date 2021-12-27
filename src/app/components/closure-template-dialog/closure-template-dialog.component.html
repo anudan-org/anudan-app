@@ -1,0 +1,49 @@
+<h1 mat-dialog-title style="margin-bottom: 0">Select a Report Template</h1>
+<h4
+  mat-dialog-title
+  *ngIf="this.selectedTemplate"
+  style="margin-top: 0; font-size: 16px; font-weight: normal"
+>
+  {{ selectedTemplate.name }}
+</h4>
+<h4
+  mat-dialog-title
+  *ngIf="!this.selectedTemplate"
+  style="margin-top: 0; font-size: 16px; font-weight: normal"
+>
+  No Closure template selected
+</h4>
+<div class="grant-template-dialog-class">
+  <mat-card
+    *ngFor="let template of templates"
+    value="{{ template.id }}"
+    style="background: #e5e5e5; max-width: none"
+    class="mb-3"
+  >
+    <mat-card-title style="font-size: 14px"
+      >{{ template.name }}
+      <mat-checkbox
+        class="template-checkbox float-right"
+        [checked]="template.id === selected"
+        (change)="setSelectedTemplate(template.id, $event)"
+      ></mat-checkbox>
+    </mat-card-title>
+    <mat-card-content style="background: #fff; padding: 10px">{{
+      template.description
+    }}</mat-card-content>
+  </mat-card>
+</div>
+<!--<mat-select [(value)]="selected">
+	<mat-option  matTooltip="{{template.description}}" matTooltipPosition="right" *ngFor="let template of templates" value="{{template.id}}">{{template.name}}</mat-option>
+</mat-select>-->
+<hr />
+<div mat-dialog-actions>
+  <button
+    [disabled]="selected === 0"
+    class="btn btn-sm btn-green-primary"
+    (click)="onYesClick()"
+  >
+    Select Closure Template
+  </button>
+  <button class="btn btn-sm btn-green" (click)="onNoClick()">Not Now</button>
+</div>

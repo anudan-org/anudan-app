@@ -1,3 +1,4 @@
+import { GrantClosure } from 'app/model/closures';
 import { User } from "./user";
 import * as moment from "moment";
 import _date = moment.unitOfTime._date;
@@ -197,6 +198,7 @@ export class Attribute {
   frequency: string;
   deletable: boolean;
   required: boolean;
+  canEdit: boolean;
 }
 
 export class Attachment {
@@ -289,6 +291,9 @@ export class Grant {
   tags: GrantTag[];
   ownerName: string;
   ownerId: number;
+  closureInProgress: boolean;
+  hashClosure: boolean;
+  closureId: number;
 }
 
 export class GrantTag {
@@ -476,6 +481,7 @@ export class TemplateLibrary {
   version: number;
   granterId: number;
   editMode: boolean = false;
+  fileType: string;
 }
 
 export class FieldInfo {

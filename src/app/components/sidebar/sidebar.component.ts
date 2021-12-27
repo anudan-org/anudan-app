@@ -1,3 +1,5 @@
+import { ClosureDataService } from './../../closure.data.service';
+import { GrantClosure } from './../../model/closures';
 import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
 import { AppComponent } from '../../app.component';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -87,8 +89,18 @@ export const ORGANIZATION_ROUTES: RouteInfo[] = [
   { path: '/organization/administration', title: 'Administration', icon: 'stop', class: '', divide: false },
   { path: '/organization/data', title: 'Export', icon: 'stop', class: '', divide: false },
 ];
+
+export const SINGLE_CLOSURE_ROUTES: RouteInfo[] = [
+  { path: '/grant-closure/header', title: 'Closure Header', icon: 'grant.svg', class: '', divide: false },
+  { path: '/grant-closure/sections', title: 'Closure Details', icon: 'view_agenda', class: '', divide: false },
+  { path: '/grant-closure/preview', title: 'Preview & Submit', icon: 'preview.svg', class: '', divide: false }
+];
+
+
+
 export let SECTION_ROUTES: RouteInfo[] = [];
 export let REPORT_SECTION_ROUTES: RouteInfo[] = [];
+export let CLOSURE_SECTION_ROUTES: RouteInfo[] = [];
 
 export const ADMIN_ROUTES: RouteInfo[] = [
   { path: '/workflow-management', title: 'Manage Workflows', icon: 'person', class: '', divide: false }
@@ -116,14 +128,17 @@ export class SidebarComponent implements OnInit {
   disbursementSubMenuItems: any[];
   sectionMenuItems: any[];
   reportSectionMenuItems: any[];
+  closureSectionMenuItems: any[];
   adminMenuItems: any[];
   platformMenuItems: any[];
   reportMenuItems: any[];
   singleReportMenuItems: any[];
+  singleClosureMenuItems: any[];
   singleDisbursementMenuItems: any[];
   orgMenuItems: any[];
   currentGrant: Grant;
   currentReport: Report;
+  currentClosure: GrantClosure;
   currentDisbursement: Disbursement;
   logoUrl: string;
   hasUnreadMessages = false;
@@ -145,6 +160,7 @@ export class SidebarComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private grantData: GrantDataService,
+    private closureService: ClosureDataService,
     private singleReportDataService: SingleReportDataService,
     private ref: ChangeDetectorRef,
     private elRef: ElementRef,
@@ -159,6 +175,10 @@ export class SidebarComponent implements OnInit {
     }
 
     this.canManageOrg = this.appComponent.loggedInUser.userRoles.filter((ur) => ur.role.name === 'Admin').length > 0;
+  }
+
+  getLastClosureSectionsPath() {
+    return this.closureSectionMenuItems[this.closureSectionMenuItems.length - 1].path;
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -208,6 +228,7 @@ export class SidebarComponent implements OnInit {
     this.grantSubMenuItems = GRANT_SUB_ROUTES.filter(menuItem => menuItem);
     this.disbursementSubMenuItems = DISBURSEMENT_SUB_ROUTES.filter(menuItem => menuItem);
     this.singleReportMenuItems = SINGLE_REPORT_ROUTES.filter(menuItem => menuItem);
+    this.singleClosureMenuItems = SINGLE_CLOSURE_ROUTES.filter(menuItem => menuItem);
     this.singleDisbursementMenuItems = SINGLE_DISBURSEMENT_SUB_ROUTES.filter(menuItem => menuItem);
     this.ref.detectChanges();
 
@@ -220,6 +241,12 @@ export class SidebarComponent implements OnInit {
       this.currentReport = report;
       this.buildSectionsSideNav(null);
     });
+
+    this.closureService.currentMessage.subscribe((closure) => {
+      this.currentClosure = closure;
+      this.buildSectionsSideNav(null);
+    });
+
     this.disbursementDataService.currentMessage.subscribe((d) => this.currentDisbursement = d);
 
     const tenantCode = localStorage.getItem('X-TENANT-CODE');
@@ -295,9 +322,11 @@ export class SidebarComponent implements OnInit {
     console.log('>>>>>>>>> ' + this.appComponent.currentView);
     this.grantData.currentMessage.subscribe(grant => this.currentGrant = grant);
     this.singleReportDataService.currentMessage.subscribe(report => this.currentReport = report);
+    this.closureService.currentMessage.subscribe(closure => this.currentClosure = closure);
 
     SECTION_ROUTES = [];
     REPORT_SECTION_ROUTES = [];
+    CLOSURE_SECTION_ROUTES = [];
     if (this.appComponent.currentView === 'grant' && this.currentGrant && (SECTION_ROUTES.length === 0 || this.appComponent.sectionAdded === true || this.appComponent.sectionUpdated === true)) {
       this.sectionMenuItems = [];
       SECTION_ROUTES = [];
@@ -331,6 +360,23 @@ export class SidebarComponent implements OnInit {
       this.appComponent.sectionAdded = false;
       return REPORT_SECTION_ROUTES[0].path;
     }
+
+    if (this.appComponent.currentView === 'grant-closure' && this.currentClosure && (CLOSURE_SECTION_ROUTES.length === 0 || this.appComponent.sectionAdded === true || this.appComponent.sectionUpdated === true)) {
+      this.closureSectionMenuItems = [];
+      CLOSURE_SECTION_ROUTES = [];
+      this.currentClosure.closureDetails.sections.sort((a, b) => (a.order > b.order) ? 1 : -1)
+      for (let section of this.currentClosure.closureDetails.sections) {
+        if (section.sectionName !== '' && section.sectionName !== '_') {
+          CLOSURE_SECTION_ROUTES.push({ path: '/grant-closure/section/' + section.sectionName.replace(/[^0-9a-z]/gi, ''), title: section.sectionName, icon: 'stop', class: '', divide: false });
+        } else {
+          CLOSURE_SECTION_ROUTES.push({ path: '/grant-closure/section/' + section.id, title: '_', icon: 'stop', class: '', divide: false });
+        }
+      }
+
+      this.closureSectionMenuItems = CLOSURE_SECTION_ROUTES.filter(menuItem => menuItem);
+      this.appComponent.sectionAdded = false;
+      return CLOSURE_SECTION_ROUTES[0].path;
+    }
   }
 
 
@@ -352,6 +398,10 @@ export class SidebarComponent implements OnInit {
 
   createNewReportSection() {
     this.appComponent.createNewReportSection.next(true);
+  }
+
+  createNewClosureSection() {
+    this.appComponent.createNewClosureSection.next(true);
   }
 
   manageMenutItemsDisplay(evt: Event) {
