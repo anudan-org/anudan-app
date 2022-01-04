@@ -508,6 +508,7 @@ export class WorkflowAssignmentModel {
   grant: Grant;
   type: string;
   canManage: boolean;
+  grantTypes: GrantType[];
   constructor() { }
 }
 

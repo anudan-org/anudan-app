@@ -1151,6 +1151,7 @@ export class PreviewComponent implements OnInit {
     wfModel.workflowAssignment = this.currentGrant.workflowAssignments;
     wfModel.type = this.appComp.currentView;
     wfModel.grant = this.currentGrant;
+    wfModel.grantTypes = this.appComp.grantTypes;
     wfModel.grant.isInternal = this.appComp.grantTypes.filter(gt => this.currentGrant.grantTypeId)[0].internal;
     wfModel.canManage =
       this.appComp.loggedInUser.organization.organizationType === "GRANTEE"

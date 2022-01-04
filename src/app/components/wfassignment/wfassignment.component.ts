@@ -47,6 +47,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     previousUser;
     previousNodeOwner;
     activeStateOwnerChanged: boolean;
+    grantType: string;
 
     constructor(
         public dialogRef: MatDialogRef<WfassignmentComponent>
@@ -82,7 +83,9 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
         window.addEventListener('scroll', this.redrawOnScroll.bind(this), true);
         if (this.data.model.type === 'grant') {
-            this.title = `<p class="mb-0  text-header">Workflow for Grant ` + this.data.model.grant.name + `</p>`;
+            const gtIdx = this.data.model.grantTypes.findIndex(gt => gt.id === this.data.model.grant.grantTypeId);
+            this.grantType = this.data.model.grantTypes[gtIdx].name;
+            this.title = `<p class="mb-0  text-subheader">Grant Workflow | ` + this.grantType + `<p class='text-header'>Grant ` + this.data.model.grant.name + `</p>`;
             const httpOptions = {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
@@ -166,6 +169,9 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].assignmentUser ? String(assignment[0].assignmentUser.id) : String(0));
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + assignment[0].id + '_' + transition.fromStateId + '_' + this.data.model.grant.id);
                             this.renderer.setAttribute(nodeOwner, 'data-counter', String(counter++));
+                            if (assignment[0].assignments === 0) {
+                                this.renderer.setStyle(nodeOwner, 'color', '#ffbf00');
+                            }
                             this.renderer.listen(nodeOwner, 'change', (event) => this.handleSelection(event));
                         } else {
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + transition.fromStateId + '_' + this.data.model.grant.id);
@@ -180,6 +186,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             const nodeOwnerOptions = this.renderer.createElement('option');
                             this.renderer.setAttribute(nodeOwnerOptions, 'value', String(option.id));
 
+
                             if (assignment.length > 0 && (assignment[0].assignmentUser ? Number(assignment[0].assignmentUser.id) : 0) === Number(option.id)) {
                                 this.renderer.setAttribute(nodeOwnerOptions, 'selected', 'selected');
                             }
@@ -188,7 +195,10 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             if (option.deleted) {
                                 username = '[Disabled] ' + username;
                                 this.renderer.setAttribute(nodeOwnerOptions, 'disabled', 'disabled');
+                            } else {
+                                this.renderer.setStyle(nodeOwnerOptions, 'color', 'initial');
                             }
+
                             this.renderer.appendChild(nodeOwnerOptions, document.createTextNode(username));
                             this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
 
@@ -296,7 +306,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             },
                 error => {
                     const errorMsg = error as HttpErrorResponse;
-                    console.log(error);
+                    //console.log(error);
                     this.toastr.error(errorMsg.error.message, errorMsg.error.messageTitle, {
                         enableHtml: true
                     });
@@ -532,7 +542,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             },
                 error => {
                     const errorMsg = error as HttpErrorResponse;
-                    console.log(error);
+                    //console.log(error);
                     this.toastr.error(errorMsg.error.message, errorMsg.error.messageTitle, {
                         enableHtml: true
                     });
@@ -766,7 +776,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             },
                 error => {
                     const errorMsg = error as HttpErrorResponse;
-                    console.log(error);
+                    //console.log(error);
                     this.toastr.error(errorMsg.error.message, errorMsg.error.messageTitle, {
                         enableHtml: true
                     });
@@ -958,6 +968,13 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     handleSelection(event: any): boolean | void {
 
         this.updateGrantAndDisbursementUsers();
+        if (this.data.model.type === 'grant') {
+            if (event.target.value === "0") {
+                event.target.style.color = '#ffbf00'
+            } else {
+                event.target.style.color = 'initial'
+            }
+        }
 
 
         if (this.data.model.type === 'grant' && this.data.model.grant.grantStatus.internalStatus === 'ACTIVE') {
@@ -1064,13 +1081,13 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     }
 
     @HostListener('window:scroll', ['$event']) getScrollHeight(event) {
-        console.log(window.pageYOffset, event);
+        //console.log(window.pageYOffset, event);
     }
 
     redrawOnScroll(ev) {
 
         this.jsPlumbInstance.repaintEverything();
-        /* console.log(ev);
+        /* //console.log(ev);
         const off = (ev.target.scrollTop);
         for (let e of $('.jtk-overlay')) {
             let pos = $(e).offset().top;
@@ -1213,7 +1230,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     }
 
     scroll() {
-        console.log('scrolled');
+        //console.log('scrolled');
     }
 
     getColorCodeByStatus(status): string {
@@ -1267,7 +1284,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
         const container = this.flowContainer.nativeElement;
         $(container).animate({ 'zoom': 0.8 }, 400, () => {
-            console.log('zommed out');
+            //console.log('zommed out');
             this.jsPlumbInstance.deleteEveryEndpoint();
             this.jsPlumbInstance.deleteEveryConnection();
             this.jsPlumbInstance.setZoom(1, true);
@@ -1289,7 +1306,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     }
 
     showPopup() {
-        console.log('popup');
+        //console.log('popup');
     }
 
     updateGrantAndDisbursementUsers() {
@@ -1298,7 +1315,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
         } */
         const assignmentElems = $('[id^="assignment_"]');
         for (let i = 0; i < assignmentElems.length; i++) {
-            console.log(assignmentElems[i].getAttribute('data-counter'));
+            //console.log(assignmentElems[i].getAttribute('data-counter'));
 
             const prev = assignmentElems[i - 1] ? assignmentElems[i - 1].value : "-1";
             const next = assignmentElems[i + 1] ? assignmentElems[i + 1].value : "-1";
@@ -1310,10 +1327,10 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             for (let child of assignmentElems[i].children) {
                 const usr = this.data.model.users.filter(u => u.id === Number(child.value));
                 if (usr.length > 0 && usr[0].deleted && child.value === assignmentElems[i].value) {
-                    console.log(assignmentElems[i]);
+                    //////console.log(assignmentElems[i]);
                     assignmentElems[i].style.textDecoration = 'line-through';
                 } else if (usr.length > 0 && !usr[0].deleted && child.value === assignmentElems[i].value) {
-                    console.log(assignmentElems[i]);
+                    //////console.log(assignmentElems[i]);
                     assignmentElems[i].style.textDecoration = 'none';
                 }
 
@@ -1337,7 +1354,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
         } */
         const assignmentElems = $('[id^="assignment_"]');
         for (let i = 2; i < assignmentElems.length; i++) {
-            console.log(assignmentElems[i].getAttribute('data-counter'));
+            //console.log(assignmentElems[i].getAttribute('data-counter'));
 
             const prev = assignmentElems[i - 1] ? assignmentElems[i - 1].value : "-1";
             const next = assignmentElems[i + 1] ? assignmentElems[i + 1].value : "-1";
@@ -1350,10 +1367,10 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                 const usr = this.data.model.users.filter(u => u.id === Number(child.value));
                 if (usr.length > 0 && usr[0].deleted && child.value === assignmentElems[i].value) {
-                    console.log(assignmentElems[i]);
+                    ////console.log(assignmentElems[i]);
                     assignmentElems[i].style.textDecoration = 'line-through';
                 } else if (usr.length > 0 && !usr[0].deleted && child.value === assignmentElems[i].value) {
-                    console.log(assignmentElems[i]);
+                    ////console.log(assignmentElems[i]);
                     assignmentElems[i].style.textDecoration = 'none';
                 }
 
@@ -1375,7 +1392,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
         } */
         const assignmentElems = $('[id^="assignment_"]');
         for (let i = 2; i < assignmentElems.length; i++) {
-            console.log(assignmentElems[i].getAttribute('data-counter'));
+            //console.log(assignmentElems[i].getAttribute('data-counter'));
 
             const prev = assignmentElems[i - 1] ? assignmentElems[i - 1].value : "-1";
             const next = assignmentElems[i + 1] ? assignmentElems[i + 1].value : "-1";
@@ -1388,10 +1405,10 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                 const usr = this.data.model.users.filter(u => u.id === Number(child.value));
                 if (usr.length > 0 && usr[0].deleted && child.value === assignmentElems[i].value) {
-                    console.log(assignmentElems[i]);
+                    ////console.log(assignmentElems[i]);
                     assignmentElems[i].style.textDecoration = 'line-through';
                 } else if (usr.length > 0 && !usr[0].deleted && child.value === assignmentElems[i].value) {
-                    console.log(assignmentElems[i]);
+                    ////console.log(assignmentElems[i]);
                     assignmentElems[i].style.textDecoration = 'none';
                 }
 
