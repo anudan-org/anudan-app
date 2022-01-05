@@ -29,7 +29,6 @@ jobs:
         cache: 'npm'
     - name: list ouput    
       run: |
-       ltr -sdfs
        #npm install -g @angular/cli@latest
        #npm install --save-dev @angular-devkit/build-angular
        #npm ci
