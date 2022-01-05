@@ -45,7 +45,7 @@ jobs:
   # this block of code will do unit and functinal testing      
   unit-and-functional-testing-Frontend:
     runs-on: ubuntu-latest
-    name: Test Frontend | Units and Functions 
+    name: Test Frontend | Units and Functions | test
     steps: 
     - name: test frontend code(functional)
       run: |
@@ -58,7 +58,7 @@ jobs:
 
   Static-Code-Analysis-Sonarqube-Frontend:
     runs-on: ubuntu-latest
-    name: Analyse Static Code | Sonarqube 
+    name: Analyse Static Code | Sonarqube | test
     steps:
     - name: checkout anudap-app repo
       uses: actions/checkout@v2  
@@ -88,7 +88,7 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     needs: [Test-Frontend-Build, unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend]
-    name: EmailNotify
+    name: EmailNotify | test
     steps:
       - name: Send some mail
         uses: wadeww/send-email-action@master
