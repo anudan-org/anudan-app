@@ -218,6 +218,7 @@ export class ReportPreviewComponent implements OnInit {
         wfModel.workflowStatuses = this.reportWorkflowStatuses;
         wfModel.workflowAssignments = this.currentReport.workflowAssignments;
         wfModel.type = this.appComp.currentView;
+        wfModel.grantTypes = this.appComp.grantTypes;
         wfModel.report = this.currentReport;
         wfModel.report.grant.isInternal = this.appComp.grantTypes.filter(gt => this.currentReport.grant.grantTypeId)[0].internal;
         wfModel.canManage = this.currentReport.flowAuthorities && this.currentReport.canManage;

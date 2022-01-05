@@ -567,6 +567,7 @@ export class AdminLayoutComponent implements OnInit {
       wfModel.workflowStatuses = this.appComponent.reportWorkflowStatuses;
       wfModel.workflowAssignments = this.currentReport.workflowAssignments;
       wfModel.type = this.appComponent.currentView;
+      wfModel.grantTypes = this.appComponent.grantTypes;
       wfModel.report = this.currentReport;
       if (this.appComponent.loggedInUser.organization.organizationType !== 'GRANTEE') {
         wfModel.report.grant.isInternal = this.appComponent.grantTypes.filter(gt => gt.id === this.currentReport.grant.grantTypeId)[0].internal;

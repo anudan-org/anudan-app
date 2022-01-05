@@ -1,5 +1,5 @@
 import { User } from 'app/model/user';
-import { Grant, WorkflowStatus, Section, WorkflowAssignments, FlowAuthority, SectionDiff } from './dahsboard';
+import { Grant, WorkflowStatus, Section, WorkflowAssignments, FlowAuthority, SectionDiff, GrantType } from './dahsboard';
 
 export class Report {
     id: number;
@@ -98,6 +98,7 @@ export class ReportWorkflowAssignmentModel {
     granteeUsers: User[];
     report: Report;
     canManage: boolean;
+    grantTypes: GrantType[];
     constructor() { }
 }
 
