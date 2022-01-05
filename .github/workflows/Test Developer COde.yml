@@ -139,6 +139,11 @@ jobs:
           body:
             This is to show automatic PR creation
           token: ${{ secrets.MY_PAT }}
-          assignees: ranjitsocial
+          labels: |
+            report
+            automated pr
+          milestone: 1
+          draft: false 
+          assignees: ranjitsocial 
           #delete-branch: true
       
