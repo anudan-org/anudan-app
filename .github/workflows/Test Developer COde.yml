@@ -131,12 +131,13 @@ jobs:
         uses: peter-evans/create-pull-request@v3
         with:
           branch: dev
-          base: ${{ env.BRANCH_NAME }}
+          #base: ${{ env.BRANCH_NAME }}
           title: "demo for auto pr"
           committer: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}">
           author: ${{ env.GIT_COMMIT_AUTHOR_NAME }} <${{ env.GIT_COMMIT_AUTHOR_EMAIL }}">
           body:
             This is to show automatic PR creation
           token: ${{ secrets.MY_PAT }}
+          assignees: ranjitsocial
           #delete-branch: true
       
