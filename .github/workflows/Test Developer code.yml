@@ -1,6 +1,7 @@
 name: Test Developer Code
 
 on:
+   workflow_dispatch: 
    push:
     branches: [ feature** ]
     paths-ignore: 
