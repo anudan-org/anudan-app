@@ -29,11 +29,11 @@ jobs:
         cache: 'npm'
     - name: list ouput    
       run: |
-       npm install -g @angular/cli@latest
-       npm install --save-dev @angular-devkit/build-angular
-       npm ci
+       #npm install -g @angular/cli@latest
+       #npm install --save-dev @angular-devkit/build-angular
+       #npm ci
        #ng build --prod --no-aot --output-hashing=all --sourceMap=false --base-href=/ --extractLicenses=false --build-optimizer false
-       ls -lrt dist 
+       #ls -lrt dist 
   # this block of code will do unit and functinal testing      
   unit-and-functional-testing-Frontend:
     runs-on: ubuntu-latest
