@@ -4,17 +4,7 @@ on:
    workflow_dispatch: 
    push:
     branches: [ feature** ]
-    paths-ignore: 
-      - '.github/workflows/**.yml'
-      - '.gitignore'
-      - '**.md'
-      - '**.json'
-      - '**.properties'
-      - '**.js'
-      - '**.iml'
-      - 'frontend/**'
-      - 'e2e/**' 
-      - '/.github/CODEOWNERS'
+
 
 # creating env variable for head commit meassge 
 env:
@@ -25,7 +15,7 @@ env:
 jobs:
   Test-Frontend-Build:
     runs-on: ubuntu-latest
-    name: Build Frontend | test
+    name: Build Frontend | test 
     steps:
     - uses: actions/checkout@v2
       with:
