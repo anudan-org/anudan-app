@@ -128,6 +128,7 @@ jobs:
         uses: rlespinasse/git-commit-data-action@v1.x
 
       - name: Raise PR
+        id: cpr
         uses: peter-evans/create-pull-request@v3
         with:
           branch: dev
