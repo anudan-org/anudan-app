@@ -4,10 +4,6 @@ frontend/**        @ranjitsocial
 src/**             @ranjitsocial
 .gitignore         @ranjitsocial
 **.md              @ranjitsocial
-angular.json       @ranjitsocial
-karma.conf.js      @ranjitsocial
-package-lock.json  @ranjitsocial
-package.json       @ranjitsocial
-protractor.conf.js @ranjitsocial
+**.json            @ranjitsocial
+**.js              @ranjitsocial
 sonar-project.properties @ranjitsocial
-tsconfig.json      @ranjitsocial
