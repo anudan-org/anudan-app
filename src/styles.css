@@ -1297,11 +1297,15 @@ app-search-filter .mat-form-field-suffix{
 }
 
 .closed-state-owner{
-  font-size: 14px !important;
   font-weight: normal;
   text-transform: capitalize;
-  background: #d4d4d4 !important;
+  background: rgba(200, 200, 200, 0.05) !important;
   text-align: left;
+  position: absolute;
+  max-width: 125px;
+  right: 20px;
+  top: 12px;
+  border: none !important;
 }
 
 th{

@@ -126,17 +126,17 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         }
 
                         const ownerNode = this.renderer.createElement('div');
-                        this.renderer.addClass(ownerNode, 'col-6');
+                        //this.renderer.addClass(ownerNode, 'col-6');
                         this.renderer.addClass(ownerNode, 'mt-2');
-                        this.renderer.setStyle(ownerNode, 'position', 'absolute');
-                        this.renderer.setStyle(ownerNode, 'right', '0');
+                        this.renderer.setAttribute(ownerNode, 'style', 'position: absolute;right: -125px;top: 15px;');
+                        //this.renderer.setStyle(ownerNode, 'right', '0');
                         const nodeOwner = this.renderer.createElement('select');
                         this.renderer.addClass(nodeOwner, 'anu-select');
                         this.renderer.addClass(nodeOwner, 'anu-wf-input');
 
 
 
-                        this.renderer.setAttribute(nodeOwner, 'style', 'color: rgb(83, 83, 83);font-weight: 400;text-transform: initial;left: -95px;position: relative;top: 23px;text-decoration: none;background-color: rgba(200,200,200,0.05) !important;border: none !important;max-width: 125px;z-index: 1;');
+                        this.renderer.setAttribute(nodeOwner, 'style', 'color: rgb(255, 191, 0);font-weight: 400;text-transform: initial;left: -95px;top: 23px;text-decoration: none;max-width: 125px;z-index: 1;background-color: rgba(200, 200, 200, 0.05) !important;border: none !important;');
                         const currentUserAssignment = this.data.model.workflowAssignment.filter((assignment) => assignment.assignments === JSON.parse(localStorage.getItem('USER')).id && assignment.stateId === this.data.model.grant.grantStatus.id);
                         const ownerUser = this.data.model.workflowAssignment.filter((assignment) => assignment.assignments === JSON.parse(localStorage.getItem('USER')).id && assignment.anchor);
 
@@ -206,15 +206,15 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                         //this.renderer.addClass(nodeOwner,'anu-wf-input');
                         this.renderer.appendChild(ownerNode, nodeOwner);
-                        this.renderer.appendChild(node, ownerNode);
+                        this.renderer.appendChild(stateNode, ownerNode);
 
                         const assForHistory = this.data.model.workflowAssignment.filter(a => a.stateId === transition.fromStateId);
                         if (assForHistory && assForHistory.length > 0 && assForHistory[0].history && assForHistory[0].history.length > 0) {
                             const historyNode = this.renderer.createElement('div');
-                            this.renderer.addClass(historyNode, 'col-7');
+                            //this.renderer.addClass(historyNode, 'col-7');
                             this.renderer.addClass(historyNode, 'text-right');
                             const histLink = this.renderer.createElement('a');
-                            this.renderer.setAttribute(histLink, 'style', 'font-size: 9px;color: #bbbbbb;padding: 4px 6px;font-weight: 400;text-transform: initial;right: 53px;position: relative;border: 1px #e0dfdf solid;background: rgba(200, 200, 200, 0.05) !important;border-radius: 4px;top: 20px;');
+                            this.renderer.setAttribute(histLink, 'style', 'font-size: 9px;color: #bbbbbb;padding: 4px 6px;font-weight: 400;text-transform: initial;right: 53px;border: 1px #e0dfdf solid;background: rgba(200, 200, 200, 0.05) !important;border-radius: 4px;top: 20px;');
                             this.renderer.appendChild(histLink, this.renderer.createText("Past Approver(s)"));
                             this.renderer.listen(histLink, 'click', (event) => this.showOwners(event, assForHistory[0].history, 'Past Approver(s)'));
                             this.renderer.appendChild(historyNode, histLink);
@@ -270,7 +270,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         if (this.data.model.grant.grantStatus.internalStatus === 'CLOSED') {
                             const ass = this.data.model.workflowAssignment.filter((assignment) => assignment.stateId === this.data.model.grant.grantStatus.id);
                             const ownerNodeHolder = this.renderer.createElement('div');
-                            this.renderer.addClass(ownerNodeHolder, 'col-6');
+                            this.renderer.addClass(ownerNodeHolder, 'col-12');
                             const ownerNode = this.renderer.createElement('div');
                             this.renderer.addClass(ownerNode, 'px-2');
                             this.renderer.addClass(ownerNode, 'anu-wf-input');
@@ -360,12 +360,12 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         }
 
                         const ownerNode = this.renderer.createElement('div');
-                        this.renderer.addClass(ownerNode, 'col-6');
+                        //this.renderer.addClass(ownerNode, 'col-6');
                         this.renderer.addClass(ownerNode, 'mt-2');
-                        this.renderer.setStyle(ownerNode, 'position', 'absolute');
-                        this.renderer.setStyle(ownerNode, 'right', '0');
+                        this.renderer.setAttribute(ownerNode, 'style', 'position: absolute;right: -125px;top: 15px;');
+                        //this.renderer.setStyle(ownerNode, 'right', '0');
                         const nodeOwner = this.renderer.createElement('select');
-                        this.renderer.setAttribute(nodeOwner, 'style', 'max-width: 140px;text-decoration: none;position: relative;left: -60px;margin-top:12px;');
+                        this.renderer.setAttribute(nodeOwner, 'style', 'color: rgb(255, 191, 0);font-weight: 400;text-transform: initial;left: -95px;top: 23px;text-decoration: none;max-width: 125px;z-index: 1;background-color: rgba(200, 200, 200, 0.05) !important;border: none !important;');
                         this.renderer.addClass(nodeOwner, 'anu-select');
                         this.renderer.addClass(nodeOwner, 'anu-wf-input');
                         const currentUserAssignment = this.data.model.workflowAssignments.filter((assignment) => assignment.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment.stateId === this.data.model.report.status.id && JSON.parse(localStorage.getItem('USER')).organization.organizationType !== 'GRANTEE');
@@ -467,15 +467,15 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                         //this.renderer.addClass(nodeOwner,'anu-wf-input');
                         this.renderer.appendChild(ownerNode, nodeOwner);
-                        this.renderer.appendChild(node, ownerNode);
+                        this.renderer.appendChild(stateNode, ownerNode);
 
                         const assForHistory = this.data.model.workflowAssignments.filter(a => a.stateId === transition.fromStateId);
                         if (assForHistory && assForHistory.length > 0 && assForHistory[0].history && assForHistory[0].history.length > 0) {
                             const historyNode = this.renderer.createElement('div');
-                            this.renderer.addClass(historyNode, 'col-7');
+                            //this.renderer.addClass(historyNode, 'col-7');
                             this.renderer.addClass(historyNode, 'text-right');
                             const histLink = this.renderer.createElement('a');
-                            this.renderer.setAttribute(histLink, 'style', 'font-size: 9px;color: #535353;padding: 4px 6px;font-weight: 400;text-transform: initial;/* text-decoration: underline; */left: -45px;position: relative;border: 1px #e0dfdf solid;background: #f8f8f8;border-radius: 4px;top: 5px;');
+                            this.renderer.setAttribute(histLink, 'style', 'font-size: 9px;color: #bbbbbb;padding: 4px 6px;font-weight: 400;text-transform: initial;right: 53px;border: 1px #e0dfdf solid;background: rgba(200, 200, 200, 0.05) !important;border-radius: 4px;top: 20px;');
                             if (transition.internalStatus !== 'ACTIVE') {
                                 this.renderer.appendChild(histLink, this.renderer.createText("Past Approver(s)"));
                                 this.renderer.listen(histLink, 'click', (event) => this.showOwners(event, assForHistory[0].history, 'Past Approver(s)'));
