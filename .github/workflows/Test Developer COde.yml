@@ -4,6 +4,17 @@ on:
    workflow_dispatch: 
    push:
     branches: [ feature** ]
+    paths-ignore: 
+      - '.github/**'
+      - '.gitignore'
+      - '**.md'
+      - '**.json'
+      - '**.properties'
+      - '**.js'
+      - '**.iml'
+      - 'frontend/**'
+      - 'e2e/**' 
+      - '/.github/CODEOWNERS'
    
 
 
