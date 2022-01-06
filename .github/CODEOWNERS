@@ -1,5 +1,13 @@
 .github/workflows  @ranjitsocial
 e2e/**             @ranjitsocial
 frontend/**        @ranjitsocial
-src                @ranjitsocial
-./**                @ranjitsocial
+src/**             @ranjitsocial
+.gitignore         @ranjitsocial
+**.md
+angular.json
+karma.conf.js
+package-lock.json
+package.json
+protractor.conf.js
+sonar-project.properties
+tsconfig.json
