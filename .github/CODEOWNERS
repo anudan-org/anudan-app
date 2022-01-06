@@ -3,7 +3,7 @@ e2e/**             @ranjitsocial
 frontend/**        @ranjitsocial
 src/**             @ranjitsocial
 .gitignore         @ranjitsocial
-**.md
+**.md              @ranjitsocial
 angular.json
 karma.conf.js
 package-lock.json
