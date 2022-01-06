@@ -1,3 +1,5 @@
 .github/workflows  @ranjitsocial
 e2e/**             @ranjitsocial
-
+frontend/**        @ranjitsocial
+src                @ranjitsocial
+.**
