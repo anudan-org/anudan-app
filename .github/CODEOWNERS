@@ -2,4 +2,4 @@
 e2e/**             @ranjitsocial
 frontend/**        @ranjitsocial
 src                @ranjitsocial
-.*                @ranjitsocial
+./**                @ranjitsocial
