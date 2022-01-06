@@ -1,1 +1,9 @@
 .github/workflows  @ranjitsocial
+e2e/**             @ranjitsocial
+frontend/**        @ranjitsocial
+src/**             @ranjitsocial
+.gitignore         @ranjitsocial
+**.md              @ranjitsocial
+**.json            @ranjitsocial
+**.js              @ranjitsocial
+sonar-project.properties @ranjitsocial
