@@ -53,7 +53,7 @@ jobs:
     name: Analyse Static Code | Sonarqube | test
     steps:
     - name: checkout anudap-app repo
-      uses: actions/checkout@v2  
+      uses: actions/checkout@v2   
       with:
         # Disabling shallow clone is recommended for improving relevancy of reporting
         fetch-depth: 0
