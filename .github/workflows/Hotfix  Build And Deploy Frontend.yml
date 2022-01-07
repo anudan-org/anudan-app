@@ -5,7 +5,7 @@ on:
    push:
     branches: [ hotfix/production_bug_fixes ]
     paths-ignore: 
-      - '.github/workflows/**.yml'
+      - '.github/**'
       - '.gitignore'
       - '**.md'
       - '**.json'
