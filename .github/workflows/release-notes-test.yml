@@ -1,0 +1,186 @@
+name: Release notes tests
+on:
+   workflow_dispatch:
+   push:
+    branches: [ dev ]
+    paths-ignore: 
+      - '.github/**'
+      - '.gitignore'
+      - '**.md'
+      - '**.json'
+      - '**.properties'
+      - '**.js'
+      - '**.iml'
+      - 'frontend/**'
+      - 'e2e/**' 
+      - '/.github/CODEOWNERS'
+  
+  anudan-app-releasenotes:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
+    name: anudan app releasenotes
+    steps:
+       - name: check out anudan-app master
+         uses: actions/checkout@master
+         with:
+              repository: anudan-org/anudan-app  
+              token: ${{ secrets.MY_PAT }}          
+              ref: master 
+              fetch-depth: 0
+       - name: Anudan Release artifact downloading      
+         uses: actions/download-artifact@v2
+         with:
+            name: Anudan-Release       
+       - name: list files
+         run: | 
+            ls -lrt
+            pwd
+            #!/bin/bash
+            #This script will generate the release notes from the commits
+            #It will discard prints oF automatic Merges and Pull Requests commits.
+            #It will show all the Commits date wise and sorted
+            line="-------------------------------------------------------------------------------"
+            d=$(date +%Y-%m-%d)
+            h=`hostname`
+            PREVIOUS_DEPLOYMENT_RLE=`cat release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`
+            CURRENT_DEPLOYMENT_RLE=`cat release.json | cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g'`
+
+            echo "
+            " >> anudan-app-release-notes.txt
+            echo "Previous Version Tag :$PREVIOUS_DEPLOYMENT_RLE" >> anudan-app-release-notes.txt
+            echo "current Version Tag  :$CURRENT_DEPLOYMENT_RLE"  >> anudan-app-release-notes.txt
+            echo "Date of the deployment :$d" >> anudan-app-release-notes.txt
+            echo "Environment Name :$h " >> anudan-app-release-notes.txt
+            echo "
+            " >> anudan-app-release-notes.txt
+            echo "$line Frontend-Changes $line" >> anudan-app-release-notes.txt
+            echo "
+            " >> anudan-app-release-notes.txt
+            DATE=
+            git log -- $PREVIOUS_DEPLOYMENT_RLE..$CURRENT_DEPLOYMENT_RLE --pretty=format:"%ad || %h || %s || Author:%an " --date=short | sort -r | while read line
+            do
+            temp=`echo $line | egrep -v '(Resolve Conflict From)'`
+            if [ "$temp" = "" ]
+            then
+                continue
+            else
+                NEWDATE=`echo $temp |  awk  '{print $1}'`
+                if [ "$NEWDATE" = "$DATE" ]
+                then
+                    echo $temp | awk '{$1="";$2="";print}' >> anudan-app-release-notes.txt
+                else
+                    echo >> anudan-app-release-notes.txt
+                    DATE=$NEWDATE
+                    echo `date --date=$DATE +%d-%B-%Y` >> anudan-app-release-notes.txt
+                    echo $temp | awk '{$1="";$2="";print}' >> anudan-app-release-notes.txt
+                fi
+            fi
+            done
+            echo "
+            " >> anudan-app-release-notes.txt
+            echo "$line Backend-Changes $line" >> anudan-app-release-notes.txt
+            echo "
+            " >> anudan-app-release-notes.txt
+            pwd
+            ls -lrt
+       - name: frontend release artifact 
+         uses: actions/upload-artifact@v2
+         with:
+          name: anudan-app
+          path: anudan-app-release-notes.txt
+          retention-days: 5     
+
+  gms-service-releasenotes:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
+    name: gms service releasenotes
+    steps:        
+
+       - name: check out gms-service master
+         uses: actions/checkout@master
+         with:
+              repository: anudan-org/gms-service  
+              token: ${{ secrets.MY_PAT }}          
+              ref: master 
+              fetch-depth: 0
+       - name: Anudan Release artifact downloading      
+         uses: actions/download-artifact@v2
+         with:
+            name: Anudan-Release       
+       - name: list files
+         run: | 
+            ls -lrt
+            pwd   
+            #!/bin/bash
+            line="-------------------------------------------------------------------------------"
+            PREVIOUS_DEPLOYMENT_RLE=`cat release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`
+            CURRENT_DEPLOYMENT_RLE=`cat release.json | cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g'`
+            DATE=
+            git log -- $PREVIOUS_DEPLOYMENT_RLE..$CURRENT_DEPLOYMENT_RLE --pretty=format:"%ad || %h || %s || Author:%an " --date=short | sort -r | while read line
+            do
+            temp=`echo $line | egrep -v '(Resolve Conflict From)'`
+            if [ "$temp" = "" ]
+            then
+                continue
+            else
+                NEWDATE=`echo $temp |  awk  '{print $1}'`
+                if [ "$NEWDATE" = "$DATE" ]
+                then
+                    echo $temp | awk '{$1="";$2="";print}' >> gms-service-releasenotes.txt
+                else
+                    echo >> gms-service-releasenotes.txt
+                    DATE=$NEWDATE
+                    echo `date --date=$DATE +%d-%B-%Y` >> gms-service-releasenotes.txt
+                    echo $temp | awk '{$1="";$2="";print}' >> gms-service-releasenotes.txt
+                fi
+            fi
+            done 
+            echo "
+            " >> gms-service-releasenotes.txt
+            ls -lrt
+            pwd 
+       - name: backend release artifact 
+         uses: actions/upload-artifact@v2
+         with:
+          name: gms-service
+          path: gms-service-releasenotes.txt
+          retention-days: 4
+              
+
+  releasenotes-push-to-release-repo:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
+    needs: [anudan-app-releasenotes, gms-service-releasenotes]
+    name: releasenotes push to release repo
+    steps:        
+       - uses: actions/checkout@v2
+         with:
+          repository: anudan-org/release   
+          token: ${{ secrets.MY_PAT }}
+
+       - name: Anudan Release artifact downloading      
+         uses: actions/download-artifact@v2
+         with:
+            name: anudan-app   
+       - name: Anudan Release artifact downloading      
+         uses: actions/download-artifact@v2
+         with:
+            name: gms-service 
+             
+       - name: local changes
+         run: |
+          cat anudan-app-release-notes.txt gms-service-releasenotes.txt  > Anudan-Raw-ReleaseNotes.txt
+          ls -lrt
+          pwd 
+          git config --local user.email "admin@anudan.org"
+          git config --local user.name "${GITHUB_ACTOR}"
+          echo gms-service-releasenotes.txt >> .gitignore
+          echo anudan-app-release-notes.txt >> .gitignore
+          git add .
+          git commit -m "this file is updated by github/action"    
+       - name: Push changes
+         uses: ad-m/github-push-action@master
+         with:
+          github_token: ${{ secrets.MY_PAT }}
+          repository: anudan-org/release 
+          branch: master
