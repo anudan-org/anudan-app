@@ -13,8 +13,8 @@ on:
       - '**.iml'
       - 'frontend/**'
       - 'e2e/**' 
-      - '/.github/CODEOWNERS'
-  
+      - '/.github/CODEOWNERS'  
+jobs: 
   anudan-app-releasenotes:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev'
