@@ -3,17 +3,7 @@ on:
    workflow_dispatch:
    push:
     branches: [ dev ]
-    paths-ignore: 
-      - '.github/**'
-      - '.gitignore'
-      - '**.md'
-      - '**.json'
-      - '**.properties'
-      - '**.js'
-      - '**.iml'
-      - 'frontend/**'
-      - 'e2e/**' 
-      - '/.github/CODEOWNERS'  
+     
 jobs: 
   anudan-app-releasenotes:
     runs-on: ubuntu-latest
