@@ -3,11 +3,27 @@ on:
    workflow_dispatch:
    push:
     branches: [ dev ]
-     
+
 jobs: 
+  Anudan-Release:
+      runs-on: ubuntu-latest 
+      if: github.ref == 'refs/heads/dev'
+      name: Update Release Candidate
+      steps: 
+      - uses: actions/checkout@v2
+        with:
+          repository: anudan-org/release   
+          token: ${{ secrets.MY_PAT }}
+      - name: upload release.json aritfact to github. 
+        uses: actions/upload-artifact@v2
+        with:
+          name: Anudan-Release
+          path: release.json
+          retention-days: 1
   anudan-app-releasenotes:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev'
+    needs: Anudan-Release
     name: anudan app releasenotes
     steps:
        - name: check out anudan-app master
@@ -47,7 +63,7 @@ jobs:
             echo "
             " >> anudan-app-release-notes.txt
             DATE=
-            git log -- $PREVIOUS_DEPLOYMENT_RLE..$CURRENT_DEPLOYMENT_RLE --pretty=format:"%ad || %h || %s || Author:%an " --date=short | sort -r | while read line
+            git log $PREVIOUS_DEPLOYMENT_RLE..$CURRENT_DEPLOYMENT_RLE --pretty=format:"%ad || %h || %s || Author:%an " --date=short | sort -r | while read line
             do
             temp=`echo $line | egrep -v '(Resolve Conflict From)'`
             if [ "$temp" = "" ]
@@ -83,6 +99,7 @@ jobs:
   gms-service-releasenotes:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev'
+    needs: Anudan-Release
     name: gms service releasenotes
     steps:        
 
@@ -106,7 +123,7 @@ jobs:
             PREVIOUS_DEPLOYMENT_RLE=`cat release.json | cut -d "," -f2 | cut -d ":" -f2 | sed 's/"//g'`
             CURRENT_DEPLOYMENT_RLE=`cat release.json | cut -d "," -f1 | cut -d ":" -f2 | sed 's/"//g'`
             DATE=
-            git log -- $PREVIOUS_DEPLOYMENT_RLE..$CURRENT_DEPLOYMENT_RLE --pretty=format:"%ad || %h || %s || Author:%an " --date=short | sort -r | while read line
+            git log $PREVIOUS_DEPLOYMENT_RLE..$CURRENT_DEPLOYMENT_RLE --pretty=format:"%ad || %h || %s || Author:%an " --date=short | sort -r | while read line
             do
             temp=`echo $line | egrep -v '(Resolve Conflict From)'`
             if [ "$temp" = "" ]
