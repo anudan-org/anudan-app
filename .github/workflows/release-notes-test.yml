@@ -14,7 +14,7 @@ jobs:
         with:
           repository: anudan-org/release   
           token: ${{ secrets.MY_PAT }}
-      - name: upload release.json aritfact to github. 
+      - name: upload release.json aritfact to github.  
         uses: actions/upload-artifact@v2
         with:
           name: Anudan-Release
