@@ -151,7 +151,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev'
     needs: [anudan-app-releasenotes, gms-service-releasenotes]
-    name: releasenotes push to release repo
+    name: releasenotes push to release repo 
     steps:        
        - uses: actions/checkout@v2
          with:
