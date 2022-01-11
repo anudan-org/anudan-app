@@ -14,6 +14,10 @@ jobs:
         with:
           repository: anudan-org/release   
           token: ${{ secrets.MY_PAT }}
+      - name: release version creating for UAT
+        run: | 
+             echo '{"releaseCandidate":"${{ env.major}}.${{ env.minor }}.${{ env.releaseCandidate }}","productionRelease":"${{ env.major}}.${{ env.minor }}.${{ env.productionRelease }}","hotFixRelease":"${{ env.hotFixRelease }}"}' > release.json 
+             ls -lrt    
       - name: upload release.json aritfact to github.  
         uses: actions/upload-artifact@v2
         with:
