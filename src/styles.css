@@ -134,6 +134,13 @@ input[type="date"]::-webkit-inner-spin-button {
   padding-top: 10px !important;
 }
 
+
+.project-document-class .mat-dialog-container{
+  overflow: hidden !important;
+  height: calc(100vh - 114px) !important;
+  padding-top: 10px !important;
+}
+
 ::-webkit-scrollbar {
   /* display: none; */
 }
@@ -511,6 +518,7 @@ font-white {
   font-weight: normal;
 }
 
+
 .state-node {
   padding: 5px 5px;
   border-radius: 4px;
@@ -774,7 +782,7 @@ font-white {
   margin-top: 0px !important;
 }
 
-.wf-assignment-class {
+.wf-assignment-class, .project-document-class {
   min-width: calc(100% - 300px) !important;
   max-width: calc(100% - 300px) !important;
   position: relative !important;
@@ -1296,11 +1304,16 @@ app-search-filter .mat-form-field-suffix{
 }
 
 .closed-state-owner{
-  font-size: 14px !important;
   font-weight: normal;
   text-transform: capitalize;
-  background: #d4d4d4 !important;
+  background: rgba(200, 200, 200, 0.05) !important;
   text-align: left;
+  position: absolute;
+  max-width: 125px;
+  right: 20px;
+  top: 12px;
+  color:rgba(170, 170, 170,0.95);
+  border: none !important;
 }
 
 th{

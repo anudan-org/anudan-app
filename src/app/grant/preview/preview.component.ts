@@ -1166,7 +1166,7 @@ export class PreviewComponent implements OnInit {
         this.currentGrant.grantStatus.internalStatus !== "ACTIVE" &&
         this.currentGrant.grantStatus.internalStatus !== "CLOSED";
     const dialogRef = this.dialog.open(WfassignmentComponent, {
-      data: { model: wfModel, userId: this.appComp.loggedInUser.id, appComp: this.appComp },
+      data: { model: wfModel, userId: this.appComp.loggedInUser.id, appComp: this.appComp, adminComp: this.adminComp },
       panelClass: "wf-assignment-class",
     });
 
@@ -1468,7 +1468,7 @@ export class PreviewComponent implements OnInit {
         currentGrant: this.currentGrant,
         acceptedFileTypes: this.appComp.acceptedFileTypes
       },
-      panelClass: "wf-assignment-class",
+      panelClass: "project-document-class",
     });
   }
 

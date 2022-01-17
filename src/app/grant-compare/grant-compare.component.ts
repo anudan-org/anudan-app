@@ -15,8 +15,9 @@ import * as difference from 'simple-text-diff';
   styleUrls: ['./grant-compare.component.scss'],
   styles: [`
     ::ng-deep .wf-assignment-class .mat-dialog-container{
-      overflow: hidden !important;
-      height: calc(100vh - 114px);
+      overflow: scroll !important;
+    height: calc(100vh - 114px) !important;
+    padding-top: 10px !important;
     }
   `]
 })

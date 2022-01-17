@@ -481,7 +481,7 @@ export class AdminLayoutComponent implements OnInit {
           this.appComponent.loggedInUser.organization.organizationType !==
           "GRANTEE";
       const dialogRef = this.dialog.open(WfassignmentComponent, {
-        data: { model: wfModel, userId: this.appComponent.loggedInUser.id, appComp: this.appComponent },
+        data: { model: wfModel, userId: this.appComponent.loggedInUser.id, appComp: this.appComponent, adminComp: this },
         panelClass: "wf-assignment-class",
       });
 
@@ -578,7 +578,7 @@ export class AdminLayoutComponent implements OnInit {
           ? false
           : this.currentReport.flowAuthorities && this.currentReport.canManage;
       const dialogRef = this.dialog.open(WfassignmentComponent, {
-        data: { model: wfModel, userId: this.appComponent.loggedInUser.id, appComp: this.appComponent },
+        data: { model: wfModel, userId: this.appComponent.loggedInUser.id, appComp: this.appComponent, adminComp: this },
         panelClass: "wf-assignment-class",
       });
 
@@ -664,13 +664,14 @@ export class AdminLayoutComponent implements OnInit {
           wfModel.workflowStatuses = workflowStatuses;
           wfModel.workflowAssignments = this.currentDisbursement.assignments;
           wfModel.type = this.appComponent.currentView;
+          wfModel.grantTypes = this.appComponent.grantTypes;
           wfModel.disbursement = this.currentDisbursement;
           if (this.appComponent.loggedInUser.organization.organizationType !== 'GRANTEE') {
             wfModel.disbursement.grant.isInternal = this.appComponent.grantTypes.filter(gt => this.currentDisbursement.grant.grantTypeId)[0].internal;
           }
           wfModel.canManage = this.currentDisbursement.canManage;
           const dialogRef = this.dialog.open(WfassignmentComponent, {
-            data: { model: wfModel, userId: this.appComponent.loggedInUser.id, appComp: this.appComponent },
+            data: { model: wfModel, userId: this.appComponent.loggedInUser.id, appComp: this.appComponent, adminComp: this },
             panelClass: "wf-assignment-class",
           });
 
@@ -716,7 +717,7 @@ export class AdminLayoutComponent implements OnInit {
           ? false
           : this.currentClosure.flowAuthorities && this.currentClosure.canManage;
       const dialogRef = this.dialog.open(WfassignmentComponent, {
-        data: { model: wfModel, userId: this.appComponent.loggedInUser.id, appComp: this.appComponent },
+        data: { model: wfModel, userId: this.appComponent.loggedInUser.id, appComp: this.appComponent, adminComp: this },
         panelClass: "wf-assignment-class",
       });
 

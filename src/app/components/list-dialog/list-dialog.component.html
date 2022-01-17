@@ -20,7 +20,7 @@
   </div>
 
   <div class="col-12 scrollable"
-    style="overflow-y: scroll;height: inherit;min-height: calc(100vh - 215px) !important;max-height: calc(100vh - 215px) !important;"
+    style="overflow-y: auto;height: inherit;min-height: calc(100vh - 215px) !important;max-height: calc(100vh - 215px) !important;"
     *ngIf="_for==='grant'">
     <div [ngClass]="uiService.getGrantCardStyle(grant,appComp)" style="cursor: pointer"
       *ngFor="let grant of filteredGrants; let i = index; let last = last;" (click)="manageGrant(grant)">
@@ -136,7 +136,7 @@
     </div>
   </div>
   <div class="col-12 scrollable"
-    style="overflow-y: scroll;height: inherit;min-height: calc(100vh - 215px) !important;max-height: calc(100vh - 215px) !important;"
+    style="overflow-y: auto;height: inherit;min-height: calc(100vh - 215px) !important;max-height: calc(100vh - 215px) !important;"
     *ngIf="_for==='report'">
     <div *ngIf="!filteredReports">
       <img alt="img" src="./assets/img/loader.gif" style="width: 10%" />
@@ -265,7 +265,7 @@
   </div>
 
   <div class="col-12 scrollable"
-    style="overflow-y: scroll;height: inherit;min-height: calc(100vh - 215px) !important;max-height: calc(100vh - 215px) !important;"
+    style="overflow-y: auto;height: inherit;min-height: calc(100vh - 215px) !important;max-height: calc(100vh - 215px) !important;"
     *ngIf="_for==='disbursement'">
     <div [ngClass]="uiService.getDisbursementCardStyle(disbursement,appComp)" style="cursor: pointer"
       *ngFor="let disbursement of filteredDisbursements; let i = index" (click)="manageDisbursement(disbursement)">
