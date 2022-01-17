@@ -1915,7 +1915,7 @@ export class SectionsComponent
         currentGrant: this.currentGrant,
         acceptedFileTypes: this.appComp.acceptedFileTypes
       },
-      panelClass: "wf-assignment-class",
+      panelClass: "project-document-class",
     });
   }
 

@@ -134,6 +134,13 @@ input[type="date"]::-webkit-inner-spin-button {
   padding-top: 10px !important;
 }
 
+
+.project-document-class .mat-dialog-container{
+  overflow: hidden !important;
+  height: calc(100vh - 114px) !important;
+  padding-top: 10px !important;
+}
+
 ::-webkit-scrollbar {
   /* display: none; */
 }
@@ -775,7 +782,7 @@ font-white {
   margin-top: 0px !important;
 }
 
-.wf-assignment-class {
+.wf-assignment-class, .project-document-class {
   min-width: calc(100% - 300px) !important;
   max-width: calc(100% - 300px) !important;
   position: relative !important;
@@ -1305,6 +1312,7 @@ app-search-filter .mat-form-field-suffix{
   max-width: 125px;
   right: 20px;
   top: 12px;
+  color:rgba(170, 170, 170,0.95);
   border: none !important;
 }
 

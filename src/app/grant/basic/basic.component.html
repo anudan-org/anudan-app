@@ -16,19 +16,19 @@
       </mat-icon>
       <mat-menu #menu1="matMenu">
         <button mat-menu-item (click)="showWorkflowAssigments()">
-          <mat-icon class="ml-1">assignment</mat-icon>View Assignments
+          <mat-icon class="ml-1">assignment</mat-icon>Manage Assignments
         </button>
-        <button *ngIf="
+        <!-- <button *ngIf="
               this.appComp.loggedInUser.organization.organizationType !==
               'GRANTEE'
             " mat-menu-item (click)="showHistory('grant', currentGrant)">
           <mat-icon class="ml-1">comment</mat-icon>View Notes
-        </button>
+        </button> -->
         <button mat-menu-item (click)="showProjectDocuments()">
-          <mat-icon class="ml-1">attachment</mat-icon>View Project Documents
+          <mat-icon class="ml-1">attachment</mat-icon>Manage Project Documents
         </button>
         <button mat-menu-item (click)="showGrantTags()" [disabled]="orgTags.length===0">
-          <mat-icon class="ml-1">label</mat-icon>View Tags
+          <mat-icon class="ml-1">label</mat-icon>Manage Tags
         </button>
         <hr *ngIf="currentGrant.origGrantId" />
         <button *ngIf="currentGrant.origGrantId" mat-menu-item (click)="manageGrant()">

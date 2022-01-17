@@ -45,7 +45,9 @@ import { CurrencyService } from 'app/currency-service';
     providers: [PDFExportComponent, SidebarComponent, TitleCasePipe],
     styles: [`
     ::ng-deep .wf-assignment-class .mat-dialog-container{
-        overflow: hidden !important;
+        overflow: scroll !important;
+    height: calc(100vh - 114px) !important;
+    padding-top: 10px !important;
     }
   `]
 })
@@ -223,7 +225,7 @@ export class ReportPreviewComponent implements OnInit {
         wfModel.report.grant.isInternal = this.appComp.grantTypes.filter(gt => this.currentReport.grant.grantTypeId)[0].internal;
         wfModel.canManage = this.currentReport.flowAuthorities && this.currentReport.canManage;
         const dialogRef = this.dialog.open(WfassignmentComponent, {
-            data: { model: wfModel, userId: this.appComp.loggedInUser.id, appComp: this.appComp },
+            data: { model: wfModel, userId: this.appComp.loggedInUser.id, appComp: this.appComp, adminComp: this.adminComp },
             panelClass: 'wf-assignment-class'
         });
 
