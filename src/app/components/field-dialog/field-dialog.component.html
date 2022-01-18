@@ -1,54 +1,24 @@
-<h1 mat-dialog-title class="text-header" style="font-weight: normal">
-  {{ message.title }}
+<h1 mat-dialog-title class="text-header" style="font-weight: normal" [innerHTML]="message.title">
 </h1>
 <div *ngIf="message.subTitle" class="my-4" [innerHTML]="message.subTitle"></div>
 <pre *ngIf="message.content" [innerHtml]="message.content"></pre>
-<div
-  mat-dialog-actions
-  class="row px-3"
-  *ngIf="message.btnSecondary === undefined && message.btnMain === undefined"
->
-  <button
-    *ngIf="!message.type"
-    (click)="onYesClick()"
-    class="btn btn-sm btn-green-primary"
-  >
+<div mat-dialog-actions class="row px-3" *ngIf="message.btnSecondary === undefined && message.btnMain === undefined">
+  <button *ngIf="!message.type" (click)="onYesClick()" class="btn btn-sm btn-green-primary">
     Yes
   </button>
-  <button
-    *ngIf="!message.type"
-    (click)="onNoClick()"
-    class="btn btn-sm btn-green"
-  >
+  <button *ngIf="!message.type" (click)="onNoClick()" class="btn btn-sm btn-green">
     No
   </button>
 
-  <button
-    *ngIf="message.type"
-    (click)="onNoClick()"
-    class="btn btn-sm btn-green-primary"
-    style="margin: 0 auto"
-  >
+  <button *ngIf="message.type" (click)="onNoClick()" class="btn btn-sm btn-green-primary" style="margin: 0 auto">
     Okay
   </button>
 </div>
-<div
-  mat-dialog-actions
-  class="row px-3"
-  *ngIf="message.btnSecondary !== undefined && message.btnMain !== undefined"
->
-  <button
-    *ngIf="!message.type"
-    (click)="onYesClick()"
-    class="btn btn-sm btn-green-primary"
-  >
+<div mat-dialog-actions class="row px-3" *ngIf="message.btnSecondary !== undefined && message.btnMain !== undefined">
+  <button *ngIf="!message.type" (click)="onYesClick()" class="btn btn-sm btn-green-primary">
     {{ message.btnMain }}
   </button>
-  <button
-    *ngIf="!message.type"
-    (click)="onNoClick()"
-    class="btn btn-sm btn-green"
-  >
+  <button *ngIf="!message.type" (click)="onNoClick()" class="btn btn-sm btn-green">
     {{ message.btnSecondary }}
   </button>
 </div>

@@ -1,3 +1,4 @@
+import { ReturnsPopupComponent } from './../../returns-popup/returns-popup.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DocpreviewService } from './../../docpreview.service';
 import { DocpreviewComponent } from './../../docpreview/docpreview.component';
@@ -717,7 +718,7 @@ export class PreviewComponent implements OnInit {
   }
 
 
-  submitGrant(toStateId: number) {
+  submitGrant(toStateId: number, transitionTitle: string) {
 
     if (this.currentGrant.grantStatus.internalStatus === 'ACTIVE') {
       const dialogRef = this.dialog.open(ClosureSelectionComponent, {
@@ -794,7 +795,7 @@ export class PreviewComponent implements OnInit {
     }
 
     this.wfValidationService.validateGrantWorkflow(this.currentGrant.id, 'GRANT', this.appComp.loggedInUser.id, this.currentGrant.grantStatus.id, toStateId).then(result => {
-      this.openBottomSheetForGrantNotes(toStateId, result);
+      this.openBottomSheetForGrantNotes(toStateId, result, transitionTitle);
       this.wfDisabled = true;
     });
   }
@@ -1053,14 +1054,15 @@ export class PreviewComponent implements OnInit {
     }
   }
 
-  openBottomSheetForGrantNotes(toStateId: number, result): void {
+  openBottomSheetForGrantNotes(toStateId: number, result, transitionTitle: string): void {
     const _bSheet = this.dialog.open(GrantNotesComponent, {
       hasBackdrop: true,
       data: {
         canManage: true,
         currentGrant: this.currentGrant,
         originalGrant: this.appComp.originalGrant,
-        validationResult: result
+        validationResult: result,
+        tTitle: transitionTitle
       },
       panelClass: "grant-notes-class",
     });
@@ -1212,7 +1214,10 @@ export class PreviewComponent implements OnInit {
                   this.appComp.loggedInUser.id
                 );
                 this.currentGrant = grant;
-                this.submitGrant(toStateId);
+                const toState = this.currentGrant.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
+                const toStateOwner = this.currentGrant.workflowAssignments.filter(a => a.stateId === toStateId)[0].assignmentUser;
+
+                this.submitGrant(toStateId, "Submitting to " + toStateOwner.firstName + " " + toStateOwner.lastName + " [" + toState + "]");
               },
               (error) => {
                 const errorMsg = error as HttpErrorResponse;
@@ -1584,5 +1589,38 @@ export class PreviewComponent implements OnInit {
         panelClass: "wf-assignment-class"
       });
     });
+  }
+
+  getForwardFlow() {
+    const forwardStates = this.currentGrant.flowAuthorities.filter(a => a.seqOrder < 50);
+    return forwardStates;
+  }
+
+  hasBackwardFlow() {
+    const backwardFlows = this.currentGrant.flowAuthorities.filter(a => a.seqOrder >= 50);
+    return (backwardFlows && backwardFlows.length > 0);
+  }
+
+  returnGrant() {
+    const dg = this.dialog.open(ReturnsPopupComponent, {
+      data: { paths: this.currentGrant.flowAuthorities.filter(a => a.seqOrder >= 50), workflows: this.currentGrant.workflowAssignments },
+      panelClass: "center-class",
+    });
+
+    dg.afterClosed().subscribe(response => {
+      if (response.toStateId !== 0) {
+        const toState = this.currentGrant.flowAuthorities.filter(a => a.toStateId === response.toStateId)[0].toName;
+        const toStateOwner = this.currentGrant.workflowAssignments.filter(a => a.stateId === response.toStateId)[0].assignmentUser;
+
+        this.submitGrant(response.toStateId, "Returning to " + toStateOwner.firstName + " " + toStateOwner.lastName + " [" + toState + "]");
+      }
+    });
+  }
+
+  getStateNameAndOwner(toStateId) {
+    const toState = this.currentGrant.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
+    const toStateOwner = this.currentGrant.workflowAssignments.filter(a => a.stateId === toStateId)[0].assignmentUser;
+
+    return toStateOwner.firstName + " " + toStateOwner.lastName + " [" + toState + "]";
   }
 }
