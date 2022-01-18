@@ -423,6 +423,7 @@ export class GrantNote {
   canMove: boolean;
   messages: any;
   validationResult: any;
+  tTitle: string;
 }
 
 export class SerializationHelper {

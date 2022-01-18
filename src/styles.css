@@ -1092,6 +1092,7 @@ li:focus {
 
 .grant-tags{
   position: absolute; left: -7px; top: 5px; color: rgba(59,115,63,1);
+  transform: scaleX(-1);
 }
 
 .search-highlight{

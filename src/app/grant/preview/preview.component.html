@@ -4,10 +4,12 @@
     <div class="row">
       <h4 class="col-11 text-left my-3 section-header" style="display: flex; align-items: center">
         <div style="display: flex">
-          <div *ngFor="let flow of currentGrant.flowAuthorities">
+          <div *ngFor="let flow of getForwardFlow()">
             <button *ngIf="currentGrant.grantStatus.internalStatus!=='ACTIVE'" [disabled]="
                 wfDisabled
-              " mat-stroked-button (click)="submitGrant(flow.toStateId)" id="{{ flow.action }}" [class]="
+              " mat-stroked-button
+              (click)="submitGrant(flow.toStateId,'Submitting to ' + getStateNameAndOwner(flow.toStateId))"
+              id="{{ flow.action }}" [class]="
                 flow.seqOrder === 0
                   ? 'mr-1 btn btn-sm btn-green-primary'
                   : 'mr-1 btn btn-sm btn-green'
@@ -16,7 +18,9 @@
             </button>
             <button *ngIf="currentGrant.grantStatus.internalStatus==='ACTIVE'" [disabled]="
                 true || wfDisabled || currentGrant.closureInProgress
-              " mat-stroked-button (click)="submitGrant(flow.toStateId)" id="{{ flow.action }}" [class]="
+              " mat-stroked-button
+              (click)="submitGrant(flow.toStateId,'Submitting to ' + getStateNameAndOwner(flow.toStateId))"
+              id="{{ flow.action }}" [class]="
                 flow.seqOrder === 0
                   ? 'mr-1 btn btn-sm btn-green-primary'
                   : 'mr-1 btn btn-sm btn-green'
@@ -25,9 +29,15 @@
               <span *ngIf="currentGrant.closureInProgress">Closure In-Progress</span>
             </button>
           </div>
+          <div *ngIf="hasBackwardFlow()">
+            <button *ngIf="currentGrant.grantStatus.internalStatus!=='ACTIVE'" [disabled]="
+            wfDisabled" mat-stroked-button (click)="returnGrant()" [class]="'mr-1 btn btn-sm btn-green'">
+              Request Modifications
+            </button>
+          </div>
         </div>
       </h4>
-      <div class="col-1 text-right" style="display: flex; align-items: center; justify-content: flex-start">
+      <div class=" col-1 text-right" style="display: flex; align-items: center; justify-content: flex-start">
         <mat-icon mat-button [matMenuTriggerFor]="menu" class="float-right" style="cursor: pointer">more_vert
         </mat-icon>
         <mat-menu #menu="matMenu">
@@ -44,7 +54,8 @@
           this.appComp.loggedInUser.organization.organizationType !==
           'GRANTEE'
         " mat-menu-item (click)="showGrantTags()" [disabled]="orgTags.length===0">
-            <mat-icon class="ml-1">label</mat-icon>Manage Tags
+            <em class="fas fa-tags ml-2 mr-4"
+              style="color:rgba(0,0,0,.54);transform: scaleX(-1);font-size: 12px;"></em>Manage Tags
           </button>
 
           <button *ngIf="
@@ -243,7 +254,8 @@
               </div>
             </div>
             <div class="col-8 mb-2">
-              <span style="color: #929292; font-size: 15px; font-family: Roboto, sans-serif;">Amount (In Words):</span>
+              <span style="color: #929292; font-size: 15px; font-family: Roboto, sans-serif;">Amount (In
+                Words):</span>
               <div class="ml-0 mb-3" style="display: flex; align-items: center">
                 <strong>{{ getGrantAmountInWords(currentGrant.amount) }}</strong>
               </div>
@@ -259,7 +271,8 @@
               </div>
             </div>
             <div class="col-6 mb-2">
-              <span style="color: #929292; font-size: 15px; font-family: Roboto, sans-serif;">Implementing Organization
+              <span style="color: #929292; font-size: 15px; font-family: Roboto, sans-serif;">Implementing
+                Organization
                 Representative:</span>
               <div class="ml-0 mb-3">
                 <strong>{{ currentGrant.representative }}</strong>
@@ -397,7 +410,8 @@
                                   ">
                                     <em class="far fa-file-powerpoint text-danger ml-1 mr-2"></em>
                                   </ng-container>
-                                  <span style="cursor: pointer;" [matMenuTriggerFor]="menu">{{ doc.name + '.' + doc.type
+                                  <span style="cursor: pointer;" [matMenuTriggerFor]="menu">{{ doc.name + '.' +
+                                    doc.type
                                     }}</span>
                                   <div data-html2canvas-ignore="true">
                                     <mat-menu data-html2canvas-ignore #menu="matMenu">
