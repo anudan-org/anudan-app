@@ -8,7 +8,7 @@ export class Disbursement {
   status: WorkflowStatus;
   grant: Grant;
   assignments: DisbursementAssignment[];
-  flowPermissions: FlowAuthority;
+  flowPermissions: FlowAuthority[];
   note: string;
   noteAddedByUser: User;
   noteAdded: Date;
@@ -85,6 +85,7 @@ export class DisbursementNote {
   originalDisbursement: Disbursement;
   canManage: boolean;
   validationResult: any;
+  tTitle: string;
 }
 
 export class DisbursementDiff {
