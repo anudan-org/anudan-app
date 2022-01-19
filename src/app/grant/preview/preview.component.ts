@@ -1217,7 +1217,7 @@ export class PreviewComponent implements OnInit {
                 const toState = this.currentGrant.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
                 const toStateOwner = this.currentGrant.workflowAssignments.filter(a => a.stateId === toStateId)[0].assignmentUser;
 
-                this.submitGrant(toStateId, "Submitting to " + toStateOwner.firstName + " " + toStateOwner.lastName + " [" + toState + "]");
+                this.submitGrant(toStateId, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
               },
               (error) => {
                 const errorMsg = error as HttpErrorResponse;
@@ -1596,9 +1596,19 @@ export class PreviewComponent implements OnInit {
     return forwardStates;
   }
 
-  hasBackwardFlow() {
+  getSingleBackwardFlow() {
+    const backwardState = this.currentGrant.flowAuthorities.filter(a => a.seqOrder >= 50)[0];
+    return backwardState;
+  }
+
+  hasMultipleBackwardFlow() {
     const backwardFlows = this.currentGrant.flowAuthorities.filter(a => a.seqOrder >= 50);
-    return (backwardFlows && backwardFlows.length > 0);
+    return (backwardFlows && backwardFlows.length > 1);
+  }
+
+  hasSingleBackwardFlow() {
+    const backwardFlows = this.currentGrant.flowAuthorities.filter(a => a.seqOrder >= 50);
+    return (backwardFlows && backwardFlows.length === 1);
   }
 
   returnGrant() {
@@ -1612,7 +1622,7 @@ export class PreviewComponent implements OnInit {
         const toState = this.currentGrant.flowAuthorities.filter(a => a.toStateId === response.toStateId)[0].toName;
         const toStateOwner = this.currentGrant.workflowAssignments.filter(a => a.stateId === response.toStateId)[0].assignmentUser;
 
-        this.submitGrant(response.toStateId, "Returning to " + toStateOwner.firstName + " " + toStateOwner.lastName + " [" + toState + "]");
+        this.submitGrant(response.toStateId, "Returning to " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
       }
     });
   }
@@ -1621,6 +1631,6 @@ export class PreviewComponent implements OnInit {
     const toState = this.currentGrant.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
     const toStateOwner = this.currentGrant.workflowAssignments.filter(a => a.stateId === toStateId)[0].assignmentUser;
 
-    return toStateOwner.firstName + " " + toStateOwner.lastName + " [" + toState + "]";
+    return toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>";
   }
 }
