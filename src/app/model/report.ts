@@ -24,7 +24,7 @@ export class Report {
     grant: Grant;
     canEdit: boolean;
     canManage: boolean;
-    flowAuthorities: FlowAuthority;
+    flowAuthorities: FlowAuthority[];
     cumulativeActuals: number;
     linkedReports: number;
     forGranteeUse: boolean;
@@ -119,6 +119,7 @@ export class ReportNote {
     originalReport: Report;
     canManage: boolean;
     validationResult: any;
+    tTitle: string;
 }
 
 export class ReportDiff {

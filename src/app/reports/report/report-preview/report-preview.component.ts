@@ -1,3 +1,4 @@
+import { ReturnsPopupComponent } from './../../../returns-popup/returns-popup.component';
 import { DocManagementService } from './../../../doc-management.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DocpreviewService } from './../../../docpreview.service';
@@ -163,7 +164,7 @@ export class ReportPreviewComponent implements OnInit {
         }
     }
 
-    submitReport(toStateId: number) {
+    submitReport(toStateId: number, transitionTitle: string) {
 
         /* if ((this.workflowValidationService.getStatusByStatusIdForReport(toStateId, this.appComp).internalStatus === 'ACTIVE' || this.workflowValidationService.getStatusByStatusIdForReport(toStateId, this.appComp).internalStatus === 'CLOSED') && this.reportValidationService.checkIfHeaderHasMissingEntries(this.currentReport)) {
             const dialogRef = this.dialog.open(MessagingComponent, {
@@ -190,17 +191,17 @@ export class ReportPreviewComponent implements OnInit {
         }
 
         this.wfValidationService.validateGrantWorkflow(this.currentReport.id, 'REPORT', this.appComp.loggedInUser.id, this.currentReport.status.id, toStateId).then(result => {
-            this.openBottomSheetForReportNotes(toStateId, result);
+            this.openBottomSheetForReportNotes(toStateId, result, transitionTitle);
             this.wfDisabled = true;
         });
 
     }
 
-    openBottomSheetForReportNotes(toStateId: number, result): void {
+    openBottomSheetForReportNotes(toStateId: number, result, transitionTitle: string): void {
 
         const _bSheet = this.dialog.open(ReportNotesComponent, {
             hasBackdrop: true,
-            data: { canManage: true, currentReport: this.currentReport, originalReport: this.appComp.originalReport, validationResult: result },
+            data: { canManage: true, currentReport: this.currentReport, originalReport: this.appComp.originalReport, validationResult: result, tTitle: transitionTitle },
             panelClass: 'grant-notes-class'
         });
 
@@ -255,7 +256,10 @@ export class ReportPreviewComponent implements OnInit {
                 this.http.post(url, { report: this.currentReport, assignments: ass }, httpOptions).subscribe((report: Report) => {
                     this.singleReportDataService.changeMessage(report);
                     this.currentReport = report;
-                    this.submitReport(toStateId);
+
+                    const toState = this.currentReport.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
+                    const toStateOwner = this.currentReport.workflowAssignments.filter(a => a.stateId === toStateId)[0].assignmentUser;
+                    this.submitReport(toStateId, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
                 }, error => {
                     const errorMsg = error as HttpErrorResponse;
                     const x = { 'enableHtml': true, 'preventDuplicates': true, 'positionClass': 'toast-top-full-width', 'progressBar': true } as Partial<IndividualConfig>;
@@ -627,5 +631,48 @@ export class ReportPreviewComponent implements OnInit {
         selectedAttachments.attachmentIds = [];
         selectedAttachments.attachmentIds.push(attachmentId);
         this.docManagementService.callReportDocDownload(selectedAttachments, this.appComp, this.currentReport);
+    }
+
+    getForwardFlow() {
+        const forwardStates = this.currentReport.flowAuthorities.filter(a => a.seqOrder < 50);
+        return forwardStates;
+    }
+
+    getSingleBackwardFlow() {
+        const backwardState = this.currentReport.flowAuthorities.filter(a => a.seqOrder >= 50)[0];
+        return backwardState;
+    }
+
+    hasMultipleBackwardFlow() {
+        const backwardFlows = this.currentReport.flowAuthorities.filter(a => a.seqOrder >= 50);
+        return (backwardFlows && backwardFlows.length > 1);
+    }
+
+    hasSingleBackwardFlow() {
+        const backwardFlows = this.currentReport.flowAuthorities.filter(a => a.seqOrder >= 50);
+        return (backwardFlows && backwardFlows.length === 1);
+    }
+
+    returnReport() {
+        const dg = this.dialog.open(ReturnsPopupComponent, {
+            data: { paths: this.currentReport.flowAuthorities.filter(a => a.seqOrder >= 50), workflows: this.currentReport.workflowAssignments },
+            panelClass: "center-class",
+        });
+
+        dg.afterClosed().subscribe(response => {
+            if (response.toStateId !== 0) {
+                const toState = this.currentReport.flowAuthorities.filter(a => a.toStateId === response.toStateId)[0].toName;
+                const toStateOwner = this.currentReport.workflowAssignments.filter(a => a.stateId === response.toStateId)[0].assignmentUser;
+
+                this.submitReport(response.toStateId, "Returning to " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
+            }
+        });
+    }
+
+    getStateNameAndOwner(toStateId) {
+        const toState = this.currentReport.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
+        const toStateOwner = this.currentReport.workflowAssignments.filter(a => a.stateId === toStateId)[0].assignmentUser;
+
+        return toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>";
     }
 }

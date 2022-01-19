@@ -3,8 +3,9 @@
   <div class="row">
     <h4 class="col-11 text-left my-3 section-header">
       <div *ngIf="currentReport.canManage" style="display: flex">
-        <div *ngFor="let flow of currentReport.flowAuthorities">
-          <button [disabled]="wfDisabled" mat-stroked-button (click)="submitReport(flow.toStateId)"
+        <div *ngFor="let flow of getForwardFlow()">
+          <button [disabled]="wfDisabled" mat-stroked-button
+            (click)="submitReport(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId))"
             id="{{ flow.action }}" [class]="
                 flow.seqOrder === 0
                   ? 'mr-1 btn btn-sm btn-green-primary'
@@ -12,6 +13,23 @@
               ">
             {{ flow.action }}
           </button>
+        </div>
+        <div *ngIf="hasMultipleBackwardFlow()">
+          <button [disabled]="
+          wfDisabled" mat-stroked-button (click)="returnReport()" [class]="'mr-1 btn btn-sm btn-green'">
+            Request Modifications
+          </button>
+        </div>
+
+        <div *ngIf="hasSingleBackwardFlow()">
+          <ng-container>
+            <button [disabled]="
+          wfDisabled" mat-stroked-button
+              (click)="submitReport(getSingleBackwardFlow().toStateId,'Returning to ' + getStateNameAndOwner(getSingleBackwardFlow().toStateId))"
+              [class]="'mr-1 btn btn-sm btn-green'">
+              Request Modifications
+            </button>
+          </ng-container>
         </div>
       </div>
     </h4>

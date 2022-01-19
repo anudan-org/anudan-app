@@ -150,6 +150,7 @@ export class FlowAuthority {
   action: string;
   noteRequired: boolean;
   seqOrder: number;
+  tTitle: string;
 }
 
 export class Submission {
