@@ -2,7 +2,7 @@
   <mat-icon>close</mat-icon>
 </span>
 <div class="p-2">
-  <p class="text-subheader">{{data.tTitle}}</p>
+  <p class="text-header" [innerHTML]="data.tTitle"></p>
   <mat-card-title *ngIf="!validationResult.canMove">Unable to proceed</mat-card-title>
   <ng-container *ngIf="validationResult.error.length>0">
     <p class="text-header-light mb-1" style="font-size:12px !important;">

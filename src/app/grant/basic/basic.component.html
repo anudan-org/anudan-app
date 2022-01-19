@@ -28,7 +28,8 @@
           <mat-icon class="ml-1">attachment</mat-icon>Manage Project Documents
         </button>
         <button mat-menu-item (click)="showGrantTags()" [disabled]="orgTags.length===0">
-          <mat-icon class="ml-1">label</mat-icon>Manage Tags
+          <em class="fas fa-tags ml-2 mr-4"
+            style="color:rgba(0,0,0,.54);transform: scaleX(-1);font-size: 12px;"></em>Manage Tags
         </button>
         <hr *ngIf="currentGrant.origGrantId" />
         <button *ngIf="currentGrant.origGrantId" mat-menu-item (click)="manageGrant()">

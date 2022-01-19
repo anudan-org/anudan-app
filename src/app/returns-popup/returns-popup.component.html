@@ -1,21 +1,21 @@
-<span class="" style="position:absolute; right: 2px; left: auto;top: 2px;z-index:1;" (click)="close()">
-  <mat-icon>close</mat-icon>
-</span>
+<!-- <span class="" style="position:absolute; right: 2px; left: auto;top: 2px;z-index:1;" (click)="close()">
+  <mat-icon>close</mat-icon> 
+</span>-->
+<p *ngIf="title" class="text-header" [innerHTML]="title"></p>
 <div class="row px-3" *ngIf="message.paths && message.paths.length>0">
-  <select #returnState class="anu-wf-input anu-select"
+  <select #returnState class="anu-wf-input anu-select" (change)="selectionChanged($event)"
     style="min-width: 235px !important;max-width: 235px !important;margin: 20px 0;">
     <option value="0">-- Return To --</option>
     <option *ngFor="let return of message.paths" [value]="return.toStateId">{{return.toName}}
       [{{getToStateOwner(return.toStateId)}}]
     </option>
   </select>
-  <!-- <ng-container *ngFor="let return of message.paths">
-    <button mat-stroked-button [class]="'mr-1 btn btn-sm btn-green-primary'" (click)='moveTo(return.toStateId)'>
-      {{ return.action }}<br><span
-        style="text-transform: initial;position: absolute;width: 100%;bottom: -12px;transition: tran;left: 0;color: black;">{{getToStateOwner(return.toStateId)}}</span>
-    </button>
-  </ng-container> -->
-  <!-- <button mat-stroked-button [class]="'mr-1 btn btn-sm btn-green'" (click)='close()'>
+</div>
+<div mat-dialog-actions class="row px-3">
+  <button class="btn btn-sm btn-green-primary" [disabled]="!prompt" (click)="close()">
+    Send Request
+  </button>
+  <button class="btn btn-sm btn-green" (click)="dismiss()">
     Not Now
-  </button> -->
+  </button>
 </div>

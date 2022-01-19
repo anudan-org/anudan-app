@@ -11,6 +11,9 @@ import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core'
 export class ReturnsPopupComponent implements OnInit {
 
   @ViewChild("returnState") returnState: ElementRef;
+  prompt = false;
+  selectedState = 0;
+  title: string;
 
   constructor(public dialogRef: MatDialogRef<ReturnsPopupComponent>
     , @Inject(MAT_DIALOG_DATA) public message: any, private dialog: MatDialog) {
@@ -29,25 +32,29 @@ export class ReturnsPopupComponent implements OnInit {
     return user.firstName + ' ' + user.lastName;
   }
 
-  close() {
-    const returnStateId = Number(this.returnState.nativeElement.value);
-    if (returnStateId !== 0) {
-      const toName = this.message.paths.filter(a => a.toStateId === returnStateId)[0].toName;
-      const dialogRef = this.dialog.open(FieldDialogComponent, {
-        data: { title: "Return to <strong>" + toName + "</strong>", btnMain: "Continue", btnSecondary: "Not Now" },
-        panelClass: "center-class",
-      });
+  dismiss() {
+    this.selectedState = 0;
+    this.close();
+  }
 
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.dialogRef.close({ toStateId: returnStateId });
-        } else {
-          this.dialogRef.close({ toStateId: 0 });
-        }
-      });
+
+  close() {
+    if (this.selectedState !== 0) {
+      this.prompt = true;
+      this.dialogRef.close({ toStateId: this.selectedState });
     } else {
       this.dialogRef.close({ toStateId: 0 });
     }
 
+  }
+
+  selectionChanged(ev) {
+    this.selectedState = Number(ev.currentTarget.value);
+    this.prompt = (this.selectedState !== 0);
+    if (this.prompt) {
+      this.title = "Send modification request to <span class='text-header'>" + this.message.paths.filter(a => a.toStateId === this.selectedState)[0].toName + "</span><span class='text-subheader'> [" + this.getToStateOwner(this.selectedState) + "]";
+    } else {
+      this.title = undefined;
+    }
   }
 }
