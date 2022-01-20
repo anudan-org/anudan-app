@@ -557,8 +557,9 @@ font-white {
   position: absolute;
   font-size: 14px;
   color: #2B2B2B;
-  left: -25px;
-  top: 4px;
+  left: 0;
+  top: -7px;
+  cursor: pointer;
 }
 
 .jtk-connector,
