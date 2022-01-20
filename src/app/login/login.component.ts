@@ -99,10 +99,9 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.appComponent.loggedInUser === null) {
-      this.appComponent.logo = "/api/public/images/" + localStorage.getItem("X-TENANT-CODE") + '/logo?' + (new Date().getTime()).toString();
-      this.logoURL = this.appComponent.logo;
-    }
+
+    this.appComponent.logo = "/api/public/images/" + localStorage.getItem("X-TENANT-CODE") + '/logo?' + (new Date().getTime()).toString();
+    this.logoURL = this.appComponent.logo;
 
     if (this.appComponent.loggedInUser) {
       this.appComponent.logout();

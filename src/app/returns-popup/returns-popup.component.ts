@@ -52,7 +52,7 @@ export class ReturnsPopupComponent implements OnInit {
     this.selectedState = Number(ev.currentTarget.value);
     this.prompt = (this.selectedState !== 0);
     if (this.prompt) {
-      this.title = "Send modification request to <span class='text-header'>" + this.message.paths.filter(a => a.toStateId === this.selectedState)[0].toName + "</span><span class='text-subheader'> [" + this.getToStateOwner(this.selectedState) + "]";
+      this.title = "Send modification request to <span class='text-header'>" + this.message.paths.filter(a => a.fromStateId === this.selectedState)[0].fromName + "</span><span class='text-subheader'> [" + this.getToStateOwner(this.selectedState) + "]";
     } else {
       this.title = undefined;
     }

@@ -8,7 +8,7 @@
             <button *ngIf="currentGrant.grantStatus.internalStatus!=='ACTIVE'" [disabled]="
                 wfDisabled
               " mat-stroked-button
-              (click)="submitGrant(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId))"
+              (click)="submitGrant(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId,true))"
               id="{{ flow.action }}" [class]="
                 flow.seqOrder === 0
                   ? 'mr-1 btn btn-sm btn-green-primary'
@@ -19,7 +19,7 @@
             <button *ngIf="currentGrant.grantStatus.internalStatus==='ACTIVE'" [disabled]="
                 true || wfDisabled || currentGrant.closureInProgress
               " mat-stroked-button
-              (click)="submitGrant(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId))"
+              (click)="submitGrant(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId,true))"
               id="{{ flow.action }}" [class]="
                 flow.seqOrder === 0
                   ? 'mr-1 btn btn-sm btn-green-primary'
@@ -40,7 +40,7 @@
             <ng-container *ngIf="currentGrant.grantStatus.internalStatus!=='ACTIVE'">
               <button [disabled]="
             wfDisabled" mat-stroked-button
-                (click)="submitGrant(getSingleBackwardFlow().toStateId,'Returning to ' + getStateNameAndOwner(getSingleBackwardFlow().toStateId))"
+                (click)="submitGrant(getSingleBackwardFlow().fromStateId,'Returning to ' + getStateNameAndOwner(getSingleBackwardFlow().fromStateId),false)"
                 [class]="'mr-1 btn btn-sm btn-green'">
                 Request Modifications
               </button>

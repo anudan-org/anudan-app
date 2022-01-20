@@ -151,6 +151,7 @@ export class FlowAuthority {
   noteRequired: boolean;
   seqOrder: number;
   tTitle: string;
+  forwardDirection: boolean;
 }
 
 export class Submission {
