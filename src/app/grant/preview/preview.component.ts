@@ -1592,34 +1592,34 @@ export class PreviewComponent implements OnInit {
   }
 
   getForwardFlow() {
-    const forwardStates = this.currentGrant.flowAuthorities.filter(a => a.seqOrder < 50);
+    const forwardStates = this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === true);
     return forwardStates;
   }
 
   getSingleBackwardFlow() {
-    const backwardState = this.currentGrant.flowAuthorities.filter(a => a.seqOrder >= 50)[0];
+    const backwardState = this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === false)[0];
     return backwardState;
   }
 
   hasMultipleBackwardFlow() {
-    const backwardFlows = this.currentGrant.flowAuthorities.filter(a => a.seqOrder >= 50);
+    const backwardFlows = this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === false);
     return (backwardFlows && backwardFlows.length > 1);
   }
 
   hasSingleBackwardFlow() {
-    const backwardFlows = this.currentGrant.flowAuthorities.filter(a => a.seqOrder >= 50);
+    const backwardFlows = this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === false);
     return (backwardFlows && backwardFlows.length === 1);
   }
 
   returnGrant() {
     const dg = this.dialog.open(ReturnsPopupComponent, {
-      data: { paths: this.currentGrant.flowAuthorities.filter(a => a.seqOrder >= 50), workflows: this.currentGrant.workflowAssignments },
+      data: { paths: this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === false), workflows: this.currentGrant.workflowAssignments },
       panelClass: "center-class",
     });
 
     dg.afterClosed().subscribe(response => {
       if (response.toStateId !== 0) {
-        const toState = this.currentGrant.flowAuthorities.filter(a => a.toStateId === response.toStateId)[0].toName;
+        const toState = this.currentGrant.flowAuthorities.filter(a => a.fromStateId === response.toStateId)[0].fromName;
         const toStateOwner = this.currentGrant.workflowAssignments.filter(a => a.stateId === response.toStateId)[0].assignmentUser;
 
         this.submitGrant(response.toStateId, "Returning to " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
@@ -1627,8 +1627,14 @@ export class PreviewComponent implements OnInit {
     });
   }
 
-  getStateNameAndOwner(toStateId) {
-    const toState = this.currentGrant.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
+  getStateNameAndOwner(toStateId, forward) {
+    let toState;
+    if (forward) {
+      toState = this.currentGrant.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
+    } else {
+      toState = this.currentGrant.flowAuthorities.filter(a => a.fromStateId === toStateId)[0].fromName;
+
+    }
     const toStateOwner = this.currentGrant.workflowAssignments.filter(a => a.stateId === toStateId)[0].assignmentUser;
 
     return toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>";

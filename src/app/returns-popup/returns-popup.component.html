@@ -6,8 +6,8 @@
   <select #returnState class="anu-wf-input anu-select" (change)="selectionChanged($event)"
     style="min-width: 235px !important;max-width: 235px !important;margin: 20px 0;">
     <option value="0">-- Return To --</option>
-    <option *ngFor="let return of message.paths" [value]="return.toStateId">{{return.toName}}
-      [{{getToStateOwner(return.toStateId)}}]
+    <option *ngFor="let return of message.paths" [value]="return.fromStateId">{{return.fromName}}
+      [{{getToStateOwner(return.fromStateId)}}]
     </option>
   </select>
 </div>
