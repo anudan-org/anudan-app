@@ -525,7 +525,7 @@ font-white {
   border: 1px solid #e4e4e4;
   text-align: center;
   margin: 0 auto 50px auto !important;
-  width: 156px !important;
+  width: 200px !important;
   font-size: 14px;
   font-weight: 400;
   text-transform: capitalize;
@@ -558,8 +558,13 @@ font-white {
   font-size: 14px;
   color: #2B2B2B;
   left: 0;
-  top: -7px;
+  top: 2px;
   cursor: pointer;
+  background: url(./assets/img/reader.png);
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .jtk-connector,
@@ -1316,6 +1321,8 @@ app-search-filter .mat-form-field-suffix{
   top: 12px;
   color:rgba(170, 170, 170,0.95);
   border: none !important;
+  left: 0;
+    width: 125px;
 }
 
 th{
@@ -1381,4 +1388,8 @@ footer{
 .singledoc-ico-disabled{
   color: #a3a3a3; 
   font-size: 1.5em;
+}
+
+.fa-book-reader:before {
+  content: "";
 }

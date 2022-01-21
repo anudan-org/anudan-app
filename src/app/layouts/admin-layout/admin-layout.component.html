@@ -105,7 +105,7 @@
       >
       <span style="color: #4dc251; cursor: pointer" class="ml-1 mr-1"
         (click)="navigateToGrants(appComponent.subMenu)">{{ appComponent.subMenu.name }}</span>
-      <span style="color: #f4f4f4"> > </span>
+      <!-- <span style="color: #f4f4f4"> > </span>
       <ng-container *ngIf="currentGrant">
         <div class="ml-1" style="color: #fff; max-width: 500px">
           <span *ngIf="currentGrant.referenceNo">{{ currentGrant.referenceNo }} | </span>{{ currentGrant.name }}
@@ -121,7 +121,7 @@
           ">
           {{ appComponent.autosaveDisplay }}
         </p>
-      </ng-container>
+      </ng-container> -->
     </div>
     <div *ngIf="appComponent.currentView === 'report'" class="px-4 pt-4 pb-4 text-left" style="
         position: sticky;
@@ -139,7 +139,7 @@
       >
       <span class="ml-1 mr-1" style="color: #4dc251; cursor: pointer"
         (click)="navigateToReports(appComponent.subMenu)">{{ appComponent.subMenu.name }}</span>
-      <span style="color: #f4f4f4"> > </span>
+      <!-- <span style="color: #f4f4f4"> > </span>
       <ng-container *ngIf="currentReport">
         <div class="m-1" style="color: #fff; max-width: 500px">
           <ng-container *ngIf="currentReport.status.internalStatus!=='CLOSED' && currentReport.disabledByAmendment">
@@ -153,7 +153,7 @@
           </ng-container>
           {{ currentReport.name }}
         </div>
-      </ng-container>
+      </ng-container> -->
       <p *ngIf="appComponent.showSaving" class="m-0" style="
           position: absolute;
           color: #f2f2f2;
@@ -183,12 +183,12 @@
       >
       <span class="ml-1 mr-1" style="color: #4dc251; cursor: pointer"
         (click)="navigateToGrants(appComponent.subMenu)">{{ appComponent.subMenu.name }}</span>
-      <span style="color: #f4f4f4"> > </span>
+      <!-- <span style="color: #f4f4f4"> > </span>
       <ng-container *ngIf="currentClosure">
         <div class="m-1" style="color: #fff; max-width: 500px">
           {{ 'Closure Request for Grant' + currentClosure.grant.name }}
         </div>
-      </ng-container>
+      </ng-container> -->
       <p *ngIf="appComponent.showSaving" class="m-0" style="
           position: absolute;
           color: #f2f2f2;
@@ -218,7 +218,7 @@
       >
       <span class="ml-1 mr-1" style="color: #4dc251; cursor: pointer"
         (click)="navigateToDisbursements(appComponent.subMenu)">{{ appComponent.subMenu.name }}</span>
-      <span style="color: #f4f4f4"> > </span>
+      <!-- <span style="color: #f4f4f4"> > </span>
 
       <ng-container *ngIf="
           currentDisbursement &&
@@ -255,7 +255,7 @@
           Disbursement Record against Approved Note for Grant
           <strong>{{ currentDisbursement.grant.name }}</strong>
         </div>
-      </ng-container>
+      </ng-container> -->
       <p *ngIf="appComponent.showSaving" class="m-0" style="
           position: absolute;
           color: #f2f2f2;
