@@ -560,34 +560,34 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
   }
 
   getForwardFlow() {
-    const forwardStates = this.currentDisbursement.flowPermissions.filter(a => a.seqOrder < 50);
+    const forwardStates = this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === true);
     return forwardStates;
   }
 
   getSingleBackwardFlow() {
-    const backwardState = this.currentDisbursement.flowPermissions.filter(a => a.seqOrder >= 50)[0];
+    const backwardState = this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === false)[0];
     return backwardState;
   }
 
   hasMultipleBackwardFlow() {
-    const backwardFlows = this.currentDisbursement.flowPermissions.filter(a => a.seqOrder >= 50);
+    const backwardFlows = this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === false);
     return (backwardFlows && backwardFlows.length > 1);
   }
 
   hasSingleBackwardFlow() {
-    const backwardFlows = this.currentDisbursement.flowPermissions.filter(a => a.seqOrder >= 50);
+    const backwardFlows = this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === false);
     return (backwardFlows && backwardFlows.length === 1);
   }
 
   returnGrant() {
     const dg = this.dialog.open(ReturnsPopupComponent, {
-      data: { paths: this.currentDisbursement.flowPermissions.filter(a => a.seqOrder >= 50), workflows: this.currentDisbursement.assignments },
+      data: { paths: this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === false), workflows: this.currentDisbursement.assignments },
       panelClass: "center-class",
     });
 
     dg.afterClosed().subscribe(response => {
       if (response.toStateId !== 0) {
-        const toState = this.currentDisbursement.flowPermissions.filter(a => a.toStateId === response.toStateId)[0].toName;
+        const toState = this.currentDisbursement.flowPermissions.filter(a => a.fromStateId === response.toStateId)[0].fromName;
         const toStateOwner = this.currentDisbursement.assignments.filter(a => a.stateId === response.toStateId)[0].assignmentUser;
 
         this.submitDisbursement(response.toStateId, "Returning to " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
@@ -595,10 +595,15 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
     });
   }
 
-  getStateNameAndOwner(toStateId) {
-    const toState = this.currentDisbursement.flowPermissions.filter(a => a.toStateId === toStateId)[0].toName;
+  getStateNameAndOwner(toStateId, forward) {
+    let toState;
+    if (forward) {
+      toState = this.currentDisbursement.flowPermissions.filter(a => a.toStateId === toStateId)[0].toName;
+    } else {
+      toState = this.currentDisbursement.flowPermissions.filter(a => a.fromStateId === toStateId)[0].fromName;
+    }
     const toStateOwner = this.currentDisbursement.assignments.filter(a => a.stateId === toStateId)[0].assignmentUser;
 
-    return toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>";
+    return toStateOwner ? (toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>") : "";
   }
 }

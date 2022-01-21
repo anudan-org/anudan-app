@@ -84,7 +84,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
         window.addEventListener('scroll', this.redrawOnScroll.bind(this), true);
         if (this.data.model.type === 'grant') {
             const gtIdx = this.data.model.grantTypes.findIndex(gt => gt.id === this.data.model.grant.grantTypeId);
-            this.grantType = this.data.model.grantTypes[gtIdx].name;
+            this.grantType = (!gtIdx || gtIdx === -1) ? "External Workflow" : this.data.model.grantTypes[gtIdx].name;
             this.title = `<p class="mb-0  text-subheader">Grant Workflow | ` + this.grantType + `<p class='text-header'>Grant ` + this.data.model.grant.name + `</p>`;
             const httpOptions = {
                 headers: new HttpHeaders({
@@ -126,8 +126,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.appendChild(node, stateNode);
                         if (transition.fromStateId === this.data.model.grant.grantStatus.id) {
                             const indicator = this.renderer.createElement('i');
-                            this.renderer.addClass(indicator, 'far');
-                            this.renderer.addClass(indicator, 'fa-file-alt');
+                            this.renderer.addClass(indicator, 'fas');
+                            this.renderer.addClass(indicator, 'fa-book-reader');
                             this.renderer.addClass(indicator, 'status-indicator');
                             this.renderer.listen(indicator, 'click', () => {
                                 this.data.adminComp.showHistory('grant', this.data.model.grant);
@@ -273,8 +273,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.appendChild(node, stateNode);
                         if (transition.toStateId === this.data.model.grant.grantStatus.id) {
                             const indicator = this.renderer.createElement('i');
-                            this.renderer.addClass(indicator, 'far');
-                            this.renderer.addClass(indicator, 'fa-file-alt');
+                            this.renderer.addClass(indicator, 'fas');
+                            this.renderer.addClass(indicator, 'fa-book-reader');
                             this.renderer.addClass(indicator, 'status-indicator');
                             this.renderer.listen(indicator, 'click', () => {
                                 this.data.adminComp.showHistory('grant', this.data.model.grant);
@@ -331,7 +331,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
         } else if (this.data.model.type === 'report') {
 
             const gtIdx = this.data.model.grantTypes.findIndex(gt => gt.id === this.data.model.report.grant.grantTypeId);
-            this.grantType = this.data.model.grantTypes[gtIdx].name;
+            this.grantType = (!gtIdx || gtIdx === -1) ? "External Workflow" : this.data.model.grantTypes[gtIdx].name;
             this.title = `<p class="mb-0 text-subheader">Report Workflow | ` + this.grantType + `<p><span class='text-header'>` + this.data.model.report.name + `</span><span class="text-subheader"> for Grant ` + this.data.model.report.grant.name + `</span></p>`;
             const httpOptions = {
                 headers: new HttpHeaders({
@@ -376,8 +376,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                         if (transition.fromStateId === this.data.model.report.status.id) {
                             const indicator = this.renderer.createElement('i');
-                            this.renderer.addClass(indicator, 'far');
-                            this.renderer.addClass(indicator, 'fa-file-alt');
+                            this.renderer.addClass(indicator, 'fas');
+                            this.renderer.addClass(indicator, 'fa-book-reader');
                             this.renderer.addClass(indicator, 'status-indicator');
                             this.renderer.listen(indicator, 'click', () => {
                                 this.data.adminComp.showHistory('report', this.data.model.report);
@@ -563,8 +563,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                         if (transition.toStateId === this.data.model.report.status.id) {
                             const indicator = this.renderer.createElement('i');
-                            this.renderer.addClass(indicator, 'far');
-                            this.renderer.addClass(indicator, 'fa-file-alt');
+                            this.renderer.addClass(indicator, 'fas');
+                            this.renderer.addClass(indicator, 'fa-book-reader');
                             this.renderer.addClass(indicator, 'status-indicator');
                             this.renderer.listen(indicator, 'click', () => {
                                 this.data.adminComp.showHistory('report', this.data.model.report);
@@ -635,8 +635,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(node, this.getColorCodeByStatusForClosure(this.data.model.workflowStatuses.filter((status) => status.id === transition.fromStateId)[0].internalStatus, this.data.model.closure));
                         if (transition.fromStateId === this.data.model.closure.status.id) {
                             const indicator = this.renderer.createElement('i');
-                            this.renderer.addClass(indicator, 'far');
-                            this.renderer.addClass(indicator, 'fa-file-alt');
+                            this.renderer.addClass(indicator, 'fas');
+                            this.renderer.addClass(indicator, 'fa-book-reader');
                             this.renderer.addClass(indicator, 'status-indicator');
                             this.renderer.addClass(node, 'node-highight');
                             this.renderer.appendChild(node, indicator);
@@ -791,8 +791,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         const node = this.renderer.createElement('div');
                         if (transition.toStateId === this.data.model.closure.status.id) {
                             const indicator = this.renderer.createElement('i');
-                            this.renderer.addClass(indicator, 'far');
-                            this.renderer.addClass(indicator, 'fa-file-alt');
+                            this.renderer.addClass(indicator, 'fas');
+                            this.renderer.addClass(indicator, 'fa-book-reader');
                             this.renderer.addClass(indicator, 'status-indicator');
                             this.renderer.addClass(node, 'node-highight');
                             this.renderer.appendChild(node, indicator);
@@ -883,8 +883,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                         if (transition.fromStateId === this.data.model.disbursement.status.id) {
                             const indicator = this.renderer.createElement('i');
-                            this.renderer.addClass(indicator, 'far');
-                            this.renderer.addClass(indicator, 'fa-file-alt');
+                            this.renderer.addClass(indicator, 'fas');
+                            this.renderer.addClass(indicator, 'fa-book-reader');
                             this.renderer.addClass(indicator, 'status-indicator');
                             this.renderer.listen(indicator, 'click', () => {
                                 this.data.adminComp.showHistory('disbursement', this.data.model.disbursement);
@@ -1014,8 +1014,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                         if (transition.toStateId === this.data.model.disbursement.status.id) {
                             const indicator = this.renderer.createElement('i');
-                            this.renderer.addClass(indicator, 'far');
-                            this.renderer.addClass(indicator, 'fa-file-alt');
+                            this.renderer.addClass(indicator, 'fas');
+                            this.renderer.addClass(indicator, 'fa-book-reader');
                             this.renderer.addClass(indicator, 'status-indicator');
                             this.renderer.listen(indicator, 'click', () => {
                                 this.data.adminComp.showHistory('disbursement', this.data.model.disbursement);
