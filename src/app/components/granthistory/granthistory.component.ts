@@ -1,3 +1,5 @@
+import { WorkflowDataService } from 'app/workflow.data.service';
+import { WorkflowStatus } from './../../model/dahsboard';
 import { ClosureHistory } from './../../model/closures';
 import { Component, Inject, OnInit, ViewChild, ElementRef, Renderer2, HostListener } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef, MatButtonModule } from '@angular/material';
@@ -29,6 +31,7 @@ export class GranthistoryComponent implements OnInit {
   reportHistory: ReportHistory[] = [];
   disbursementHistory: DisbursementHistory[] = [];
   closureHistory: ClosureHistory[] = [];
+  transitions: WorkflowTransition[];
 
   constructor(
     public dialogRef: MatDialogRef<GranthistoryComponent>
@@ -36,6 +39,7 @@ export class GranthistoryComponent implements OnInit {
     , private http: HttpClient
     , private renderer: Renderer2
     , @Inject(ElementRef) er: ElementRef
+    , private workflowDataService: WorkflowDataService
   ) {
     this.dialogRef.disableClose = true;
   }
@@ -50,22 +54,43 @@ export class GranthistoryComponent implements OnInit {
     };
 
     if (this.data.type === 'grant') {
-      const url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/grant/' + this.data.data.id + '/history/';
+      let url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/grant/' + this.data.data.id + '/history/';
 
       this.http.get<GrantHistory[]>(url, httpOptions).subscribe((history: GrantHistory[]) => {
-        this.grantHistory = history;
+
+        url = '/api/admin/workflow/grant/' + this.data.data.id + '/user/' + JSON.parse(localStorage.getItem('USER')).id;
+
+        this.http.get<WorkflowTransition[]>(url, httpOptions).subscribe((transitions: WorkflowTransition[]) => {
+          this.transitions = transitions;
+          this.grantHistory = history;
+        });
+
+
       });
     } else if (this.data.type === 'report') {
-      const url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/report/' + this.data.data.id + '/history/';
+      let url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/report/' + this.data.data.id + '/history/';
 
       this.http.get<ReportHistory[]>(url, httpOptions).subscribe((history: ReportHistory[]) => {
-        this.reportHistory = history;
+
+        url = '/api/admin/workflow/report/' + this.data.data.id + '/user/' + JSON.parse(localStorage.getItem('USER')).id;
+
+        this.http.get<WorkflowTransition[]>(url, httpOptions).subscribe((transitions: WorkflowTransition[]) => {
+          this.transitions = transitions;
+          this.reportHistory = history;
+        });
+
       });
     } else if (this.data.type === 'disbursement') {
       const url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/disbursements/' + this.data.data.id + '/history/';
 
       this.http.get<DisbursementHistory[]>(url, httpOptions).subscribe((history: DisbursementHistory[]) => {
-        this.disbursementHistory = history;
+
+        this.workflowDataService.getDisbursementWorkflow(this.data.data).then(transitions => {
+
+          this.transitions = transitions;
+          this.disbursementHistory = history;
+        });
+
       });
     } else if (this.data.type === 'grant-closure') {
       const url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/closure/' + this.data.data.id + '/history/';
@@ -87,5 +112,95 @@ export class GranthistoryComponent implements OnInit {
   }
   ngAfterViewInit() {
     //Added new comment again
+  }
+
+  getPreviousStatus(idx, _for) {
+    let status;
+    if (_for === 'grant') {
+      status = this.grantHistory[idx - 1];
+      if (status) {
+        return status.grantStatus;
+      } else {
+        const newStatus = new WorkflowStatus();
+        newStatus.name = '';
+        newStatus.internalStatus = '';
+        return newStatus;
+      }
+    } else if (_for === 'report') {
+      status = this.reportHistory[idx - 1];
+      if (status) {
+        return status.status;
+      } else {
+        const newStatus = new WorkflowStatus();
+        newStatus.name = '';
+        newStatus.internalStatus = '';
+        return newStatus;
+      }
+    } else if (_for === 'disbursement') {
+      status = this.disbursementHistory[idx - 1];
+      if (status) {
+        return status.status;
+      } else {
+        const newStatus = new WorkflowStatus();
+        newStatus.name = '';
+        newStatus.internalStatus = '';
+        return newStatus;
+      }
+    }
+  }
+
+  getDirection(fromId, toId) {
+    if (!fromId || !toId) {
+      return 'sync'
+    }
+    const entry = this.transitions.filter(a => a.fromStateId === fromId && a.toStateId === toId);
+    return entry.length > 0 ? 'fas fa-long-arrow-alt-right text-green' : 'fas fa-long-arrow-alt-right text-red';
+  }
+
+  getPreviousOwner(idx, _for) {
+    if (_for === 'grant') {
+      const status = this.grantHistory[idx];
+      if (status) {
+        const ass = this.data.data.workflowAssignments.filter(a => a.stateId === status.grantStatus.id)[0];
+        if (ass) {
+          return ass.assignmentUser.firstName + ' ' + ass.assignmentUser.lastName;
+        } else {
+          return '';
+        }
+
+      } else {
+
+        return '';
+      }
+    } else if (_for === 'report') {
+      const status = this.reportHistory[idx];
+      if (status) {
+        const ass = this.data.data.workflowAssignments.filter(a => a.stateId === status.status.id)[0];
+        if (ass) {
+          return ass.assignmentUser.firstName + ' ' + ass.assignmentUser.lastName;
+        } else {
+          return '';
+        }
+
+      } else {
+
+        return '';
+      }
+    } else if (_for === 'disbursement') {
+      const status = this.disbursementHistory[idx];
+      if (status) {
+        const ass = this.data.data.assignments.filter(a => a.stateId === status.status.id)[0];
+        if (ass) {
+          return ass.assignmentUser.firstName + ' ' + ass.assignmentUser.lastName;
+        } else {
+          return '';
+        }
+
+      } else {
+
+        return '';
+      }
+    }
+
   }
 }

@@ -56,6 +56,10 @@ export class ReportHistory {
     canEdit: boolean;
     canManage: boolean;
     flowAuthorities: FlowAuthority;
+    note: string;
+    noteAdded: Date;
+    noteAddedBy: string;
+    noteAddedByUser: User;
 }
 
 export class ReportDetails {
