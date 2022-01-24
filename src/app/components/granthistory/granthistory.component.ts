@@ -122,8 +122,8 @@ export class GranthistoryComponent implements OnInit {
         return status.grantStatus;
       } else {
         const newStatus = new WorkflowStatus();
-        newStatus.name = '';
-        newStatus.internalStatus = '';
+        newStatus.name = this.data.data.grantStatus.name;
+        newStatus.internalStatus = this.data.data.grantStatus.internalStatus;
         return newStatus;
       }
     } else if (_for === 'report') {
@@ -132,8 +132,8 @@ export class GranthistoryComponent implements OnInit {
         return status.status;
       } else {
         const newStatus = new WorkflowStatus();
-        newStatus.name = '';
-        newStatus.internalStatus = '';
+        newStatus.name = this.data.data.status.name;
+        newStatus.internalStatus = this.data.data.status.internalStatus;
         return newStatus;
       }
     } else if (_for === 'disbursement') {
@@ -142,8 +142,8 @@ export class GranthistoryComponent implements OnInit {
         return status.status;
       } else {
         const newStatus = new WorkflowStatus();
-        newStatus.name = '';
-        newStatus.internalStatus = '';
+        newStatus.name = this.data.data.status.name;
+        newStatus.internalStatus = this.data.data.status.internalStatus;
         return newStatus;
       }
     }
@@ -151,7 +151,7 @@ export class GranthistoryComponent implements OnInit {
 
   getDirection(fromId, toId) {
     if (!fromId || !toId) {
-      return 'sync'
+      return 'fas fa-long-arrow-alt-right text-green';
     }
     const entry = this.transitions.filter(a => a.fromStateId === fromId && a.toStateId === toId);
     return entry.length > 0 ? 'fas fa-long-arrow-alt-right text-green' : 'fas fa-long-arrow-alt-right text-red';
@@ -169,8 +169,8 @@ export class GranthistoryComponent implements OnInit {
         }
 
       } else {
-
-        return '';
+        const currentAss = this.data.data.workflowAssignments.filter(a => a.stateId === this.data.data.grantStatus.id)[0].assignmentUser;
+        return currentAss.firstName + ' ' + currentAss.lastName;
       }
     } else if (_for === 'report') {
       const status = this.reportHistory[idx];
