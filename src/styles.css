@@ -1402,3 +1402,11 @@ footer{
 .fa-book-reader:before {
   content: "";
 }
+
+.lh-12{
+  line-height: 12px;
+}
+
+.lh-20{
+  line-height: 20px;
+}

@@ -1,9 +1,9 @@
-<h4>Workflow Notes</h4>
+<h4 [innerHTML]="title" class="mb-4"></h4>
 <span class="" style="position: absolute; right: 10px; left: auto; top: 10px" (click)="onNoClick()">
   <mat-icon>close</mat-icon>
 </span>
 <div *ngIf="data.type === 'grant'" #flowContainer id="flowContainer" class="text-left"
-  style="height: calc(100vh - 170px);overflow-y: auto;">
+  style="height: calc(100vh - 192px);overflow-y: auto;">
   <ng-container *ngFor="let item of grantHistory;let i = index;">
     <ng-container *ngIf="item.note !== '' && item.noteAddedByUser">
       <div class="mb-0 px-1" style="display: flex;">
@@ -44,7 +44,7 @@
   </ng-container>
 </div>
 <div *ngIf="data.type === 'report'" #flowContainer id="flowContainer" class="text-left"
-  style="height: calc(100vh - 170px);overflow-y: auto;">
+  style="height: calc(100vh - 213px);overflow-y: auto;">
   <ng-container *ngFor="let item of reportHistory;let i = index;">
     <ng-container *ngIf="item.note !== '' && item.noteAddedByUser">
       <div class="mb-0 px-1" style="display: flex;">
@@ -84,7 +84,7 @@
 </div>
 
 <div *ngIf="data.type === 'disbursement'" #flowContainer id="flowContainer" class="text-left"
-  style="height: calc(100vh - 170px);overflow-y: auto;">
+  style="height: calc(100vh - 197px);overflow-y: auto;">
   <ng-container *ngFor="let item of disbursementHistory;let i = index;">
     <ng-container *ngIf="item.note !== '' && item.noteAddedByUser">
       <div class="mb-0 px-1" style="display: flex;">

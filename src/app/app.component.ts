@@ -1,3 +1,4 @@
+import { UtilsService } from './utils.service';
 import { GrantClosure } from './model/closures';
 import { MessagingComponent } from './components/messaging/messaging.component';
 import { AfterViewChecked, ChangeDetectorRef, Component, enableProdMode, ApplicationRef, Injectable } from '@angular/core';
@@ -121,7 +122,8 @@ export class AppComponent implements AfterViewChecked {
     private appRef: ApplicationRef,
     private updates: SwUpdate,
     private snackbar: MatSnackBar,
-    private dialog: MatDialog) {
+    private dialog: MatDialog,
+    private utils: UtilsService) {
 
     this.route.queryParamMap.subscribe(params => {
       console.log(params.get('q'));
@@ -204,6 +206,7 @@ export class AppComponent implements AfterViewChecked {
       const url = "/api/user/" + this.loggedInUser.id + "/grant/grantTypes";
       this.httpClient.get(url, httpOptions).subscribe((result: GrantType[]) => {
         this.grantTypes = result;
+        this.utils.setGrantTypes(this.grantTypes);
       });
     }
   }

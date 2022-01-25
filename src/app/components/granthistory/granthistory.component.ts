@@ -1,3 +1,4 @@
+import { UtilsService } from './../../utils.service';
 import { WorkflowDataService } from 'app/workflow.data.service';
 import { WorkflowStatus } from './../../model/dahsboard';
 import { ClosureHistory } from './../../model/closures';
@@ -32,6 +33,7 @@ export class GranthistoryComponent implements OnInit {
   disbursementHistory: DisbursementHistory[] = [];
   closureHistory: ClosureHistory[] = [];
   transitions: WorkflowTransition[];
+  title: string;
 
   constructor(
     public dialogRef: MatDialogRef<GranthistoryComponent>
@@ -40,6 +42,7 @@ export class GranthistoryComponent implements OnInit {
     , private renderer: Renderer2
     , @Inject(ElementRef) er: ElementRef
     , private workflowDataService: WorkflowDataService
+    , private utils: UtilsService
   ) {
     this.dialogRef.disableClose = true;
   }
@@ -63,6 +66,7 @@ export class GranthistoryComponent implements OnInit {
         this.http.get<WorkflowTransition[]>(url, httpOptions).subscribe((transitions: WorkflowTransition[]) => {
           this.transitions = transitions;
           this.grantHistory = history;
+          this.title = `<p class="mb-0 text-subheader text-center">Grant Workflow Notes | ` + this.utils.getGrantTypeName(this.data.data.grantTypeId) + `<p class='text-header text-center'>` + this.data.data.name + `</p>`;
         });
 
 
@@ -77,6 +81,7 @@ export class GranthistoryComponent implements OnInit {
         this.http.get<WorkflowTransition[]>(url, httpOptions).subscribe((transitions: WorkflowTransition[]) => {
           this.transitions = transitions;
           this.reportHistory = history;
+          this.title = `<p class="mb-0 text-subheader text-center">Report Workflow Notes | ` + this.utils.getGrantTypeName(this.data.data.grant.grantTypeId) + `<p class="mb-0 lh-12 text-center"><span class='text-header'>` + this.data.data.name + `</span></p><p class="mb-1 lh-20 text-center"><span class="text-subheader">` + this.data.data.grant.name + `</span></p>`;
         });
 
       });
@@ -89,6 +94,7 @@ export class GranthistoryComponent implements OnInit {
 
           this.transitions = transitions;
           this.disbursementHistory = history;
+          this.title = `<p class="mb-0 text-subheader text-center">Disbursement Approval Workflow Notes | ` + this.utils.getGrantTypeName(this.data.data.grant.grantTypeId) + `</p><p class="mb-1 lh-20 text-center"><span class="text-header text-center">` + this.data.data.grant.name + `</span></p>`;
         });
 
       });
