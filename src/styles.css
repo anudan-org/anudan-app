@@ -410,6 +410,11 @@ input:-internal-autofill-selected {
 .text-red {
   color: #d84830 !important;
 }
+
+.text-light-red {
+  color: rgb(244, 67, 54) !important;
+}
+
 .btn-green {
   background-color: transparent !important;
   border: 1px solid #39743c !important;
@@ -481,6 +486,10 @@ font-white {
 
 .text-green {
   color: #39743c !important;
+}
+
+.text-light-green{
+  color: #4dc252 !important;
 }
 
 .text-black{
