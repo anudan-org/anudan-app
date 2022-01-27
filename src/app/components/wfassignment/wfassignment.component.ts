@@ -85,7 +85,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
         if (this.data.model.type === 'grant') {
             const gtIdx = this.data.model.grantTypes.findIndex(gt => gt.id === this.data.model.grant.grantTypeId);
             this.grantType = (!gtIdx || gtIdx === -1) ? "External Workflow" : this.data.model.grantTypes[gtIdx].name;
-            this.title = `<p class="mb-0  text-subheader">Grant Workflow | ` + this.grantType + `<p class='text-header'>Grant ` + this.data.model.grant.name + `</p>`;
+            this.title = `<p class="mb-0  text-subheader">Grant Workflow | ` + this.grantType + `<p class='text-header'>` + ((this.data.model.grant.grantStatus.internalStatus === 'ACTIVE' || this.data.model.grant.grantStatus.internalStatus === 'CLOSED') ? `<span class="text-subheader">[` + this.data.model.grant.referenceNo + `] </span>` : ``) + this.data.model.grant.name + `</p>`;
             const httpOptions = {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
@@ -335,7 +335,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
             const gtIdx = this.data.model.grantTypes.findIndex(gt => gt.id === this.data.model.report.grant.grantTypeId);
             this.grantType = (!gtIdx || gtIdx === -1) ? "External Workflow" : this.data.model.grantTypes[gtIdx].name;
-            this.title = `<p class="mb-0 text-subheader">Report Workflow | ` + this.grantType + `<p class="mb-0 lh-12"><span class='text-header'>` + this.data.model.report.name + `</span></p><p class="mb-1 lh-20"><span class="text-subheader">` + this.data.model.report.grant.name + `</span></p>`;
+            this.title = `<p class="mb-0 text-subheader">Report Workflow | ` + this.grantType + `<p class="mb-0 lh-12"><span class='text-header'>` + this.data.model.report.name + `</span></p><p class="mb-1 lh-20"><span class="text-subheader">` + ((this.data.model.report.grant.grantStatus.internalStatus === 'ACTIVE' || this.data.model.report.grant.grantStatus.internalStatus === 'CLOSED') ? `<span>[` + this.data.model.report.grant.referenceNo + `] </span>` : ``) + this.data.model.report.grant.name + `</span></p>`;
             const httpOptions = {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
@@ -854,7 +854,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
         } else if (this.data.model.type === 'disbursement') {
             const gtIdx = this.data.model.grantTypes.findIndex(gt => gt.id === this.data.model.disbursement.grant.grantTypeId);
             this.grantType = this.data.model.grantTypes[gtIdx].name;
-            this.title = `<p class="mb-0 text-subheader">Disbursement Approval Workflow | ` + this.grantType + `</p><p class="mb-1 lh-20"><span class="text-header">` + this.data.model.disbursement.grant.name + `</span></p>`;
+            this.title = `<p class="mb-0 text-subheader">Disbursement Approval Workflow | ` + this.grantType + `</p><p class="mb-1 lh-20"><span class="text-header">` + ((this.data.model.disbursement.grant.grantStatus.internalStatus === 'ACTIVE' || this.data.model.disbursement.grant.grantStatus.internalStatus === 'CLOSED') ? `<span class="text-subheader">[` + this.data.model.disbursement.grant.referenceNo + `] </span>` : ``) + this.data.model.disbursement.grant.name + `</span></p>`;
             this.workflowDataService.getDisbursementWorkflow(this.data.model.disbursement).then(transitions => {
 
                 this.transitions = transitions;
