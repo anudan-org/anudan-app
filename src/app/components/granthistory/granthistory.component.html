@@ -21,7 +21,7 @@
         </div>
         <span style="position:relative;">
           <em style="position:absolute;top:4px;"
-            [ngClass]="getDirection(item.grantStatus.id,getPreviousStatus(i,'grant').id)">
+            [ngClass]="getDirection(item.grantStatus.id,getPreviousStatus(i,'grant').id,'grant')">
           </em>
         </span>
         <div
@@ -61,7 +61,7 @@
         </div>
         <span style="position:relative;">
           <em style="position:absolute;top:4px;"
-            [ngClass]="getDirection(item.status.id,getPreviousStatus(i,'report').id)">
+            [ngClass]="getDirection(item.status.id,getPreviousStatus(i,'report').id,'report')">
           </em>
         </span>
         <div
@@ -101,7 +101,7 @@
         </div>
         <span style="position:relative;">
           <em style="position:absolute;top:4px;"
-            [ngClass]="getDirection(item.status.id,getPreviousStatus(i,'disbursement').id)">
+            [ngClass]="getDirection(item.status.id,getPreviousStatus(i,'disbursement').id,'disbursement')">
           </em>
         </span>
         <div
