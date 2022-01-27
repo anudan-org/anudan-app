@@ -155,9 +155,16 @@ export class GranthistoryComponent implements OnInit {
     }
   }
 
-  getDirection(fromId, toId) {
-    if (!fromId || !toId) {
-      return 'fas fa-long-arrow-alt-right text-light-green';
+  getDirection(fromId, toId, _for) {
+    if (!toId) {
+      if (_for === 'grant') {
+        toId = this.data.data.grantStatus.id
+      } else if (_for === 'report') {
+        toId = this.data.data.status.id
+      } if (_for === 'disbursement') {
+        toId = this.data.data.status.id
+      }
+
     }
     const entry = this.transitions.filter(a => a.fromStateId === fromId && a.toStateId === toId);
     return entry.length > 0 ? 'fas fa-long-arrow-alt-right text-light-green' : 'fas fa-long-arrow-alt-right text-light-red';
