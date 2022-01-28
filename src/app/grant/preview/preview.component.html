@@ -31,7 +31,8 @@
           </div>
           <div *ngIf="hasMultipleBackwardFlow()">
             <button *ngIf="currentGrant.grantStatus.internalStatus!=='ACTIVE'" [disabled]="
-            wfDisabled" mat-stroked-button (click)="returnGrant()" [class]="'mr-1 btn btn-sm btn-green'">
+            wfDisabled" mat-stroked-button (click)="returnGrant()"
+              [class]="'mr-1 btn btn-sm btn-green border-light-red'">
               Request Modifications
             </button>
           </div>
@@ -40,8 +41,8 @@
             <ng-container *ngIf="currentGrant.grantStatus.internalStatus!=='ACTIVE'">
               <button [disabled]="
             wfDisabled" mat-stroked-button
-                (click)="submitGrant(getSingleBackwardFlow().fromStateId,'Returning to ' + getStateNameAndOwner(getSingleBackwardFlow().fromStateId),false)"
-                [class]="'mr-1 btn btn-sm btn-green'">
+                (click)="submitGrant(getSingleBackwardFlow().fromStateId,'<span class=\'text-light-red\'>Returning to</span> ' + getStateNameAndOwner(getSingleBackwardFlow().fromStateId),false)"
+                [class]="'mr-1 btn btn-sm btn-green border-light-red'">
                 Request Modifications
               </button>
             </ng-container>

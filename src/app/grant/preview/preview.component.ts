@@ -1622,7 +1622,7 @@ export class PreviewComponent implements OnInit {
         const toState = this.currentGrant.flowAuthorities.filter(a => a.fromStateId === response.toStateId)[0].fromName;
         const toStateOwner = this.currentGrant.workflowAssignments.filter(a => a.stateId === response.toStateId)[0].assignmentUser;
 
-        this.submitGrant(response.toStateId, "Returning to " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
+        this.submitGrant(response.toStateId, "<span class='text-light-red'>Returning to  </span>" + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
       }
     });
   }
