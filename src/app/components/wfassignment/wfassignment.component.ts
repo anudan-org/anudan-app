@@ -108,6 +108,10 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         /* if (transition._from === 'GMT Review') {
                             this.renderer.setStyle(node, 'position', 'relative');
                             this.renderer.setStyle(node, 'left', '200px');
+                        }
+                        if (transition._from === 'GMT Review 2') {
+                            this.renderer.setStyle(node, 'position', 'relative');
+                            this.renderer.setStyle(node, 'left', '-200px');
                         } */
                         /* if (this.data.model.workflowStatuses.filter((status) => status.id === transition.fromStateId)[0].internalStatus === 'DRAFT') {
                             const notesNode = this.renderer.createElement('span');

@@ -16,7 +16,8 @@
         </div>
         <div *ngIf="hasMultipleBackwardFlow()">
           <button [disabled]="
-          wfDisabled" mat-stroked-button (click)="returnReport()" [class]="'mr-1 btn btn-sm btn-green'">
+          wfDisabled" mat-stroked-button (click)="returnReport()"
+            [class]="'mr-1 btn btn-sm btn-green border-light-red'">
             Request Modifications
           </button>
         </div>
@@ -25,8 +26,8 @@
           <ng-container>
             <button [disabled]="
           wfDisabled" mat-stroked-button
-              (click)="submitReport(getSingleBackwardFlow().toStateId,'Returning to ' + getStateNameAndOwner(getSingleBackwardFlow().toStateId,false))"
-              [class]="'mr-1 btn btn-sm btn-green'">
+              (click)="submitReport(getSingleBackwardFlow().toStateId,'<span class=\'text-light-red\'>Returning to </span>' + getStateNameAndOwner(getSingleBackwardFlow().toStateId,false))"
+              [class]="'mr-1 btn btn-sm btn-green border-light-red'">
               Request Modifications
             </button>
           </ng-container>

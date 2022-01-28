@@ -1410,3 +1410,7 @@ footer{
 .lh-20{
   line-height: 20px;
 }
+
+.border-light-red{
+  border : 1px solid rgb(244, 67, 54) !important;
+}
