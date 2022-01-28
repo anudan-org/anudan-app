@@ -1,135 +1,146 @@
-<h4>Workflow Notes</h4>
-<span
-  class=""
-  style="position: absolute; right: 10px; left: auto; top: 10px"
-  (click)="onNoClick()"
->
+<h4 [innerHTML]="title" class="mb-4"></h4>
+<span class="" style="position: absolute; right: 10px; left: auto; top: 10px" (click)="onNoClick()">
   <mat-icon>close</mat-icon>
 </span>
-<div
-  *ngIf="data.type === 'grant'"
-  #flowContainer
-  id="flowContainer"
-  class="text-left"
-  style="height: calc(100vh - 170px);overflow-y: scroll;"
->
-  <ng-container *ngFor="let item of grantHistory">
+<div *ngIf="data.type === 'grant'" #flowContainer id="flowContainer" class="text-left"
+  style="height: calc(100vh - 192px);overflow-y: auto;">
+  <ng-container *ngFor="let item of grantHistory;let i = index;">
     <ng-container *ngIf="item.note !== '' && item.noteAddedByUser">
-      <p class="mb-0 p-1">
-        <span
-          [class]="
-            'badge mb-1 mr-2 text-white state-' +
+      <div class="mb-0 px-1" style="display: flex;">
+        <div
+          style="display: flex; flex-direction: column; flex-shrink: 0; align-items: center; justify-content: center;">
+          <span [class]="
+            'badge mb-1 mr-2 text-black state-' +
             item.grantStatus.internalStatus.toLowerCase()
+           + ' '" style="font-weight: 400;box-shadow: 2px 2px 4px;align-self:flex-start">{{ item.grantStatus.name
+            }}</span>
+          <span class="text-subheader"
+            style="align-self: flex-start;max-width: 100px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">{{
+            item.noteAddedByUser.firstName }}
+            {{ item.noteAddedByUser.lastName }}</span>
+        </div>
+        <span style="position:relative;">
+          <em style="position:absolute;top:4px;"
+            [ngClass]="getDirection(item.grantStatus.id,getPreviousStatus(i,'grant').id,'grant')">
+          </em>
+        </span>
+        <div
+          style="display: flex; flex-direction: column; flex-shrink: 0; align-items: center; justify-content: center;">
+          <span [class]="
+            'badge mb-1 mr-2 text-black state-' +
+            getPreviousStatus(i,'grant').internalStatus.toLowerCase() + ' ml-4'
           "
-          >{{ item.grantStatus.name }}</span
-        >
-        <b
-          >{{ item.noteAddedByUser.firstName }}
-          {{ item.noteAddedByUser.lastName }}</b
-        >
-        <small> ({{ item.noteAdded | date: "dd-MMM-yyyy hh:mm a" }})</small>
-      </p>
-      <pre class="p-1" [innerHTML]="item.note"></pre>
+            style="opacity: 0.5; box-shadow: none;font-weight: 400;place-self: flex-start;">{{getPreviousStatus(i,'grant').name}}</span>
+          <div class="text-subheader ml-4" [innerHTML]="getPreviousOwner(i-1,'grant')"></div>
+        </div>
+
+      </div>
+      <small class="text-subheader px-1"> {{ item.noteAdded | date: "dd-MMM-yyyy hh:mm a" }}</small>
+      <pre class="p-1" style="background: #efefef;margin-right: 25px;" [innerHTML]="item.note"></pre>
     </ng-container>
   </ng-container>
   <ng-container *ngIf="!data.data.noteAddedByUser && grantHistory.length === 0">
     <p>No notes have been added until now.</p>
   </ng-container>
 </div>
-<div
-  *ngIf="data.type === 'report'"
-  #flowContainer
-  id="flowContainer"
-  class="text-left"
-  style="height: calc(100vh - 170px);overflow-y: scroll;"
->
-  <ng-container *ngFor="let item of reportHistory">
+<div *ngIf="data.type === 'report'" #flowContainer id="flowContainer" class="text-left"
+  style="height: calc(100vh - 213px);overflow-y: auto;">
+  <ng-container *ngFor="let item of reportHistory;let i = index;">
     <ng-container *ngIf="item.note !== '' && item.noteAddedByUser">
-      <p class="mb-0 p-1">
-        <span
-          [class]="
-            'badge mb-1 mr-2 text-white state-' +
+      <div class="mb-0 px-1" style="display: flex;">
+        <div
+          style="display: flex; flex-direction: column; flex-shrink: 0; align-items: center; justify-content: center;">
+          <span [class]="
+            'badge mb-1 mr-2 text-black state-' +
             item.status.internalStatus.toLowerCase()
+           + ' '" style="font-weight: 400;box-shadow: 2px 2px 4px;align-self:flex-start">{{ item.status.name }}</span>
+          <span class="text-subheader"
+            style="align-self: flex-start;max-width: 100px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">{{
+            item.noteAddedByUser.firstName }}
+            {{ item.noteAddedByUser.lastName }}</span>
+        </div>
+        <span style="position:relative;">
+          <em style="position:absolute;top:4px;"
+            [ngClass]="getDirection(item.status.id,getPreviousStatus(i,'report').id,'report')">
+          </em>
+        </span>
+        <div
+          style="display: flex; flex-direction: column; flex-shrink: 0; align-items: center; justify-content: center;">
+          <span [class]="
+            'badge mb-1 mr-2 text-black state-' +
+            getPreviousStatus(i,'report').internalStatus.toLowerCase() + ' ml-4'
           "
-          >{{ item.status.name }}</span
-        >
-        <b
-          >{{ item.noteAddedByUser.firstName }}
-          {{ item.noteAddedByUser.lastName }}</b
-        >
-        <small> ({{ item.noteAdded | date: "dd-MMM-yyyy hh:mm a" }})</small>
-      </p>
-      <pre class="p-1">{{ item.note }}</pre>
+            style="opacity: 0.5; box-shadow: none;font-weight: 400;place-self: flex-start;">{{getPreviousStatus(i,'report').name}}</span>
+          <div class="text-subheader ml-4" [innerHTML]="getPreviousOwner(i-1,'report')"></div>
+        </div>
+      </div>
+      <small class="text-subheader px-1"> {{ item.noteAdded | date: "dd-MMM-yyyy hh:mm a" }}</small>
+      <pre class="p-1" style="background: #efefef;margin-right: 25px;">{{ item.note }}</pre>
     </ng-container>
   </ng-container>
-  <ng-container
-    *ngIf="!data.data.noteAddedByUser && reportHistory.length === 0"
-  >
+  <ng-container *ngIf="!data.data.noteAddedByUser && reportHistory.length === 0">
     <p>No notes have been added until now.</p>
   </ng-container>
 </div>
 
-<div
-  *ngIf="data.type === 'disbursement'"
-  #flowContainer
-  id="flowContainer"
-  class="text-left"
-  style="height: calc(100vh - 170px);overflow-y: scroll;"
->
-  <ng-container *ngFor="let item of disbursementHistory">
+<div *ngIf="data.type === 'disbursement'" #flowContainer id="flowContainer" class="text-left"
+  style="height: calc(100vh - 197px);overflow-y: auto;">
+  <ng-container *ngFor="let item of disbursementHistory;let i = index;">
     <ng-container *ngIf="item.note !== '' && item.noteAddedByUser">
-      <p class="mb-0 p-1">
-        <span
-          [class]="
-            'badge mb-1 mr-2 text-white state-' +
+      <div class="mb-0 px-1" style="display: flex;">
+        <div
+          style="display: flex; flex-direction: column; flex-shrink: 0; align-items: center; justify-content: center;">
+          <span [class]="
+            'badge mb-1 mr-2 text-black state-' +
             item.status.internalStatus.toLowerCase()
+           + ' '" style="font-weight: 400;box-shadow: 2px 2px 4px;align-self:flex-start">{{ item.status.name }}</span>
+          <span class="text-subheader"
+            style="align-self: flex-start;max-width: 100px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">{{
+            item.noteAddedByUser.firstName }}
+            {{ item.noteAddedByUser.lastName }}</span>
+        </div>
+        <span style="position:relative;">
+          <em style="position:absolute;top:4px;"
+            [ngClass]="getDirection(item.status.id,getPreviousStatus(i,'disbursement').id,'disbursement')">
+          </em>
+        </span>
+        <div
+          style="display: flex; flex-direction: column; flex-shrink: 0; align-items: center; justify-content: center;">
+          <span [class]="
+            'badge mb-1 mr-2 text-black state-' +
+            getPreviousStatus(i,'disbursement').internalStatus.toLowerCase() + ' ml-4'
           "
-          >{{ item.status.name }}</span
-        >
-        <b
-          >{{ item.noteAddedByUser.firstName }}
-          {{ item.noteAddedByUser.lastName }}</b
-        >
-        <small> ({{ item.noteAdded | date: "dd-MMM-yyyy hh:mm a" }})</small>
-      </p>
-      <p class="p-1">{{ item.note }}</p>
+            style="opacity: 0.5; box-shadow: none;font-weight: 400;place-self: flex-start;">{{getPreviousStatus(i,'disbursement').name}}</span>
+          <div class="text-subheader ml-4" [innerHTML]="getPreviousOwner(i-1,'disbursement')"></div>
+        </div>
+
+      </div>
+      <small class="text-subheader px-1"> {{ item.noteAdded | date: "dd-MMM-yyyy hh:mm a" }}</small>
+      <pre class="p-1" style="background: #efefef;margin-right: 25px;">{{ item.note }}</pre>
     </ng-container>
   </ng-container>
-  <ng-container
-    *ngIf="!data.data.noteAddedByUser && disbursementHistory.length === 0"
-  >
+  <ng-container *ngIf="!data.data.noteAddedByUser && disbursementHistory.length === 0">
     <p>No notes have been added until now.</p>
   </ng-container>
 </div>
 
-<div
-  *ngIf="data.type === 'grant-closure'"
-  #flowContainer
-  id="flowContainer"
-  class="text-left"
-  style="height: calc(100vh - 170px);overflow-y: scroll;"
->
+<div *ngIf="data.type === 'grant-closure'" #flowContainer id="flowContainer" class="text-left"
+  style="height: calc(100vh - 170px);overflow-y: auto;">
   <ng-container *ngFor="let item of closureHistory">
     <ng-container *ngIf="item.note !== '' && item.noteAddedByUser">
       <p class="mb-0 p-1">
-        <span
-          [class]="
+        <span [class]="
             'badge mb-1 mr-2 text-white state-' +
             item.status.internalStatus.toLowerCase()
-          "
-          >{{ item.status.name }}</span
-        >
-        <strong
-          >{{ item.noteAddedByUser.firstName }}
+          ">{{ item.status.name }}</span>
+        <strong>{{ item.noteAddedByUser.firstName }}
           {{ item.noteAddedByUser.lastName }}</strong>
         <small> ({{ item.noteAdded | date: "dd-MMM-yyyy hh:mm a" }})</small>
       </p>
       <p class="p-1">{{ item.note }}</p>
     </ng-container>
   </ng-container>
-  <ng-container
-    *ngIf="!data.data.noteAddedByUser && closureHistory.length === 0"
-  >
+  <ng-container *ngIf="!data.data.noteAddedByUser && closureHistory.length === 0">
     <p>No notes have been added until now.</p>
   </ng-container>
 </div>

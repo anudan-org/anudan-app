@@ -2,27 +2,34 @@
   <mat-icon>close</mat-icon>
 </span>
 <div class="p-2">
-<mat-card-title *ngIf="!validationResult.canMove">Unable to proceed</mat-card-title>
-<ng-container *ngIf="validationResult.error.length>0">
-  <p class="text-header-light mb-1" style="font-size:12px !important;">
-    Warnings:
-  </p>
-  <p *ngFor="let e of validationResult.error" class="d-flex align-items-center text-subheader-light" style="font-size:12px !important;"><mat-icon [inline]="true" class="material-icons-outlined text-danger mr-1">
-    error_outline
-  </mat-icon>{{e.message}}</p>
-</ng-container>
-<ng-container *ngIf="validationResult.info.length>0">
-  <p class="text-header-light mb-1" style="font-size:12px !important;">
-    Information:
-  </p>
-  <p *ngFor="let e of validationResult.info" class="d-flex align-items-center text-subheader-light" style="font-size:12px !important;"><mat-icon [inline]="true" class="material-icons-outlined text-grey mr-1">
-    info_outline
-  </mat-icon>{{e.message}}</p>
-</ng-container>
-<mat-card-title *ngIf="validationResult.canMove">Note</mat-card-title>
+  <p class="text-header" [innerHTML]="data.tTitle"></p>
+  <mat-card-title *ngIf="!validationResult.canMove">Unable to proceed</mat-card-title>
+  <ng-container *ngIf="validationResult.error.length>0">
+    <p class="text-header-light mb-1" style="font-size:12px !important;">
+      Warnings:
+    </p>
+    <p *ngFor="let e of validationResult.error" class="d-flex align-items-center text-subheader-light"
+      style="font-size:12px !important;">
+      <mat-icon [inline]="true" class="material-icons-outlined text-danger mr-1">
+        error_outline
+      </mat-icon>{{e.message}}
+    </p>
+  </ng-container>
+  <ng-container *ngIf="validationResult.info.length>0">
+    <p class="text-header-light mb-1" style="font-size:12px !important;">
+      Information:
+    </p>
+    <p *ngFor="let e of validationResult.info" class="d-flex align-items-center text-subheader-light"
+      style="font-size:12px !important;">
+      <mat-icon [inline]="true" class="material-icons-outlined text-grey mr-1">
+        info_outline
+      </mat-icon>{{e.message}}
+    </p>
+  </ng-container>
+  <mat-card-title *ngIf="validationResult.canMove">Note</mat-card-title>
 
-<!--<mat-card-subtitle></mat-card-subtitle>-->
-<!--<div #scrollContainer style="min-height: 300px;max-height: 300px;overflow-y: scroll;">
+  <!--<mat-card-subtitle></mat-card-subtitle>-->
+  <!--<div #scrollContainer style="min-height: 300px;max-height: 300px;overflow-y: scroll;">
 &lt;!&ndash;<mat-nav-list>
   <ng-container *ngFor="let note of passedNotesInfo.notes">
     <mat-list-item>
@@ -33,18 +40,23 @@
   </ng-container>
 </mat-nav-list>&ndash;&gt;
 </div>-->
-<ng-container>
-  <mat-form-field *ngIf="validationResult.canMove">
-    <textarea *ngIf="validationResult.canMove" [disabled]="!validationResult.canMove" class="anu-input" matInput #inputMessage></textarea>
-  </mat-form-field>
-  <mat-expansion-panel style="background: #f8f8f8;" [expanded]="false" class="mb-3 grants-expansion-panel" *ngIf="original && current" [ngStyle]="hasChanges?{'visibility':'visible','height':'auto'}:{'visibility':'hidden','height':'0'}">
-    <mat-expansion-panel-header class="grant-expansion-panel" style="padding: 15px;">
-      <mat-panel-title style="display: flex; align-items: center">
-        <small>View changes</small>
-      </mat-panel-title>
-    </mat-expansion-panel-header>
-    <app-grant-compare [for]="'Grant'" [compareType]="'strong'" [newItem]="current" [oldItem]="original" [standAlone]="false" [title]="'Grant Changes'" [compare1Title]="'Current State'" [compare2Title]="'Previous State'" (hasChanges)="checkIfHasDifferences($event)"></app-grant-compare>
-    <!--<div *ngIf="grantDiff" style="background:#fff;padding:5px;max-height:200px;min-width:600px;overflow:scroll;">
+  <ng-container>
+    <mat-form-field *ngIf="validationResult.canMove">
+      <textarea *ngIf="validationResult.canMove" [disabled]="!validationResult.canMove" class="anu-input" matInput
+        #inputMessage></textarea>
+    </mat-form-field>
+    <mat-expansion-panel style="background: #f8f8f8;" [expanded]="false" class="mb-3 grants-expansion-panel"
+      *ngIf="original && current"
+      [ngStyle]="hasChanges?{'visibility':'visible','height':'auto'}:{'visibility':'hidden','height':'0'}">
+      <mat-expansion-panel-header class="grant-expansion-panel" style="padding: 15px;">
+        <mat-panel-title style="display: flex; align-items: center">
+          <small>View changes</small>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+      <app-grant-compare [for]="'Grant'" [compareType]="'strong'" [newItem]="current" [oldItem]="original"
+        [standAlone]="false" [title]="'Grant Changes'" [compare1Title]="'Current State'"
+        [compare2Title]="'Previous State'" (hasChanges)="checkIfHasDifferences($event)"></app-grant-compare>
+      <!--<div *ngIf="grantDiff" style="background:#fff;padding:5px;max-height:200px;min-width:600px;overflow:scroll;">
       <div *ngIf="grantDiff.oldGrantName || grantDiff.newGrantName" class="mb-2 change-box">
         <span class="change-title">Grant name changed</span>
         <div class="change-new" *ngIf="grantDiff.newGrantName">{{grantDiff.newGrantName}}</div>
@@ -277,8 +289,9 @@
 
 
     </div> -->
-  </mat-expansion-panel>
+    </mat-expansion-panel>
 
-  <button class="btn btn-sm btn-green-primary" (click)="close(true)" [disabled]="!validationResult.canMove">Proceed</button>
-</ng-container>
+    <button class="btn btn-sm btn-green-primary" (click)="close(true)"
+      [disabled]="!validationResult.canMove">Proceed</button>
+  </ng-container>
 </div>

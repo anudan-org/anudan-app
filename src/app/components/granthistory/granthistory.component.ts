@@ -1,3 +1,6 @@
+import { UtilsService } from './../../utils.service';
+import { WorkflowDataService } from 'app/workflow.data.service';
+import { WorkflowStatus } from './../../model/dahsboard';
 import { ClosureHistory } from './../../model/closures';
 import { Component, Inject, OnInit, ViewChild, ElementRef, Renderer2, HostListener } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef, MatButtonModule } from '@angular/material';
@@ -29,6 +32,8 @@ export class GranthistoryComponent implements OnInit {
   reportHistory: ReportHistory[] = [];
   disbursementHistory: DisbursementHistory[] = [];
   closureHistory: ClosureHistory[] = [];
+  transitions: WorkflowTransition[];
+  title: string;
 
   constructor(
     public dialogRef: MatDialogRef<GranthistoryComponent>
@@ -36,6 +41,8 @@ export class GranthistoryComponent implements OnInit {
     , private http: HttpClient
     , private renderer: Renderer2
     , @Inject(ElementRef) er: ElementRef
+    , private workflowDataService: WorkflowDataService
+    , private utils: UtilsService
   ) {
     this.dialogRef.disableClose = true;
   }
@@ -50,22 +57,46 @@ export class GranthistoryComponent implements OnInit {
     };
 
     if (this.data.type === 'grant') {
-      const url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/grant/' + this.data.data.id + '/history/';
+      let url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/grant/' + this.data.data.id + '/history/';
 
       this.http.get<GrantHistory[]>(url, httpOptions).subscribe((history: GrantHistory[]) => {
-        this.grantHistory = history;
+
+        url = '/api/admin/workflow/grant/' + this.data.data.id + '/user/' + JSON.parse(localStorage.getItem('USER')).id;
+
+        this.http.get<WorkflowTransition[]>(url, httpOptions).subscribe((transitions: WorkflowTransition[]) => {
+          this.transitions = transitions;
+          this.grantHistory = history;
+          this.title = `<p class="mb-0 text-subheader text-center">Grant Workflow Notes | ` + this.utils.getGrantTypeName(this.data.data.grantTypeId) + `<p class='text-header text-center'>` + ((this.data.data.grantStatus.internalStatus === 'ACTIVE' || this.data.data.grantStatus.internalStatus === 'CLOSED') ? `<span class="text-subheader">[` + this.data.data.referenceNo + `] </span>` : ``) + this.data.data.name + `</p>`;
+        });
+
+
       });
     } else if (this.data.type === 'report') {
-      const url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/report/' + this.data.data.id + '/history/';
+      let url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/report/' + this.data.data.id + '/history/';
 
       this.http.get<ReportHistory[]>(url, httpOptions).subscribe((history: ReportHistory[]) => {
-        this.reportHistory = history;
+
+        url = '/api/admin/workflow/report/' + this.data.data.id + '/user/' + JSON.parse(localStorage.getItem('USER')).id;
+
+        this.http.get<WorkflowTransition[]>(url, httpOptions).subscribe((transitions: WorkflowTransition[]) => {
+          this.transitions = transitions;
+          this.reportHistory = history;
+          this.title = `<p class="mb-0 text-subheader text-center">Report Workflow Notes | ` + this.utils.getGrantTypeName(this.data.data.grant.grantTypeId) + `<p class="mb-0 lh-12 text-center"><span class='text-header'>` + this.data.data.name + `</span></p><p class="mb-1 lh-20 text-center"><span class="text-subheader">` + ((this.data.data.grant.grantStatus.internalStatus === 'ACTIVE' || this.data.data.grant.grantStatus.internalStatus === 'CLOSED') ? `<span class="text-subheader">[` + this.data.data.grant.referenceNo + `] </span>` : ``) + this.data.data.grant.name + `</span></p>`;
+        });
+
       });
     } else if (this.data.type === 'disbursement') {
       const url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/disbursements/' + this.data.data.id + '/history/';
 
       this.http.get<DisbursementHistory[]>(url, httpOptions).subscribe((history: DisbursementHistory[]) => {
-        this.disbursementHistory = history;
+
+        this.workflowDataService.getDisbursementWorkflow(this.data.data).then(transitions => {
+
+          this.transitions = transitions;
+          this.disbursementHistory = history;
+          this.title = `<p class="mb-0 text-subheader text-center">Disbursement Approval Workflow Notes | ` + this.utils.getGrantTypeName(this.data.data.grant.grantTypeId) + `</p><p class="mb-1 lh-20 text-center"><span class="text-header text-center">` + ((this.data.data.grant.grantStatus.internalStatus === 'ACTIVE' || this.data.data.grant.grantStatus.internalStatus === 'CLOSED') ? `<span class="text-subheader">[` + this.data.data.grant.referenceNo + `] </span>` : ``) + this.data.data.grant.name + `</span></p>`;
+        });
+
       });
     } else if (this.data.type === 'grant-closure') {
       const url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/closure/' + this.data.data.id + '/history/';
@@ -87,5 +118,104 @@ export class GranthistoryComponent implements OnInit {
   }
   ngAfterViewInit() {
     //Added new comment again
+  }
+
+  getPreviousStatus(idx, _for) {
+    let status;
+    if (_for === 'grant') {
+      status = this.grantHistory[idx - 1];
+      if (status) {
+        return status.grantStatus;
+      } else {
+        const newStatus = new WorkflowStatus();
+        newStatus.name = this.data.data.grantStatus.name;
+        newStatus.internalStatus = this.data.data.grantStatus.internalStatus;
+        return newStatus;
+      }
+    } else if (_for === 'report') {
+      status = this.reportHistory[idx - 1];
+      if (status) {
+        return status.status;
+      } else {
+        const newStatus = new WorkflowStatus();
+        newStatus.name = this.data.data.status.name;
+        newStatus.internalStatus = this.data.data.status.internalStatus;
+        return newStatus;
+      }
+    } else if (_for === 'disbursement') {
+      status = this.disbursementHistory[idx - 1];
+      if (status) {
+        return status.status;
+      } else {
+        const newStatus = new WorkflowStatus();
+        newStatus.name = this.data.data.status.name;
+        newStatus.internalStatus = this.data.data.status.internalStatus;
+        return newStatus;
+      }
+    }
+  }
+
+  getDirection(fromId, toId, _for) {
+    if (!toId) {
+      if (_for === 'grant') {
+        toId = this.data.data.grantStatus.id
+      } else if (_for === 'report') {
+        toId = this.data.data.status.id
+      } if (_for === 'disbursement') {
+        toId = this.data.data.status.id
+      }
+
+    }
+    const entry = this.transitions.filter(a => a.fromStateId === fromId && a.toStateId === toId);
+    return entry.length > 0 ? 'fas fa-long-arrow-alt-right text-light-green' : 'fas fa-long-arrow-alt-right text-light-red';
+  }
+
+  getPreviousOwner(idx, _for) {
+    if (_for === 'grant') {
+      const status = this.grantHistory[idx];
+      if (status) {
+        const ass = this.data.data.workflowAssignments.filter(a => a.stateId === status.grantStatus.id)[0];
+        if (ass) {
+          return '&nbsp;';//ass.assignmentUser.firstName + ' ' + ass.assignmentUser.lastName;
+        } else {
+          return '&nbsp;';
+        }
+
+      } else {
+        const currentAss = this.data.data.workflowAssignments.filter(a => a.stateId === this.data.data.grantStatus.id)[0].assignmentUser;
+        return '&nbsp;';//currentAss.firstName + ' ' + currentAss.lastName;
+      }
+    } else if (_for === 'report') {
+      const status = this.reportHistory[idx];
+      if (status) {
+        const ass = this.data.data.workflowAssignments.filter(a => a.stateId === status.status.id)[0];
+        if (ass) {
+          return '&nbsp;';//ass.assignmentUser.firstName + ' ' + ass.assignmentUser.lastName;
+        } else {
+          return '&nbsp;';
+        }
+
+      } else {
+
+        const currentAss = this.data.data.workflowAssignments.filter(a => a.stateId === this.data.data.status.id)[0].assignmentUser;
+        return '&nbsp;';//currentAss.firstName + ' ' + currentAss.lastName;
+      }
+    } else if (_for === 'disbursement') {
+      const status = this.disbursementHistory[idx];
+      if (status) {
+        const ass = this.data.data.assignments.filter(a => a.stateId === status.status.id)[0];
+        if (ass) {
+          return '&nbsp;';//ass.assignmentUser.firstName + ' ' + ass.assignmentUser.lastName;
+        } else {
+          return '&nbsp;';
+        }
+
+      } else {
+
+        const currentAss = this.data.data.assignments.filter(a => a.stateId === this.data.data.status.id)[0].assignmentUser;
+        return '&nbsp;';//currentAss.firstName + ' ' + currentAss.lastName;
+      }
+    }
+
   }
 }

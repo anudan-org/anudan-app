@@ -35,7 +35,9 @@ import { TitleCasePipe } from '@angular/common';
   providers: [PDFExportComponent, SidebarComponent, TitleCasePipe],
   styles: [`
     ::ng-deep .wf-assignment-class .mat-dialog-container{
-        overflow: hidden !important;
+      overflow: scroll !important;
+    height: calc(100vh - 114px) !important;
+    padding-top: 10px !important;
     }
   `]
 })

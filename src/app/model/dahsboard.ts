@@ -150,6 +150,8 @@ export class FlowAuthority {
   action: string;
   noteRequired: boolean;
   seqOrder: number;
+  tTitle: string;
+  forwardDirection: boolean;
 }
 
 export class Submission {
@@ -423,6 +425,7 @@ export class GrantNote {
   canMove: boolean;
   messages: any;
   validationResult: any;
+  tTitle: string;
 }
 
 export class SerializationHelper {
@@ -508,6 +511,7 @@ export class WorkflowAssignmentModel {
   grant: Grant;
   type: string;
   canManage: boolean;
+  grantTypes: GrantType[];
   constructor() { }
 }
 

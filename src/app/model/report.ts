@@ -1,5 +1,5 @@
 import { User } from 'app/model/user';
-import { Grant, WorkflowStatus, Section, WorkflowAssignments, FlowAuthority, SectionDiff } from './dahsboard';
+import { Grant, WorkflowStatus, Section, WorkflowAssignments, FlowAuthority, SectionDiff, GrantType } from './dahsboard';
 
 export class Report {
     id: number;
@@ -24,7 +24,7 @@ export class Report {
     grant: Grant;
     canEdit: boolean;
     canManage: boolean;
-    flowAuthorities: FlowAuthority;
+    flowAuthorities: FlowAuthority[];
     cumulativeActuals: number;
     linkedReports: number;
     forGranteeUse: boolean;
@@ -56,6 +56,10 @@ export class ReportHistory {
     canEdit: boolean;
     canManage: boolean;
     flowAuthorities: FlowAuthority;
+    note: string;
+    noteAdded: Date;
+    noteAddedBy: string;
+    noteAddedByUser: User;
 }
 
 export class ReportDetails {
@@ -98,6 +102,7 @@ export class ReportWorkflowAssignmentModel {
     granteeUsers: User[];
     report: Report;
     canManage: boolean;
+    grantTypes: GrantType[];
     constructor() { }
 }
 
@@ -118,6 +123,7 @@ export class ReportNote {
     originalReport: Report;
     canManage: boolean;
     validationResult: any;
+    tTitle: string;
 }
 
 export class ReportDiff {

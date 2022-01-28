@@ -1,4 +1,4 @@
-import { WorkflowStatus, Grant, FlowAuthority, SectionDiff } from "./dahsboard";
+import { WorkflowStatus, Grant, FlowAuthority, SectionDiff, GrantType } from "./dahsboard";
 import { User } from "./user";
 
 export class Disbursement {
@@ -8,7 +8,7 @@ export class Disbursement {
   status: WorkflowStatus;
   grant: Grant;
   assignments: DisbursementAssignment[];
-  flowPermissions: FlowAuthority;
+  flowPermissions: FlowAuthority[];
   note: string;
   noteAddedByUser: User;
   noteAdded: Date;
@@ -64,6 +64,7 @@ export class DisbursementWorkflowAssignmentModel {
   type: string;
   disbursement: Disbursement;
   canManage: boolean;
+  grantTypes: GrantType[];
   constructor() { }
 }
 
@@ -84,6 +85,7 @@ export class DisbursementNote {
   originalDisbursement: Disbursement;
   canManage: boolean;
   validationResult: any;
+  tTitle: string;
 }
 
 export class DisbursementDiff {

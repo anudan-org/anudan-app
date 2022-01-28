@@ -39,7 +39,7 @@
                                 " [accept]="message.acceptedFileTypes" />
         </div>
       </div>
-      <mat-nav-list style="height:calc(100vh - 315px); overflow-y: scroll;overflow-x: hidden;">
+      <mat-nav-list style="height:calc(100vh - 315px); overflow-y: auto;overflow-x: hidden;">
         <ng-container *ngFor="let attachment of projectDocs">
           <mat-list-item>
             <p [id] mat-line style="

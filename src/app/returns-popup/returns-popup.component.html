@@ -1,0 +1,21 @@
+<!-- <span class="" style="position:absolute; right: 2px; left: auto;top: 2px;z-index:1;" (click)="close()">
+  <mat-icon>close</mat-icon> 
+</span>-->
+<p *ngIf="title" class="text-header" [innerHTML]="title"></p>
+<div class="row px-3" *ngIf="message.paths && message.paths.length>0">
+  <select #returnState class="anu-wf-input anu-select" (change)="selectionChanged($event)"
+    style="min-width: 235px !important;max-width: 235px !important;margin: 20px 0;">
+    <option value="0">-- Return To --</option>
+    <option *ngFor="let return of message.paths" [value]="return.fromStateId">{{return.fromName}}
+      [{{getToStateOwner(return.fromStateId)}}]
+    </option>
+  </select>
+</div>
+<div mat-dialog-actions class="row px-3">
+  <button class="btn btn-sm btn-green border-light-red" [disabled]="!prompt" (click)="close()">
+    Send Request
+  </button>
+  <button class="btn btn-sm btn-green" (click)="dismiss()">
+    Not Now
+  </button>
+</div>

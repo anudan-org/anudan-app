@@ -1,34 +1,37 @@
 <div class="col-12 bg-white" style="position: sticky; top: 80px; z-index: 1040">
   <!--<span class="badge badge-dark text-white pull-right mt-2" matBadgeSize="medium">{{currentGrant.grantStatus.displayName}}</span>-->
   <div class="row">
-    <h4 class="col-11 text-left my-3 section-header">Grant Header
-      <span *ngIf="(currentGrant.grantStatus.internalStatus === 'DRAFT' ||
+    <h4 class="col-11 text-left mt-3 mb-0 section-header">
+      <p *ngIf="(currentGrant.grantStatus.internalStatus === 'DRAFT' ||
       currentGrant.grantStatus.internalStatus === 'REVIEW') &&
-    currentGrant.origGrantId" class="text-subheader d-flex align-items-center">
+    currentGrant.origGrantId" class="text-subheader d-flex align-items-center mb-0">
         <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
           info_outline
         </mat-icon>
         <span>Amendment in-progress [<strong>{{ currentGrant.origGrantRefNo }}</strong>]</span>
-      </span>
+      </p>
+    </h4>
+    <h4 class="col-11 text-left my-3 section-header">Grant Header
     </h4>
     <div class="col-1 text-right" style="display: flex; align-items: center; justify-content: flex-start">
       <mat-icon mat-button [matMenuTriggerFor]="menu1" class="float-right" style="cursor: pointer">more_vert
       </mat-icon>
       <mat-menu #menu1="matMenu">
         <button mat-menu-item (click)="showWorkflowAssigments()">
-          <mat-icon class="ml-1">assignment</mat-icon>View Assignments
+          <mat-icon class="ml-1">assignment</mat-icon>Manage Assignments
         </button>
         <button *ngIf="
               this.appComp.loggedInUser.organization.organizationType !==
               'GRANTEE'
             " mat-menu-item (click)="showHistory('grant', currentGrant)">
-          <mat-icon class="ml-1">comment</mat-icon>View Notes
+          <mat-icon class="ml-1">local_library</mat-icon>View Notes
         </button>
         <button mat-menu-item (click)="showProjectDocuments()">
-          <mat-icon class="ml-1">attachment</mat-icon>View Project Documents
+          <mat-icon class="ml-1">attachment</mat-icon>Manage Project Documents
         </button>
         <button mat-menu-item (click)="showGrantTags()" [disabled]="orgTags.length===0">
-          <mat-icon class="ml-1">label</mat-icon>View Tags
+          <em class="fas fa-tags ml-2 mr-4"
+            style="color:rgba(0,0,0,.54);transform: scaleX(-1);font-size: 12px;"></em>Manage Tags
         </button>
         <hr *ngIf="currentGrant.origGrantId" />
         <button *ngIf="currentGrant.origGrantId" mat-menu-item (click)="manageGrant()">

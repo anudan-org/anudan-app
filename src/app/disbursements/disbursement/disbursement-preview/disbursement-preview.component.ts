@@ -1,3 +1,4 @@
+import { ReturnsPopupComponent } from './../../../returns-popup/returns-popup.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DocManagementService } from './../../../doc-management.service';
 import { DocpreviewService } from './../../../docpreview.service';
@@ -261,10 +262,11 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
         wfModel.workflowAssignments = this.currentDisbursement.assignments;
         wfModel.type = this.appComponent.currentView;
         wfModel.disbursement = this.currentDisbursement;
+        wfModel.grantTypes = this.appComponent.grantTypes;
         wfModel.disbursement.grant.isInternal = this.appComponent.grantTypes.filter(gt => this.currentDisbursement.grant.grantTypeId)[0].internal;
         wfModel.canManage = this.currentDisbursement.canManage;
         const dialogRef = this.dialog.open(WfassignmentComponent, {
-          data: { model: wfModel, userId: this.appComponent.loggedInUser.id, appComp: this.appComponent },
+          data: { model: wfModel, userId: this.appComponent.loggedInUser.id, appComp: this.appComponent, adminComp: this.adminComp },
           panelClass: "wf-assignment-class",
         });
 
@@ -286,7 +288,10 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
               .then((disbursement) => {
                 this.disbursementService.changeMessage(disbursement);
                 this.currentDisbursement = disbursement;
-                this.submitDisbursement(toState);
+
+                const toState = this.currentDisbursement.flowPermissions.filter(a => a.toStateId === toState)[0].toName;
+                const toStateOwner = this.currentDisbursement.assignments.filter(a => a.stateId === toState)[0].assignmentUser;
+                this.submitDisbursement(toState, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
               });
           } else {
             dialogRef.close();
@@ -295,7 +300,7 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
       });
   }
 
-  submitDisbursement(toState: number) {
+  submitDisbursement(toState: number, transitionTitle: string) {
     this.disableRecordButton = true;
     this.workflowDataService
       .getDisbursementWorkflowStatuses(this.currentDisbursement, this.appComponent)
@@ -338,20 +343,21 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
         paramsList.push(params);
 
         this.wfValidationService.validateGrantWorkflow(this.currentDisbursement.id, 'DISBURSEMENT', this.appComponent.loggedInUser.id, this.currentDisbursement.status.id, toState, paramsList).then(result => {
-          this.openBottomSheetForReportNotes(toState, result);
+          this.openBottomSheetForReportNotes(toState, result, transitionTitle);
           this.wfDisabled = true;
         });
       });
   }
 
-  openBottomSheetForReportNotes(toStateId: number, result): void {
+  openBottomSheetForReportNotes(toStateId: number, result, transitionTitle: string): void {
     const _bSheet = this.dialog.open(DisbursementNotesComponent, {
       hasBackdrop: true,
       data: {
         canManage: true,
         currentDisbursement: this.currentDisbursement,
         originalDisbursement: this.originalDisbursement,
-        validationResult: result
+        validationResult: result,
+        tTitle: transitionTitle
       },
       panelClass: "grant-notes-class",
     });
@@ -551,5 +557,53 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
     selectedAttachments.attachmentIds = [];
     selectedAttachments.attachmentIds.push(attachmentId);
     this.docManagementService.callDisbursementDocDownload(selectedAttachments, this.appComponent, this.currentDisbursement);
+  }
+
+  getForwardFlow() {
+    const forwardStates = this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === true);
+    return forwardStates;
+  }
+
+  getSingleBackwardFlow() {
+    const backwardState = this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === false)[0];
+    return backwardState;
+  }
+
+  hasMultipleBackwardFlow() {
+    const backwardFlows = this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === false);
+    return (backwardFlows && backwardFlows.length > 1);
+  }
+
+  hasSingleBackwardFlow() {
+    const backwardFlows = this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === false);
+    return (backwardFlows && backwardFlows.length === 1);
+  }
+
+  returnGrant() {
+    const dg = this.dialog.open(ReturnsPopupComponent, {
+      data: { paths: this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === false), workflows: this.currentDisbursement.assignments },
+      panelClass: "center-class",
+    });
+
+    dg.afterClosed().subscribe(response => {
+      if (response.toStateId !== 0) {
+        const toState = this.currentDisbursement.flowPermissions.filter(a => a.fromStateId === response.toStateId)[0].fromName;
+        const toStateOwner = this.currentDisbursement.assignments.filter(a => a.stateId === response.toStateId)[0].assignmentUser;
+
+        this.submitDisbursement(response.toStateId, "<span class='text-light-red'>Returning to </span>" + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
+      }
+    });
+  }
+
+  getStateNameAndOwner(toStateId, forward) {
+    let toState;
+    if (forward) {
+      toState = this.currentDisbursement.flowPermissions.filter(a => a.toStateId === toStateId)[0].toName;
+    } else {
+      toState = this.currentDisbursement.flowPermissions.filter(a => a.fromStateId === toStateId)[0].fromName;
+    }
+    const toStateOwner = this.currentDisbursement.assignments.filter(a => a.stateId === toStateId)[0].assignmentUser;
+
+    return toStateOwner ? (toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>") : "";
   }
 }

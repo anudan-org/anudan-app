@@ -18,9 +18,9 @@ import { FieldDialogComponent } from '../field-dialog/field-dialog.component';
   styleUrls: ['./project-documents.component.scss'],
   styles: [`
       ::ng-deep .wf-assignment-class .mat-dialog-container{
-          overflow: hidden !important;
-          height: calc(100vh - 114px);
-          padding-top: 10px !important;
+        overflow: scroll !important;
+    height: calc(100vh - 114px) !important;
+    padding-top: 10px !important;
       }
   `]
 })

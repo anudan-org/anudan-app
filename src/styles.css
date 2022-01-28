@@ -128,6 +128,19 @@ input[type="date"]::-webkit-inner-spin-button {
   overflow-y: hidden !important;
 }
 
+.wf-assignment-class .mat-dialog-container{
+  overflow: scroll !important;
+  height: calc(100vh - 114px) !important;
+  padding-top: 10px !important;
+}
+
+
+.project-document-class .mat-dialog-container{
+  overflow: hidden !important;
+  height: calc(100vh - 114px) !important;
+  padding-top: 10px !important;
+}
+
 ::-webkit-scrollbar {
   /* display: none; */
 }
@@ -213,11 +226,15 @@ body {
   border: 1px solid #d4d4d4 !important;
   border-radius: 4px !important;
   line-height: 165% !important;
-  font-size: 14px !important;
-  padding: 8px 12px !important;
+  font-size: 12px !important;
+  padding: 2px 12px !important;
   background: #fff !important;
   min-height: 25px;
   background-image: none !important;
+  max-width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .anu-input:focus{
@@ -393,6 +410,11 @@ input:-internal-autofill-selected {
 .text-red {
   color: #d84830 !important;
 }
+
+.text-light-red {
+  color: rgb(244, 67, 54) !important;
+}
+
 .btn-green {
   background-color: transparent !important;
   border: 1px solid #39743c !important;
@@ -466,6 +488,10 @@ font-white {
   color: #39743c !important;
 }
 
+.text-light-green{
+  color: #4dc252 !important;
+}
+
 .text-black{
   color: #000 !important;
 }
@@ -501,20 +527,21 @@ font-white {
   font-weight: normal;
 }
 
+
 .state-node {
   padding: 5px 5px;
   border-radius: 4px;
   border: 1px solid #e4e4e4;
   text-align: center;
-  margin: 0 auto 25px auto !important;
-  width: 600px !important;
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  min-height: 45px;
+  margin: 0 auto 50px auto !important;
+  width: 200px !important;
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: capitalize;
   display: flex;
   flex-direction: row;
   align-items: center;
+  min-height: 45px;
 }
 
 .state-node .mat-form-field-wrapper {
@@ -527,7 +554,8 @@ font-white {
 }
 
 .node-highight {
-  box-shadow:2px 2px 4px #3d3c3c
+  box-shadow: 2px 2px 6px 0px #3d3c3c;
+  font-weight: 800;
 }
 
 .state-highlight {
@@ -536,9 +564,16 @@ font-white {
 
 .status-indicator {
   position: absolute;
-  font-size: 18px;
+  font-size: 14px;
   color: #2B2B2B;
-  left: 170px;
+  left: 0;
+  top: 2px;
+  cursor: pointer;
+  background: url(./assets/img/reader.png);
+    width: 15px;
+    height: 15px;
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .jtk-connector,
@@ -548,11 +583,11 @@ font-white {
 
 .connectorLabel {
   z-index: 2001;
-  background: #454545;
+  background: #fff;
   padding: 0px 4px;
-  margin-left: 30px;
+  margin-left: 0;
   font-size: 10px;
-  color: #fff;
+  color: #39743c;
   -webkit-font-smoothing: subpixel-antialiased;
   font-weight: 400;
   border-radius: 5px;
@@ -762,7 +797,7 @@ font-white {
   margin-top: 0px !important;
 }
 
-.wf-assignment-class {
+.wf-assignment-class, .project-document-class {
   min-width: calc(100% - 300px) !important;
   max-width: calc(100% - 300px) !important;
   position: relative !important;
@@ -1072,6 +1107,7 @@ li:focus {
 
 .grant-tags{
   position: absolute; left: -7px; top: 5px; color: rgba(59,115,63,1);
+  transform: scaleX(-1);
 }
 
 .search-highlight{
@@ -1284,11 +1320,18 @@ app-search-filter .mat-form-field-suffix{
 }
 
 .closed-state-owner{
-  font-size: 14px !important;
   font-weight: normal;
   text-transform: capitalize;
-  background: #d4d4d4 !important;
+  background: rgba(200, 200, 200, 0.05) !important;
   text-align: left;
+  position: absolute;
+  max-width: 125px;
+  right: 20px;
+  top: 12px;
+  color:rgba(170, 170, 170,0.95);
+  border: none !important;
+  left: 0;
+    width: 125px;
 }
 
 th{
@@ -1354,4 +1397,20 @@ footer{
 .singledoc-ico-disabled{
   color: #a3a3a3; 
   font-size: 1.5em;
+}
+
+.fa-book-reader:before {
+  content: "";
+}
+
+.lh-12{
+  line-height: 12px;
+}
+
+.lh-20{
+  line-height: 20px;
+}
+
+.border-light-red{
+  border : 1px solid rgb(244, 67, 54) !important;
 }

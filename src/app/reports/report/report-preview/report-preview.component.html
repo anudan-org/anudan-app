@@ -3,8 +3,9 @@
   <div class="row">
     <h4 class="col-11 text-left my-3 section-header">
       <div *ngIf="currentReport.canManage" style="display: flex">
-        <div *ngFor="let flow of currentReport.flowAuthorities">
-          <button [disabled]="wfDisabled" mat-stroked-button (click)="submitReport(flow.toStateId)"
+        <div *ngFor="let flow of getForwardFlow()">
+          <button [disabled]="wfDisabled" mat-stroked-button
+            (click)="submitReport(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId,true))"
             id="{{ flow.action }}" [class]="
                 flow.seqOrder === 0
                   ? 'mr-1 btn btn-sm btn-green-primary'
@@ -12,6 +13,24 @@
               ">
             {{ flow.action }}
           </button>
+        </div>
+        <div *ngIf="hasMultipleBackwardFlow()">
+          <button [disabled]="
+          wfDisabled" mat-stroked-button (click)="returnReport()"
+            [class]="'mr-1 btn btn-sm btn-green border-light-red'">
+            Request Modifications
+          </button>
+        </div>
+
+        <div *ngIf="hasSingleBackwardFlow()">
+          <ng-container>
+            <button [disabled]="
+          wfDisabled" mat-stroked-button
+              (click)="submitReport(getSingleBackwardFlow().toStateId,'<span class=\'text-light-red\'>Returning to </span>' + getStateNameAndOwner(getSingleBackwardFlow().toStateId,false))"
+              [class]="'mr-1 btn btn-sm btn-green border-light-red'">
+              Request Modifications
+            </button>
+          </ng-container>
         </div>
       </div>
     </h4>
@@ -21,10 +40,10 @@
       <mat-icon mat-button [matMenuTriggerFor]="menu" class="float-right" style="cursor: pointer">more_vert</mat-icon>
       <mat-menu #menu="matMenu">
         <button mat-menu-item (click)="showWFAssigments()">
-          <mat-icon class="ml-1">assignment</mat-icon>View Assignments
+          <mat-icon class="ml-1">assignment</mat-icon>Manage Assignments
         </button>
         <button mat-menu-item (click)="showHistory('report', currentReport)">
-          <mat-icon class="ml-1">comment</mat-icon>View Notes
+          <mat-icon class="ml-1">local_library</mat-icon>View Notes
         </button>
         <hr>
         <button mat-menu-item (click)="saveAs(currentReport.name + '.pdf')">

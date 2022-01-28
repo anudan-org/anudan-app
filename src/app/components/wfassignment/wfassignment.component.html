@@ -1,5 +1,4 @@
-<span class="" style="position:absolute; right: 10px; left: auto;top: 10px;" (click)="onNoClick()"
-  (scroll)="redrawOnScroll()">
+<span class="" style="position:absolute; right: 20px; left: auto;top: 10px;z-index:1;" (click)="onNoClick()">
   <mat-icon>close</mat-icon>
 </span>
 <!-- <ng-container *ngIf="this.data.model.type==='grant'">
@@ -24,7 +23,7 @@
   <div [innerHTML]="title">
   </div>
 </div>
-<div #flowContainer id="flowContainer" (scroll)="redrawOnScroll()" class="text-center">
+<div #flowContainer id="flowContainer" class="text-center" style="position:relative;">
 
 </div>
 <div mat-dialog-actions style="position:absolute;bottom:62px;background:#fff;">
