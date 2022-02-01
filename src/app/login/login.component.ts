@@ -63,7 +63,9 @@ export class LoginComponent implements OnInit {
 
     this.host = localStorage.getItem('X-TENANT-CODE');
     this.activatedRoute.queryParams.subscribe(params => {
-      this.parameters = params;
+      if (Object.keys(params).length !== 0) {
+        this.parameters = params;
+      }
     });
     const tenantCode = localStorage.getItem('X-TENANT-CODE');
 
