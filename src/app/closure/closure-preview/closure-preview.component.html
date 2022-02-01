@@ -2,8 +2,9 @@
   <div class="row">
     <h4 class="col-11 text-left my-3 section-header">
       <div *ngIf="currentClosure.canManage" style="display: flex">
-        <div *ngFor="let flow of currentClosure.flowAuthorities">
-          <button [disabled]="wfDisabled" mat-stroked-button (click)="submitClosure(flow.toStateId)"
+        <div *ngFor="let flow of getForwardFlow()">
+          <button [disabled]="wfDisabled" mat-stroked-button
+            (click)="submitClosure(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId,true))"
             id="{{ flow.action }}" [class]="
                 flow.seqOrder === 0
                   ? 'mr-1 btn btn-sm btn-green-primary'
@@ -11,6 +12,25 @@
               ">
             {{ flow.action }}
           </button>
+        </div>
+
+        <div *ngIf="hasMultipleBackwardFlow()">
+          <button [disabled]="
+          wfDisabled" mat-stroked-button (click)="returnClosure()"
+            [class]="'mr-1 btn btn-sm btn-green border-light-red'">
+            Request Modifications
+          </button>
+        </div>
+
+        <div *ngIf="hasSingleBackwardFlow()">
+          <ng-container>
+            <button [disabled]="
+          wfDisabled" mat-stroked-button
+              (click)="submitClosure(getSingleBackwardFlow().toStateId,'<span class=\'text-light-red\'>Returning to </span>' + getStateNameAndOwner(getSingleBackwardFlow().toStateId,false))"
+              [class]="'mr-1 btn btn-sm btn-green border-light-red'">
+              Request Modifications
+            </button>
+          </ng-container>
         </div>
       </div>
     </h4>

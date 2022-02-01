@@ -1,5 +1,5 @@
 import { User } from './user';
-import { Section, Grant, WorkflowStatus, FlowAuthority, SectionDiff } from './dahsboard';
+import { Section, Grant, WorkflowStatus, FlowAuthority, SectionDiff, GrantType } from './dahsboard';
 
 export class GrantClosure {
   id: number;
@@ -18,7 +18,7 @@ export class GrantClosure {
   canManage: boolean;
   forGranteeUse: boolean;
   granteeUsers: User[];
-  flowAuthorities: FlowAuthority;
+  flowAuthorities: FlowAuthority[];
   ownerId: number;
   ownerName: string;
   disabledByAmendment: boolean;
@@ -70,6 +70,7 @@ export class ClosureWorkflowAssignmentModel {
   granteeUsers: User[];
   closure: GrantClosure;
   canManage: boolean;
+  grantTypes: GrantType[];
   constructor() { }
 }
 export class ClosureWorkflowAssignment {
@@ -105,6 +106,8 @@ export class ClosureNote {
   originalClosure: GrantClosure;
   canManage: boolean;
   validationResult: any;
+  tTitle: string;
+
 }
 
 
