@@ -106,14 +106,14 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     if (this.elemRef.nativeElement.querySelector('#' + nodeId) === null) {
                         const node = this.renderer.createElement('div');
                         this.renderer.addClass(node, this.getColorCodeByStatus(this.data.model.workflowStatuses.filter((status) => status.id === transition.fromStateId)[0].internalStatus));
-                        if (transition._from === 'GMT Review') {
+                        /* if (transition._from === 'GMT Review') {
                             this.renderer.setStyle(node, 'position', 'relative');
                             this.renderer.setStyle(node, 'left', '200px');
                         }
                         if (transition._from === 'GMT Review 2') {
                             this.renderer.setStyle(node, 'position', 'relative');
                             this.renderer.setStyle(node, 'left', '-200px');
-                        }
+                        } */
                         /* if (this.data.model.workflowStatuses.filter((status) => status.id === transition.fromStateId)[0].internalStatus === 'DRAFT') {
                             const notesNode = this.renderer.createElement('span');
                             this.renderer.appendChild(notesNode, this.renderer.createText('Workflow Note(s)'));
