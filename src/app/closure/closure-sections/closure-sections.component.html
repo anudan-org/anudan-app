@@ -2,6 +2,22 @@
   <div class="row">
     <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
       <ng-container *ngIf="action === getCleanText(section)">
+        <h4 class="col-11 text-left mt-3 mb-0 section-header">
+          <p class="text-header d-flex align-items-center mb-0">Grant Closure <span class="text-subheader"> |
+              {{
+              (currentClosure.grant.referenceNo
+              ? currentClosure.grant.referenceNo + " | "
+              : "") + currentClosure.grant.name}}</span>
+          </p>
+          <p *ngIf="(currentClosure.grant.grantStatus.internalStatus === 'DRAFT' ||
+          currentClosure.grant.grantStatus.internalStatus === 'REVIEW') &&
+          currentClosure.grant.origGrantId" class="text-subheader d-flex align-items-center mb-0">
+            <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
+              info_outline
+            </mat-icon>
+            <span>Amendment in-progress [<strong>{{ currentClosure.grant.origGrantRefNo }}</strong>]</span>
+          </p>
+        </h4>
         <h4 class="col-8 text-left my-3 section-header">
           {{ section.sectionName }}
         </h4>

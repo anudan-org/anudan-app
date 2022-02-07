@@ -678,7 +678,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(stateNode, 'text-center');
                         let nodeStateName;
                         if (transition.internalStatus !== 'ACTIVE') {
-                            nodeStateName = this.renderer.createText(transition._from + ' - ' + transition.fromStateId);
+                            nodeStateName = this.renderer.createText(transition._from);
                         } else {
                             nodeStateName = this.renderer.createText(this.data.model.closure.grant.isInternal ? transition._from : this.data.model.closure.grant.organization.name);
                         }
@@ -691,7 +691,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             this.renderer.addClass(indicator, 'fa-book-reader');
                             this.renderer.addClass(indicator, 'status-indicator');
                             this.renderer.listen(indicator, 'click', () => {
-                                this.data.adminComp.showHistory('report', this.data.model.report);
+                                this.data.adminComp.showHistory('grant-closure', this.data.model.closure);
                             });
                             this.renderer.addClass(node, 'node-highight');
                             this.renderer.appendChild(stateNode, indicator);
@@ -842,15 +842,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(node, 'my-5');
                         this.renderer.appendChild(this.flowContainer.nativeElement, node);
 
-                        if (this.hasSiblings(transition)) {
-                            this.renderer.setStyle(node, 'position', 'relative');
-                            this.renderer.setStyle(node, 'left', '200px');
-                            this.drawUnderParent(transition)
-                        } else {
-                            this.drawUnderParent(transition);
-                            /* this.renderer.setStyle(node, 'position', 'relative');
-                            this.renderer.setStyle(node, 'left', '-200px'); */
-                        }
+                        //debugger;
+                        this.rePositionNode(transition);
 
                         /* if (transition._from === 'Grantee Sahara') {
                             this.renderer.setStyle(node, 'position', 'relative');
@@ -1235,7 +1228,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         connector: ["Flowchart"],
                         overlays: [
                             ["Arrow", { width: 8, length: 8, location: 1 }],
-                            ['Label', { label: transition.action + ' - ' + transition.seqOrder, location: 0.5, cssClass: 'connectorLabel' }]
+                            ['Label', { label: transition.action, location: 0.5, cssClass: 'connectorLabel' }]
                         ],
                         source: 'state_' + transition.fromStateId, // it is the id of source div
                         target: 'state_' + transition.toStateId, // it is the id of target div
@@ -1717,27 +1710,71 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     }
 
     hasSiblings(transition) {
-        const siblings = this.transitions.filter(t => t.fromStateId === transition.fromStateId && t.id !== transition.id);
+        const parent = this.transitions.filter(t => t.toStateId === transition.fromStateId)[0];
+        const siblings = this.transitions.filter(t => t.fromStateId === parent.fromStateId)
         return (siblings && siblings.length > 0) ? true : false;
+    }
+
+    getLastSiblingPosition(transition) {
+        const parent = this.getParent(transition);
+        if (!parent) {
+            return 0;
+        }
+        const siblings = this.transitions.filter(t => t.fromStateId === parent.fromStateId && t.id !== parent.id);
+        if (siblings && siblings.length > 0) {
+            const lastSibling = $("#state_" + siblings[siblings.length - 1].toStateId)[0];
+            if (lastSibling) {
+                const t = $(lastSibling).css('left');
+                return $("#state_" + (t ? Number(t.replace('px', '')) : 0) + 300);
+            } else {
+                const p = $("#state_" + parent.fromStateId).css('left');
+                return (p ? Number(p.replace('px', '')) : 0) - 300;
+            }
+        }
+        return 0;
     }
 
     isSiblingDrawn(transition: WorkflowTransition) {
         const sibglingElements = $("#state_" + transition.fromStateId);
         console.log(sibglingElements.length);
     }
-    drawUnderParent(transition: WorkflowTransition) {
-        let parentElement;
-        if (transition.internalStatus !== 'DRAFT') {
-            parentElement = $("#state_" + transition.fromStateId);
+
+    rePositionNode(transition: WorkflowTransition) {
+        const parent = this.getParent(transition);
+        this.position("state_" + transition.fromStateId,
+            parent ? "state_" + parent.fromStateId : "_",
+            this.getOffset(transition));
+    }
+
+    getParent(transition: WorkflowTransition) {
+        const parents = this.transitions.filter(t => t.toStateId === transition.fromStateId);
+        if (parents && parents.length > 1) {
+            return parents[parents.length - 1];
+        }
+        return parents[0];
+    }
+
+    getOffset(transition: WorkflowTransition) {
+        return this.getLastSiblingPosition(transition);
+    }
+
+    position(transitionNodeId: any, parentNodeId: any, offset: any) {
+
+        const t = $("#" + parentNodeId).css('left');
+        $("#" + transitionNodeId).css('position', 'relative').css('left', (t ? Number(t.replace('px', '')) : 0) + offset);
+        /* let parentElement;
+        const p = this.transitions.filter(t => t.toStateId === transition.fromStateId)[0];
+        if (p) {
+            parentElement = $("#state_" + p.fromStateId);
         }
         if (parentElement && parentElement.length > 0) {
             // $("state_" + transition.toStateId).css('posistion', 'relative').css('left', $(parentElement[0]).css('left'));
-            this.renderer.setStyle($("state_" + transition.toStateId), 'position', 'relative');
-            this.renderer.setStyle($("state_" + transition.toStateId), 'left', $(parentElement[0]).css('left'));
+            this.renderer.setStyle($("#state_" + transition.fromStateId)[0], 'position', 'relative');
+            this.renderer.setStyle($("#state_" + transition.fromStateId)[0], 'left', $(parentElement[0]).css('left'));
         } else {
             //$("state_" + transition.fromStateId).css('posistion', 'relative').css('left', '0px');
-            this.renderer.setStyle($("state_" + transition.fromStateId), 'position', 'relative');
-            this.renderer.setStyle($("state_" + transition.fromStateId), 'left', '0px');
-        }
+            this.renderer.setStyle($("#state_" + transition.fromStateId)[0], 'position', 'relative');
+            this.renderer.setStyle($("#state_" + transition.fromStateId)[0], 'left', '0px');
+        } */
     }
 }

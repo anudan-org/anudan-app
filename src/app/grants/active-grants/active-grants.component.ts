@@ -1,4 +1,4 @@
-import { ClosureDataService } from './../../closure.data.service';
+import { ClosureDataService } from 'app/closure.data.service';
 import { GrantClosure } from 'app/model/closures';
 import { UiUtilService } from './../../ui-util.service';
 import { CurrencyService } from "./../../currency-service";

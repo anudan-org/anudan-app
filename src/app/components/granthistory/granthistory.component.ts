@@ -99,10 +99,17 @@ export class GranthistoryComponent implements OnInit {
 
       });
     } else if (this.data.type === 'grant-closure') {
-      const url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/closure/' + this.data.data.id + '/history/';
+      let url = '/api/user/' + JSON.parse(localStorage.getItem('USER')).id + '/closure/' + this.data.data.id + '/history/';
 
       this.http.get<ClosureHistory[]>(url, httpOptions).subscribe((history: ClosureHistory[]) => {
-        this.closureHistory = history;
+        url = '/api/admin/workflow/closure/' + this.data.data.id + '/user/' + JSON.parse(localStorage.getItem('USER')).id;
+        this.http.get<WorkflowTransition[]>(url, httpOptions).subscribe((transitions: WorkflowTransition[]) => {
+          this.closureHistory = history;
+          this.transitions = transitions;
+          this.title = `<p class="mb-0 text-subheader text-center">Disbursement Approval Workflow Notes | ` + this.utils.getGrantTypeName(this.data.data.grant.grantTypeId) + `</p><p class="mb-1 lh-20 text-center"><span class="text-header text-center">` + ((this.data.data.grant.grantStatus.internalStatus === 'ACTIVE' || this.data.data.grant.grantStatus.internalStatus === 'CLOSED') ? `<span class="text-subheader">[` + this.data.data.grant.referenceNo + `] </span>` : ``) + this.data.data.grant.name + `</span></p>`;
+
+        });
+
       });
     }
 
@@ -152,6 +159,16 @@ export class GranthistoryComponent implements OnInit {
         newStatus.internalStatus = this.data.data.status.internalStatus;
         return newStatus;
       }
+    } else if (_for === 'closure') {
+      status = this.closureHistory[idx - 1];
+      if (status) {
+        return status.status;
+      } else {
+        const newStatus = new WorkflowStatus();
+        newStatus.name = this.data.data.status.name;
+        newStatus.internalStatus = this.data.data.status.internalStatus;
+        return newStatus;
+      }
     }
   }
 
@@ -162,6 +179,8 @@ export class GranthistoryComponent implements OnInit {
       } else if (_for === 'report') {
         toId = this.data.data.status.id
       } if (_for === 'disbursement') {
+        toId = this.data.data.status.id
+      } else if (_for === 'closure') {
         toId = this.data.data.status.id
       }
 
@@ -213,6 +232,21 @@ export class GranthistoryComponent implements OnInit {
       } else {
 
         const currentAss = this.data.data.assignments.filter(a => a.stateId === this.data.data.status.id)[0].assignmentUser;
+        return '&nbsp;';//currentAss.firstName + ' ' + currentAss.lastName;
+      }
+    } else if (_for === 'closure') {
+      const status = this.closureHistory[idx];
+      if (status) {
+        const ass = this.data.data.workflowAssignment.filter(a => a.stateId === status.status.id)[0];
+        if (ass) {
+          return '&nbsp;';//ass.assignmentUser.firstName + ' ' + ass.assignmentUser.lastName;
+        } else {
+          return '&nbsp;';
+        }
+
+      } else {
+
+        const currentAss = this.data.data.workflowAssignment.filter(a => a.stateId === this.data.data.status.id)[0].assignmentUser;
         return '&nbsp;';//currentAss.firstName + ' ' + currentAss.lastName;
       }
     }

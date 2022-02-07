@@ -29,7 +29,7 @@ export class ClosureDataService {
 
     if (message !== null) {
       const user = JSON.parse(localStorage.getItem('USER'));
-      if ((message.workflowAssignment.filter(wf => wf.stateId === message.status.id && wf.assignmentId === userId).length > 0) && user.organization.organizationType !== 'GRANTEE' && (message.status.internalStatus !== 'ACTIVE' && message.status.internalStatus !== 'CLOSED')) {
+      if ((message.workflowAssignment.filter(wf => wf.stateId === message.status.id && wf.assignmentId === userId).length > 0) && (message.status.internalStatus !== 'CLOSED')) {
         message.canManage = true
       } else {
         message.canManage = false;

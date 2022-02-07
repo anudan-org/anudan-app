@@ -118,7 +118,7 @@ export class ClosurePreviewComponent implements OnInit {
 
     for (let assignment of this.currentClosure.workflowAssignment) {
       const status1 = this.closureWorkflowStatuses.filter((status) => status.id === assignment.stateId);
-      if ((assignment.assignmentId === null || assignment.assignmentId === undefined || assignment.assignmentId === 0 && !status1[0].terminal) || (assignment.assignmentUser.deleted)) {
+      if (((assignment.assignmentId === null || assignment.assignmentId === undefined || assignment.assignmentId === 0) && !status1[0].terminal) || (assignment && assignment.assignmentUser && assignment.assignmentUser.deleted)) {
         const dialogRef = this.dialog.open(FieldDialogComponent, {
           data: { title: "Would you like to assign users responsible for this workflow?", btnMain: "Assign Users", btnSecondary: "Not Now" },
           panelClass: 'center-class'
@@ -295,10 +295,10 @@ export class ClosurePreviewComponent implements OnInit {
       this.closureService.changeMessage(updatedClosure, this.appComp.loggedInUser.id);
       this.currentClosure = updatedClosure;
 
-      if (this.currentClosure.workflowAssignment.filter((a) => a.assignmentId === this.appComp.loggedInUser.id && a.anchor).length === 0) {
-        this.appComp.currentView = 'upcoming';
-        this.router.navigate(['grant-closures/in-progress']);
-      }
+
+      this.appComp.subMenu = { name: "Active Grants", action: "ag" };
+      this.router.navigate(['grants/active']);
+
     });
   }
 
