@@ -125,19 +125,38 @@
 </div>
 
 <div *ngIf="data.type === 'grant-closure'" #flowContainer id="flowContainer" class="text-left"
-  style="height: calc(100vh - 170px);overflow-y: auto;">
-  <ng-container *ngFor="let item of closureHistory">
+  style="height: calc(100vh - 197px);overflow-y: auto;">
+  <ng-container *ngFor="let item of closureHistory;let i = index;">
     <ng-container *ngIf="item.note !== '' && item.noteAddedByUser">
-      <p class="mb-0 p-1">
-        <span [class]="
-            'badge mb-1 mr-2 text-white state-' +
+      <div class="mb-0 px-1" style="display: flex;">
+        <div
+          style="display: flex; flex-direction: column; flex-shrink: 0; align-items: center; justify-content: center;">
+          <span [class]="
+            'badge mb-1 mr-2 text-black state-' +
             item.status.internalStatus.toLowerCase()
-          ">{{ item.status.name }}</span>
-        <strong>{{ item.noteAddedByUser.firstName }}
-          {{ item.noteAddedByUser.lastName }}</strong>
-        <small> ({{ item.noteAdded | date: "dd-MMM-yyyy hh:mm a" }})</small>
-      </p>
-      <p class="p-1">{{ item.note }}</p>
+           + ' '" style="font-weight: 400;box-shadow: 2px 2px 4px;align-self:flex-start">{{ item.status.name }}</span>
+          <span class="text-subheader"
+            style="align-self: flex-start;max-width: 100px;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;">{{
+            item.noteAddedByUser.firstName }}
+            {{ item.noteAddedByUser.lastName }}</span>
+        </div>
+        <span style="position:relative;">
+          <em style="position:absolute;top:4px;"
+            [ngClass]="getDirection(item.status.id,getPreviousStatus(i,'closure').id,'closure')">
+          </em>
+        </span>
+        <div
+          style="display: flex; flex-direction: column; flex-shrink: 0; align-items: center; justify-content: center;">
+          <span [class]="
+            'badge mb-1 mr-2 text-black state-' +
+            getPreviousStatus(i,'closure').internalStatus.toLowerCase() + ' ml-4'
+          "
+            style="opacity: 0.5; box-shadow: none;font-weight: 400;place-self: flex-start;">{{getPreviousStatus(i,'closure').name}}</span>
+          <div class="text-subheader ml-4" [innerHTML]="getPreviousOwner(i-1,'closure')"></div>
+        </div>
+      </div>
+      <small class="text-subheader px-1"> {{ item.noteAdded | date: "dd-MMM-yyyy hh:mm a" }}</small>
+      <pre class="p-1" style="background: #efefef;margin-right: 25px;">{{ item.note }}</pre>
     </ng-container>
   </ng-container>
   <ng-container *ngIf="!data.data.noteAddedByUser && closureHistory.length === 0">

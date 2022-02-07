@@ -1,3 +1,4 @@
+import { ReturnsPopupComponent } from './../../returns-popup/returns-popup.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DocManagementService } from './../../doc-management.service';
 import { DocpreviewService } from './../../docpreview.service';
@@ -113,11 +114,11 @@ export class ClosurePreviewComponent implements OnInit {
     this.logoUrl = "/api/public/images/" + this.currentClosure.grant.grantorOrganization.code + "/logo";
   }
 
-  submitClosure(toStateId: number) {
+  submitClosure(toStateId: number, transitionTitle: string) {
 
     for (let assignment of this.currentClosure.workflowAssignment) {
       const status1 = this.closureWorkflowStatuses.filter((status) => status.id === assignment.stateId);
-      if ((assignment.assignmentId === null || assignment.assignmentId === undefined || assignment.assignmentId === 0 && !status1[0].terminal) || (assignment.assignmentUser.deleted)) {
+      if (((assignment.assignmentId === null || assignment.assignmentId === undefined || assignment.assignmentId === 0) && !status1[0].terminal) || (assignment && assignment.assignmentUser && assignment.assignmentUser.deleted)) {
         const dialogRef = this.dialog.open(FieldDialogComponent, {
           data: { title: "Would you like to assign users responsible for this workflow?", btnMain: "Assign Users", btnSecondary: "Not Now" },
           panelClass: 'center-class'
@@ -132,7 +133,7 @@ export class ClosurePreviewComponent implements OnInit {
     }
 
     this.wfvalidationService.validateGrantWorkflow(this.currentClosure.id, 'CLOSURE', this.appComp.loggedInUser.id, this.currentClosure.status.id, toStateId).then(result => {
-      this.openBottomSheetForClosureNotes(toStateId, result);
+      this.openBottomSheetForClosureNotes(toStateId, result, transitionTitle);
       this.wfDisabled = true;
     });
 
@@ -146,6 +147,7 @@ export class ClosurePreviewComponent implements OnInit {
     wfModel.workflowAssignments = this.currentClosure.workflowAssignment;
     wfModel.type = this.appComp.currentView;
     wfModel.closure = this.currentClosure;
+    wfModel.grantTypes = this.appComp.grantTypes;
     wfModel.closure.grant.isInternal = this.appComp.grantTypes.filter(gt => this.currentClosure.grant.grantTypeId)[0].internal;
     wfModel.canManage = this.currentClosure.flowAuthorities && this.currentClosure.canManage;
     const dialogRef = this.dialog.open(WfassignmentComponent, {
@@ -179,7 +181,9 @@ export class ClosurePreviewComponent implements OnInit {
         this.http.post(url, { closure: this.currentClosure, assignments: ass }, httpOptions).subscribe((closure: GrantClosure) => {
           this.closureService.changeMessage(closure, this.appComp.loggedInUser.id);
           this.currentClosure = closure;
-          this.submitClosure(toStateId);
+          const toState = this.currentClosure.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
+          const toStateOwner = this.currentClosure.workflowAssignment.filter(a => a.stateId === toStateId)[0].assignmentUser;
+          this.submitClosure(toStateId, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
         }, error => {
           const errorMsg = error as HttpErrorResponse;
 
@@ -197,11 +201,11 @@ export class ClosurePreviewComponent implements OnInit {
     });
   }
 
-  openBottomSheetForClosureNotes(toStateId: number, result): void {
+  openBottomSheetForClosureNotes(toStateId: number, result, transitionTitle: string): void {
 
     const _bSheet = this.dialog.open(ClosureNotesComponent, {
       hasBackdrop: true,
-      data: { canManage: true, currentClosure: this.currentClosure, originalClosure: this.appComp.originalClosure, validationResult: result },
+      data: { canManage: true, currentClosure: this.currentClosure, originalClosure: this.appComp.originalClosure, validationResult: result, tTitle: transitionTitle },
       panelClass: 'grant-notes-class'
     });
 
@@ -291,10 +295,10 @@ export class ClosurePreviewComponent implements OnInit {
       this.closureService.changeMessage(updatedClosure, this.appComp.loggedInUser.id);
       this.currentClosure = updatedClosure;
 
-      if (this.currentClosure.workflowAssignment.filter((a) => a.assignmentId === this.appComp.loggedInUser.id && a.anchor).length === 0) {
-        this.appComp.currentView = 'upcoming';
-        this.router.navigate(['grant-closures/in-progress']);
-      }
+
+      this.appComp.subMenu = { name: "Active Grants", action: "ag" };
+      this.router.navigate(['grants/active']);
+
     });
   }
 
@@ -490,5 +494,53 @@ export class ClosurePreviewComponent implements OnInit {
     selectedAttachments.attachmentIds = [];
     selectedAttachments.attachmentIds.push(attachmentId);
     this.docManagementService.callClosureDocDownload(selectedAttachments, this.appComp, this.currentClosure);
+  }
+
+  getForwardFlow() {
+    const forwardStates = this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === true);
+    return forwardStates;
+  }
+
+  getSingleBackwardFlow() {
+    const backwardState = this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false)[0];
+    return backwardState;
+  }
+
+  hasMultipleBackwardFlow() {
+    const backwardFlows = this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false);
+    return (backwardFlows && backwardFlows.length > 1);
+  }
+
+  hasSingleBackwardFlow() {
+    const backwardFlows = this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false);
+    return (backwardFlows && backwardFlows.length === 1);
+  }
+
+  returnClosure() {
+    const dg = this.dialog.open(ReturnsPopupComponent, {
+      data: { paths: this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false), workflows: this.currentClosure.workflowAssignment },
+      panelClass: "center-class",
+    });
+
+    dg.afterClosed().subscribe(response => {
+      if (response.toStateId !== 0) {
+        const toState = this.currentClosure.flowAuthorities.filter(a => a.fromStateId === response.toStateId)[0].fromName;
+        const toStateOwner = this.currentClosure.workflowAssignment.filter(a => a.stateId === response.toStateId)[0].assignmentUser;
+
+        this.submitClosure(response.toStateId, "<span class='text-light-red'>Returning to </span>" + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
+      }
+    });
+  }
+
+  getStateNameAndOwner(toStateId, forward) {
+    let toState;
+    if (forward) {
+      toState = this.currentClosure.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
+    } else {
+      toState = this.currentClosure.flowAuthorities.filter(a => a.fromStateId === toStateId)[0].fromName;
+    }
+    const toStateOwner = this.currentClosure.workflowAssignment.filter(a => a.stateId === toStateId)[0].assignmentUser;
+
+    return toStateOwner ? (toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>") : "";
   }
 }

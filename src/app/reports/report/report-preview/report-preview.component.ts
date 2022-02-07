@@ -303,6 +303,7 @@ export class ReportPreviewComponent implements OnInit {
 
             this.singleReportDataService.changeMessage(report);
             this.wfDisabled = false;
+
             if (report.status.internalStatus === 'DRAFT' || report.status.internalStatus === 'ACTIVE') {
                 this.appComp.subMenu = { name: 'Upcoming Reports', action: 'ur' };
             } else if (report.status.internalStatus === 'REVIEW') {
