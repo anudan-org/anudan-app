@@ -296,6 +296,7 @@ export class ClosurePreviewComponent implements OnInit {
       this.currentClosure = updatedClosure;
 
 
+      this.appComp.currentView = 'grants';
       this.appComp.subMenu = { name: "Active Grants", action: "ag" };
       this.router.navigate(['grants/active']);
 
@@ -502,16 +503,27 @@ export class ClosurePreviewComponent implements OnInit {
   }
 
   getSingleBackwardFlow() {
+
+    if (this.appComp.loggedInUser.organization.organizationType === 'GRANTEE') {
+      return this.currentClosure.flowAuthorities[0];
+    }
     const backwardState = this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false)[0];
     return backwardState;
   }
 
   hasMultipleBackwardFlow() {
+    if (this.appComp.loggedInUser.organization.organizationType === 'GRANTEE') {
+      return false;
+    }
     const backwardFlows = this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false);
     return (backwardFlows && backwardFlows.length > 1);
   }
 
   hasSingleBackwardFlow() {
+
+    if (this.appComp.loggedInUser.organization.organizationType === 'GRANTEE') {
+      return true;
+    }
     const backwardFlows = this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false);
     return (backwardFlows && backwardFlows.length === 1);
   }
