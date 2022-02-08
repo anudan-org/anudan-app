@@ -1224,16 +1224,18 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
             if (Number(transition.seqOrder) < 50) {
                 setTimeout(() => {
-                    this.jsPlumbInstance.connect({
-                        connector: ["Flowchart"],
+                    let tick = this.jsPlumbInstance.connect({
+                        connector: ["Flowchart", { cssClass: 'connectorLink' + transition.toStateId }],
                         overlays: [
                             ["Arrow", { width: 8, length: 8, location: 1 }],
                             ['Label', { label: transition.action, location: 0.5, cssClass: 'connectorLabel' }]
                         ],
                         source: 'state_' + transition.fromStateId, // it is the id of source div
                         target: 'state_' + transition.toStateId, // it is the id of target div
-                        anchors: ["Bottom", "Top"]
+                        anchors: ["Bottom", "Top"],
+
                     });
+                    $(tick).attr('id', 'coonector_id_' + transition.toStateId)
                 }, 50);
 
 

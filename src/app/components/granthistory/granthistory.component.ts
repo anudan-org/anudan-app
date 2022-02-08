@@ -20,7 +20,7 @@ declare var jsPlumb: any;
   styleUrls: ['./granthistory.component.scss'],
   styles: [`
       ::ng-deep .grant-notes-class .mat-dialog-container{
-          overflow-y: hidden !important;
+          overflow-y: auto !important;
           border-radius: 0 !important;
           height: calc(100vh - 114px) !important;
       }

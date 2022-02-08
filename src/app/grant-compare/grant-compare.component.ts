@@ -1210,7 +1210,7 @@ export class GrantCompareComponent implements OnInit {
             for (let attr of oldSection.attributes) {
               let oldAttr = null;
 
-              oldAttr = section.attributes.filter((a) => a.name === attr.name)[0];
+              oldAttr = section.attributes.filter((a) => a.id === attr.id)[0];
               if (!oldAttr) {
                 this._getClosureDiffSections();
                 const attrDiff = new AttributeDiff();
@@ -1287,7 +1287,7 @@ export class GrantCompareComponent implements OnInit {
     for (const section of oldClosure.sections) {
       const currentSection = newClosure.sections.filter((sec) => sec.name === section.name)[0];
       if (!currentSection) {
-        this._getReportDiffSections();
+        this._getClosureDiffSections();
         let secDiff = new SectionDiff();
         secDiff.oldSection = section;
         secDiff.newSection = null;
