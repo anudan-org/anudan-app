@@ -154,7 +154,9 @@ export class ClosureHeaderComponent implements OnInit {
     this.closureService.currentMessage.subscribe((closure) => {
       this.currentClosure = closure;
       this.myControl = new FormControl(this.currentClosure.reason);
-
+      if (this.appComp.loggedInUser.organization.organizationType === 'GRANTEE') {
+        this.myControl.disable();
+      }
       console.log(this.currentClosure);
     });
 
