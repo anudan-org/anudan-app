@@ -42,10 +42,10 @@
 </div>-->
   <ng-container>
 
-    <mat-form-field *ngIf="validationResult.canMove">
+    <mat-form-field *ngIf="validationResult.canMove" class="mx-3">
       <textarea *ngIf="validationResult.canMove" class="anu-input" matInput #inputMessage></textarea>
     </mat-form-field>
-    <mat-expansion-panel style="background: #f8f8f8;" [expanded]="false" class="mb-3 grants-expansion-panel"
+    <mat-expansion-panel style="background: #f8f8f8;" [expanded]="false" class="mb-3 grants-expansion-panel mx-3"
       *ngIf="current && original"
       [ngStyle]="hasChanges?{'visibility':'visible','height':'auto'}:{'visibility':'hidden','height':'0'}">
       <mat-expansion-panel-header class="grant-expansion-panel" style="padding: 15px;">

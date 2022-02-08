@@ -113,9 +113,8 @@
                     currentClosure.canManage
                   ">
                       <mat-label>Closure Reason:</mat-label>
-                      <input [disabled]="currentClosure.forGranteeUse" id="closureReason" matInput class="anu-input"
-                        [formControl]="myControl" [matAutocomplete]="auto"
-                        placeholder="Select or create Closure Reason" />
+                      <input id="closureReason" matInput class="anu-input" [formControl]="myControl"
+                        [matAutocomplete]="auto" placeholder="Select or create Closure Reason" />
                     </mat-form-field>
                     <mat-autocomplete [disabled]="currentClosure.forGranteeUse" #auto="matAutocomplete"
                       [displayWith]="displayFn" autoActiveFirstOption>
