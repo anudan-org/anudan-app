@@ -1,3 +1,5 @@
+import { HttpClient } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { GrantType } from './model/dahsboard';
 import { AppComponent } from './app.component';
 import { Injectable } from '@angular/core';
@@ -8,7 +10,25 @@ import { Injectable } from '@angular/core';
 export class UtilsService {
 
   grantTypes: GrantType[];
-  constructor() { }
+  constructor(private httpClient: HttpClient) {
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
+    const loggedInUser = JSON.parse(localStorage.getItem('USER'));
+    if (loggedInUser) {
+      const url = "/api/user/" + loggedInUser.id + "/grant/grantTypes";
+      this.httpClient.get(url, httpOptions).subscribe((result: GrantType[]) => {
+        this.grantTypes = result;
+        this.setGrantTypes(this.grantTypes);
+      });
+    }
+  }
 
   setGrantTypes(grantTypes: GrantType[]) {
     this.grantTypes = grantTypes;
