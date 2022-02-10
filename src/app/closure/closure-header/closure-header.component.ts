@@ -129,6 +129,10 @@ export class ClosureHeaderComponent implements OnInit {
 
     this.closureService.currentMessage.subscribe((closure) => {
       this.currentClosure = closure;
+      if (!this.currentClosure) {
+        this.appComp.currentView = 'dashboard';
+        this.router.navigate(['dashboard']);
+      }
       let url = '/api/app/config/closure/' + this.currentClosure.id;
 
       this.http.get(url, httpOptions).subscribe((config: Configuration) => {

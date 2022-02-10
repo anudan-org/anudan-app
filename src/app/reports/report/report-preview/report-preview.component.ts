@@ -655,8 +655,12 @@ export class ReportPreviewComponent implements OnInit {
     }
 
     returnReport() {
+        const gtIdx = this.appComp.grantTypes.findIndex(gt => gt.id === this.currentReport.grant.grantTypeId);
+        const grantType = (!gtIdx || gtIdx === -1) ? "External Workflow" : this.appComp.grantTypes[gtIdx].name;
+        const title = `<p class="mb-0  text-subheader">Report Workflow Return | ` + grantType + `<p class='text-header text-center'>` + ((this.currentReport.grant.grantStatus.internalStatus === 'ACTIVE' || this.currentReport.grant.grantStatus.internalStatus === 'CLOSED') ? `<span class="text-subheader">[` + this.currentReport.grant.referenceNo + `] </span>` : ``) + this.currentReport.grant.name + `</p>`;
+
         const dg = this.dialog.open(ReturnsPopupComponent, {
-            data: { paths: this.currentReport.flowAuthorities.filter(a => a.forwardDirection === false), workflows: this.currentReport.workflowAssignments },
+            data: { paths: this.currentReport.flowAuthorities.filter(a => a.forwardDirection === false), workflows: this.currentReport.workflowAssignments, title: title },
             panelClass: "center-class",
         });
 

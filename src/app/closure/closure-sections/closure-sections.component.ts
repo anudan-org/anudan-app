@@ -148,6 +148,10 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
 
     this.closureService.currentMessage.subscribe((closure) => {
       this.currentClosure = closure;
+      if (!this.currentClosure) {
+        this.appComp.currentView = 'dashboard';
+        this.router.navigate(['dashboard']);
+      }
 
       console.log(this.currentClosure);
     });

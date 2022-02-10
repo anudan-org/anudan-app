@@ -1612,8 +1612,12 @@ export class PreviewComponent implements OnInit {
   }
 
   returnGrant() {
+    const gtIdx = this.appComp.grantTypes.findIndex(gt => gt.id === this.currentGrant.grantTypeId);
+    const grantType = (!gtIdx || gtIdx === -1) ? "External Workflow" : this.appComp.grantTypes[gtIdx].name;
+    const title = `<p class="mb-0  text-subheader">Grant Workflow Return | ` + grantType + `<p class='text-header text-center'>` + ((this.currentGrant.grantStatus.internalStatus === 'ACTIVE' || this.currentGrant.grantStatus.internalStatus === 'CLOSED') ? `<span class="text-subheader">[` + this.currentGrant.referenceNo + `] </span>` : ``) + this.currentGrant.name + `</p>`;
+
     const dg = this.dialog.open(ReturnsPopupComponent, {
-      data: { paths: this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === false), workflows: this.currentGrant.workflowAssignments },
+      data: { paths: this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === false), workflows: this.currentGrant.workflowAssignments, title: title },
       panelClass: "center-class",
     });
 
