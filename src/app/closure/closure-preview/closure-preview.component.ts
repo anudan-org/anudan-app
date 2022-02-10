@@ -99,6 +99,11 @@ export class ClosurePreviewComponent implements OnInit {
       }
     });
 
+    if (!this.currentClosure) {
+      this.appComp.currentView = 'dashboard';
+      this.router.navigate(['dashboard']);
+    }
+
     let url = '/api/app/config/closure/' + this.currentClosure.id;
 
     this.http.get(url, httpOptions).subscribe((config: Configuration) => {
@@ -505,7 +510,7 @@ export class ClosurePreviewComponent implements OnInit {
   getSingleBackwardFlow() {
 
     if (this.appComp.loggedInUser.organization.organizationType === 'GRANTEE') {
-      return this.currentClosure.flowAuthorities[0];
+      return this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false)[0];
     }
     const backwardState = this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false)[0];
     return backwardState;
@@ -529,8 +534,15 @@ export class ClosurePreviewComponent implements OnInit {
   }
 
   returnClosure() {
+    let flows = this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false).filter((v, i, a) => a.findIndex(t => (t.toStateId === v.toStateId)) === i);
+    flows.sort((a, b) => a.seqOrder > b.seqOrder ? -1 : b.seqOrder > a.seqOrder ? 1 : 0);
+
+    const gtIdx = this.appComp.grantTypes.findIndex(gt => gt.id === this.currentClosure.grant.grantTypeId);
+    const grantType = (!gtIdx || gtIdx === -1) ? "External Workflow" : this.appComp.grantTypes[gtIdx].name;
+    const title = `<p class="mb-0  text-subheader">Grant Closure Workflow Return | ` + grantType + `<p class='text-header text-center'>` + ((this.currentClosure.grant.grantStatus.internalStatus === 'ACTIVE' || this.currentClosure.grant.grantStatus.internalStatus === 'CLOSED') ? `<span class="text-subheader">[` + this.currentClosure.grant.referenceNo + `] </span>` : ``) + this.currentClosure.grant.name + `</p>`;
+
     const dg = this.dialog.open(ReturnsPopupComponent, {
-      data: { paths: this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false), workflows: this.currentClosure.workflowAssignment },
+      data: { paths: flows, workflows: this.currentClosure.workflowAssignment, title: title },
       panelClass: "center-class",
     });
 

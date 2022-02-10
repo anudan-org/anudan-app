@@ -579,9 +579,13 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
     return (backwardFlows && backwardFlows.length === 1);
   }
 
-  returnGrant() {
+  returnDisbursement() {
+    const gtIdx = this.appComponent.grantTypes.findIndex(gt => gt.id === this.currentDisbursement.grant.grantTypeId);
+    const grantType = (!gtIdx || gtIdx === -1) ? "External Workflow" : this.appComponent.grantTypes[gtIdx].name;
+    const title = `<p class="mb-0  text-subheader">Report Workflow Return | ` + grantType + `<p class='text-header text-center'>` + ((this.currentDisbursement.grant.grantStatus.internalStatus === 'ACTIVE' || this.currentDisbursement.grant.grantStatus.internalStatus === 'CLOSED') ? `<span class="text-subheader">[` + this.currentDisbursement.grant.referenceNo + `] </span>` : ``) + this.currentDisbursement.grant.name + `</p>`;
+
     const dg = this.dialog.open(ReturnsPopupComponent, {
-      data: { paths: this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === false), workflows: this.currentDisbursement.assignments },
+      data: { paths: this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === false), workflows: this.currentDisbursement.assignments, title: title },
       panelClass: "center-class",
     });
 
