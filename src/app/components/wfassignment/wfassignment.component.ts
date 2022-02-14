@@ -1151,7 +1151,55 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     }
     handleSelection(event: any): boolean | void {
 
-        this.updateGrantAndDisbursementUsers();
+        const id = Number(event.currentTarget.id.split('_')[2]);
+        const val = Number(event.currentTarget.value);
+        let transitions = this.transitions.filter(a => a.fromStateId === id);
+        let select2Process = []
+        for (let t of transitions) {
+            const assignments = this.data.model.workflowAssignments.filter(a => a.stateId === t.toStateId);
+            for (let a of assignments) {
+                select2Process.push('assignment_' + a.id + '_' + a.stateId + '_' + a.closureId);
+            }
+        }
+
+        transitions = this.transitions.filter(a => a.toStateId === id);
+        for (let t of transitions) {
+            const assignments = this.data.model.workflowAssignments.filter(a => a.stateId === t.fromStateId);
+            for (let a of assignments) {
+                select2Process.push('assignment_' + a.id + '_' + a.stateId + '_' + a.closureId);
+            }
+        }
+
+        console.log(select2Process)
+        const assignmentElems = $('[id^="assignment_"]');
+        if (select2Process && select2Process.length > 0) {
+            for (let i = 0; i < select2Process.length; i++) {
+                const node2Process = $('#' + select2Process[i]);
+                for (let j = 0; j < $(node2Process).children().length; j++) {
+                    const usr = this.data.model.users.filter(u => u.id === Number($(node2Process).children()[j].value));
+                    if (usr.length > 0 && usr[0].deleted && Number($(node2Process).children()[j].value) === val) {
+                        //////console.log(assignmentElems[i]);
+                        $(node2Process).css('text-decoration', 'line-through');
+                    } else if (usr.length > 0 && !usr[0].deleted && Number($(node2Process).children()[j].value) === val) {
+                        //////console.log(assignmentElems[i]);
+                        $(node2Process).css('text-decoration', 'none');
+                    }
+
+                    if (val === Number($(node2Process).children()[j].value)) {
+                        $(node2Process).children()[j].setAttribute('disabled', 'disabled');
+                    } else {
+
+                        if (usr.length > 0 && !usr[0].deleted) {
+                            $(node2Process).children()[j].removeAttribute('disabled');
+                        }
+                        //child.removeAttribute('disabled');
+                    }
+                }
+            }
+        }
+
+
+        //this.updateGrantAndDisbursementUsers();
         if (event.target.value === "0") {
             event.target.style.color = '#ffbf00'
         } else {
@@ -1497,9 +1545,31 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
         /* if (!environment.production) {
             return;
         } */
+
+        /* let transitions = this.transitions.filter(a => a.fromStateId === Number(assignmentElems[i].id.split('_')[2]));
+            let select2Process = []
+            for (let t of transitions) {
+                const assignments = this.data.model.workflowAssignments.filter(a => a.stateId === t.toStateId);
+                for (let a of assignments) {
+                    select2Process.push('assignment_' + a.id + '_' + a.stateId + '_' + a.closureId);
+                }
+            }
+
+            transitions = this.transitions.filter(a => a.toStateId === Number(assignmentElems[i].id.split('_')[2]));
+            for (let t of transitions) {
+                const assignments = this.data.model.workflowAssignments.filter(a => a.stateId === t.fromStateId);
+                for (let a of assignments) {
+                    select2Process.push('assignment_' + a.id + '_' + a.stateId + '_' + a.closureId);
+                }
+            }
+
+            console.log(select2Process) */
+
         const assignmentElems = $('[id^="assignment_"]');
         for (let i = 0; i < assignmentElems.length; i++) {
             //console.log(assignmentElems[i].getAttribute('data-counter'));
+
+
 
             const prev = assignmentElems[i - 1] ? assignmentElems[i - 1].value : "-1";
             const next = assignmentElems[i + 1] ? assignmentElems[i + 1].value : "-1";
