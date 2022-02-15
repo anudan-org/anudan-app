@@ -3,7 +3,7 @@
     <!--<span class="badge badge-dark text-white pull-right mt-2" matBadgeSize="medium">{{currentGrant.grantStatus.displayName}}</span>-->
     <div class="row">
       <h4 class="col-11 text-left my-3 section-header" style="display: flex; align-items: center">
-        <div style="display: flex">
+        <div *ngIf="currentGrant.canManage" style="display: flex">
           <div *ngFor="let flow of getForwardFlow()">
             <button *ngIf="currentGrant.grantStatus.internalStatus!=='ACTIVE'" [disabled]="
                 wfDisabled
