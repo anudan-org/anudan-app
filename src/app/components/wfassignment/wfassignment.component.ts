@@ -1,4 +1,4 @@
-import { Grant } from './../../model/dahsboard';
+import { Grant, FlowAuthority } from './../../model/dahsboard';
 import { Report } from './../../model/report';
 import { Component, Inject, OnInit, AfterViewInit, ViewChild, ElementRef, Renderer2, HostListener } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef, MatButtonModule, MatDialog } from '@angular/material';
@@ -1287,6 +1287,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 }, 50);
 
 
+
             } /* else {
                 setTimeout(() => {
                     this.jsPlumbInstance.connect({
@@ -1305,11 +1306,39 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
         }
 
+        setTimeout(() => {
+
+            /* $('svg[class^=connectorLink').children()[0].setAttribute('stroke', '#d4d4d4');
+            $('svg[class^=connectorLink').children()[1].setAttribute('stroke', '#d4d4d4'); */
+
+            let backFlows;
+            if (this.data.model.type === 'grant') {
+                backFlows = this.data.model.grant.flowAuthorities.filter(a => a.forwardDirection === false);
+            } else if (this.data.model.type === 'report') {
+                backFlows = this.data.model.report.flowAuthorities.filter(a => a.forwardDirection === false);
+            } else if (this.data.model.type === 'disbursement') {
+                backFlows = this.data.model.disbursement.flowPermissions.filter(a => a.forwardDirection === false);
+            } else if (this.data.model.type === 'grant-closure') {
+                backFlows = this.data.model.closure.flowAuthorities.filter(a => a.forwardDirection === false);
+            }
+            //backFlows.splice(0, 1);
+            if (backFlows && backFlows.length > 0) {
+                for (let nack of backFlows) {
+                    $('.connectorLink' + nack.toStateId).children()[0].setAttribute('stroke-width', 3);
+                    $('.connectorLink' + nack.toStateId).children()[0].setAttribute('stroke', '#4dc251');
+                    $('.connectorLink' + nack.toStateId).children()[1].setAttribute('stroke', '#4dc251');
+                    $('.connectorLink' + nack.toStateId).children()[1].setAttribute('fill', '#4dc251');
+
+                }
+            }
+        }, 200);
+
+
     }
 
     @HostListener('window:resize', ['$event'])
     onResize(event) {
-        this.jsPlumbInstance.repaintEverything();
+        //this.jsPlumbInstance.repaintEverything();
     }
 
     @HostListener('window:scroll', ['$event']) getScrollHeight(event) {
@@ -1318,7 +1347,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
     redrawOnScroll(ev) {
 
-        this.jsPlumbInstance.repaintEverything();
+        //this.jsPlumbInstance.repaintEverything();
         /* //console.log(ev);
         const off = (ev.target.scrollTop);
         for (let e of $('.jtk-overlay')) {
@@ -1532,7 +1561,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             jsPlumb.Defaults.Endpoint = "Blank";
             jsPlumb.Defaults.Zoom = "1";
             this.jsPlumbInstance = jsPlumb.getInstance(jsPlumb.Defaults);
-            this.jsPlumbInstance.repaintEverything();
+            //this.jsPlumbInstance.repaintEverything();
         });
 
     }
