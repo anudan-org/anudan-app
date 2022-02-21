@@ -196,10 +196,14 @@ export class LoginComponent implements OnInit {
       this.getGrantTypes();
 
       if (this.user.organization.type === 'GRANTEE' || this.user.organization.type === 'GRANTER') {
-        if (this.parameters.g || this.parameters.r || this.parameters.d) {
-          this.router.navigate(['/dashboard'], { queryParams: { g: this.parameters.g, r: this.parameters.r, d: this.parameters.d, email: this.parameters.email, org: this.parameters.org, type: this.parameters.type, status: 'e' } });
+        if (this.parameters) {
+          if (this.parameters.g || this.parameters.r || this.parameters.d) {
+            this.router.navigate(['/dashboard'], { queryParams: { g: this.parameters.g, r: this.parameters.r, d: this.parameters.d, email: this.parameters.email, org: this.parameters.org, type: this.parameters.type, status: 'e' } });
+          } else {
+            this.router.navigate(['/dashboard'], { queryParams: { g: this.parameters.g, r: this.parameters.r, d: this.parameters.d, email: this.parameters.email, org: this.parameters.org, type: this.parameters.type, status: 'd' } });
+          }
         } else {
-          this.router.navigate(['/dashboard'], { queryParams: { g: this.parameters.g, r: this.parameters.r, d: this.parameters.d, email: this.parameters.email, org: this.parameters.org, type: this.parameters.type, status: 'd' } });
+          this.router.navigate(['/dashboard']);
         }
       } else {
         this.router.navigate(['/admin/tenants'], { queryParams: { g: this.parameters.g, r: this.parameters.r, d: this.parameters.d, email: this.parameters.email, org: this.parameters.org, type: this.parameters.type, status: 'e' } });
