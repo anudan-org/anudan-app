@@ -1,3 +1,4 @@
+import { RefundpopupComponent } from './../../refundpopup/refundpopup.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DocpreviewComponent } from './../../docpreview/docpreview.component';
 import { DocpreviewService } from './../../docpreview.service';
@@ -20,7 +21,7 @@ import { DisbursementDataService } from './../../disbursement.data.service';
 import { CurrencyService } from './../../currency-service';
 import { AttributeService } from './../../attribute-validation-service';
 import { AdminLayoutComponent } from 'app/layouts/admin-layout/admin-layout.component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, NavigationStart } from '@angular/router';
 import { APP_DATE_FORMATS } from './../../reports/report/report-sections/report-sections.component';
 
 import { DatePipe } from '@angular/common';
@@ -83,6 +84,8 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   @ViewChild("dataColumns") dataColumns: ElementRef;
   @ViewChild("auto") matAutocomplete: MatAutocomplete;
   @ViewChild("fruitInput") fruitInput: ElementRef<HTMLInputElement>;
+  @ViewChild("refundRequested") refundRequested: ElementRef;
+  @ViewChild("ongoingDisbursementAmount") ongoingDisbursementAmount: ElementRef;
 
   currentClosure: GrantClosure;
   action: string;
@@ -97,6 +100,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   allowScroll = true;
   noSingleDocAction: boolean = false;
   downloadAndDeleteAllowed: boolean = false;
+  subscribers: any = {};
 
   constructor(public appComp: AppComponent,
     private closureService: ClosureDataService,
@@ -116,10 +120,49 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     private elem: ElementRef,
     private docManagementService: DocManagementService,
     private docPreviewService: DocpreviewService,
-    private sanitizer: DomSanitizer) {
+    private sanitizer: DomSanitizer,
+    private datePipe: DatePipe,) {
     this.route.params.subscribe((p) => {
       this.action = p["action"];
       this.appComp.action = this.action;
+    });
+
+    this.subscribers = this.router.events.subscribe((val) => {
+      if (
+        val instanceof NavigationStart &&
+        val.url === "/grant-closure/preview"
+      ) {
+        this.appComp.action = "grant-closure-preview";
+      } else if (
+        val instanceof NavigationStart &&
+        val.url !== "/grant-closure/preview"
+      ) {
+        this.appComp.action = "";
+      }
+
+      if (val instanceof NavigationStart) {
+        if (this.currentClosure &&
+          !this.appComp.closureSaved
+        ) {
+          this.appComp.closureSaved = true;
+          this.saveClosure();
+
+        }
+
+        if (val.url === "/grants/active") {
+          this.subscribers.unsubscribe();
+        }
+      }
+    });
+
+
+    this.appComp.closureUpdated.subscribe((statusUpdate) => {
+      if (statusUpdate.status && statusUpdate.closureId && this.appComp.loggedInUser !== undefined) {
+        let closure = closureService.updateClosure(statusUpdate.closureId, this.appComp);
+        if (closure) {
+          closureService.changeMessage(closure, this.appComp.loggedInUser.id);
+        }
+      }
     });
 
     this.adminService.getLibraryDocs(this.appComp.loggedInUser).then((data: TemplateLibrary[]) => {
@@ -155,6 +198,38 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
 
       console.log(this.currentClosure);
     });
+  }
+
+  saveClosure() {
+    if (!this.currentClosure.canManage) {
+      return;
+    }
+
+    this.appComp.showSaving = true;
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
+    const url =
+      "/api/user/" +
+      this.appComp.loggedInUser.id +
+      "/closure/" +
+      this.currentClosure.id;
+
+    this.http
+      .put(url, this.currentClosure, httpOptions)
+      .subscribe((closure: GrantClosure) => {
+        this.closureService.changeMessage(closure, this.appComp.loggedInUser.id);
+        this.appComp.closureSaved = false;
+        this.appComp.autosaveDisplay =
+          "Last saved @ " +
+          this.datePipe.transform(new Date(), "hh:mm:ss a") +
+          "     ";
+      });
   }
 
   ngAfterViewInit() {
@@ -622,6 +697,41 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       amount = "0";
     }
     return this.currencyService.getFormattedAmount(Number(amount));
+  }
+
+  getReceivedFunds(i) {
+    const funds = document.getElementsByClassName('rf');
+    return (funds && funds.length) > 0 ? funds[i].innerHTML : '';
+  }
+
+  getPlannedFunds(i) {
+    const funds = document.getElementsByClassName('pf');
+    return (funds && funds.length) > 0 ? funds[i].innerHTML : '';
+  }
+
+  getPlannedDiff(i) {
+    const pf = $('.pf');
+    if (!pf || pf.length === 0) {
+      return '';
+    }
+
+    const pieces = $(pf[i]).html().replace('₹ ', '').split(",")
+
+    const p = Number(pieces.join(""));//.replaceAll(',', ''));
+    return this.currencyService.getFormattedAmount(p - 0);
+  }
+
+
+
+  getRecievedDiff(i) {
+    const pf = $('.rf');
+    if (!pf || pf.length === 0) {
+      return '';
+    }
+
+    const peices = $(pf[i]).html().replace('₹ ', '').split(',');
+    const p = Number(peices.join(""));
+    return this.currencyService.getFormattedAmount(p - 0);
   }
 
   getTotals(idx: number, fieldTableValue: TableData[]): string {
@@ -1150,6 +1260,10 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     }
 
     const createSectionModal = this.createSectionModal.nativeElement;
+    this.callCreateSectionAPI(sectionName.val())
+  }
+
+  callCreateSectionAPI(nameOfSection) {
 
     const httpOptions = {
       headers: new HttpHeaders({
@@ -1158,7 +1272,6 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
         Authorization: localStorage.getItem("AUTH_TOKEN"),
       }),
     };
-
     const url =
       "/api/user/" +
       this.appComp.loggedInUser.id +
@@ -1167,21 +1280,16 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       "/template/" +
       this.currentClosure.template.id +
       "/section/" +
-      sectionName.val();
+      nameOfSection;
 
     this.http
       .post<ClosureSectionInfo>(url, this.currentClosure, httpOptions)
       .subscribe(
         (info: ClosureSectionInfo) => {
           this.closureService.changeMessage(info.closure, this.appComp.loggedInUser.id);
-
-          sectionName.val("");
-          //$('#section_' + newSection.id).css('display', 'block');
-          $(createSectionModal).modal("hide");
           this.appComp.sectionAdded = true;
           this.sidebar.buildSectionsSideNav(null);
           this.appComp.sectionInModification = false;
-          //  this.appComp.selectedTemplate = info.report.template;
           this.router.navigate([
             "grant-closure/section/" +
             this.getCleanText(
@@ -1263,5 +1371,23 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
         this.deleteAttachment(attributeId, attachmentId);
       }
     });
+  }
+
+  captureRefund() {
+    const dg = this.dialog.open(RefundpopupComponent, {
+      data: { title: `<p class='text-header'>Refund Request<p><p class='text-subheader'>` + (this.currentClosure.grant.referenceNo ? '[' + this.currentClosure.grant.referenceNo + '] ' : '') + this.currentClosure.grant.name + `</p>` },
+      panelClass: "center-class",
+    });
+
+    dg.afterClosed().subscribe(result => {
+      if (result.status) {
+        this.refundRequested.nativeElement.innerHTML = this.currencyService.getFormattedAmount(Number(result.amount));
+        this.callCreateSectionAPI("Refund");
+      }
+    });
+  }
+
+  getOngoingDisbursementAmount() {
+    return this.currentClosure.grant.ongoingDisbursementAmount ? this.currencyService.getFormattedAmount(this.currentClosure.grant.ongoingDisbursementAmount) : ''
   }
 }

@@ -205,4 +205,11 @@ export class SubmittedReportsComponent implements OnInit {
             this.appSearchFilter.closeSearch();
         }
     }
+
+    reloadReports(ev) {
+        this.filteredSubmittedReportsOD = undefined;
+        this.filteredSubmittedReportsD = undefined;
+        this.getReports();
+
+    }
 }

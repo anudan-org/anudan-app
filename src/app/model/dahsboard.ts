@@ -296,6 +296,9 @@ export class Grant {
   closureInProgress: boolean;
   hashClosure: boolean;
   closureId: number;
+  refundAmount: number;
+  refundReason: string;
+  ongoingDisbursementAmount: number;
 }
 
 export class GrantTag {

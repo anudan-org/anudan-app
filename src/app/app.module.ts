@@ -45,6 +45,7 @@ import { NocookieComponent } from './nocookie/nocookie.component';
 import { NgxMarkjsModule } from 'ngx-markjs';
 import { ClosureSelectionComponent } from './components/closure-selection/closure-selection.component';
 import { ReturnsPopupComponent } from './returns-popup/returns-popup.component';
+import { RefundpopupComponent } from './refundpopup/refundpopup.component';
 
 
 export class AnudanErrorHandler implements ErrorHandler {
@@ -98,6 +99,7 @@ export function provideConfig() {
     NotificationspopupComponent,
     NocookieComponent,
     ReturnsPopupComponent,
+    RefundpopupComponent,
   ],
   imports: [
     BrowserAnimationsModule,
@@ -161,7 +163,7 @@ export function provideConfig() {
     MatMenuModule,
     { provide: ErrorHandler, useClass: AnudanErrorHandler }
   ],
-  entryComponents: [WfassignmentComponent, GranthistoryComponent, NotificationspopupComponent, MessagingComponent, FieldDialogComponent, OwnersPopupComponent, ProjectDocumentsComponent, ClosureSelectionComponent, DocpreviewComponent, ReturnsPopupComponent],
+  entryComponents: [WfassignmentComponent, GranthistoryComponent, NotificationspopupComponent, MessagingComponent, FieldDialogComponent, OwnersPopupComponent, ProjectDocumentsComponent, ClosureSelectionComponent, DocpreviewComponent, ReturnsPopupComponent, RefundpopupComponent],
   schemas: [NO_ERRORS_SCHEMA],
   bootstrap: [AppComponent]
 })
