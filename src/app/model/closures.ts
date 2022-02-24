@@ -22,6 +22,16 @@ export class GrantClosure {
   ownerId: number;
   ownerName: string;
   disabledByAmendment: boolean;
+  closureDocuments: ClosureDocument[];
+}
+
+export class ClosureDocument {
+  id: number;
+  location: string;
+  uploadedOn: Date;
+  uploadedBy: number;
+  name: string;
+  extension: string;
 }
 
 export class ClosureDetails {

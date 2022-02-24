@@ -1,3 +1,4 @@
+import { ActualRefund } from './model/dahsboard';
 import { AppComponent } from 'app/app.component';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { UserService } from './user.service';
@@ -97,5 +98,28 @@ export class ClosureDataService {
 
 
     return grantClosure;
+  }
+
+  saveActualRefund(actualRefund, closureId, appComp: AppComponent): Promise<ActualRefund> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+    let urlNew =
+      "/api/user/" + appComp.loggedInUser.id + "/closure/" + closureId + "/actualRefund";
+
+
+    return this.httpClient.put(urlNew, actualRefund, httpOptions).toPromise()
+      .then<ActualRefund>()
+      .catch((err) => {
+        return Promise.reject(
+          "Unable to save actual refund entry"
+        );
+      });
+
+    return null;
   }
 }

@@ -581,4 +581,12 @@ export class ActiveGrantsComponent implements OnInit {
     });
   }
 
+  tabClicked(ev) {
+    if (ev.index === 0) {
+      this.hasTenant = false;
+      this.fetchDashboard(String(this.appComponent.loggedInUser.id), this.currentGrant);
+    } else if (ev.index === 1) {
+      this.getGrantsUnderClosure();
+    }
+  }
 }

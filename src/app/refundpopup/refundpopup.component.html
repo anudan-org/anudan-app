@@ -1,0 +1,25 @@
+<h1 mat-dialog-title class="text-header text-center" style="font-weight: normal" [innerHTML]="message.title">
+</h1>
+
+<div class="row w-100">
+  <div class="col-12">
+    <label for="refundamount" class="mb-0">Refund Amount</label>
+  </div>
+  <div class="col-12 mb-4">
+    <input id="refundamount" #refundAmount class="anu-input" type="number" placeholder="Enter refund amount">
+  </div>
+  <div class="col-12">
+    <label for="refundreason" class="mb-0">Refund Reason</label>
+  </div>
+  <div class="col-12">
+    <textarea id="refundreason" #refundReason class="anu-input w-100" placeholder="Enter a note"></textarea>
+  </div>
+</div>
+<div mat-dialog-actions class="row px-3">
+  <button [disabled]="!refundAmount.value" (click)="onYesClick()" class="btn btn-sm btn-green-primary">
+    Okay
+  </button>
+  <button (click)="onNoClick()" class="btn btn-sm btn-green">
+    Not Now
+  </button>
+</div>

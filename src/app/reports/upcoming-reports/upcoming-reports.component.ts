@@ -509,4 +509,14 @@ export class UpcomingReportsComponent implements OnInit {
             this.appSearchFilter.closeSearch();
         }
     }
+
+    reloadReports(ev) {
+        this.filteredToSetupReportD = undefined;
+        this.filteredToSetupReportOD = undefined;
+        this.filteredReadyToSubmitReportsD = undefined;
+        this.filteredReadyToSubmitReportsOD = undefined;
+        this.filterAllReports = undefined;
+        this.getReports();
+
+    }
 }

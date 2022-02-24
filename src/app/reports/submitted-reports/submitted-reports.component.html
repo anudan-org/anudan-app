@@ -1,72 +1,65 @@
 <div class="row search-panel">
   <div class="col-9 search-panel-container">
-    <app-search-filter #appSearchFilter *ngIf="!searchClosed" [ready]="filterReady" (highlightDone)="resetFilterFlag($event)" (filterCriteria)="startFilter($event)" (close)="closeSearch($event)"></app-search-filter>
+    <app-search-filter #appSearchFilter *ngIf="!searchClosed" [ready]="filterReady"
+      (highlightDone)="resetFilterFlag($event)" (filterCriteria)="startFilter($event)" (close)="closeSearch($event)">
+    </app-search-filter>
     <mat-icon (click)="openSearch()" style="position: absolute; right: 0; margin-right: 20px;">search</mat-icon>
   </div>
-  <div  class="col-3 d-flex align-items-center justify-content-end p-0"></div>
+  <div class="col-3 d-flex align-items-center justify-content-end p-0"></div>
 </div>
 <div class="main-content" style="margin-top: 40px;">
   <div class="container-fluid">
-      <div class="row">
-        <div class="col-12">
-          <mat-tab-group #matTabGroup>
-            <mat-tab
-              
-              label="Reports Due ({{
+    <div class="row">
+      <div class="col-12">
+        <mat-tab-group #matTabGroup (selectedTabChange)="reloadReports($event)">
+          <mat-tab label="Reports Due ({{
                 filteredSubmittedReportsD ? filteredSubmittedReportsD.length : 0
-              }})"
-            >
+              }})">
             <div *ngIf="!filteredSubmittedReportsD">
-              <img alt="img"src="./assets/img/loader.gif" style="width: 10%" />
+              <img alt="img" src="./assets/img/loader.gif" style="width: 10%" />
               <p style="color: black">Loading upcoming reports...</p>
             </div>
-            <div
-              *ngIf="filteredSubmittedReportsD && filteredSubmittedReportsD.length === 0"
-            >
+            <div *ngIf="filteredSubmittedReportsD && filteredSubmittedReportsD.length === 0">
               <p class="py-5">No Reports</p>
             </div>
-            <div
-              [ngClass]="uiService.getReportCardStyle(report,appComp)"
-              style="cursor: pointer"
-              *ngFor="let report of filteredSubmittedReportsD; let i = index"
-              (click)="manageReport(report)"
-            >
+            <div [ngClass]="uiService.getReportCardStyle(report,appComp)" style="cursor: pointer"
+              *ngFor="let report of filteredSubmittedReportsD; let i = index" (click)="manageReport(report)">
               <div class="col-12 mb-1">
-                <p
-                  *ngIf="report.disabledByAmendment"
+                <p *ngIf="report.disabledByAmendment"
                   class="mb-0 text-subheader d-flex align-items-center text-left mt-2"
-                  style="font-weight: 600; font-size: 12px"
-                ><mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
-                  info_outline
-                </mat-icon>
+                  style="font-weight: 600; font-size: 12px">
+                  <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
+                    info_outline
+                  </mat-icon>
                   Underlying grant has been amended. Please check if this
                   report is still valid.
                 </p>
                 <div class="text-subheader text-left mb-0 mt-2">
-                  <div class="mb-1"><span  class="search-context">{{
-                    (report.grant.referenceNo
+                  <div class="mb-1"><span class="search-context">{{
+                      (report.grant.referenceNo
                       ? report.grant.referenceNo + " | "
                       : "") + report.grant.name
-                  }}</span></div>
-                  
+                      }}</span></div>
+
                   <div class="mb-1"><span *ngIf="isExternalGrant(report.grant)" class=" mt-1 search-context">{{
-                    report.grant.organization
+                      report.grant.organization
                       ? report.grant.organization.name
                       : ""
-                  }}</span> 
-                  <span *ngIf="!isExternalGrant(report.grant)" class="mt-1 search-context">{{
-                    report.grant.grantorOrganization.name
-                  }}</span> </div>
-                  
-                  <div class="mt-1">
-                    <img alt="img"src="./assets/img/rupee.png" style="width: 9px" /><span
-                    >{{ getFormattedGrantAmount(report.grant.amount) }}
-                  </span>
-                  &nbsp;&nbsp;<span class="text-subheader"><small>({{
-                    getGrantAmountInWords(report.grant.amount)
-                  }})</small></span>
+                      }}</span>
+                    <span *ngIf="!isExternalGrant(report.grant)" class="mt-1 search-context">{{
+                      report.grant.grantorOrganization.name
+                      }}</span>
                   </div>
-                  
+
+                  <div class="mt-1">
+                    <img alt="img" src="./assets/img/rupee.png" style="width: 9px" /><span>{{
+                      getFormattedGrantAmount(report.grant.amount) }}
+                    </span>
+                    &nbsp;&nbsp;<span class="text-subheader"><small>({{
+                        getGrantAmountInWords(report.grant.amount)
+                        }})</small></span>
+                  </div>
+
                 </div>
               </div>
               <div class="col-9 mb-2" style="display: flex; align-items: center">
@@ -111,13 +104,14 @@
                     </div>
                   </div>
                 </div>
-                
+
               </div>
               <div class="col-3">
                 <div class="row">
                   <div class="col-12">
                     <div [ngClass]="isExternalGrant(report.grant)?'status-indicator3':'status-indicator2'">
-                      <div [class]="'text-center status-icon state-'+(isExternalGrant(report.grant)?'ext-':'') + report.status.internalStatus.toLowerCase()">
+                      <div
+                        [class]="'text-center status-icon state-'+(isExternalGrant(report.grant)?'ext-':'') + report.status.internalStatus.toLowerCase()">
                       </div>{{report.status.name | uppercase}}
                     </div>
                     <div class="text-center text-subheader pl-3 mt-2 search-context">{{report.ownerName}}</div>
@@ -125,64 +119,55 @@
                 </div>
               </div>
             </div>
-            </mat-tab>
-            <mat-tab
-              
-              label="Reports Overdue ({{
+          </mat-tab>
+          <mat-tab label="Reports Overdue ({{
                 filteredSubmittedReportsOD ? filteredSubmittedReportsOD.length : 0
-              }})"
-            >
+              }})">
             <div *ngIf="!filteredSubmittedReportsOD">
-              <img alt="img"src="./assets/img/loader.gif" style="width: 10%" />
+              <img alt="img" src="./assets/img/loader.gif" style="width: 10%" />
               <p style="color: black">Loading upcoming reports...</p>
             </div>
-            <div
-              *ngIf="filteredSubmittedReportsOD && filteredSubmittedReportsOD.length === 0"
-            >
+            <div *ngIf="filteredSubmittedReportsOD && filteredSubmittedReportsOD.length === 0">
               <p class="py-5">No Reports</p>
             </div>
-            <div
-              [ngClass]="uiService.getReportCardStyle(report,appComp)"
-              style="cursor: pointer"
-              *ngFor="let report of filteredSubmittedReportsOD; let i = index"
-              (click)="manageReport(report)"
-            >
+            <div [ngClass]="uiService.getReportCardStyle(report,appComp)" style="cursor: pointer"
+              *ngFor="let report of filteredSubmittedReportsOD; let i = index" (click)="manageReport(report)">
               <div class="col-12 mb-1">
-                <p
-                  *ngIf="report.disabledByAmendment"
+                <p *ngIf="report.disabledByAmendment"
                   class="mb-0 text-subheader d-flex align-items-center text-left mt-2"
-                  style="font-weight: 600; font-size: 12px"
-                ><mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
-                  info_outline
-                </mat-icon>
+                  style="font-weight: 600; font-size: 12px">
+                  <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
+                    info_outline
+                  </mat-icon>
                   Underlying grant has been amended. Please check if this
                   report is still valid.
                 </p>
                 <div class="text-subheader text-left mb-0 mt-2">
-                  <div class="mb-1"><span  class="search-context">{{
-                    (report.grant.referenceNo
+                  <div class="mb-1"><span class="search-context">{{
+                      (report.grant.referenceNo
                       ? report.grant.referenceNo + " | "
                       : "") + report.grant.name
-                  }}</span></div>
-                  
+                      }}</span></div>
+
                   <div class="mb-1"><span *ngIf="isExternalGrant(report.grant)" class=" mt-1 search-context">{{
-                    report.grant.organization
+                      report.grant.organization
                       ? report.grant.organization.name
                       : ""
-                  }}</span> 
-                  <span *ngIf="!isExternalGrant(report.grant)" class="mt-1 search-context">{{
-                    report.grant.grantorOrganization.name
-                  }}</span> </div>
-                  
-                  <div class="mt-1">
-                    <img alt="img"src="./assets/img/rupee.png" style="width: 9px" /><span
-                    >{{ getFormattedGrantAmount(report.grant.amount) }}
-                  </span>
-                  &nbsp;&nbsp;<span class="text-subheader"><small>({{
-                    getGrantAmountInWords(report.grant.amount)
-                  }})</small></span>
+                      }}</span>
+                    <span *ngIf="!isExternalGrant(report.grant)" class="mt-1 search-context">{{
+                      report.grant.grantorOrganization.name
+                      }}</span>
                   </div>
-                  
+
+                  <div class="mt-1">
+                    <img alt="img" src="./assets/img/rupee.png" style="width: 9px" /><span>{{
+                      getFormattedGrantAmount(report.grant.amount) }}
+                    </span>
+                    &nbsp;&nbsp;<span class="text-subheader"><small>({{
+                        getGrantAmountInWords(report.grant.amount)
+                        }})</small></span>
+                  </div>
+
                 </div>
               </div>
               <div class="col-9 mb-2" style="display: flex; align-items: center">
@@ -227,25 +212,26 @@
                     </div>
                   </div>
                 </div>
-                
+
               </div>
               <div class="col-3">
                 <div class="row">
                   <div class="col-12">
                     <div [ngClass]="isExternalGrant(report.grant)?'status-indicator3':'status-indicator2'">
-                      <div [class]="'text-center status-icon state-'+(isExternalGrant(report.grant)?'ext-':'')+report.status.internalStatus.toLowerCase()">
+                      <div
+                        [class]="'text-center status-icon state-'+(isExternalGrant(report.grant)?'ext-':'')+report.status.internalStatus.toLowerCase()">
                       </div>{{report.status.name | uppercase}}
                     </div>
                     <div class="text-center text-subheader pl-3 mt-2 search-context">{{report.ownerName}}</div>
                   </div>
-                  
+
                 </div>
               </div>
             </div>
-            </mat-tab>
-            </mat-tab-group>
-          
-        </div>
+          </mat-tab>
+        </mat-tab-group>
+
       </div>
+    </div>
   </div>
 </div>

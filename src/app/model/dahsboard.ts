@@ -296,6 +296,21 @@ export class Grant {
   closureInProgress: boolean;
   hashClosure: boolean;
   closureId: number;
+  refundAmount: number;
+  refundReason: string;
+  ongoingDisbursementAmount: number;
+  actualRefunds: ActualRefund[];
+}
+
+export class ActualRefund {
+  id: number;
+  amount: number;
+  note: string;
+  refundDate: Date;
+  refundDateStr: string;
+  createdDate: Date;
+  createdBy: number;
+  associatedGrantId: number;
 }
 
 export class GrantTag {
