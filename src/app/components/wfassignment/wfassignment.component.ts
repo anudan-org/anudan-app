@@ -1272,6 +1272,12 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
             if (Number(transition.seqOrder) < 50) {
                 setTimeout(() => {
+                    let fromLeft = $('#state_' + transition.fromStateId).css('left');
+                    let toLeft = $('#state_' + transition.toStateId).css('left');
+                    fromLeft = !fromLeft ? 0 : Number(fromLeft.replace('px', ''));
+                    toLeft = !toLeft ? 0 : Number(toLeft.replace('px', ''));
+                    let a1 = (fromLeft === toLeft) ? ["Bottom", "Top"] : (fromLeft > toLeft) ? ["Left", "Top"] : (fromLeft < toLeft) ? ["Bottom", "Left"] : ["Bottom", "Top"];
+                    let a2 = (fromLeft < toLeft) ? "Bottom" : "LeftMiddle";
                     let tick = this.jsPlumbInstance.connect({
                         connector: ["Flowchart", { cssClass: 'connectorLink' + transition.toStateId }],
                         overlays: [
@@ -1280,7 +1286,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         ],
                         source: 'state_' + transition.fromStateId, // it is the id of source div
                         target: 'state_' + transition.toStateId, // it is the id of target div
-                        anchors: ["Bottom", "Top"],
+                        anchors: a1,
 
                     });
                     $(tick).attr('id', 'coonector_id_' + transition.toStateId)
@@ -1826,10 +1832,10 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             const lastSibling = $("#state_" + siblings[siblings.length - 1].toStateId)[0];
             if (lastSibling) {
                 const t = $(lastSibling).css('left');
-                return $("#state_" + (t ? Number(t.replace('px', '')) : 0) + 300);
+                return (t ? Number(t.replace('px', '')) : 0) + 345;
             } else {
                 const p = $("#state_" + parent.fromStateId).css('left');
-                return (p ? Number(p.replace('px', '')) : 0) - 300;
+                return (p ? Number(p.replace('px', '')) : 0) - 345;
             }
         }
         return 0;
@@ -1862,7 +1868,21 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     position(transitionNodeId: any, parentNodeId: any, offset: any) {
 
         const t = $("#" + parentNodeId).css('left');
-        $("#" + transitionNodeId).css('position', 'relative').css('left', (t ? Number(t.replace('px', '')) : 0) + offset);
+        let parentTop = $("#" + parentNodeId).css('top');
+        let parentHeight = $("#" + parentNodeId).height();
+
+        $("#" + transitionNodeId)
+            .css('position', 'relative')
+            .css('left', (t ? Number(t.replace('px', '')) : 0) + offset);
+
+        /* if (!parentTop) {
+            parentTop = 0;
+        } else {
+            parentTop = Number(parentTop.replace('px', ''));
+        }
+
+        $("#" + transitionNodeId).css('top', parentTop + parentHeight); */
+
         /* let parentElement;
         const p = this.transitions.filter(t => t.toStateId === transition.fromStateId)[0];
         if (p) {

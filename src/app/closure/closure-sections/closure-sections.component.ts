@@ -11,7 +11,7 @@ import { COMMA } from '@angular/cdk/keycodes';
 import { ENTER } from '@angular/cdk/keycodes';
 import { AdminService } from './../../admin.service';
 import { FormControl } from '@angular/forms';
-import { Grant, TemplateLibrary, AttachmentDownloadRequest } from './../../model/dahsboard';
+import { Grant, TemplateLibrary, AttachmentDownloadRequest, ActualRefund } from './../../model/dahsboard';
 import { FieldDialogComponent } from './../../components/field-dialog/field-dialog.component';
 import { MessagingComponent } from './../../components/messaging/messaging.component';
 import { SectionEditComponent } from './../../components/section-edit/section-edit.component';
@@ -56,7 +56,7 @@ import { saveAs } from "file-saver";
   styles: [
     `
       ::ng-deep
-        .dibursements-class
+        .refunds-holder
         .mat-form-field-appearance-legacy
         .mat-form-field-infix {
         padding: 0 !important;
@@ -64,14 +64,14 @@ import { saveAs } from "file-saver";
     `,
     `
       ::ng-deep
-        .dibursements-class
+        .refunds-holder
         .mat-form-field-appearance-legacy
         .mat-form-field-wrapper {
         padding-bottom: 0 !important;
       }
     `,
     `
-      ::ng-deep .dibursements-class .mat-form-field-infix {
+      ::ng-deep .refunds-holder .mat-form-field-infix {
         border-top: 0 !important;
       }
     `,
@@ -81,6 +81,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
 
   @ViewChild("createSectionModal") createSectionModal: ElementRef;
   @ViewChild("datePicker") datePicker: MatDatepicker<any>;
+  @ViewChild("datePicker2") datePicker2: MatDatepicker<any>;
   @ViewChild("dataColumns") dataColumns: ElementRef;
   @ViewChild("auto") matAutocomplete: MatAutocomplete;
   @ViewChild("fruitInput") fruitInput: ElementRef<HTMLInputElement>;
@@ -92,6 +93,8 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   newField: any;
   selectedDateField: any;
   selectedColumn: ColumnData;
+  selectedARDateField: any;
+  selectedARColumn: ActualRefund;
   myControl: FormControl;
   options: TemplateLibrary[];
   filteredOptions: Observable<TemplateLibrary[]>;
@@ -141,9 +144,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       }
 
       if (val instanceof NavigationStart) {
-        if (this.currentClosure &&
-          !this.appComp.closureSaved
-        ) {
+        if (this.currentClosure) {
           this.appComp.closureSaved = true;
           this.saveClosure();
 
@@ -194,6 +195,9 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       if (!this.currentClosure) {
         this.appComp.currentView = 'dashboard';
         this.router.navigate(['dashboard']);
+      }
+      if (this.currentClosure.grant.actualRefunds.length === 0) {
+        //this.addActualRefunds();
       }
 
       console.log(this.currentClosure);
@@ -351,6 +355,10 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
           }),
         };
 
+        if (this.currentClosure.closureDetails.sections.filter(a => a.id === secId)[0] && this.currentClosure.closureDetails.sections.filter(a => a.id === secId)[0].sectionName === 'Refund') {
+          this.currentClosure.grant.refundAmount = null;
+          this.currentClosure.grant.refundReason = null;
+        }
         const url =
           "/api/user/" +
           this.appComp.loggedInUser.id +
@@ -718,7 +726,13 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     const pieces = $(pf[i]).html().replace('₹ ', '').split(",")
 
     const p = Number(pieces.join(""));//.replaceAll(',', ''));
-    return this.currencyService.getFormattedAmount(p - 0);
+    let actualRfundsTotal = 0;
+    if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {
+      for (let rf of this.currentClosure.grant.actualRefunds) {
+        actualRfundsTotal += (rf.amount ? rf.amount : 0);
+      }
+    }
+    return this.currencyService.getFormattedAmount(p - 0 + actualRfundsTotal);
   }
 
 
@@ -803,6 +817,19 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     }
   }
 
+  openARDate(af: ActualRefund, ev: MouseEvent) {
+    const stDateElem = this.datePicker2;
+    this.selectedARDateField = ev;
+    this.selectedARColumn = af;
+    if (!stDateElem.opened) {
+      this.appComp.sectionInModification = true;
+      stDateElem.open();
+    } else {
+      this.appComp.sectionInModification = false;
+      stDateElem.close();
+    }
+  }
+
   setDate(ev: MatDatepickerInputEvent<any>) {
     const trgt = ev.target;
     this.selectedDateField.target.value = this.datepipe.transform(
@@ -810,6 +837,26 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       "dd-MMM-yyyy"
     );
     this.selectedColumn.value = this.selectedDateField.target.value;
+  }
+
+  setARDate(ev: MatDatepickerInputEvent<any>) {
+    this.selectedARDateField.target.value = this.datepipe.transform(
+      ev.value,
+      "dd-MMM-yyyy"
+    );
+    //this.selectedARColumn.refundDate = this.selectedARDateField.target.value;
+    this.selectedARColumn.refundDateStr = this.selectedARDateField.target.value.toString();
+
+    this.updateRefundLineItem(this.selectedARColumn);
+  }
+
+  updateRefundLineItem(af) {
+    this.closureService.saveActualRefund(af, this.currentClosure.id, this.appComp).then((response: ActualRefund) => {
+      this.selectedARColumn = response;
+      const idx = this.currentClosure.grant.actualRefunds.findIndex(a => a.id === this.selectedARColumn.id);
+      this.currentClosure.grant.actualRefunds[idx] = this.selectedARColumn;
+      //this.currentClosure.grant.actualRefunds.push(af);
+    });
   }
 
   dateFilter = (d: Date | null): boolean => {
@@ -1082,6 +1129,68 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       });
   }
 
+  processSelectedClosureDocFiles(event) {
+    let files = event.target.files;
+
+    const endpoint =
+      "/api/user/" +
+      this.appComp.loggedInUser.id +
+      "/closure/" +
+      this.currentClosure.id +
+      "/upload/docs";
+    let formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      if (files.item(i).size === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected a file with no content. Unable to upload.',
+          panelClass: "center-class"
+        });
+        event.target.value = "";
+        break;
+      }
+
+      const ext = files.item(i).name.substr(files.item(i).name.lastIndexOf('.'));
+      if (this.appComp.acceptedFileTypes.filter(d => d === ext).length === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected an unsupported file type. Supported file types are ' + this.appComp.acceptedFileTypes.toString() + '. Unable to upload.',
+          panelClass: "center-class"
+        });
+        event.target.value = "";
+        break;
+      }
+      formData.append("file", files.item(i));
+      const fileExistsCheck = this._checkAttachmentExists(
+        files.item(i).name.substring(0, files.item(i).name.lastIndexOf("."))
+      );
+      if (fileExistsCheck.status) {
+        alert(
+          "Document " +
+          files.item(i).name +
+          " is already attached under " +
+          fileExistsCheck.message
+        );
+        event.target.value = "";
+        return;
+      }
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+      reportProgress: true,
+    };
+
+    this.http
+      .post<any>(endpoint, formData, httpOptions)
+      .subscribe((info: GrantClosure) => {
+        this.closureService.changeMessage(info, this.appComp.loggedInUser.id);
+        //this.currentClosure = info.closure;
+
+      });
+  }
+
   handleSelection(attribId, attachmentId) {
     const docElems = this.elem.nativeElement.querySelectorAll(
       '[id^="attriute_' + attribId + '_attachment_"]'
@@ -1198,6 +1307,10 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
+        if (this.currentClosure.closureDetails.sections.filter(a => a.id === sectionId)[0] && this.currentClosure.closureDetails.sections.filter(a => a.id === sectionId)[0].sectionName === 'Refund') {
+          this.currentClosure.grant.refundAmount = null;
+          this.currentClosure.grant.refundReason = null;
+        }
         const httpOptions = {
           headers: new HttpHeaders({
             "Content-Type": "application/json",
@@ -1374,20 +1487,70 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   }
 
   captureRefund() {
-    const dg = this.dialog.open(RefundpopupComponent, {
-      data: { title: `<p class='text-header'>Refund Request<p><p class='text-subheader'>` + (this.currentClosure.grant.referenceNo ? '[' + this.currentClosure.grant.referenceNo + '] ' : '') + this.currentClosure.grant.name + `</p>` },
-      panelClass: "center-class",
-    });
+    /*  const dg = this.dialog.open(RefundpopupComponent, {
+       data: { title: `<p class='text-header'>Refund Request<p><p class='text-subheader'>` + (this.currentClosure.grant.referenceNo ? '[' + this.currentClosure.grant.referenceNo + '] ' : '') + this.currentClosure.grant.name + `</p>` },
+       panelClass: "center-class",
+     }); */
 
-    dg.afterClosed().subscribe(result => {
-      if (result.status) {
-        this.refundRequested.nativeElement.innerHTML = this.currencyService.getFormattedAmount(Number(result.amount));
-        this.callCreateSectionAPI("Refund");
-      }
-    });
+    /* dg.afterClosed().subscribe(result => {
+      if (result.status) { */
+    //this.refundRequested.nativeElement.innerHTML = this.currencyService.getFormattedAmount(Number(result.amount));
+    this.callCreateSectionAPI("Project Refund Details");
+    /* }
+  }); */
   }
 
   getOngoingDisbursementAmount() {
     return this.currentClosure.grant.ongoingDisbursementAmount ? this.currencyService.getFormattedAmount(this.currentClosure.grant.ongoingDisbursementAmount) : ''
+  }
+
+  getRefundAmount() {
+    if (this.currentClosure.grant.refundAmount) {
+      return this.currencyService.getFormattedAmount(this.currentClosure.grant.refundAmount);
+    }
+  }
+
+  addActualRefunds() {
+    console.log(this.currentClosure);
+    let af = new ActualRefund();
+    af.createdDate = new Date();
+    af.amount = null;
+    af.createdBy = this.appComp.loggedInUser.id;
+    af.note = '';
+    af.refundDate = null;
+    af.associatedGrantId = this.currentClosure.grant.id;
+    this.closureService.saveActualRefund(af, this.currentClosure.id, this.appComp).then((response: ActualRefund) => {
+      af = response;
+      this.currentClosure.grant.actualRefunds.push(af);
+    });
+  }
+
+  getFormattedARAmount(amount) {
+    if (!amount) {
+      return '';
+    }
+
+    return this.currencyService.getFormattedAmount(amount);
+  }
+
+  toggleARAmountInput(ev) {
+    const inputId = 'afinput_' + ev.currentTarget.id.split("_")[1];
+    $(ev.currentTarget).css('visibility', 'hidden');
+    $('#' + inputId).css('visibility', 'visible');
+    $('#' + inputId).focus();
+  }
+
+  toggleARInput(ev, af) {
+    const inputDisplay = 'afp_' + ev.currentTarget.id.split("_")[1];
+    $(ev.currentTarget).css('visibility', 'hidden');
+    $('#' + inputDisplay).css('visibility', 'visible');
+    this.updateRefundLineItem(af);
+  }
+
+  getRedundDate(dt) {
+    return this.datepipe.transform(
+      dt,
+      "dd-MMM-yyyy"
+    );
   }
 }
