@@ -18,8 +18,8 @@
             <span>Amendment in-progress [<strong>{{ currentClosure.grant.origGrantRefNo }}</strong>]</span>
           </p>
         </h4>
-        <h4 class="col-8 text-left my-3 section-header">
-          {{ section.sectionName }}
+        <h4 class="col-8 text-left my-3 section-header"
+          [innerHTML]="section.systemGenerated?section.sectionName+'<sup>*</sup>':section.sectionName">
         </h4>
         <div class="col-3" style="
               display: flex;
@@ -136,7 +136,14 @@
                                   <ng-container *ngFor="let af of currentClosure.grant.actualRefunds;let i=index">
                                     <div class="col-1 py-1"
                                       style="border:1px solid #d4d4d4;display:flex;align-items:center;justify-content:center;">
-                                      {{i+1}}</div>
+                                      {{i+1}}
+                                      <mat-icon *ngIf="currentClosure.grant.actualRefunds.length > 1"
+                                        (click)="deleteActualRefundRow(af, i)" aria-hidden="false"
+                                        style="font-size: 12px; top: 38%; position: absolute; right: 9px; z-index: 1; cursor: pointer; width: auto; height: auto;"
+                                        aria-label="Example home icon" inline="false" title="Delete this row">
+                                        delete_outline
+                                      </mat-icon>
+                                    </div>
                                     <div class="col-3 py-1" style="border:1px solid #d4d4d4;">
                                       <mat-form-field>
                                         <input (click)='openARDate(af,$event)' [(ngModel)]="af.refundDate"
@@ -204,25 +211,25 @@
                                           ">
                                         {{ attachment.name }}
                                       </p>
-                                      <input id='attachment_{{attachment.id}}' mat-list-icon class="attachment-checkbox"
-                                        type="checkbox" (change)="
-                                            handleSelection(attachment.id)
+                                      <input id='closure_attachment_{{attachment.id}}' mat-list-icon
+                                        class="attachment-checkbox" type="checkbox" (change)="
+                                            handleClosureDocSelection(attachment.id)
                                           " style="width: 18px;" />
-                                      <button [disabled]="noSingleDocAction" class='single-doc'
+                                      <button [disabled]="noSingleClosureDocAction" class='single-doc'
                                         (click)="previewDocument('closure-document',attachment)">
                                         <mat-icon class="float-right"
-                                          [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                          [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
                                           remove_red_eye</mat-icon>
                                       </button>
-                                      <button [disabled]="noSingleDocAction" class='single-doc'>
-                                        <mat-icon class=" float-right" (click)="downloadSingleDoc(attachment.id)"
-                                          [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                      <button [disabled]="noSingleClosureDocAction" class='single-doc'>
+                                        <mat-icon class=" float-right" (click)="downloadSingleClosureDoc(attachment.id)"
+                                          [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
                                           file_download</mat-icon>
                                       </button>
-                                      <button [disabled]="noSingleDocAction" class='single-doc'
-                                        (click)="deleteSingleDoc(attachment.id)">
+                                      <button [disabled]="noSingleClosureDocAction" class='single-doc'
+                                        (click)="deleteSingleClosureDoc(attachment.id)">
                                         <mat-icon class="float-right"
-                                          [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                          [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
                                           delete_outlined</mat-icon>
                                       </button>
                                     </mat-list-item>
@@ -231,15 +238,16 @@
                                        currentClosure.closureDocuments &&
                                        currentClosure.closureDocuments.length > 0
                                       ">
-                                    <button id="downloadBtn" [disabled]="!downloadAndDeleteAllowed"
-                                      class="btn btn-sm btn-blue" (click)="downloadSelection()">
+                                    <button id="downloadBtn" [disabled]="!downloadAndDeleteClosureDocsAllowed"
+                                      class="btn btn-sm btn-blue" (click)="downloadClosureDocsSelection()">
                                       <mat-icon style='display:flex;align-items:center;justify-content: center;'>
                                         system_update_alt</mat-icon>
                                       Download Selected Documents
                                     </button>
 
                                     <button id="deleteBtn" class="btn btn-sm btn-blue ml-4"
-                                      [disabled]="!downloadAndDeleteAllowed" (click)="deleteSelection()">
+                                      [disabled]="!downloadAndDeleteClosureDocsAllowed"
+                                      (click)="deleteClosureDocsSelection()">
                                       <mat-icon style='display:flex;align-items:center;justify-content: center;'>
                                         delete_outlined
                                       </mat-icon>Delete
@@ -383,13 +391,13 @@
                                   <td class="text-right px-1 text-subheader"></td>
                                 </tr>
                                 <tr
-                                  *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) || !currentClosure.grant.hasOngoingDisbursement">
+                                  *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) || !currentClosure.grant.hasOngoingDisbursement &&  this.getActualRefundsForGrant()!==0">
                                   <td></td>
                                   <td colspan="4"></td>
 
                                   <td><button class="btn btn-sm btn-green"
-                                      *ngIf="getPlannedFunds(0)!==getReceivedFunds(0)"
-                                      [disabled]="currentClosure.grant.hasOngoingDisbursement">{{currentClosure.grant.hasOngoingDisbursement?'Disbursement
+                                      *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) && this.getActualRefundsForGrant()===0"
+                                      [disabled]="currentClosure.grant.hasOngoingDisbursement ">{{currentClosure.grant.hasOngoingDisbursement?'Disbursement
                                       Request In-Progress':'Initiate Disbursement'}}</button>
                                   </td>
                                   <td><button
@@ -533,7 +541,7 @@
                               </div>
                               <div id="tableArea" class="row flex-row flex-nowrap"
                                 style="overflow: hidden; overflow-x: scroll">
-                                <table id="tablePlaceholder">
+                                <table id="tablePlaceholderX" class='refunds-holder'>
                                   <tr>
                                     <th id="col1" width="20%" style="
                               min-width: 250px;
@@ -774,7 +782,7 @@
                               <div id="tableArea" class="row dibursements-class mt-4"
                                 style="padding-left: 15px; padding-right: 15px">
                                 <p class="text-header">Project Funds Received</p>
-                                <table #dataColumns id="tablePlaceholder" width="100%">
+                                <table #dataColumns id="refunds-holder" width="100%">
                                   <ng-container *ngIf="!attribute.fieldTableValue">
                                     <tr>
                                       <th id="no_funds">
@@ -1061,7 +1069,7 @@
                                         !row.enteredByGrantee
                                       " #amountFormatted class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: -1px;
+                                        top: 5px;
                                         cursor: text;
                                         color: #212529;
                                         background: #f4f4f4 !important;
@@ -1089,7 +1097,7 @@
                                         row.enteredByGrantee
                                       " #amountFormatted class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: -1px;
+                                        top: 5px;
                                         cursor: text;
                                         background: #f4f4f4 !important;
                                       ">
@@ -1112,7 +1120,7 @@
                                           'Funds from Other Sources'
                                       " class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: -1px;
+                                        top: 5px;
                                         background: #f4f4f4 !important;
                                       ">
                                                 {{
@@ -1229,7 +1237,7 @@
                                           'Funds from Other Sources'
                                       " class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: -1px;
+                                        top: 5px;
                                         cursor: text;
                                         background: #f4f4f4 !important;
                                       ">
@@ -1254,7 +1262,7 @@
                                         !row.enteredByGrantee
                                       " #amountFormatted class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: -1px;
+                                        top: 5px;
                                         cursor: text;
                                         background: #f4f4f4 !important;
                                       ">
@@ -1271,7 +1279,7 @@
                                       " #amountFormatted (click)="showAmountInput($event)"
                                                 class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: -1px;
+                                        top: 5px;
                                         cursor: text;
                                       ">
                                                 {{
@@ -1309,7 +1317,7 @@
                                         !row.status
                                       " type="number" class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: -1px;
+                                        top: 5px;
                                         color: #212529;
                                         background: #f4f4f4 !important;
                                       ">
@@ -1407,7 +1415,7 @@
                                           'Funds from Other Sources'
                                       " #amountFormatted class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: -1px;
+                                        top: 5px;
                                         cursor: text;
                                         color: #212529;
                                         background: #f4f4f4 !important;
@@ -1432,7 +1440,7 @@
                                           'Funds from Other Sources'
                                       " class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: -1px;
+                                        top: 5px;
                                         background: #f4f4f4 !important;
                                       ">
                                                 {{

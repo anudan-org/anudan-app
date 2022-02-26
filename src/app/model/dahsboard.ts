@@ -223,6 +223,8 @@ export class Section {
   attributes: Attribute[];
   deletable: boolean;
   order: number;
+  isRefund: boolean;
+  systemGenerated: boolean;
 }
 
 export class GrantDetails {

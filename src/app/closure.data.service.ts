@@ -122,4 +122,27 @@ export class ClosureDataService {
 
     return null;
   }
+
+  deleteActualRefund(actualRefund: ActualRefund, closureId, appComp: AppComponent): Promise<void> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+    let urlNew =
+      "/api/user/" + appComp.loggedInUser.id + "/closure/" + closureId + "/actualRefund/" + actualRefund.id;
+
+
+    return this.httpClient.delete(urlNew, httpOptions).toPromise()
+      .then<void>()
+      .catch((err) => {
+        return Promise.reject(
+          "Unable to delete actual refund entry"
+        );
+      });
+
+    return null;
+  }
 }
