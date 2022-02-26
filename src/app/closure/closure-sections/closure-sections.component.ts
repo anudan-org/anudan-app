@@ -61,16 +61,14 @@ import { saveAs } from "file-saver";
         .mat-form-field-infix {
         padding: 0 !important;
       }
-    `,
-    `
+    
       ::ng-deep
         .refunds-holder
         .mat-form-field-appearance-legacy
         .mat-form-field-wrapper {
         padding-bottom: 0 !important;
       }
-    `,
-    `
+    
       ::ng-deep .refunds-holder .mat-form-field-infix {
         border-top: 0 !important;
       }
@@ -102,7 +100,9 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   fruitCtrl = new FormControl();
   allowScroll = true;
   noSingleDocAction: boolean = false;
+  noSingleClosureDocAction: boolean = false;
   downloadAndDeleteAllowed: boolean = false;
+  downloadAndDeleteClosureDocsAllowed: boolean = false;
   subscribers: any = {};
 
   constructor(public appComp: AppComponent,
@@ -726,13 +726,8 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     const pieces = $(pf[i]).html().replace('₹ ', '').split(",")
 
     const p = Number(pieces.join(""));//.replaceAll(',', ''));
-    let actualRfundsTotal = 0;
-    if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {
-      for (let rf of this.currentClosure.grant.actualRefunds) {
-        actualRfundsTotal += (rf.amount ? rf.amount : 0);
-      }
-    }
-    return this.currencyService.getFormattedAmount(p - 0 + actualRfundsTotal);
+
+    return this.currencyService.getFormattedAmount(p - 0 + this.getActualRefundsForGrant());
   }
 
 
@@ -745,7 +740,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
 
     const peices = $(pf[i]).html().replace('₹ ', '').split(',');
     const p = Number(peices.join(""));
-    return this.currencyService.getFormattedAmount(p - 0);
+    return this.currencyService.getFormattedAmount(p - 0 - this.getActualRefundsForGrant());
   }
 
   getTotals(idx: number, fieldTableValue: TableData[]): string {
@@ -768,36 +763,20 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     return this.currencyService.getFormattedAmount(total);
   }
 
-  deleteDisbursementRow(sectionId, attributeId, rowIndex) {
+  deleteActualRefundRow(actualRefund, rowIndex) {
     const dialogRef = this.dialog.open(FieldDialogComponent, {
-      data: { title: "Delete selected disbursement row?", btnMain: "Delete Disbursement", btnSecondary: "Not Now" },
+      data: { title: "Delete selected Actual Refund row?", btnMain: "Delete Actual Refund", btnSecondary: "Not Now" },
       panelClass: "center-class",
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        for (let section of this.currentClosure.closureDetails.sections) {
-          if (section.id === sectionId) {
-            for (let attrib of section.attributes) {
-              if (attrib.id == attributeId) {
-                console.log(attrib.fieldTableValue);
-                const tableData = attrib.fieldTableValue;
-
-                this.disbursementService
-                  .removeDisbursementRowByGrantee(
-                    tableData[rowIndex].actualDisbursementId
-                  )
-                  .then(() => {
-                    tableData.splice(rowIndex, 1);
-                    const starCounter = tableData ? tableData.length : 0;
-                    for (let i = 0; i < starCounter; i++) {
-                      tableData[i].name = String(i + 1);
-                    }
-                  });
-              }
-            }
-          }
-        }
+        //
+        this.closureService.deleteActualRefund(actualRefund, this.currentClosure.id, this.appComp)
+          .then(() => {
+            const idx = this.currentClosure.grant.actualRefunds.findIndex(g => g.id === actualRefund.id);
+            this.currentClosure.grant.actualRefunds.splice(idx, 1);
+          });
       } else {
         dialogRef.close();
       }
@@ -1213,6 +1192,28 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     }
   }
 
+  handleClosureDocSelection(attachmentId) {
+    const docElems = this.elem.nativeElement.querySelectorAll(
+      '[id^="closure_attachment_' + attachmentId + '"]'
+    );
+    if (docElems.length > 0) {
+      let found = false;
+      for (let docElem of docElems) {
+        if (docElem.checked) {
+          found = true;
+        }
+      }
+
+      if (found) {
+        this.noSingleClosureDocAction = true;
+        this.downloadAndDeleteClosureDocsAllowed = true;
+      } else {
+        this.noSingleClosureDocAction = false;
+        this.downloadAndDeleteClosureDocsAllowed = false;
+      }
+    }
+  }
+
   downloadSelection(attribId) {
     const elems = this.elem.nativeElement.querySelectorAll(
       '[id^="attriute_' + attribId + '_attachment_"]'
@@ -1226,6 +1227,22 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
         }
       }
       this.docManagementService.callClosureDocDownload(selectedAttachments, this.appComp, this.currentClosure);
+    }
+  }
+
+  downloadClosureDocsSelection(attachmentId) {
+    const elems = this.elem.nativeElement.querySelectorAll(
+      '[id^="closure_attachment_"]'
+    );
+    const selectedClosureDocsAttachments = new AttachmentDownloadRequest();
+    if (elems.length > 0) {
+      selectedClosureDocsAttachments.attachmentIds = [];
+      for (let singleElem of elems) {
+        if (singleElem.checked) {
+          selectedClosureDocsAttachments.attachmentIds.push(singleElem.id.split("_")[2]);
+        }
+      }
+      this.docManagementService.callClosureDocsDownload(selectedClosureDocsAttachments, this.appComp, this.currentClosure);
     }
   }
 
@@ -1259,6 +1276,36 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     });
   }
 
+  deleteClosureDocsSelection(attachmentId) {
+
+    const dReg = this.dialog.open(FieldDialogComponent, {
+      data: { title: 'Are you sure you want to delete the selected document(s)?', btnMain: "Delete Document(s)", btnSecondary: "Not Now" },
+      panelClass: 'center-class'
+    });
+
+    dReg.afterClosed().subscribe(result => {
+      if (result) {
+        const elems = this.elem.nativeElement.querySelectorAll(
+          '[id^="closure_attachment_"]'
+        );
+        const selectedClosureDocsAttachments = new AttachmentDownloadRequest();
+        if (elems.length > 0) {
+          selectedClosureDocsAttachments.attachmentIds = [];
+          for (let singleElem of elems) {
+            if (singleElem.checked) {
+              selectedClosureDocsAttachments.attachmentIds.push(singleElem.id.split("_")[2]);
+            }
+          }
+        }
+        for (let item of selectedClosureDocsAttachments.attachmentIds) {
+          this.deleteClosureDocsAttachment(item);
+        }
+      } else {
+        dReg.close();
+      }
+    });
+  }
+
   deleteAttachment(attributeId, attachmentId) {
     this.docManagementService.deleteClosureAttachment(attachmentId, this.appComp.loggedInUser.id, attributeId, this.currentClosure.id, this.currentClosure)
       .then((closure: GrantClosure) => {
@@ -1279,6 +1326,15 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
             }
           }
         }
+      });
+  }
+
+  deleteClosureDocsAttachment(attachmentId) {
+    this.docManagementService.deleteClosureDocsAttachment(attachmentId, this.appComp.loggedInUser.id, this.currentClosure.id, this.currentClosure)
+      .then((closure: GrantClosure) => {
+        this.closureService.changeMessage(closure, this.appComp.loggedInUser.id);
+        this.currentClosure = closure;
+
       });
   }
 
@@ -1373,10 +1429,10 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     }
 
     const createSectionModal = this.createSectionModal.nativeElement;
-    this.callCreateSectionAPI(sectionName.val())
+    this.callCreateSectionAPI(sectionName.val(), false)
   }
 
-  callCreateSectionAPI(nameOfSection) {
+  callCreateSectionAPI(nameOfSection, isRefund) {
 
     const httpOptions = {
       headers: new HttpHeaders({
@@ -1393,7 +1449,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       "/template/" +
       this.currentClosure.template.id +
       "/section/" +
-      nameOfSection;
+      nameOfSection + "/" + isRefund;
 
     this.http
       .post<ClosureSectionInfo>(url, this.currentClosure, httpOptions)
@@ -1469,7 +1525,31 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     this.docManagementService.callClosureDocDownload(selectedAttachments, this.appComp, this.currentClosure);
   }
 
+  downloadSingleClosureDoc(attachmentId: number) {
+    const selectedAttachments = new AttachmentDownloadRequest();
+    selectedAttachments.attachmentIds = [];
+    selectedAttachments.attachmentIds.push(attachmentId);
+    this.docManagementService.callClosureDocsDownload(selectedAttachments, this.appComp, this.currentClosure);
+  }
+
   deleteSingleDoc(attributeId, attachmentId) {
+    const dReg = this.dialog.open(FieldDialogComponent, {
+      data: {
+        title: "Are you sure you want to delete the selected document?",
+        btnMain: "Delete Document",
+        btnSecondary: "Not Now"
+      },
+      panelClass: "field-delete-class",
+    });
+
+    dReg.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteAttachment(attributeId, attachmentId);
+      }
+    });
+  }
+
+  deleteSingleClosureDoc(attachmentId) {
     const dReg = this.dialog.open(FieldDialogComponent, {
       data: {
         title: "Are you sure you want to delete the selected document?",
@@ -1481,7 +1561,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
 
     dReg.afterClosed().subscribe((result) => {
       if (result) {
-        this.deleteAttachment(attributeId, attachmentId);
+        this.deleteClosureDocsAttachment(attachmentId);
       }
     });
   }
@@ -1495,7 +1575,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     /* dg.afterClosed().subscribe(result => {
       if (result.status) { */
     //this.refundRequested.nativeElement.innerHTML = this.currencyService.getFormattedAmount(Number(result.amount));
-    this.callCreateSectionAPI("Project Refund Details");
+    this.callCreateSectionAPI("Project Refund Details", true);
     /* }
   }); */
   }
@@ -1552,5 +1632,15 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       dt,
       "dd-MMM-yyyy"
     );
+  }
+
+  getActualRefundsForGrant() {
+    let actualRfundsTotal = 0;
+    if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {
+      for (let rf of this.currentClosure.grant.actualRefunds) {
+        actualRfundsTotal += (rf.amount ? rf.amount : 0);
+      }
+    }
+    return actualRfundsTotal;
   }
 }

@@ -367,7 +367,7 @@ export class SidebarComponent implements OnInit {
       this.currentClosure.closureDetails.sections.sort((a, b) => (a.order > b.order) ? 1 : -1)
       for (let section of this.currentClosure.closureDetails.sections) {
         if (section.sectionName !== '' && section.sectionName !== '_') {
-          CLOSURE_SECTION_ROUTES.push({ path: '/grant-closure/section/' + section.sectionName.replace(/[^0-9a-z]/gi, ''), title: section.sectionName, icon: 'stop', class: '', divide: false });
+          CLOSURE_SECTION_ROUTES.push({ path: '/grant-closure/section/' + section.sectionName.replace(/[^0-9a-z]/gi, ''), title: (section.systemGenerated ? section.sectionName + '<sup>*</sup>' : section.sectionName), icon: 'stop', class: '', divide: false });
         } else {
           CLOSURE_SECTION_ROUTES.push({ path: '/grant-closure/section/' + section.id, title: '_', icon: 'stop', class: '', divide: false });
         }

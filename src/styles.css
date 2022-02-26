@@ -771,6 +771,12 @@ font-white {
   left: 150px !important;
 }
 
+.field-delete-class {
+  max-width: calc(90% - 300px) !important;
+  position: relative !important;
+  left: 150px !important;
+}
+
 .screen-center-class {
   max-width: calc(100%) !important;
   position: relative !important;
@@ -1413,4 +1419,10 @@ footer{
 
 .border-light-red{
   border : 1px solid rgb(244, 67, 54) !important;
+}
+
+.cdk-global-scrollblock {
+  position: fixed;
+  width: 100%;
+  overflow-y: auto;
 }

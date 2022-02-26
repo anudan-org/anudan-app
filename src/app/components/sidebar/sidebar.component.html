@@ -1,7 +1,4 @@
-<div
-      *ngIf="isMobileMenu()"
-      class="p-1 nav-item"
-      style="
+<div *ngIf="isMobileMenu()" class="p-1 nav-item" style="
         padding-top: 0 !important;
         min-height: 80px;
         max-height: 80px;
@@ -10,36 +7,24 @@
         background: #424652;
         z-index: 1040;
         border-bottom: 1px solid #525560;
-      "
-    >
-      <div
-        style="
+      ">
+  <div style="
           display: flex;
           align-items: center;
           flex-direction: row;
           min-height: 80px;
           max-height: 80px;
-        "
-      >
-        <img
-          [src]="appComponent.logo"
-          alt="logo"
-          class="nav-link float-left"
-          style="max-width: 35%"
-        />
-        <strong class="text-left text-white">{{ appComponent.loggedInUser.organization.name }}</strong>
-      </div>
-    </div>
+        ">
+    <img [src]="appComponent.logo" alt="logo" class="nav-link float-left" style="max-width: 35%" />
+    <strong class="text-left text-white">{{ appComponent.loggedInUser.organization.name }}</strong>
+  </div>
+</div>
 <div class="sidebar-wrapper">
-  <ul
-    class="nav"
-    *ngIf="
+  <ul class="nav" *ngIf="
       appComponent.loggedInUser.organization.type === 'GRANTER' ||
       appComponent.loggedInUser.organization.type === 'GRANTEE'
-    "
-  >
-    <ng-container
-      *ngIf="
+    ">
+    <ng-container *ngIf="
         appComponent.currentView === 'dashboard' ||
         appComponent.currentView === 'grants' ||
         appComponent.currentView === 'disbursements' ||
@@ -48,32 +33,22 @@
         appComponent.currentView === 'applications' ||
         appComponent.currentView === 'user-profile' ||
         appComponent.currentView === 'upcoming'
-      "
-    >
+      ">
       <ng-container *ngFor="let menuItem of menuItems; let i = index">
-        <li
-          (click)="manageMenutItemsDisplay($event)"
-          routerLinkActive="active"
-          tabindex="{{ i }}"
-          *ngIf="
+        <li (click)="manageMenutItemsDisplay($event)" routerLinkActive="active" tabindex="{{ i }}" *ngIf="
             menuItem.title !== 'Disbursements' &&
             menuItem.title !== 'Organization' &&
             menuItem.title !== 'Reports' &&
             menuItem.title !== 'Grants' &&
             (menuItem.title === 'Dashboard' || canManageOrg)
-          "
-          class="{{ menuItem.class }} nav-item text-left"
-        >
+          " class="{{ menuItem.class }} nav-item text-left">
           <a class="nav-link" [routerLink]="[menuItem.path]">
             <!--<em class="material-icons">{{menuItem.icon}}</em>-->
             <p>
-              <img
-                src="./assets/img/{{ menuItem.icon }}"
-                [ngClass]="menuItem.title === 'Dashboard' ? 'mr-2' : 'mr-2'"
+              <img src="./assets/img/{{ menuItem.icon }}" [ngClass]="menuItem.title === 'Dashboard' ? 'mr-2' : 'mr-2'"
                 [ngStyle]="
                   menuItem.title === 'Dashboard' ? { width: '24px' } : {}
-                "
-              />{{ menuItem.title }}
+                " />{{ menuItem.title }}
             </p>
           </a>
         </li>
@@ -81,36 +56,18 @@
         <ng-container *ngIf="menuItem.divide && canManageOrg">
           <mat-divider></mat-divider>
         </ng-container>
-        <mat-expansion-panel
-          #organization
-          id="organization"
-          *ngIf="menuItem.title === 'Organization' && canManageOrg"
+        <mat-expansion-panel #organization id="organization" *ngIf="menuItem.title === 'Organization' && canManageOrg"
           [expanded]="
             appComponent.subMenu.name === 'Organization Details' ||
             appComponent.subMenu.name === 'Organization Admin'
-          "
-        >
-          <mat-expansion-panel-header
-            (click)="buildSectionsSideNav($event)"
-            style="padding: 14px"
-          >
-            <mat-panel-title
-              style="display: flex; align-items: center; font-weight: 300"
-              class="menu-sidenav-title"
-            >
-              <img
-                src="./assets/img/{{ menuItem.icon }}"
-                class="mr-2"
-              />Organization
+          ">
+          <mat-expansion-panel-header (click)="buildSectionsSideNav($event)" style="padding: 14px">
+            <mat-panel-title style="display: flex; align-items: center; font-weight: 300" class="menu-sidenav-title">
+              <img src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Organization
             </mat-panel-title>
           </mat-expansion-panel-header>
-          <li
-            routerLinkActive="active"
-            tabindex="{{ i }}"
-            *ngFor="let orgMenuItem of orgMenuItems; let i = index"
-            class="{{ orgMenuItem.class }} nav-item text-left"
-            (click)="manageMenutItemsDisplay($event)"
-          >
+          <li routerLinkActive="active" tabindex="{{ i }}" *ngFor="let orgMenuItem of orgMenuItems; let i = index"
+            class="{{ orgMenuItem.class }} nav-item text-left" (click)="manageMenutItemsDisplay($event)">
             <a class="nav-link py-0" [routerLink]="[orgMenuItem.path]">
               <em class="material-icons" style="font-size: 18px">remove</em>
               <p>{{ orgMenuItem.title }}</p>
@@ -118,84 +75,44 @@
           </li>
         </mat-expansion-panel>
 
-        <mat-expansion-panel
-          #grants
-          id="grants"
-          *ngIf="menuItem.title === 'Grants'"
-          [expanded]="
+        <mat-expansion-panel #grants id="grants" *ngIf="menuItem.title === 'Grants'" [expanded]="
             appComponent.subMenu.name === 'In-progress Grants' ||
             appComponent.subMenu.name === 'Active Grants' ||
             appComponent.subMenu.name === 'Closed Grants'
-          "
-        >
-          <mat-expansion-panel-header
-            (click)="buildSectionsSideNav($event)"
-            style="padding: 14px"
-          >
-            <mat-panel-title
-              style="display: flex; align-items: center; font-weight: 300"
-              class="menu-sidenav-title"
-            >
-              <img alt="img"src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Grants
+          ">
+          <mat-expansion-panel-header (click)="buildSectionsSideNav($event)" style="padding: 14px">
+            <mat-panel-title style="display: flex; align-items: center; font-weight: 300" class="menu-sidenav-title">
+              <img alt="img" src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Grants
             </mat-panel-title>
           </mat-expansion-panel-header>
-          <li
-            routerLinkActive="active"
-            tabindex="{{ i }}"
-            *ngFor="let subMenu of grantSubMenuItems; let i = index"
-            class="{{ subMenu.class }} nav-item text-left"
-            (click)="manageMenutItemsDisplay($event)"
-          >
-            <a
-              class="nav-link py-0"
-              [routerLink]="[subMenu.path]"
-              *ngIf="
+          <li routerLinkActive="active" tabindex="{{ i }}" *ngFor="let subMenu of grantSubMenuItems; let i = index"
+            class="{{ subMenu.class }} nav-item text-left" (click)="manageMenutItemsDisplay($event)">
+            <a class="nav-link py-0" [routerLink]="[subMenu.path]" *ngIf="
                 appComponent.loggedInUser.organization.organizationType !==
                   'GRANTEE' && subMenu.title === 'In-progress'
-              "
-            >
+              ">
               <em class="material-icons" style="font-size: 18px">remove</em>
               <p>{{ subMenu.title }}</p>
             </a>
-            <a
-              class="nav-link py-0"
-              [routerLink]="[subMenu.path]"
-              *ngIf="subMenu.title !== 'In-progress'"
-            >
+            <a class="nav-link py-0" [routerLink]="[subMenu.path]" *ngIf="subMenu.title !== 'In-progress'">
               <em class="material-icons" style="font-size: 18px">remove</em>
               <p>{{ subMenu.title }}</p>
             </a>
           </li>
         </mat-expansion-panel>
 
-        <mat-expansion-panel
-          #reports
-          id="reports"
-          *ngIf="menuItem.title === 'Reports'"
-          [expanded]="
+        <mat-expansion-panel #reports id="reports" *ngIf="menuItem.title === 'Reports'" [expanded]="
             appComponent.subMenu.name === 'Upcoming Reports' ||
             appComponent.subMenu.name === 'Submitted Reports' ||
             appComponent.subMenu.name === 'Approved Reports'
-          "
-        >
-          <mat-expansion-panel-header
-            (click)="buildSectionsSideNav($event)"
-            style="padding: 14px"
-          >
-            <mat-panel-title
-              style="display: flex; align-items: center; font-weight: 300"
-              class="menu-sidenav-title"
-            >
-              <img alt="img"src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Reports
+          ">
+          <mat-expansion-panel-header (click)="buildSectionsSideNav($event)" style="padding: 14px">
+            <mat-panel-title style="display: flex; align-items: center; font-weight: 300" class="menu-sidenav-title">
+              <img alt="img" src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Reports
             </mat-panel-title>
           </mat-expansion-panel-header>
-          <li
-            routerLinkActive="active"
-            tabindex="{{ i }}"
-            *ngFor="let reportMenuItem of reportMenuItems; let i = index"
-            class="{{ reportMenuItem.class }} nav-item text-left"
-            (click)="manageMenutItemsDisplay($event)"
-          >
+          <li routerLinkActive="active" tabindex="{{ i }}" *ngFor="let reportMenuItem of reportMenuItems; let i = index"
+            class="{{ reportMenuItem.class }} nav-item text-left" (click)="manageMenutItemsDisplay($event)">
             <a class="nav-link py-0" [routerLink]="[reportMenuItem.path]">
               <em class="material-icons" style="font-size: 18px">remove</em>
               <p>{{ reportMenuItem.title }}</p>
@@ -203,43 +120,23 @@
           </li>
         </mat-expansion-panel>
 
-        <mat-expansion-panel
-          #disbursements
-          id="disbursements"
-          *ngIf="
+        <mat-expansion-panel #disbursements id="disbursements" *ngIf="
             menuItem.title === 'Disbursements' &&
             appComponent.loggedInUser.organization.type !== 'GRANTEE'
-          "
-          [expanded]="
+          " [expanded]="
             appComponent.subMenu.name === 'Approvals In-progress' ||
             appComponent.subMenu.name === 'Approvals Active' ||
             appComponent.subMenu.name === 'Approvals Closed'
-          "
-        >
-          <mat-expansion-panel-header
-            (click)="buildSectionsSideNav($event)"
-            style="padding: 14px"
-          >
-            <mat-panel-title
-              style="display: flex; align-items: center; font-weight: 300"
-              class="menu-sidenav-title"
-            >
-              <img
-                src="./assets/img/{{ menuItem.icon }}"
-                class="mr-2"
-              />Disbursements
+          ">
+          <mat-expansion-panel-header (click)="buildSectionsSideNav($event)" style="padding: 14px">
+            <mat-panel-title style="display: flex; align-items: center; font-weight: 300" class="menu-sidenav-title">
+              <img src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Disbursements
             </mat-panel-title>
           </mat-expansion-panel-header>
-          <li
-            routerLinkActive="active"
-            tabindex="{{ i }}"
-            *ngFor="
+          <li routerLinkActive="active" tabindex="{{ i }}" *ngFor="
               let disbursementMenuItem of disbursementSubMenuItems;
               let i = index
-            "
-            class="{{ disbursementMenuItem.class }} nav-item text-left"
-            (click)="manageMenutItemsDisplay($event)"
-          >
+            " class="{{ disbursementMenuItem.class }} nav-item text-left" (click)="manageMenutItemsDisplay($event)">
             <a class="nav-link py-0" [routerLink]="[disbursementMenuItem.path]">
               <em class="material-icons" style="font-size: 18px">remove</em>
               <p>{{ disbursementMenuItem.title }}</p>
@@ -250,360 +147,208 @@
     </ng-container>
 
     <ng-container *ngIf="appComponent.currentView === 'grant'">
-      <li
-        routerLinkActive="active"
-        *ngFor="let menuItem of grantMenuItems"
-        class="{{ menuItem.class }} nav-item text-left"
-      >
+      <li routerLinkActive="active" *ngFor="let menuItem of grantMenuItems"
+        class="{{ menuItem.class }} nav-item text-left">
         <ng-container *ngIf="menuItem.title !== 'Grant Details'">
-          <a
-            class="nav-link mb-2"
-            [routerLink]="[menuItem.path]"
-            *ngIf="currentGrant && currentGrant.canManage"
-          >
+          <a class="nav-link mb-2" [routerLink]="[menuItem.path]" *ngIf="currentGrant && currentGrant.canManage">
             <p style="font-size: 14px">
-              <img alt="img"src="./assets/img/{{ menuItem.icon }}" class="mr-2" />{{
-                menuItem.title
+              <img alt="img" src="./assets/img/{{ menuItem.icon }}" class="mr-2" />{{
+              menuItem.title
               }}
             </p>
           </a>
-          <a
-            class="nav-link mb-2"
-            [routerLink]="[menuItem.path]"
-            *ngIf="
+          <a class="nav-link mb-2" [routerLink]="[menuItem.path]" *ngIf="
               currentGrant &&
               !currentGrant.canManage &&
               menuItem.title === 'Preview & Submit'
-            "
-          >
+            ">
             <p style="font-size: 14px">
-              <img alt="img"src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Preview
+              <img alt="img" src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Preview
             </p>
           </a>
         </ng-container>
 
-        <ng-container
-          *ngIf="
+        <ng-container *ngIf="
             menuItem.title === 'Grant Details' &&
             currentGrant &&
             currentGrant.canManage
-          "
-        >
+          ">
           <mat-expansion-panel cdkDropList (cdkDropListDropped)="drop($event)">
-            <mat-expansion-panel-header
-              (click)="buildSectionsSideNav()"
-              style="padding: 14px"
-            >
+            <mat-expansion-panel-header (click)="buildSectionsSideNav()" style="padding: 14px">
               <mat-panel-title style="display: flex; align-items: center">
                 <em class="material-icons">list</em>Grant Details
               </mat-panel-title>
             </mat-expansion-panel-header>
-            <li
-              tabindex="{{ i }}"
-              cdkDrag
-              (cdkDragStarted)="dragStarted($event)"
-              routerLinkActive="active"
-              *ngFor="let menuItem1 of sectionMenuItems; let i = index"
-              class="{{ menuItem1.class }} nav-item text-left"
-              style="cursor: move"
-            >
-              <i
-                *ngIf="currentGrant && currentGrant.canManage"
-                cdkDragHandle
-                class="material-icons"
-                style="margin: 0px 14px 0px 20px"
-                >drag_indicator</i
-              >
-              <p *cdkDragPreview style="color: #fff">{{ menuItem1.title }}</p>
-              <a
-                class="nav-link py-0"
-                [routerLink]="[menuItem1.path]"
-                style="padding-top: 0; padding-bottom: 0; padding-left: 30px"
-              >
-                <i
-                  *ngIf="currentGrant && !currentGrant.canManage"
-                  class="material-icons"
-                  style="font-size: 18px"
-                  >{{ menuItem1.icon }}</i
-                >
-                <p>{{ menuItem1.title }}</p>
-              </a>
-            </li>
-            <li>
-              <button
-                *ngIf="currentGrant.canManage"
-                (click)="createNewSection()"
-                class="btn btn-sm btn-white"
-                style="
+      <li tabindex="{{ i }}" cdkDrag (cdkDragStarted)="dragStarted($event)" routerLinkActive="active"
+        *ngFor="let menuItem1 of sectionMenuItems; let i = index" class="{{ menuItem1.class }} nav-item text-left"
+        style="cursor: move">
+        <i *ngIf="currentGrant && currentGrant.canManage" cdkDragHandle class="material-icons"
+          style="margin: 0px 14px 0px 20px">drag_indicator</i>
+        <p *cdkDragPreview style="color: #fff">{{ menuItem1.title }}</p>
+        <a class="nav-link py-0" [routerLink]="[menuItem1.path]"
+          style="padding-top: 0; padding-bottom: 0; padding-left: 30px">
+          <i *ngIf="currentGrant && !currentGrant.canManage" class="material-icons" style="font-size: 18px">{{
+            menuItem1.icon }}</i>
+          <p>{{ menuItem1.title }}</p>
+        </a>
+      </li>
+      <li>
+        <button *ngIf="currentGrant.canManage" (click)="createNewSection()" class="btn btn-sm btn-white" style="
                   margin: 7px 0 0px 63px;
                   border-radius: 2px !important;
                   padding: 1px 10px 1px 10px;
-                "
-              >
-                Add a section<img
-                  src="./assets/img/add.svg"
-                  class="ml-2"
-                  style="width: 24px"
-                />
-              </button>
-            </li>
-          </mat-expansion-panel>
-        </ng-container>
+                ">
+          Add a section<img src="./assets/img/add.svg" class="ml-2" style="width: 24px" />
+        </button>
       </li>
+      </mat-expansion-panel>
+    </ng-container>
+    </li>
     </ng-container>
 
     <!--THIS IS FOR THE SINGLE REPORT-->
     <ng-container *ngIf="appComponent.currentView === 'report'">
-      <li
-        tabindex="{{ i }}"
-        routerLinkActive="active"
-        *ngFor="let menuItem of singleReportMenuItems; let i = index"
-        class="{{ menuItem.class }} nav-item text-left"
-      >
+      <li tabindex="{{ i }}" routerLinkActive="active" *ngFor="let menuItem of singleReportMenuItems; let i = index"
+        class="{{ menuItem.class }} nav-item text-left">
         <ng-container *ngIf="menuItem.title !== 'Report Details'">
-          <a
-            class="nav-link mb-2"
-            [routerLink]="[menuItem.path]"
-            *ngIf="currentReport.canManage"
-          >
+          <a class="nav-link mb-2" [routerLink]="[menuItem.path]" *ngIf="currentReport.canManage">
             <p style="font-size: 14px">
-              <img alt="img"src="./assets/img/{{ menuItem.icon }}" class="mr-2" />{{
-                menuItem.title
+              <img alt="img" src="./assets/img/{{ menuItem.icon }}" class="mr-2" />{{
+              menuItem.title
               }}
             </p>
           </a>
-          <a
-            class="nav-link mb-2"
-            [routerLink]="[menuItem.path]"
-            *ngIf="
+          <a class="nav-link mb-2" [routerLink]="[menuItem.path]" *ngIf="
               !currentReport.canManage && menuItem.title === 'Preview & Submit'
-            "
-          >
+            ">
             <p style="font-size: 14px">
-              <img alt="img"src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Preview
+              <img alt="img" src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Preview
             </p>
           </a>
         </ng-container>
 
-        <ng-container
-          *ngIf="menuItem.title === 'Report Details' && currentReport.canManage"
-        >
+        <ng-container *ngIf="menuItem.title === 'Report Details' && currentReport.canManage">
           <mat-expansion-panel cdkDropList (cdkDropListDropped)="drop($event)">
-            <mat-expansion-panel-header
-              (click)="buildSectionsSideNav()"
-              style="padding: 14px"
-            >
+            <mat-expansion-panel-header (click)="buildSectionsSideNav()" style="padding: 14px">
               <mat-panel-title style="display: flex; align-items: center">
                 <em class="material-icons">list</em>Report Details
               </mat-panel-title>
             </mat-expansion-panel-header>
-            <li
-              tabindex="{{ i }}"
-              cdkDrag
-              (cdkDragStarted)="dragStarted($event)"
-              routerLinkActive="active"
-              *ngFor="let menuItem1 of reportSectionMenuItems; let i = index"
-              class="{{ menuItem1.class }} nav-item text-left"
-              style="cursor: move"
-            >
-              <i
-                *ngIf="
+      <li tabindex="{{ i }}" cdkDrag (cdkDragStarted)="dragStarted($event)" routerLinkActive="active"
+        *ngFor="let menuItem1 of reportSectionMenuItems; let i = index" class="{{ menuItem1.class }} nav-item text-left"
+        style="cursor: move">
+        <i *ngIf="
                   this.currentReport.canManage && !currentReport.forGranteeUse
-                "
-                cdkDragHandle
-                class="material-icons"
-                style="margin: 0px 14px 0px 20px"
-                >drag_indicator</i
-              >
-              <p *cdkDragPreview style="color: #fff">{{ menuItem1.title }}</p>
-              <a
-                class="nav-link py-0"
-                [routerLink]="[menuItem1.path]"
-                style="padding-top: 0; padding-bottom: 0; padding-left: 30px"
-              >
-                <i
-                  *ngIf="!this.currentReport.canManage"
-                  class="material-icons"
-                  style="font-size: 18px"
-                  >{{ menuItem1.icon }}</i
-                >
-                <p>{{ menuItem1.title }}</p>
-              </a>
-            </li>
-            <li
-              *ngIf="currentReport.canManage && !currentReport.forGranteeUse"
-              tabindex="{{ i }}"
-            >
-              <button
-                (click)="createNewReportSection()"
-                class="btn btn-sm btn-white"
-                style="
+                " cdkDragHandle class="material-icons" style="margin: 0px 14px 0px 20px">drag_indicator</i>
+        <p *cdkDragPreview style="color: #fff">{{ menuItem1.title }}</p>
+        <a class="nav-link py-0" [routerLink]="[menuItem1.path]"
+          style="padding-top: 0; padding-bottom: 0; padding-left: 30px">
+          <i *ngIf="!this.currentReport.canManage" class="material-icons" style="font-size: 18px">{{ menuItem1.icon
+            }}</i>
+          <p>{{ menuItem1.title }}</p>
+        </a>
+      </li>
+      <li *ngIf="currentReport.canManage && !currentReport.forGranteeUse" tabindex="{{ i }}">
+        <button (click)="createNewReportSection()" class="btn btn-sm btn-white" style="
                   margin: 7px 0 0px 63px;
                   border-radius: 2px !important;
                   padding: 1px 10px 1px 10px;
-                "
-              >
-                Add a section<img
-                  src="./assets/img/add.svg"
-                  class="ml-2"
-                  style="width: 24px"
-                />
-              </button>
-            </li>
-          </mat-expansion-panel>
-        </ng-container>
+                ">
+          Add a section<img src="./assets/img/add.svg" class="ml-2" style="width: 24px" />
+        </button>
       </li>
+      </mat-expansion-panel>
+    </ng-container>
+    </li>
     </ng-container>
     <!--END-->
 
     <!--THIS IS FOR THE SINGLE CLOSURE-->
     <ng-container *ngIf="appComponent.currentView === 'grant-closure' && currentClosure">
-      <li
-        tabindex="{{ i }}"
-        routerLinkActive="active"
-        *ngFor="let menuItem of singleClosureMenuItems; let i = index"
-        class="{{ menuItem.class }} nav-item text-left"
-      >
+      <li tabindex="{{ i }}" routerLinkActive="active" *ngFor="let menuItem of singleClosureMenuItems; let i = index"
+        class="{{ menuItem.class }} nav-item text-left">
         <ng-container *ngIf="menuItem.title !== 'Closure Details'">
-          <a
-            class="nav-link mb-2"
-            [routerLink]="[menuItem.path]"
-            *ngIf="currentClosure.canManage"
-          >
+          <a class="nav-link mb-2" [routerLink]="[menuItem.path]" *ngIf="currentClosure.canManage">
             <p style="font-size: 14px">
-              <img alt="img"src="./assets/img/{{ menuItem.icon }}" class="mr-2" />{{
-                menuItem.title
+              <img alt="img" src="./assets/img/{{ menuItem.icon }}" class="mr-2" />{{
+              menuItem.title
               }}
             </p>
           </a>
-          <a
-            class="nav-link mb-2"
-            [routerLink]="[menuItem.path]"
-            *ngIf="
+          <a class="nav-link mb-2" [routerLink]="[menuItem.path]" *ngIf="
               !currentClosure.canManage && menuItem.title === 'Preview & Submit'
-            "
-          >
+            ">
             <p style="font-size: 14px">
-              <img alt="img"src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Preview
+              <img alt="img" src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Preview
             </p>
           </a>
         </ng-container>
 
-        <ng-container
-          *ngIf="menuItem.title === 'Closure Details' && currentClosure.canManage"
-        >
+        <ng-container *ngIf="menuItem.title === 'Closure Details' && currentClosure.canManage">
           <mat-expansion-panel cdkDropList (cdkDropListDropped)="drop($event)">
-            <mat-expansion-panel-header
-              (click)="buildSectionsSideNav()"
-              style="padding: 14px"
-            >
+            <mat-expansion-panel-header (click)="buildSectionsSideNav()" style="padding: 14px">
               <mat-panel-title style="display: flex; align-items: center">
                 <em class="material-icons">list</em>Closure Details
               </mat-panel-title>
             </mat-expansion-panel-header>
-            <li
-              tabindex="{{ i }}"
-              cdkDrag
-              (cdkDragStarted)="dragStarted($event)"
-              routerLinkActive="active"
-              *ngFor="let menuItem1 of closureSectionMenuItems; let i = index"
-              class="{{ menuItem1.class }} nav-item text-left"
-              style="cursor: move"
-            >
-              <i
-                *ngIf="
+      <li tabindex="{{ i }}" cdkDrag (cdkDragStarted)="dragStarted($event)" routerLinkActive="active"
+        *ngFor="let menuItem1 of closureSectionMenuItems; let i = index"
+        class="{{ menuItem1.class }} nav-item text-left" style="cursor: move">
+        <i *ngIf="
                   this.currentClosure.canManage && !currentClosure.forGranteeUse
-                "
-                cdkDragHandle
-                class="material-icons"
-                style="margin: 0px 14px 0px 20px"
-                >drag_indicator</i
-              >
-              <p *cdkDragPreview style="color: #fff">{{ menuItem1.title }}</p>
-              <a
-                class="nav-link py-0"
-                [routerLink]="[menuItem1.path]"
-                style="padding-top: 0; padding-bottom: 0; padding-left: 30px"
-              >
-                <i
-                  *ngIf="!this.currentClosure.canManage"
-                  class="material-icons"
-                  style="font-size: 18px"
-                  >{{ menuItem1.icon }}</i
-                >
-                <p>{{ menuItem1.title }}</p>
-              </a>
-            </li>
-            <li
-              *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse"
-              tabindex="{{ i }}"
-            >
-              <button
-                (click)="createNewClosureSection()"
-                class="btn btn-sm btn-white"
-                style="
+                " cdkDragHandle class="material-icons" style="margin: 0px 14px 0px 20px">drag_indicator</i>
+        <p *cdkDragPreview style="color: #fff">{{ menuItem1.title }}</p>
+        <a class="nav-link py-0" [routerLink]="[menuItem1.path]"
+          style="padding-top: 0; padding-bottom: 0; padding-left: 30px">
+          <i *ngIf="!this.currentClosure.canManage" class="material-icons" style="font-size: 18px">{{ menuItem1.icon
+            }}</i>
+          <p [innerHTML]="menuItem1.title"></p>
+        </a>
+      </li>
+      <li *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse" tabindex="{{ i }}">
+        <button (click)="createNewClosureSection()" class="btn btn-sm btn-white" style="
                   margin: 7px 0 0px 63px;
                   border-radius: 2px !important;
                   padding: 1px 10px 1px 10px;
-                "
-              >
-                Add a section<img alt="Add section button"
-                  src="./assets/img/add.svg"
-                  class="ml-2"
-                  style="width: 24px"
-                />
-              </button>
-            </li>
-          </mat-expansion-panel>
-        </ng-container>
+                ">
+          Add a section<img alt="Add section button" src="./assets/img/add.svg" class="ml-2" style="width: 24px" />
+        </button>
       </li>
+      </mat-expansion-panel>
+    </ng-container>
+    </li>
     </ng-container>
     <!--END-->
 
     <!--THIS IS FOR THE SINGLE DISBURSEMENT-->
     <ng-container *ngIf="appComponent.currentView === 'disbursement'">
-      <li
-        tabindex="{{ i }}"
-        routerLinkActive="active"
+      <li tabindex="{{ i }}" routerLinkActive="active"
         *ngFor="let menuItem of singleDisbursementMenuItems; let i = index"
-        class="{{ menuItem.class }} nav-item text-left"
-      >
+        class="{{ menuItem.class }} nav-item text-left">
         <ng-container *ngIf="menuItem.title !== 'Report Details'">
-          <a
-            class="nav-link mb-2"
-            [routerLink]="[menuItem.path]"
-            *ngIf="currentDisbursement.canManage"
-          >
+          <a class="nav-link mb-2" [routerLink]="[menuItem.path]" *ngIf="currentDisbursement.canManage">
             <p style="font-size: 14px">
-              <img alt="img"src="./assets/img/{{ menuItem.icon }}" class="mr-2" />{{
-                menuItem.title
+              <img alt="img" src="./assets/img/{{ menuItem.icon }}" class="mr-2" />{{
+              menuItem.title
               }}
             </p>
           </a>
-          <a
-            class="nav-link mb-2"
-            [routerLink]="[menuItem.path]"
-            *ngIf="
+          <a class="nav-link mb-2" [routerLink]="[menuItem.path]" *ngIf="
               !currentDisbursement.canManage &&
               !currentDisbursement.canRecordActuals &&
               menuItem.title === 'Preview & Submit'
-            "
-          >
+            ">
             <p style="font-size: 14px">
-              <img alt="img"src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Preview
+              <img alt="img" src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Preview
             </p>
           </a>
-          <a
-            class="nav-link mb-2"
-            [routerLink]="[menuItem.path]"
-            *ngIf="
+          <a class="nav-link mb-2" [routerLink]="[menuItem.path]" *ngIf="
               !currentDisbursement.canManage &&
               currentDisbursement.canRecordActuals &&
               menuItem.title === 'Preview & Submit'
-            "
-          >
+            ">
             <p style="font-size: 14px">
-              <img alt="img"src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Record
+              <img alt="img" src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Record
               Disbursement
             </p>
           </a>
@@ -612,25 +357,13 @@
     </ng-container>
     <!--END-->
   </ul>
-  <ul
-    class="nav"
-    *ngIf="appComponent.loggedInUser.organization.type === 'PLATFORM'"
-  >
-    <ng-container
-      *ngFor="let platformMenuItem of platformMenuItems; let i = index"
-    >
-      <li
-        tabindex="{{ i }}"
-        routerLinkActive="active"
-        class="{{ platformMenuItem.class }} nav-item text-left"
-      >
+  <ul class="nav" *ngIf="appComponent.loggedInUser.organization.type === 'PLATFORM'">
+    <ng-container *ngFor="let platformMenuItem of platformMenuItems; let i = index">
+      <li tabindex="{{ i }}" routerLinkActive="active" class="{{ platformMenuItem.class }} nav-item text-left">
         <a class="nav-link" [routerLink]="[platformMenuItem.path]">
           <!--<em class="material-icons">{{menuItem.icon}}</em>-->
           <p>
-            <img
-              src="./assets/img/{{ platformMenuItem.icon }}"
-              class="mr-2"
-            />{{ platformMenuItem.title }}
+            <img src="./assets/img/{{ platformMenuItem.icon }}" class="mr-2" />{{ platformMenuItem.title }}
           </p>
         </a>
       </li>
