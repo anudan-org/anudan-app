@@ -1057,6 +1057,24 @@ export class GrantCompareComponent implements OnInit {
       this.closureDiff.newClosureDescription = newClosure.description;
     }
 
+    if (oldClosure.grantRefundAmount !== newClosure.grantRefundAmount) {
+      this._getClosureDiff();
+      this.closureDiff.oldClosureGrantRefundAmount = oldClosure.grantRefundAmount;
+      this.closureDiff.newClosureGrantRefundAmount = newClosure.grantRefundAmount;
+    }
+
+    if (oldClosure.grantRefundReason !== newClosure.grantRefundReason) {
+      this._getClosureDiff();
+      this.closureDiff.oldClosureGrantRefundReason = oldClosure.grantRefundReason;
+      this.closureDiff.newClosureGrantRefundReason = newClosure.grantRefundReason;
+    }
+
+    if (JSON.stringify(oldClosure.grantActualRefunds) !== JSON.stringify(newClosure.grantRefundReason)) {
+      this._getClosureDiff();
+      this.closureDiff.oldClosureActualRefunds = oldClosure.actualRefunds;
+      this.closureDiff.newClosureActualRefunds = newClosure.actualRefunds;
+    }
+
 
     for (const section of newClosure.sections) {
       const oldSection = oldClosure.sections.filter((sec) => sec.id === section.id)[0];
@@ -1763,5 +1781,13 @@ export class GrantCompareComponent implements OnInit {
     //document.getElementById('attribute_' + elemId).innerHTML = '';
     //document.getElementById('attribute_' + elemId).append('<H1>Hello</H1>');
     return html;
+  }
+
+  getTheRefundAmountNewDifference(oldAmt, newAmt) {
+    return this.getTheDifference(inf.format(oldAmt ? Number(oldAmt) : 0), inf.format(newAmt ? Number(newAmt) : 0)).before;
+  }
+
+  getTheRefundAmountOldDifference(oldAmt, newAmt) {
+    return inf.format(this.getTheDifference(inf.format(oldAmt ? Number(oldAmt) : 0), inf.format(newAmt ? Number(newAmt) : 0)).after);
   }
 }
