@@ -1059,6 +1059,54 @@
         </div>
       </div>
 
+      <div *ngIf="closureDiff.oldClosureGrantRefundAmount || closureDiff.newClosureGrantRefundAmount"
+        class="mb-2 change-box">
+        <span class="change-title"><span>Closure Header | </span>Project Refund Amount changed</span>
+        <div class="change-new" *ngIf="closureDiff.newClosureGrantRefundAmount">
+          <div class="px-2 my-1"
+            [innerHtml]="getTheRefundAmountOldDifference(closureDiff.oldClosureGrantRefundAmount?closureDiff.oldClosureGrantRefundAmount:'',closureDiff.newClosureGrantRefundAmount)">
+          </div>
+        </div>
+        <div *ngIf="!closureDiff.newClosureGrantRefundAmount && closureDiff.oldClosureGrantRefundAmount"
+          class="text-danger">
+          <em><small>Currently has no value</small></em>
+        </div>
+        <div class="change-old" *ngIf="closureDiff.oldClosureGrantRefundAmount">
+          <div class="px-2 my-1"
+            [innerHtml]="getTheRefundAmountNewDifference(closureDiff.oldClosureGrantRefundAmount,closureDiff.newClosureGrantRefundAmount?closureDiff.newClosureGrantRefundAmount:'')">
+          </div>
+        </div>
+        <div *ngIf="!closureDiff.oldClosureGrantRefundAmount && closureDiff.newClosureGrantRefundAmount"
+          class="text-white">
+          <em><small>Previously had no value</small></em>
+        </div>
+      </div>
+
+      <div *ngIf="closureDiff.oldClosureGrantRefundReason || closureDiff.newClosureGrantRefundReason"
+        class="mb-2 change-box">
+        <span class="change-title"><span>Closure Header | </span>Project Refund Reason changed</span>
+        <div class="change-new" *ngIf="closureDiff.newClosureGrantRefundReason">
+          <div class="px-2 my-1"
+            [innerHtml]="getTheDifference(closureDiff.oldClosureGrantRefundReason?closureDiff.oldClosureGrantRefundReason:'',closureDiff.newClosureGrantRefundReason).after">
+          </div>
+        </div>
+        <div *ngIf="!closureDiff.newClosureGrantRefundReason && closureDiff.oldClosureGrantRefundReason"
+          class="text-danger">
+          <em><small>Currently has no value</small></em>
+        </div>
+        <div class="change-old" *ngIf="closureDiff.oldClosureGrantRefundReason">
+          <div class="px-2 my-1"
+            [innerHtml]="getTheDifference(closureDiff.oldClosureGrantRefundReason,closureDiff.newClosureGrantRefundReason?closureDiff.newClosureGrantRefundReason:'').before">
+          </div>
+        </div>
+        <div *ngIf="!closureDiff.oldClosureGrantRefundReason && closureDiff.newClosureGrantRefundReason"
+          class="text-white">
+          <em><small>Previously had no value</small></em>
+        </div>
+      </div>
+
+
+
 
       <ng-container *ngIf="closureDiff.sectionDiffs">
         <ng-container *ngFor="let sectionDiff of closureDiff.sectionDiffs">

@@ -1,5 +1,5 @@
 import { User } from './user';
-import { Section, Grant, WorkflowStatus, FlowAuthority, SectionDiff, GrantType } from './dahsboard';
+import { Section, Grant, WorkflowStatus, FlowAuthority, SectionDiff, GrantType, ActualRefund } from './dahsboard';
 
 export class GrantClosure {
   id: number;
@@ -148,6 +148,12 @@ export class ClosureHistory {
 export class ClosureDiff {
   oldClosureReason: string;
   newClosureReason: string;
+  oldClosureGrantRefundAmount: number;
+  newClosureGrantRefundAmount: number;
+  oldClosureGrantRefundReason: string;
+  newClosureGrantRefundReason: string;
+  oldClosureActualRefunds: ActualRefund[];
+  newClosureActualRefunds: ActualRefund[];
   oldClosureDescription: string;
   newClosureDescription: string;
   sectionDiffs: SectionDiff[];
