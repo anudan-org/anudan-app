@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { ClosureDiff } from './../model/closures';
 import { DisbursementDiff, ActualDisbursement } from './../model/disbursement';
 import { ReportDiff } from './../model/report';
@@ -39,7 +40,7 @@ export class GrantCompareComponent implements OnInit {
   disbursementDiff: DisbursementDiff;
 
   constructor(public dialogRef: MatDialogRef<GrantCompareComponent>
-    , @Inject(MAT_DIALOG_DATA) public itemsCompare: any, public currencyService: CurrencyService) {
+    , @Inject(MAT_DIALOG_DATA) public itemsCompare: any, public currencyService: CurrencyService, private datePipe: DatePipe) {
     dialogRef.disableClose = true;
 
     if (itemsCompare.checkType) {
@@ -1789,5 +1790,67 @@ export class GrantCompareComponent implements OnInit {
 
   getTheRefundAmountOldDifference(oldAmt, newAmt) {
     return inf.format(this.getTheDifference(inf.format(oldAmt ? Number(oldAmt) : 0), inf.format(newAmt ? Number(newAmt) : 0)).after);
+  }
+
+  getActualRefundsTabularDataNew(oldData, data) {
+    let html = '<table width="100%" border="1" class="bg-white"><tr>';
+    const tabData = data;
+    html += '<td>#</td><td>Refund Date</td><td>Refund Amount</td><td>Note</td></tr>';
+    for (let i = 0; i < tabData.length; i++) {
+
+
+      html += '<tr><td>' + (i + 1) + '</td><td>' + this.getTheDifference(String(this.datePipe.transform(oldData[i].refundDate, 'dd-MMM-yyyy')), tabData[i].refundDate ? String(this.datePipe.transform(tabData[i].refundDate, 'dd-MMM-yyyy')) : '').after + '</td>' +
+        '<td>' + this.getTheDifference(String(oldData[i].amount), tabData[i].amount ? String(tabData[i].amount) : '').after + '</td>' +
+        '<td>' + this.getTheDifference(String(oldData[i].note), String(tabData[i].note)).after + '</td>';
+
+    }
+    html += '</tr>';
+    /* for (let i = 0; i < tabData.length; i++) {
+
+      html += '<tr><td>' + this.getTheDifference(oldData && oldData.length > 0 && oldData[i] ? oldData[i].name : '', tabData[i].name).after + '</td>';
+      for (let j = 0; j < tabData[i].columns.length; j++) {
+        //if(tabData[i].columns[j].name.trim() !== ''){
+        html += '<td>' + this.getTheDifference(oldData && oldData.length > 0 && oldData[i] ? String(oldData[i].columns[j].value.trim() === '' ? '&nbsp;' : oldData[i].columns[j].value) : '', String(tabData[i].columns[j].value.trim() === '' ? '&nbsp;' : tabData[i].columns[j].value)).after + '</td>';
+        //}
+      }
+      html += '</tr>';
+    } */
+
+    html += '</table>'
+    return html;
+  }
+
+  getActualRefundsTabularDataOld(oldData, data) {
+    let html = '<table width="100%" border="1" class="bg-white"><tr>';
+
+    let tabData;
+    if (data) {
+      tabData = data;
+    } else {
+      tabData = oldData;
+    }
+    html += '<td>#</td><td>Refund Date</td><td>Refund Amount</td><td>Note</td></tr>';
+    for (let i = 0; i < tabData.length; i++) {
+
+
+      html += '<tr><td>' + (i + 1) + '</td><td>' + this.getTheDifference(String(this.datePipe.transform(oldData[i].refundDate, 'dd-MMM-yyyy')), String(this.datePipe.transform(tabData[i].refundDate, 'dd-MMM-yyyy'))).before + '</td>' +
+        '<td>' + this.getTheDifference(String(oldData[i].amount), String(tabData[i].amount)).before + '</td>' +
+        '<td>' + this.getTheDifference(String(oldData[i].note), String(tabData[i].note)).before + '</td></tr>';
+
+    }
+    //html += '</tr>';
+    /* for (let i = 0; i < tabData.length; i++) {
+
+      html += '<tr><td>' + this.getTheDifference(oldData && oldData.length > 0 && oldData[i] ? oldData[i].name : '', tabData[i].name).after + '</td>';
+      for (let j = 0; j < tabData[i].columns.length; j++) {
+        //if(tabData[i].columns[j].name.trim() !== ''){
+        html += '<td>' + this.getTheDifference(oldData && oldData.length > 0 && oldData[i] ? String(oldData[i].columns[j].value.trim() === '' ? '&nbsp;' : oldData[i].columns[j].value) : '', String(tabData[i].columns[j].value.trim() === '' ? '&nbsp;' : tabData[i].columns[j].value)).after + '</td>';
+        //}
+      }
+      html += '</tr>';
+    } */
+
+    html += '</table>'
+    return html;
   }
 }
