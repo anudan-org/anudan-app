@@ -37,6 +37,8 @@ import { Attribute, ColumnData, CustomDateAdapter, Section, TableData } from 'ap
 import { GrantClosure } from 'app/model/closures';
 import { ClosureDataService } from 'app/closure.data.service';
 import { saveAs } from "file-saver";
+import * as inf from "indian-number-format";
+
 
 @Component({
   selector: 'app-closure-sections',
@@ -85,6 +87,9 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   @ViewChild("fruitInput") fruitInput: ElementRef<HTMLInputElement>;
   @ViewChild("refundRequested") refundRequested: ElementRef;
   @ViewChild("ongoingDisbursementAmount") ongoingDisbursementAmount: ElementRef;
+  @ViewChild("grantRefundFormatted") grantRefundFormatted: ElementRef;
+  @ViewChild("refundAmount") refundAmount: ElementRef;
+
 
   currentClosure: GrantClosure;
   action: string;
@@ -1642,5 +1647,29 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       }
     }
     return actualRfundsTotal;
+  }
+
+  showFormattedRefundAmount(evt: any) {
+    evt.currentTarget.style.visibility = "hidden";
+    this.grantRefundFormatted.nativeElement.style.visibility = "visible";
+  }
+
+  showRefundAmountInput(evt: any) {
+    evt.currentTarget.style.visibility = "hidden";
+    this.refundAmount.nativeElement.style.visibility = "visible";
+  }
+
+  getFormattedGrantAmount(amount: number): string {
+    if (amount) {
+      return inf.format(amount, 2);
+    }
+    return "<div class='amountPlaceholder'>Enter grant amount</div>";
+  }
+
+  getFormattedRefundAmount(amount: number): string {
+    if (amount) {
+      return inf.format(amount, 2);
+    }
+    return "<div class='amountPlaceholder'>Enter grant amount</div>";
   }
 }

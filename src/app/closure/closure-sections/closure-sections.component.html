@@ -102,8 +102,12 @@
                         <ng-container class="mb-2">
                           <div class="col-4">
                             <mat-form-field>
-                              <input [(ngModel)]="currentClosure.grant.refundAmount" class="anu-input"
-                                [ngModelOptions]="{ standAlone: true }" matInput placeholder="Refund Amount" />
+                              <input (blur)="showFormattedRefundAmount($event)" #refundAmount
+                                [(ngModel)]="currentClosure.grant.refundAmount" class="anu-input"
+                                [ngModelOptions]="{ standAlone: true }" matInput placeholder="Refund Amount (₹)" />
+                              <p #grantRefundFormatted (click)="showRefundAmountInput($event)"
+                                class="anu-input w-100 text-right" style="position: absolute; top: 5px; cursor: text"
+                                [innerHtml]="getFormattedRefundAmount(currentClosure.grant.refundAmount)"></p>
                             </mat-form-field>
                           </div>
                         </ng-container>
@@ -146,8 +150,8 @@
                                     </div>
                                     <div class="col-3 py-1" style="border:1px solid #d4d4d4;">
                                       <mat-form-field>
-                                        <input (click)='openARDate(af,$event)' [(ngModel)]="af.refundDate"
-                                          [value]="getRedundDate(af.refundDate)" class="anu-input"
+                                        <input (click)='openARDate(af,$event)' [value]="getRedundDate(af.refundDate)"
+                                          class="anu-input text-center" [ngModel]="af.refundDate | date: 'dd-MMM-yyyy'"
                                           [ngModelOptions]="{ standAlone: true }" matInput placeholder="" readonly />
                                       </mat-form-field>
                                     </div>
