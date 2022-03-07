@@ -373,7 +373,7 @@
                                   <td class="px-1 text-subheader">Project</td>
                                   <td class="text-right px-1 text-subheader">{{getPlannedFunds(0)}}</td>
                                   <td class="text-right px-1 text-subheader">{{getReceivedFunds(0)}}</td>
-                                  <td class="text-right px-1 text-subheader"></td>
+                                  <td class="text-right px-1 text-subheader">{{getRefundReceived()}}</td>
                                   <td class="text-right px-1 text-subheader"></td>
                                   <td class="text-right px-1 text-subheader">{{getPlannedDiff(0)}}</td>
                                   <td class="text-right px-1 text-subheader">{{getRecievedDiff(0)}}</td>
@@ -393,6 +393,18 @@
                                   <td class="text-right px-1 text-subheader">{{getRecievedDiff(1)}}</td>
                                   <td class="text-right px-1 text-subheader"></td>
                                   <td class="text-right px-1 text-subheader"></td>
+                                </tr>
+                                <tr>
+                                  <td class="text-subheader text-right text-bold pr-2">Totals</td>
+                                  <td class="text-subheader text-right text-bold pr-2">{{getPlannedTotal()}}</td>
+                                  <td class="text-subheader text-right text-bold pr-2">{{getReceivedTotal()}}</td>
+                                  <td class="text-subheader text-right text-bold pr-2">{{getRefundReceived()}}</td>
+                                  <td class="text-subheader text-right text-bold pr-2"></td>
+                                  <td class="text-subheader text-right text-bold pr-2">{{getPlannedDiffTotal()}}</td>
+                                  <td class="text-subheader text-right text-bold pr-2">{{getRecievedDiffTotals()}}</td>
+                                  <td class="text-subheader text-right text-bold pr-2">
+                                    {{getOngoingDisbursementAmount()}}</td>
+                                  <td></td>
                                 </tr>
                                 <tr
                                   *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) || !currentClosure.grant.hasOngoingDisbursement &&  this.getActualRefundsForGrant()!==0">

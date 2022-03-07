@@ -1672,4 +1672,73 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     }
     return "<div class='amountPlaceholder'>Enter grant amount</div>";
   }
+
+  getPlannedTotal() {
+    const pf = $('.pf');
+    if (!pf || pf.length === 0) {
+      return '';
+    }
+
+    const internalDisbursement = $(pf[0]).html().replace('₹ ', '').split(",")
+    const externalDisbursement = $(pf[1]).html().replace('₹ ', '').split(",")
+
+    const i = Number(internalDisbursement.join(""));//.replaceAll(',', ''));
+    const e = Number(externalDisbursement.join(""));//.replaceAll(',', ''));
+
+    return this.currencyService.getFormattedAmount(i + e);
+  }
+
+  getReceivedTotal() {
+    const pf = $('.rf');
+    if (!pf || pf.length === 0) {
+      return '';
+    }
+
+    const internalDisbursement = $(pf[0]).html().replace('₹ ', '').split(",")
+    const externalDisbursement = $(pf[1]).html().replace('₹ ', '').split(",")
+
+    const i = Number(internalDisbursement.join(""));//.replaceAll(',', ''));
+    const e = Number(externalDisbursement.join(""));//.replaceAll(',', ''));
+
+    return this.currencyService.getFormattedAmount(i + e);
+  }
+
+  getRefundReceived() {
+    if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {
+      let total = 0;
+      for (let rf of this.currentClosure.grant.actualRefunds) {
+        total += rf.amount ? rf.amount : 0;
+      }
+      return this.currencyService.getFormattedAmount(total);
+    }
+    return this.currencyService.getFormattedAmount(0);
+  }
+
+  getPlannedDiffTotal() {
+    const pf = $('.pf');
+    if (!pf || pf.length === 0) {
+      return '';
+    }
+
+    const pieces1 = $(pf[0]).html().replace('₹ ', '').split(",")
+    const p1 = Number(pieces1.join(""));
+    const pieces2 = $(pf[1]).html().replace('₹ ', '').split(",")
+    const p2 = Number(pieces2.join(""));
+
+    return this.currencyService.getFormattedAmount((p1 - 0 + this.getActualRefundsForGrant()) + (p2));
+  }
+
+  getRecievedDiffTotals() {
+    const pf = $('.rf');
+    if (!pf || pf.length === 0) {
+      return '';
+    }
+
+    const peices1 = $(pf[0]).html().replace('₹ ', '').split(',');
+    const p1 = Number(peices1.join(""));
+    const peices2 = $(pf[1]).html().replace('₹ ', '').split(',');
+    const p2 = Number(peices1.join(""));
+    return this.currencyService.getFormattedAmount(p1 - 0 - this.getActualRefundsForGrant() + p2);
+  }
+
 }

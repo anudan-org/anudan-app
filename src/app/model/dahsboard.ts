@@ -224,6 +224,7 @@ export class Section {
   deletable: boolean;
   order: number;
   isRefund: boolean;
+  refund: boolean;
   systemGenerated: boolean;
 }
 
