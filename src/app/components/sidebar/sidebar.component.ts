@@ -350,7 +350,7 @@ export class SidebarComponent implements OnInit {
       this.currentReport.reportDetails.sections.sort((a, b) => (a.order > b.order) ? 1 : -1)
       for (let section of this.currentReport.reportDetails.sections) {
         if (section.sectionName !== '' && section.sectionName !== '_') {
-          REPORT_SECTION_ROUTES.push({ path: '/report/section/' + section.sectionName.replace(/[^0-9a-z]/gi, ''), title: section.sectionName, icon: 'stop', class: '', divide: false });
+          REPORT_SECTION_ROUTES.push({ path: '/report/section/' + section.sectionName.replace(/[^0-9a-z]/gi, ''), title: (section.systemGenerated ? section.sectionName + '<sup>*</sup>' : section.sectionName), icon: 'stop', class: '', divide: false });
         } else {
           REPORT_SECTION_ROUTES.push({ path: '/grant/section/' + section.id, title: '_', icon: 'stop', class: '', divide: false });
         }
