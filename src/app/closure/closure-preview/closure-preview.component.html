@@ -215,6 +215,60 @@
                           </tr>
                         </table>
                       </div>
+
+                      <ng-container *ngIf="currentClosure.closureDocuments && currentClosure.closureDocuments.length>0">
+                        <div class="col-sm-12 col-lg-12 mb-3 mt-3">
+                          <span style="
+                          color: #929292;
+                          font-size: 15px;
+                          font-family: Roboto, sans-serif;
+                        ">Associated Closure Documents</span>
+                          <ul class="pl-0">
+                            <li *ngFor="
+                            let doc of currentClosure.closureDocuments
+                          " style="list-style-type: none">
+                              <p class="m-0" style="font-family: Roboto, sans-serif; font-size: 14px">
+                                <strong>
+                                  <ng-container *ngIf="doc.extension === 'pdf'">
+                                    <em class="far fa-file-pdf text-danger ml-1"></em>
+                                  </ng-container>
+                                  <ng-container *ngIf="doc.extension === 'txt'">
+                                    <i class="far fa-file-alt ml-1"></i>
+                                  </ng-container>
+                                  <ng-container *ngIf="
+                                  doc.extension === 'xls' || doc.extension === 'xlsx'
+                                ">
+                                    <em class="far fa-file-excel text-success ml-1"></em>
+                                  </ng-container>
+                                  <ng-container *ngIf="
+                                  doc.extension === 'doc' || doc.extension === 'docx'
+                                ">
+                                    <em class="far fa-file-word text-primary ml-1"></em>
+                                  </ng-container>
+                                  <ng-container *ngIf="
+                                  doc.extension === 'ppt' || doc.extension === 'pptx'
+                                ">
+                                    <em class="far fa-file-powerpoint text-danger ml-1"></em>
+                                  </ng-container>
+                                  <span class="ml-2" style="cursor: pointer;" [matMenuTriggerFor]="menuDoc">{{
+                                    doc.name +
+                                    '.'+doc.extension}}</span>
+                                  <div data-html2canvas-ignore="true">
+                                    <mat-menu data-html2canvas-ignore #menuDoc="matMenu">
+                                      <button mat-menu-item (click)="previewDocument('closure-document',doc)">
+                                        <mat-icon class="ml-1">remove_red_eye</mat-icon>Preview
+                                      </button>
+                                      <button mat-menu-item (click)="downloadSingleClosureDoc(doc.id)">
+                                        <mat-icon class="ml-1">file_download</mat-icon>Download
+                                      </button>
+                                    </mat-menu>
+                                  </div>
+                                </strong>
+                              </p>
+                            </li>
+                          </ul>
+                        </div>
+                      </ng-container>
                     </div>
                   </div>
 
@@ -364,7 +418,7 @@
                             font-size: 13px;
                             font-family: Roboto, sans-serif;
                           ">{{ attribute.fieldName }}</span>
-                            <ul>
+                            <ul class="pl-0">
                               <li *ngFor="
                               let doc of attribute.attachments
                             " style="list-style-type: none">
@@ -372,6 +426,9 @@
                                   <strong>
                                     <ng-container *ngIf="doc.type === 'pdf'">
                                       <em class="far fa-file-pdf text-danger ml-1"></em>
+                                    </ng-container>
+                                    <ng-container *ngIf="doc.type === 'txt'">
+                                      <i class="far fa-file-alt ml-1"></i>
                                     </ng-container>
                                     <ng-container *ngIf="
                                     doc.type === 'xls' || doc.type === 'xlsx'

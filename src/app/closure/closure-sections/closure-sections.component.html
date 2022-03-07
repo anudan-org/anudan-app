@@ -181,7 +181,7 @@
                                     class="fas fa-plus-circle text-green mr-1"></em>Add a row</span>
                               </div>
                               <div class="col-12 mt-4">
-                                <p class="text-header px-0">Closure Documents</p>
+                                <p class="text-header px-0">Associated Closure Documents</p>
                               </div>
                               <div class="col-sm-12 col-lg-12 text-left">
                                 <div class="row mx-3">
@@ -798,7 +798,7 @@
                               <div id="tableArea" class="row dibursements-class mt-4"
                                 style="padding-left: 15px; padding-right: 15px">
                                 <p class="text-header">Project Funds Received</p>
-                                <table #dataColumns id="refunds-holder" width="100%">
+                                <table #dataColumns id="refunds-holder" class="refunds-holder" width="100%">
                                   <ng-container *ngIf="!attribute.fieldTableValue">
                                     <tr>
                                       <th id="no_funds">
@@ -1085,7 +1085,7 @@
                                         !row.enteredByGrantee
                                       " #amountFormatted class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: 5px;
+                                        top: -1px;
                                         cursor: text;
                                         color: #212529;
                                         background: #f4f4f4 !important;
@@ -1113,7 +1113,7 @@
                                         row.enteredByGrantee
                                       " #amountFormatted class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: 5px;
+                                        top: -1px;
                                         cursor: text;
                                         background: #f4f4f4 !important;
                                       ">
@@ -1136,7 +1136,7 @@
                                           'Funds from Other Sources'
                                       " class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: 5px;
+                                        top: -1px;
                                         background: #f4f4f4 !important;
                                       ">
                                                 {{
@@ -1253,7 +1253,7 @@
                                           'Funds from Other Sources'
                                       " class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: 5px;
+                                        top: -1px;
                                         cursor: text;
                                         background: #f4f4f4 !important;
                                       ">
@@ -1278,7 +1278,7 @@
                                         !row.enteredByGrantee
                                       " #amountFormatted class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: 5px;
+                                        top: -1px;
                                         cursor: text;
                                         background: #f4f4f4 !important;
                                       ">
@@ -1295,7 +1295,7 @@
                                       " #amountFormatted (click)="showAmountInput($event)"
                                                 class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: 5px;
+                                        top: -1px;
                                         cursor: text;
                                       ">
                                                 {{
@@ -1333,7 +1333,7 @@
                                         !row.status
                                       " type="number" class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: 5px;
+                                        top: -1px;
                                         color: #212529;
                                         background: #f4f4f4 !important;
                                       ">
@@ -1431,7 +1431,7 @@
                                           'Funds from Other Sources'
                                       " #amountFormatted class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: 5px;
+                                        top: -1px;
                                         cursor: text;
                                         color: #212529;
                                         background: #f4f4f4 !important;
@@ -1456,7 +1456,7 @@
                                           'Funds from Other Sources'
                                       " class="anu-input w-100 text-right" style="
                                         position: absolute;
-                                        top: 5px;
+                                        top: -1px;
                                         background: #f4f4f4 !important;
                                       ">
                                                 {{
