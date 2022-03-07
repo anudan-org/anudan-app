@@ -574,4 +574,11 @@ export class ClosurePreviewComponent implements OnInit {
     }
     return inf.format(0, 2);;
   }
+
+  downloadSingleClosureDoc(attachmentId: number) {
+    const selectedAttachments = new AttachmentDownloadRequest();
+    selectedAttachments.attachmentIds = [];
+    selectedAttachments.attachmentIds.push(attachmentId);
+    this.docManagementService.callClosureDocsDownload(selectedAttachments, this.appComp, this.currentClosure);
+  }
 }
