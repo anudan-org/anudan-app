@@ -567,4 +567,11 @@ export class ClosurePreviewComponent implements OnInit {
 
     return toStateOwner ? (toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>") : "";
   }
+
+  getFormattedRefundAmount(amount: number): string {
+    if (amount) {
+      return inf.format(amount, 2);
+    }
+    return inf.format(0, 2);;
+  }
 }
