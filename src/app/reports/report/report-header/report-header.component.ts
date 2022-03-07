@@ -407,7 +407,7 @@ export class ReportHeaderComponent implements OnInit {
         day <= new Date(this.currentReport.dueDate) &&
         day <= new Date(this.currentReport.endDate)
       );
-    } else if (!this.currentReport.dueDate) {
+    } else if (this.currentReport.dueDate) {
       return day <= new Date(this.currentReport.dueDate);
     }
     return true;

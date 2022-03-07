@@ -1070,7 +1070,7 @@ export class GrantCompareComponent implements OnInit {
       this.closureDiff.newClosureGrantRefundReason = newClosure.grantRefundReason;
     }
 
-    if (JSON.stringify(oldClosure.grantActualRefunds) !== JSON.stringify(newClosure.grantRefundReason)) {
+    if (JSON.stringify(oldClosure.actualRefunds) !== JSON.stringify(newClosure.actualRefunds)) {
       this._getClosureDiff();
       this.closureDiff.oldClosureActualRefunds = oldClosure.actualRefunds;
       this.closureDiff.newClosureActualRefunds = newClosure.actualRefunds;
@@ -1799,9 +1799,9 @@ export class GrantCompareComponent implements OnInit {
     for (let i = 0; i < tabData.length; i++) {
 
 
-      html += '<tr><td>' + (i + 1) + '</td><td>' + this.getTheDifference(String(this.datePipe.transform(oldData[i].refundDate, 'dd-MMM-yyyy')), tabData[i].refundDate ? String(this.datePipe.transform(tabData[i].refundDate, 'dd-MMM-yyyy')) : '').after + '</td>' +
-        '<td>' + this.getTheDifference(String(oldData[i].amount), tabData[i].amount ? String(tabData[i].amount) : '').after + '</td>' +
-        '<td>' + this.getTheDifference(String(oldData[i].note), String(tabData[i].note)).after + '</td>';
+      html += '<tr><td>' + (i + 1) + '</td><td>' + this.getTheDifference((oldData[i] && oldData[i].refundDate) ? String(this.datePipe.transform(oldData[i].refundDate, 'dd-MMM-yyyy')) : '', tabData[i].refundDate ? String(this.datePipe.transform(tabData[i].refundDate, 'dd-MMM-yyyy')) : '').after + '</td>' +
+        '<td>' + this.getTheDifference((oldData[i] && oldData[i].amount) ? String(oldData[i].amount) : '', tabData[i].amount ? String(tabData[i].amount) : '').after + '</td>' +
+        '<td>' + this.getTheDifference((oldData[i] && oldData[i].note) ? String(oldData[i].note) : '', tabData[i].note ? String(tabData[i].note) : '').after + '</td>';
 
     }
     html += '</tr>';
@@ -1833,9 +1833,10 @@ export class GrantCompareComponent implements OnInit {
     for (let i = 0; i < tabData.length; i++) {
 
 
-      html += '<tr><td>' + (i + 1) + '</td><td>' + this.getTheDifference(String(this.datePipe.transform(oldData[i].refundDate, 'dd-MMM-yyyy')), String(this.datePipe.transform(tabData[i].refundDate, 'dd-MMM-yyyy'))).before + '</td>' +
-        '<td>' + this.getTheDifference(String(oldData[i].amount), String(tabData[i].amount)).before + '</td>' +
-        '<td>' + this.getTheDifference(String(oldData[i].note), String(tabData[i].note)).before + '</td></tr>';
+
+      html += '<tr><td>' + (i + 1) + '</td><td>' + this.getTheDifference((oldData[i] && oldData[i].refundDate) ? String(this.datePipe.transform(oldData[i].refundDate, 'dd-MMM-yyyy')) : '', tabData[i].refundDate ? String(this.datePipe.transform(tabData[i].refundDate, 'dd-MMM-yyyy')) : '').before + '</td>' +
+        '<td>' + this.getTheDifference((oldData[i] && oldData[i].amount) ? String(oldData[i].amount) : '', tabData[i].amount ? String(tabData[i].amount) : '').before + '</td>' +
+        '<td>' + this.getTheDifference((oldData[i] && oldData[i].note) ? String(oldData[i].note) : '', tabData[i].note ? String(tabData[i].note) : '').before + '</td></tr>';
 
     }
     //html += '</tr>';

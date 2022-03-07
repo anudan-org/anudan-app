@@ -1107,13 +1107,13 @@
 
       <div *ngIf="closureDiff.newClosureActualRefunds && closureDiff.oldClosureActualRefunds" class="mb-2 change-box">
         <span class="change-title"><span>Closure Refunds | </span>Project Actual Refunds changed</span>
-        <ng-container *ngFor="let entry of closureDiff.newClosureActualRefunds">
-          <div class="col-12 change-new my-2 p-3"
+        <ng-container>
+          AX<div class="col-12 change-new my-2 p-3"
             [innerHTML]="getActualRefundsTabularDataNew(closureDiff.oldClosureActualRefunds,closureDiff.newClosureActualRefunds)">
           </div>
         </ng-container>
-        <ng-container *ngFor="let entry of closureDiff.newClosureActualRefunds">
-          <div class="col-12 change-old my-2 p-3"
+        <ng-container>
+          BX<div class="col-12 change-old my-2 p-3"
             [innerHTML]="getActualRefundsTabularDataOld(closureDiff.oldClosureActualRefunds,closureDiff.newClosureActualRefunds)">
           </div>
         </ng-container>
@@ -1122,7 +1122,7 @@
       <div *ngIf="!closureDiff.newClosureActualRefunds && closureDiff.oldClosureActualRefunds" class="mb-2 change-box">
         <span class="change-title"><span>Closure Refunds | </span>Project Actual Refunds deleted</span>
         <ng-container *ngFor="let entry of closureDiff.oldClosureActualRefunds">
-          <div class="col-12 change-old my-2 p-3"
+          CX<div class="col-12 change-old my-2 p-3"
             [innerHTML]="getActualRefundsTabularDataOld(closureDiff.oldClosureActualRefunds,closureDiff.newClosureActualRefunds)">
           </div>
         </ng-container>

@@ -245,7 +245,7 @@
           style="padding-top: 0; padding-bottom: 0; padding-left: 30px">
           <i *ngIf="!this.currentReport.canManage" class="material-icons" style="font-size: 18px">{{ menuItem1.icon
             }}</i>
-          <p>{{ menuItem1.title }}</p>
+          <p [innerHTML]="menuItem1.title"></p>
         </a>
       </li>
       <li *ngIf="currentReport.canManage && !currentReport.forGranteeUse" tabindex="{{ i }}">

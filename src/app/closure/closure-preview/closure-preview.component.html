@@ -251,8 +251,7 @@
                                     <em class="far fa-file-powerpoint text-danger ml-1"></em>
                                   </ng-container>
                                   <span class="ml-2" style="cursor: pointer;" [matMenuTriggerFor]="menuDoc">{{
-                                    doc.name +
-                                    '.'+doc.extension}}</span>
+                                    doc.name}}</span>
                                   <div data-html2canvas-ignore="true">
                                     <mat-menu data-html2canvas-ignore #menuDoc="matMenu">
                                       <button mat-menu-item (click)="previewDocument('closure-document',doc)">
