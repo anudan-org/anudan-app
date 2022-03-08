@@ -1824,11 +1824,11 @@ export class GrantCompareComponent implements OnInit {
     let html = '<table width="100%" border="1" class="bg-white"><tr>';
 
     let tabData;
-    if (data) {
+    /* if (data) {
       tabData = data;
-    } else {
-      tabData = oldData;
-    }
+    } else { */
+    tabData = oldData;
+    /*  } */
     html += '<td>#</td><td>Refund Date</td><td>Refund Amount</td><td>Note</td></tr>';
     for (let i = 0; i < tabData.length; i++) {
 
