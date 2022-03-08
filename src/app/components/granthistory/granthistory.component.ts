@@ -178,7 +178,9 @@ export class GranthistoryComponent implements OnInit {
         toId = this.data.data.grantStatus.id
       } else if (_for === 'report') {
         toId = this.data.data.status.id
-      } if (_for === 'disbursement') {
+      }
+
+      if (_for === 'disbursement') {
         toId = this.data.data.status.id
       } else if (_for === 'closure') {
         toId = this.data.data.status.id

@@ -29,7 +29,6 @@ export class ClosureDataService {
   changeMessage(message: GrantClosure, userId: number) {
 
     if (message !== null) {
-      const user = JSON.parse(localStorage.getItem('USER'));
       if ((message.workflowAssignment.filter(wf => wf.stateId === message.status.id && wf.assignmentId === userId).length > 0) && (message.status.internalStatus !== 'CLOSED')) {
         message.canManage = true
       } else {
@@ -119,8 +118,6 @@ export class ClosureDataService {
           "Unable to save actual refund entry"
         );
       });
-
-    return null;
   }
 
   deleteActualRefund(actualRefund: ActualRefund, closureId, appComp: AppComponent): Promise<void> {
@@ -142,7 +139,5 @@ export class ClosureDataService {
           "Unable to delete actual refund entry"
         );
       });
-
-    return null;
   }
 }

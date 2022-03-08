@@ -113,13 +113,7 @@ export class DocumentLibraryComponent implements OnInit {
             }
           }
 
-          this.adminService.deleteSelectedLibraryDocs(this.appComponent.loggedInUser, selectedAttachments).then(() => {
-            for (let a of selectedAttachments.attachmentIds) {
-              const index = this.docs.findIndex(d => d.id === Number(a));
-              this.docs.splice(index, 1);
-              this.appComponent.currentTenant.templateLibrary = this.docs;
-            }
-          });
+          this.deleteDocumentLibrary(selectedAttachments);
         }
       } else {
         dReg.close();
@@ -127,6 +121,16 @@ export class DocumentLibraryComponent implements OnInit {
     });
 
 
+  }
+
+  private deleteDocumentLibrary(selectedAttachments: AttachmentDownloadRequest) {
+    this.adminService.deleteSelectedLibraryDocs(this.appComponent.loggedInUser, selectedAttachments).then(() => {
+      for (let a of selectedAttachments.attachmentIds) {
+        const index = this.docs.findIndex(d => d.id === Number(a));
+        this.docs.splice(index, 1);
+        this.appComponent.currentTenant.templateLibrary = this.docs;
+      }
+    });
   }
 
   canCreateDoc() {
@@ -240,13 +244,7 @@ export class DocumentLibraryComponent implements OnInit {
         selectedAttachments.attachmentIds = [];
         selectedAttachments.attachmentIds.push(attachmentId);
 
-        this.adminService.deleteSelectedLibraryDocs(this.appComponent.loggedInUser, selectedAttachments).then(() => {
-          for (let a of selectedAttachments.attachmentIds) {
-            const index = this.docs.findIndex(d => d.id === Number(a));
-            this.docs.splice(index, 1);
-            this.appComponent.currentTenant.templateLibrary = this.docs;
-          }
-        });
+        this.deleteDocumentLibrary(selectedAttachments);
       }
     });
   }

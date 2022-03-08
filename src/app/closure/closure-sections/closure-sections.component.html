@@ -358,16 +358,17 @@
                                 </div>
                               </div>
                               <table border="1" style="width: 100%;">
+                                <caption></caption>
                                 <tr>
-                                  <th></th>
-                                  <th class="text-center" style="width: 12.5%;">Committed / Planned</th>
-                                  <th class="text-center" style="width: 12.5%;">Received Funds</th>
-                                  <th class="text-center" style="width: 12.5%;">Refund Received</th>
-                                  <th class="text-center" style="width: 12.5%;">Actuals Spent</th>
-                                  <th class="text-center" style="width: 12.5%;">Yet to Receive</th>
-                                  <th class="text-center" style="width: 12.5%;">Yet to Spend</th>
-                                  <th class="text-center" style="width: 12.5%;">Disbursement Reqested</th>
-                                  <th class="text-center" style="width: 12.5%;">Refund Requested</th>
+                                  <th id="aref1"></th>
+                                  <th id="aref2" class="text-center" style="width: 12.5%;">Committed / Planned</th>
+                                  <th id="aref3" class="text-center" style="width: 12.5%;">Received Funds</th>
+                                  <th id="aref4" class="text-center" style="width: 12.5%;">Refund Received</th>
+                                  <th id="aref5" class="text-center" style="width: 12.5%;">Actuals Spent</th>
+                                  <th id="aref6" class="text-center" style="width: 12.5%;">Yet to Receive</th>
+                                  <th id="aref7" class="text-center" style="width: 12.5%;">Yet to Spend</th>
+                                  <th id="aref8" class="text-center" style="width: 12.5%;">Disbursement Reqested</th>
+                                  <th id="aref9" class="text-center" style="width: 12.5%;">Refund Requested</th>
                                 </tr>
                                 <tr>
                                   <td class="px-1 text-subheader">Project</td>
@@ -547,8 +548,8 @@
                                   <span *ngIf="
                             currentClosure.canManage &&
                             !currentClosure.forGranteeUse
-                          " (click)="addColumn(attribute)" style="cursor: pointer"><i
-                                      class="fas fa-plus-circle text-green mr-1"></i>Add a column</span>
+                          " (click)="addColumn(attribute)" style="cursor: pointer"><em
+                                      class="fas fa-plus-circle text-green mr-1"></em>Add a column</span>
                                 </div>
                                 <div style="margin-left: 250px">
                                   <em (click)="moveColsRight()" class="fas fa-arrow-alt-circle-left mr-3"></em><em
@@ -558,9 +559,10 @@
                               <div id="tableArea" class="row flex-row flex-nowrap"
                                 style="overflow: hidden; overflow-x: scroll">
                                 <table id="tablePlaceholderX" class='refunds-holder'>
+                                  <caption></caption>
                                   <tr>
-                                    <th id="col1" width="20%" style="
-                              min-width: 250px;
+                                    <th id="col1" style="
+                              min-width: 250px;width:20%;
                               position: sticky;
                               left: 0;
                               z-index: 1;
@@ -620,8 +622,9 @@
                             let i = index
                           ">
                                     <tr>
-                                      <td width="20%" style="
+                                      <td style="
                                 position: sticky;
+                                width: 20%;
                                 left: 0;
                                 z-index: 1;
                                 background: rgb(244, 244, 244);
@@ -685,18 +688,19 @@
                                   <span *ngIf="
                             currentClosure.canManage &&
                             !currentClosure.forGranteeUse
-                          " (click)="addRow(attribute)" style="cursor: pointer"><i
-                                      class="fas fa-plus-circle text-green mr-1"></i>Add a row</span>
+                          " (click)="addRow(attribute)" style="cursor: pointer"><em
+                                      class="fas fa-plus-circle text-green mr-1"></em>Add a row</span>
                                 </div>
                               </div>
                             </div>
                             <div class="col-sm-12 col-lg-12 text-left" *ngIf="attribute.fieldType === 'disbursement'">
                               <div id="tableArea" class="row" style="padding-left: 15px; padding-right: 15px">
                                 <p class="text-header">Planned Project Funds</p>
-                                <table id="tablePlaceholderX" width="100%">
+                                <table id="tablePlaceholderX" style="width:100%;">
+                                  <caption></caption>
                                   <tr style="background: #f9f9f9">
-                                    <th id="planned" align="center" valign="middle" width="10%"
-                                      style="border: 1px solid #e4e4e4">
+                                    <th id="planned" class="d-flex align-items-center justify-content-center"
+                                      style="border: 1px solid #e4e4e4;width:10%;">
                                       <label class="m-0"><span>Planned Installment #</span></label>
                                     </th>
                                     <ng-container *ngFor="
@@ -704,14 +708,16 @@
                                 .fieldTableValue[0].columns;
                               let i = index
                             ">
-                                      <th [id]="'col_1_'+i" align="center" valign="middle" [ngStyle]="
-                                column.name === 'Funds from other Sources'
+                                      <th [id]="'col_1_'+i" class="d-flex align-items-center justify-content-center"
+                                        [ngStyle]="
+                                (column.name === 'Funds from other Sources')
                                   ? {
                                       border: '1px solid #e4e4e4',
-                                      background: 'transparent'
+                                      background: 'transparent',
+                                      width:'10%'
                                     }
-                                  : { border: '1px solid #e4e4e4' }
-                              " width="10%">
+                                  : { border: '1px solid #e4e4e4',width:'10%' }
+                              ">
                                         <label class="m-0 text-center p-2 m-0"
                                           style="font-weight: 400; font-size: 14px">{{
                                           column.name === "Notes"
@@ -727,7 +733,7 @@
                             let i = index
                           ">
                                     <tr>
-                                      <td width="10%">
+                                      <td style="width:10%;">
                                         <p class="anu-input m-0 text-center" style="background: #f4f4f4 !important">
                                           <label class="w-100 m-0">{{
                                             row.name
@@ -763,7 +769,8 @@
                             getGrantDisbursementAttribute()
                               .fieldTableValue.length > 1
                           " style="background: #f4f4f4">
-                                    <td class="py-2" align="center" style="position: sticky; left: 0; z-index: 1">
+                                    <td class="py-2" class="d-flex justify-content-center"
+                                      style="position: sticky; left: 0; z-index: 1">
                                       <label class="w-100" style="font-weight: 600">TOTAL:</label>
                                     </td>
                                     <ng-container *ngIf="
@@ -774,7 +781,7 @@
                                 let column of getGrantDisbursementAttribute()
                                   .fieldTableValue[0].columns;
                                 let j = index
-                              " valign="middle">
+                              " class="d-flex align-items-center justify-content-center">
                                         <label class="text-right pr-3 my-0 w-100"
                                           *ngIf="column.dataType === 'currency'"><strong class="pf">{{
                                             getTotals(
@@ -786,19 +793,14 @@
                                       </td>
                                     </ng-container>
                                   </tr>
-                                  <!--tr *ngIf="getGrantDisbursementAttribute().fieldTableValue.length>1" style="background:#f4f4f4;">
-                            <td align="center" style="position: sticky; left: 0; z-index: 1;"><strong>Committed Grant Amount:</strong></td>
-                            <td *ngFor="let column of getGrantDisbursementAttribute().fieldTableValue[0].columns,let j = index" valign="middle">
-                              <p class="text-right pr-3 my-0" *ngIf="column.dataType==='currency'"><strong>{{getCommittedGrantTotals(j)}}</strong></p>
-                            </td>
-                          </tr-->
                                 </table>
                               </div>
 
                               <div id="tableArea" class="row dibursements-class mt-4"
                                 style="padding-left: 15px; padding-right: 15px">
                                 <p class="text-header">Project Funds Received</p>
-                                <table #dataColumns id="refunds-holder" class="refunds-holder" width="100%">
+                                <table #dataColumns id="refunds-holder" class="refunds-holder" style="width:100%">
+                                  <caption></caption>
                                   <ng-container *ngIf="!attribute.fieldTableValue">
                                     <tr>
                                       <th id="no_funds">
@@ -811,7 +813,8 @@
                                   </ng-container>
                                   <tr>
                                     <ng-container *ngIf="attribute.fieldTableValue">
-                                      <td align="center" valign="middle" width="10%" style="border: 1px solid #e4e4e4">
+                                      <td class="d-flex align-items-center justify-content-center"
+                                        style="border: 1px solid #e4e4e4;width:10%;">
                                         <label class="m-0">#</label>
                                       </td>
                                     </ng-container>
@@ -824,15 +827,16 @@
                                   .columns;
                                 let i = index
                               ">
-                                        <td align="center" valign="middle" [ngStyle]="
+                                        <td class="d-flex align-items-center justify-content-center" [ngStyle]="
                                   column.name ===
                                   'Funds from Other Sources'
                                     ? {
                                         border: '1px solid #e4e4e4',
-                                        background: 'transparent'
+                                        background: 'transparent',
+                                        width:'10%'
                                       }
-                                    : { border: '1px solid #e4e4e4' }
-                                " width="10%">
+                                    : { border: '1px solid #e4e4e4',width:'10%' }
+                                ">
                                           <label class="m-0 text-center p-2" style="
                                     font-weight: 400;
                                     font-size: 14px;
@@ -854,17 +858,19 @@
                               let i = index
                             ">
                                       <tr *ngIf="row.reportId === currentClosure.id">
-                                        <td width="10%" [ngStyle]="
+                                        <td [ngStyle]="
                                   row.enteredByGrantee
                                     ? {
                                         background: 'transparent',
                                         padding: '2px 4px',
-                                        border: '1px solid #e4e4e4'
+                                        border: '1px solid #e4e4e4',
+                                        width:'10%'
                                       }
                                     : {
                                         background: 'rgb(244,244,244)',
                                         padding: '2px 4px',
-                                        border: '1px solid #e4e4e4'
+                                        border: '1px solid #e4e4e4',
+                                        width:'10%'
                                       }
                                 ">
                                           <mat-icon *ngIf="
@@ -872,12 +878,6 @@
                                       1 &&
                                     currentClosure.forGranteeUse &&
                                     row.enteredByGrantee
-                                  " (click)="
-                                    deleteDisbursementRow(
-                                      section.id,
-                                      attribute.id,
-                                      i
-                                    )
                                   " aria-hidden="false" style="
                                     font-size: 12px;
                                     top: -3px;
@@ -1347,17 +1347,19 @@
                                       </tr>
                                       <!--When row belongs to a different report-->
                                       <tr *ngIf="row.reportId !== currentClosure.id">
-                                        <td width="10%" [ngStyle]="
+                                        <td [ngStyle]="
                                   row.enteredByGrantee
                                     ? {
                                         background: 'transparent',
                                         padding: '2px 4px',
-                                        border: '1px solid #e4e4e4'
+                                        border: '1px solid #e4e4e4',
+                                        width:'10%'
                                       }
                                     : {
                                         background: 'rgb(244,244,244)',
                                         padding: '2px 4px',
-                                        border: '1px solid #e4e4e4'
+                                        border: '1px solid #e4e4e4',
+                                        width:'10%'
                                       }
                                 ">
                                           <p class="anu-input m-0 text-center" [ngClass]="
@@ -1534,25 +1536,14 @@
 
                                   <div class="row">
                                     <div class="col-12">
-                                      <!-- <span
-                              *ngIf="
-                                currentClosure.forGranteeUse &&
-                                getFundsFromOtherSourceTotals() > 0
-                              "
-                              (click)="addDisbursementRow(attribute)"
-                              style="cursor: pointer"
-                              ><i
-                                class="fas fa-plus-circle text-green mr-1"
-                              ></i
-                              >Add a row</span
-                            > -->
                                     </div>
                                   </div>
                                   <tr *ngIf="
                             attribute.fieldTableValue &&
                             attribute.fieldTableValue.length > 1
                           " style="background: #f4f4f4">
-                                    <td class="py-2" align="center" style="position: sticky; left: 0; z-index: 1">
+                                    <td class="py-2 d-flex justify-content-center"
+                                      style="position: sticky; left: 0; z-index: 1">
                                       <label class="w-100" style="font-weight: 600">TOTAL:</label>
                                     </td>
                                     <ng-container *ngIf="attribute.fieldTableValue[0]">
@@ -1560,7 +1551,7 @@
                                 let column of attribute.fieldTableValue[0]
                                   .columns;
                                 let j = index
-                              " valign="middle">
+                              " class="d-flex align-items-center justify-content-center">
                                         <label class="text-right pr-3 my-0 w-100"
                                           *ngIf="column.dataType === 'currency'"><strong class="rf">{{
                                             getTotals(j, attribute.fieldTableValue)
@@ -1568,7 +1559,6 @@
                                       </td>
                                     </ng-container>
                                   </tr>
-                                  <!-- <tr *ngIf="showUnapprovedIndicator(attribute)"><td colspan="5" [innerHTML]="showUnapprovedIndicator(attribute)"></td></tr> -->
                                 </table>
                               </div>
                             </div>
@@ -1602,8 +1592,6 @@
                             : 'N/A'
                         " />
                               </mat-form-field>
-                              <!--label *ngIf="(currentClosure.canManage && currentClosure.forGranteeUse) || !currentClosure.canManage">Grant Level Target/Goal:</label>
-                    <p class="anu-input" *ngIf="(currentClosure.canManage && currentClosure.forGranteeUse) || !currentClosure.canManage" style="background:#F0F1F0 !important;">{{attribute.grantLevelTarget}}</p-->
                             </div>
                             <div class="col-sm-4 col-lg-4 text-left" *ngIf="attribute.fieldType === 'kpi'">
                               <mat-form-field>
@@ -1680,23 +1668,6 @@
                                   [ngModelOptions]="{ standAlone: true }" placeholder="Report Level Accomplishment:" />
                               </mat-form-field>
                             </div>
-
-                            <!--<div class="col-sm-4 col-lg-4 text-left" *ngIf="attribute.fieldType==='kpi' && attribute.canEdit">
-                    <mat-form-field>
-                      <mat-label>Reporting Frequency</mat-label>
-                      <mat-select [(ngModel)]="attribute.frequency"  class="anu-input"
-                                  [ngModelOptions]="{standAlone:true}">
-                        <mat-option value="none" aria-selected="true">&#45;&#45;Select type
-                          of field&#45;&#45;
-                        </mat-option>
-                        <mat-option value="monthly">Monthly</mat-option>
-                        <mat-option value="quarterly">Quarterly</mat-option>
-                        <mat-option value="half-yearly">Half Yearly</mat-option>
-                        <mat-option value="yearly">Yearly</mat-option>
-                      </mat-select>
-
-                    </mat-form-field>
-                  </div>-->
                             <div class="col-sm-12 col-lg-12 text-left" *ngIf="attribute.fieldType === 'multiline'">
                               <textarea [(ngModel)]="attribute.fieldValue" class="anu-input h-100 w-100"
                                 [ngModelOptions]="{ standAlone: true }"></textarea>
@@ -1707,14 +1678,6 @@
                                   <form class="example-form">
                                     <mat-form-field class="example-chip-list">
                                       <mat-chip-list #chipList aria-label="Fruit selection">
-                                        <!--<mat-chip
-                                *ngFor="let fruit of attribute.docs"
-                                [selectable]="selectable"
-                                [removable]="removable"
-                                (removed)="remove(attribute, fruit)">
-                                {{fruit.name}}
-                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                              </mat-chip>-->
                                         <button class="btn btn-sm btn-blue w-100" [matAutocomplete]="auto">
                                           <mat-icon style='display:flex;align-items:center;justify-content: center;'>
                                             business</mat-icon>Browse from library
@@ -1727,7 +1690,7 @@
                                 " #fruitInput [formControl]="myControl" [matAutocomplete]="auto"
                                           [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="
                                   separatorKeysCodes
-                                " [matChipInputAddOnBlur]="addOnBlur" />
+                                " />
                                       </mat-chip-list>
                                       <mat-autocomplete #auto="matAutocomplete" (optionSelected)="
                                 selected(attribute, $event)

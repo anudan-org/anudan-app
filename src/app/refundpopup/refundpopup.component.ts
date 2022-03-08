@@ -15,6 +15,7 @@ export class RefundpopupComponent implements OnInit {
     , @Inject(MAT_DIALOG_DATA) public message: any) { }
 
   ngOnInit() {
+    console.log("Much empty here...")
   }
 
   onYesClick() {
