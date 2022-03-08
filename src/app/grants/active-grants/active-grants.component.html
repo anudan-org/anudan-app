@@ -148,18 +148,18 @@
               </div>
             </div>
           </mat-tab>
-          <mat-tab *ngIf="closures && closures.length>0" label="Commitments under Closure">
-            <div *ngIf="!closures">
+          <mat-tab *ngIf="filteredClosures && filteredClosures.length>0" label="Commitments under Closure">
+            <div *ngIf="!filteredClosures">
               <img alt="img" src="./assets/img/loader.gif" style="width: 10%" />
               <p style="color: black">Loading in-progress closures...</p>
             </div>
-            <div *ngIf="closures && closures.length === 0">
+            <div *ngIf="filteredClosures && filteredClosures.length === 0">
               <p class="py-5">
                 No closures
               </p>
             </div>
             <div [ngClass]="uiService.getClosureCardStyle(closure,appComponent)" style="cursor: pointer"
-              *ngFor="let closure of closures; let i = index" (click)="manageClosure(closure)">
+              *ngFor="let closure of filteredClosures; let i = index" (click)="manageClosure(closure)">
               <div class="d-flex align-items-center report-delete"
                 *ngIf="(closure.canManage && closure.status.internalStatus === 'DRAFT') || (!closure.canManage && closure.disabledByAmendment)"
                 (click)="deleteClosure(closure)">
