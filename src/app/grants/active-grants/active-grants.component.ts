@@ -78,12 +78,14 @@ export class ActiveGrantsComponent implements OnInit {
   grantsClosed = [];
   logoURL: string;
   filteredGrants: Grant[] = [];
+  filteredClosures: GrantClosure[] = [];
   searchClosed = true;
   filterReady = false;
   filterCriteria: any;
   @ViewChild("appSearchFilter") appSearchFilter: SearchFilterComponent;
   closures: GrantClosure[];
   deleteClosureClicked: boolean = false;
+  selectedTab: any;
 
   constructor(
     private http: HttpClient,
@@ -200,6 +202,7 @@ export class ActiveGrantsComponent implements OnInit {
     const url = "/api/user/" + this.appComponent.loggedInUser.id + "/closure/";
     this.http.get<GrantClosure[]>(url, httpOptions).subscribe((closures: GrantClosure[]) => {
       this.closures = closures;
+      this.filteredClosures = closures;
     });
   }
   fetchDashboard(userId: string, grant: Grant) {
@@ -496,16 +499,29 @@ export class ActiveGrantsComponent implements OnInit {
   startFilter(val) {
     val = val.toLowerCase();
     this.filterCriteria = val;
-    this.filteredGrants = this.grantsActive.filter(g => {
-      return (
-        (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
-        (g.organization && g.organization.name && g.organization.name.toLowerCase().includes(val)) ||
-        (g.referenceNo && g.referenceNo.toLowerCase().includes(val)) ||
-        (g.ownerName && g.ownerName.toLowerCase().includes(val))
-      )
-    });
+    if (this.selectedTab === 0) {
+      this.filteredGrants = this.grantsActive.filter(g => {
+        return (
+          (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
+          (g.organization && g.organization.name && g.organization.name.toLowerCase().includes(val)) ||
+          (g.referenceNo && g.referenceNo.toLowerCase().includes(val)) ||
+          (g.ownerName && g.ownerName.toLowerCase().includes(val))
+        )
+      });
 
-    this.filterReady = true;
+      this.filterReady = true;
+    } else {
+      this.filteredClosures = this.closures.filter(g => {
+        return (
+          (g.grant.name && g.grant.name.trim() !== '' && g.grant.name.toLowerCase().includes(val)) ||
+          (g.grant.grantorOrganization && g.grant.grantorOrganization.name && g.grant.grantorOrganization.name.toLowerCase().includes(val)) ||
+          (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
+          (g.ownerName && g.ownerName.toLowerCase().includes(val))
+        )
+      });
+
+      this.filterReady = true;
+    }
 
   }
 
@@ -582,6 +598,7 @@ export class ActiveGrantsComponent implements OnInit {
   }
 
   tabClicked(ev) {
+    this.selectedTab = ev.index;
     if (ev.index === 0) {
       this.hasTenant = false;
       this.fetchDashboard(String(this.appComponent.loggedInUser.id), this.currentGrant);
