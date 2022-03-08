@@ -201,6 +201,7 @@ export class Attribute {
   deletable: boolean;
   required: boolean;
   canEdit: boolean;
+  grantLevelTarget: any;
 }
 
 export class Attachment {
