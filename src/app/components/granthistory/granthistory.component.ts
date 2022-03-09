@@ -189,47 +189,4 @@ export class GranthistoryComponent implements OnInit {
     return entry.length > 0 ? 'fas fa-long-arrow-alt-right text-light-green' : 'fas fa-long-arrow-alt-right text-light-red';
   }
 
-  getPreviousOwner(idx, _for) {
-    if (_for === 'grant') {
-      const status = this.grantHistory[idx];
-      if (status) {
-        this.data.data.workflowAssignments.filter(a => a.stateId === status.grantStatus.id)[0];
-        return '&nbsp;';
-      } else {
-        this.data.data.workflowAssignments.filter(a => a.stateId === this.data.data.grantStatus.id)[0].assignmentUser;
-        return '&nbsp;';
-      }
-    } else if (_for === 'report') {
-      const status = this.reportHistory[idx];
-      if (status) {
-        this.data.data.workflowAssignments.filter(a => a.stateId === status.status.id)[0];
-        return '&nbsp;';
-      } else {
-
-        this.data.data.workflowAssignments.filter(a => a.stateId === this.data.data.status.id)[0].assignmentUser;
-        return '&nbsp;';
-      }
-    } else if (_for === 'disbursement') {
-      const status = this.disbursementHistory[idx];
-      if (status) {
-        this.data.data.assignments.filter(a => a.stateId === status.status.id)[0];
-        return '&nbsp;';
-      } else {
-
-        this.data.data.assignments.filter(a => a.stateId === this.data.data.status.id)[0].assignmentUser;
-        return '&nbsp;';
-      }
-    } else if (_for === 'closure') {
-      const status = this.closureHistory[idx];
-      if (status) {
-        this.data.data.workflowAssignment.filter(a => a.stateId === status.status.id)[0];
-        return '&nbsp;';
-      } else {
-
-        this.data.data.workflowAssignment.filter(a => a.stateId === this.data.data.status.id)[0].assignmentUser;
-        return '&nbsp;';
-      }
-    }
-
-  }
 }

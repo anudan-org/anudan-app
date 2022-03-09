@@ -31,7 +31,7 @@
             getPreviousStatus(i,'grant').internalStatus.toLowerCase() + ' ml-4'
           "
             style="opacity: 0.5; box-shadow: none;font-weight: 400;place-self: flex-start;">{{getPreviousStatus(i,'grant').name}}</span>
-          <div class="text-subheader ml-4" [innerHTML]="getPreviousOwner(i-1,'grant')"></div>
+          <div class="text-subheader ml-4"></div>
         </div>
 
       </div>
@@ -71,7 +71,7 @@
             getPreviousStatus(i,'report').internalStatus.toLowerCase() + ' ml-4'
           "
             style="opacity: 0.5; box-shadow: none;font-weight: 400;place-self: flex-start;">{{getPreviousStatus(i,'report').name}}</span>
-          <div class="text-subheader ml-4" [innerHTML]="getPreviousOwner(i-1,'report')"></div>
+          <div class="text-subheader ml-4"></div>
         </div>
       </div>
       <small class="text-subheader px-1"> {{ item.noteAdded | date: "dd-MMM-yyyy hh:mm a" }}</small>
@@ -111,7 +111,7 @@
             getPreviousStatus(i,'disbursement').internalStatus.toLowerCase() + ' ml-4'
           "
             style="opacity: 0.5; box-shadow: none;font-weight: 400;place-self: flex-start;">{{getPreviousStatus(i,'disbursement').name}}</span>
-          <div class="text-subheader ml-4" [innerHTML]="getPreviousOwner(i-1,'disbursement')"></div>
+          <div class="text-subheader ml-4"></div>
         </div>
 
       </div>
@@ -152,7 +152,7 @@
             getPreviousStatus(i,'closure').internalStatus.toLowerCase() + ' ml-4'
           "
             style="opacity: 0.5; box-shadow: none;font-weight: 400;place-self: flex-start;">{{getPreviousStatus(i,'closure').name}}</span>
-          <div class="text-subheader ml-4" [innerHTML]="getPreviousOwner(i-1,'closure')"></div>
+          <div class="text-subheader ml-4"></div>
         </div>
       </div>
       <small class="text-subheader px-1"> {{ item.noteAdded | date: "dd-MMM-yyyy hh:mm a" }}</small>
