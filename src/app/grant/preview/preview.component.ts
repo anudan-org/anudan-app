@@ -97,6 +97,15 @@ import { ClosureSelectionComponent } from 'app/components/closure-selection/clos
         border: 2px dashed #aaa;
         padding: 10px;
       }
+
+      ::ng-deep #tablePlaceholder .mat-form-field-wrapper {
+        padding: 0 !important;
+      }
+
+      ::ng-deep #tablePlaceholder .mat-form-field-infix {
+        padding: 0 !important;
+        border:0 !important;
+      }
     `,
   ],
 })

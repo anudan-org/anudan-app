@@ -360,9 +360,8 @@
     <ng-container *ngFor="let platformMenuItem of platformMenuItems; let i = index">
       <li tabindex="{{ i }}" routerLinkActive="active" class="{{ platformMenuItem.class }} nav-item text-left">
         <a class="nav-link" [routerLink]="[platformMenuItem.path]">
-          <!--<em class="material-icons">{{menuItem.icon}}</em>-->
           <p>
-            <img src="./assets/img/{{ platformMenuItem.icon }}" class="mr-2" />{{ platformMenuItem.title }}
+            <img alt="" src="./assets/img/{{ platformMenuItem.icon }}" class="mr-2" />{{ platformMenuItem.title }}
           </p>
         </a>
       </li>
