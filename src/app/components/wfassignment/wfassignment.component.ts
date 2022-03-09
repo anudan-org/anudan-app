@@ -79,7 +79,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             });
         }
 
-        window.addEventListener('scroll', this.redrawOnScroll.bind(this), true);
         if (this.data.model.type === 'grant') {
             const gtIdx = this.data.model.grantTypes.findIndex(gt => gt.id === this.data.model.grant.grantTypeId);
             this.grantType = (!gtIdx || gtIdx === -1) ? "External Workflow" : this.data.model.grantTypes[gtIdx].name;
