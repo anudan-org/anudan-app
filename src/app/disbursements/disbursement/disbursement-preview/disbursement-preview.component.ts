@@ -533,15 +533,10 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
 
     this.docPreviewService.previewDoc(_for, this.appComponent.loggedInUser.id, attach.id, this.currentDisbursement.id).then((result: any) => {
       let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
-      let docUrl;
-      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/view.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
-      } else if (docType === 'pdf' || docType === 'txt') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
-      }
+
       this.dialog.open(DocpreviewComponent, {
         data: {
-          url: docUrl,
+          url: result.url,
           type: docType,
           title: attach.name + '.' + attach.location.substring(attach.location.lastIndexOf(".") + 1),
           userId: this.appComponent.loggedInUser.id,
