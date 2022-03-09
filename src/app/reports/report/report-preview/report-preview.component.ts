@@ -630,13 +630,11 @@ export class ReportPreviewComponent implements OnInit {
     }
 
     getForwardFlow() {
-        const forwardStates = this.currentReport.flowAuthorities.filter(a => a.forwardDirection === true);
-        return forwardStates;
+        return this.currentReport.flowAuthorities.filter(a => a.forwardDirection === true);
     }
 
     getSingleBackwardFlow() {
-        const backwardState = this.currentReport.flowAuthorities.filter(a => a.forwardDirection === false)[0];
-        return backwardState;
+        return this.currentReport.flowAuthorities.filter(a => a.forwardDirection === false)[0];
     }
 
     hasMultipleBackwardFlow() {

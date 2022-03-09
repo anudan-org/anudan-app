@@ -1,6 +1,4 @@
-import { FieldDialogComponent } from './../components/field-dialog/field-dialog.component';
-import { MatDialog } from '@angular/material';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core';
 
 @Component({

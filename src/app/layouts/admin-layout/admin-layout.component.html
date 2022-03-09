@@ -105,23 +105,6 @@
       >
       <span style="color: #4dc251; cursor: pointer" class="ml-1 mr-1"
         (click)="navigateToGrants(appComponent.subMenu)">{{ appComponent.subMenu.name }}</span>
-      <!-- <span style="color: #f4f4f4"> > </span>
-      <ng-container *ngIf="currentGrant">
-        <div class="ml-1" style="color: #fff; max-width: 500px">
-          <span *ngIf="currentGrant.referenceNo">{{ currentGrant.referenceNo }} | </span>{{ currentGrant.name }}
-        </div>
-        <p *ngIf="appComponent.showSaving" class="m-0" style="
-            position: absolute;
-            color: #f2f2f2;
-            left: 23px;
-            bottom: 0px;
-            font-weight: normal;
-            font-style: oblique;
-            font-size: 10px;
-          ">
-          {{ appComponent.autosaveDisplay }}
-        </p>
-      </ng-container> -->
     </div>
     <div *ngIf="appComponent.currentView === 'report'" class="px-4 pt-4 pb-4 text-left" style="
         position: sticky;
@@ -139,21 +122,6 @@
       >
       <span class="ml-1 mr-1" style="color: #4dc251; cursor: pointer"
         (click)="navigateToReports(appComponent.subMenu)">{{ appComponent.subMenu.name }}</span>
-      <!-- <span style="color: #f4f4f4"> > </span>
-      <ng-container *ngIf="currentReport">
-        <div class="m-1" style="color: #fff; max-width: 500px">
-          <ng-container *ngIf="currentReport.status.internalStatus!=='CLOSED' && currentReport.disabledByAmendment">
-            <p class="mb-0 text-subheader text-white d-flex align-items-center text-left"
-              style="font-weight: 600; font-size: 12px">
-              <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
-                info_outline
-              </mat-icon>
-              Underlying grant has been amended. Please check if this report is still valid.
-            </p>
-          </ng-container>
-          {{ currentReport.name }}
-        </div>
-      </ng-container> -->
       <p *ngIf="appComponent.showSaving" class="m-0" style="
           position: absolute;
           color: #f2f2f2;
@@ -183,12 +151,6 @@
       >
       <span class="ml-1 mr-1" style="color: #4dc251; cursor: pointer"
         (click)="navigateToGrants(appComponent.subMenu)">{{ appComponent.subMenu.name }}</span>
-      <!-- <span style="color: #f4f4f4"> > </span>
-      <ng-container *ngIf="currentClosure">
-        <div class="m-1" style="color: #fff; max-width: 500px">
-          {{ 'Closure Request for Grant' + currentClosure.grant.name }}
-        </div>
-      </ng-container> -->
       <p *ngIf="appComponent.showSaving" class="m-0" style="
           position: absolute;
           color: #f2f2f2;
@@ -218,44 +180,6 @@
       >
       <span class="ml-1 mr-1" style="color: #4dc251; cursor: pointer"
         (click)="navigateToDisbursements(appComponent.subMenu)">{{ appComponent.subMenu.name }}</span>
-      <!-- <span style="color: #f4f4f4"> > </span>
-
-      <ng-container *ngIf="
-          currentDisbursement &&
-          currentDisbursement.status.internalStatus !== 'ACTIVE' &&
-          currentDisbursement.status.internalStatus !== 'CLOSED'
-        ">
-        <div class="m-1" style="color: #fff; max-width: 500px">
-          <p *ngIf="currentDisbursement.disabledByAmendment && currentDisbursement.status.internalStatus!=='CLOSED'"
-            class="mb-0 text-subheader text-white d-flex align-items-center text-left"
-            style="font-weight: 600; font-size: 12px">
-            <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
-              info_outline
-            </mat-icon>
-            Underlying grant has been amended. Please check if this disbursement is still valid.
-          </p>
-          Approval Request Note for Grant
-          <strong>{{ currentDisbursement.grant.name }}</strong>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="
-          currentDisbursement &&
-          (currentDisbursement.status.internalStatus === 'ACTIVE' ||
-            currentDisbursement.status.internalStatus === 'CLOSED')
-        ">
-        <div class="m-1" style="color: #fff; max-width: 500px">
-          <p *ngIf="currentDisbursement.disabledByAmendment && currentDisbursement.status.internalStatus!=='CLOSED'"
-            class="mb-0 text-subheader text-white d-flex align-items-center text-left"
-            style="font-weight: 600; font-size: 12px">
-            <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
-              info_outline
-            </mat-icon>
-            Underlying grant has been amended. Please check if this disbursement is still valid.
-          </p>
-          Disbursement Record against Approved Note for Grant
-          <strong>{{ currentDisbursement.grant.name }}</strong>
-        </div>
-      </ng-container> -->
       <p *ngIf="appComponent.showSaving" class="m-0" style="
           position: absolute;
           color: #f2f2f2;

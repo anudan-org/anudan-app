@@ -1,5 +1,5 @@
 import { Report } from './../../model/report';
-import { Component, Inject, OnInit, AfterViewInit, ViewChild, ElementRef, Renderer2, HostListener } from '@angular/core';
+import { Component, Inject, OnInit, AfterViewInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { WorkflowTransition } from '../../model/workflow-transition';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';

@@ -497,8 +497,7 @@ export class ClosurePreviewComponent implements OnInit {
   }
 
   getForwardFlow() {
-    const forwardStates = this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === true);
-    return forwardStates;
+    return this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === true);
   }
 
   getSingleBackwardFlow() {
@@ -506,8 +505,7 @@ export class ClosurePreviewComponent implements OnInit {
     if (this.appComp.loggedInUser.organization.organizationType === 'GRANTEE') {
       return this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false)[0];
     }
-    const backwardState = this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false)[0];
-    return backwardState;
+    return this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false)[0];
   }
 
   hasMultipleBackwardFlow() {
@@ -566,7 +564,7 @@ export class ClosurePreviewComponent implements OnInit {
     if (amount) {
       return inf.format(amount, 2);
     }
-    return inf.format(0, 2);;
+    return inf.format(0, 2);
   }
 
   downloadSingleClosureDoc(attachmentId: number) {

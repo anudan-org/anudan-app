@@ -73,7 +73,6 @@ import {
   MatAutocomplete,
 } from "@angular/material/autocomplete";
 import { MatChipInputEvent } from "@angular/material/chips";
-import { saveAs } from "file-saver";
 import { AdminLayoutComponent } from "../../layouts/admin-layout/admin-layout.component";
 import { User } from "../../model/user";
 

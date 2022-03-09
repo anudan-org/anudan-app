@@ -29,7 +29,6 @@ import { Router, NavigationStart } from "@angular/router";
 import { CurrencyService } from "app/currency-service";
 import { AdminLayoutComponent } from "app/layouts/admin-layout/admin-layout.component";
 import { AmountValidator } from "app/amount-validator";
-import { saveAs } from "file-saver";
 
 @Component({
   selector: "disbursement-dashboard",

@@ -60,7 +60,6 @@ import {
 } from "@angular/material";
 import { FieldDialogComponent } from "../../../components/field-dialog/field-dialog.component";
 import { AdminLayoutComponent } from "../../../layouts/admin-layout/admin-layout.component";
-import { saveAs } from "file-saver";
 import { Configuration } from "../../../model/app-config";
 import { User } from "../../../model/user";
 import * as inf from "indian-number-format";

@@ -2,7 +2,6 @@ import { MessagingComponent } from 'app/components/messaging/messaging.component
 import { DocpreviewComponent } from './../../docpreview/docpreview.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DocpreviewService } from './../../docpreview.service';
-import { DocManagementService } from './../../doc-management.service';
 import { AdminService } from './../../admin.service';
 import { TemplateLibrary, AttachmentDownloadRequest } from './../../model/dahsboard';
 import { FieldDialogComponent } from './../../components/field-dialog/field-dialog.component';

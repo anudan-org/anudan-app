@@ -124,27 +124,16 @@ export class GrantCompareComponent implements OnInit {
               oldAttr = oldSection.attributes.filter((a) => a.name === attr.name)[0];
             }
             if (oldAttr) {
-              if (oldAttr.name !== attr.name) {
+              if (oldAttr.name !== attr.name || oldAttr.type !== attr.type || oldAttr.type === attr.type && oldAttr.type === 'multiline' && oldAttr.value !== attr.value) {
                 this._getGrantDiffSections();
                 this.saveDifferences(oldSection, oldAttr, section, attr);
 
-              }
-              else if (oldAttr.type !== attr.type) {
-                this._getGrantDiffSections();
-                this.saveDifferences(oldSection, oldAttr, section, attr);
-
-              } else if (oldAttr.type === attr.type && oldAttr.type === 'multiline' && oldAttr.value !== attr.value) {
-                this._getGrantDiffSections();
-                this.saveDifferences(oldSection, oldAttr, section, attr);
               } else if (oldAttr.type === attr.type && oldAttr.type === 'kpi') {
                 const ot = (oldAttr.target === undefined || oldAttr.target === null) ? null : oldAttr.target;
                 const nt = (attr.target === undefined || attr.target === null) ? null : attr.target;
                 const of = (oldAttr.frequency === undefined || oldAttr.frequency === null) ? null : oldAttr.frequency;
                 const nf = (attr.frequency === undefined || attr.frequency === null) ? null : attr.frequency;
-                if (ot !== nt) {
-                  this._getGrantDiffSections();
-                  this.saveDifferences(oldSection, oldAttr, section, attr);
-                } else if (of !== nf) {
+                if (ot !== nt || of !== nf) {
                   this._getGrantDiffSections();
                   this.saveDifferences(oldSection, oldAttr, section, attr);
                 }

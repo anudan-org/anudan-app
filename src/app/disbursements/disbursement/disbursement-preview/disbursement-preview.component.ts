@@ -555,13 +555,11 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
   }
 
   getForwardFlow() {
-    const forwardStates = this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === true);
-    return forwardStates;
+    return this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === true);
   }
 
   getSingleBackwardFlow() {
-    const backwardState = this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === false)[0];
-    return backwardState;
+    return this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === false)[0];
   }
 
   hasMultipleBackwardFlow() {

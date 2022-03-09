@@ -1591,13 +1591,11 @@ export class PreviewComponent implements OnInit {
   }
 
   getForwardFlow() {
-    const forwardStates = this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === true);
-    return forwardStates;
+    return this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === true);
   }
 
   getSingleBackwardFlow() {
-    const backwardState = this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === false)[0];
-    return backwardState;
+    return this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === false)[0];
   }
 
   hasMultipleBackwardFlow() {

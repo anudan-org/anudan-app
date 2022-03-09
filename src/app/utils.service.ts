@@ -1,7 +1,5 @@
-import { HttpClient } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { GrantType } from './model/dahsboard';
-import { AppComponent } from './app.component';
 import { Injectable } from '@angular/core';
 
 @Injectable({
