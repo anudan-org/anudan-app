@@ -365,6 +365,9 @@
                                   ">
                                       <em class="far fa-file-powerpoint text-danger ml-1"></em>
                                     </ng-container>
+                                    <ng-container *ngIf="doc.type === 'txt'">
+                                      <i class="far fa-file-alt ml-1"></i>
+                                    </ng-container>
                                     <span class="ml-2" style="cursor: pointer;" [matMenuTriggerFor]="menu">{{ doc.name +
                                       '.' +
                                       doc.type}}</span>

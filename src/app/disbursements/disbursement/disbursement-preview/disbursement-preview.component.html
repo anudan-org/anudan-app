@@ -607,6 +607,9 @@
                 ">
                   <em class="far fa-file-powerpoint text-danger ml-1"></em>
                 </ng-container>
+                <ng-container *ngIf="doc.location === '.txt'">
+                  <em class="far fa-file-alt ml-1"></em>
+                </ng-container>
                 <strong class="ml-2">{{ doc.name
                   }}{{'.'+doc.location.substring(doc.location.lastIndexOf(".")+1)}}</strong>
               </span>

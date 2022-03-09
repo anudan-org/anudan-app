@@ -196,11 +196,6 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
         this.appComp.currentView = 'dashboard';
         this.router.navigate(['dashboard']);
       }
-      if (this.currentClosure.grant.actualRefunds.length === 0) {
-        //this.addActualRefunds();
-      }
-
-      console.log(this.currentClosure);
     });
   }
 
@@ -667,7 +662,9 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       },
       "100",
       "linear",
-      function () { }
+      function () {
+        //Do nothing
+      }
     );
   }
 
@@ -678,7 +675,9 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       },
       "100",
       "linear",
-      function () { }
+      function () {
+        //Do nothing
+      }
     );
   }
 

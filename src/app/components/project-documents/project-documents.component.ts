@@ -8,7 +8,6 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { AttachmentDownloadRequest } from 'app/model/dahsboard';
 import { ProjectDoc } from 'app/model/project-doc';
-import { saveAs } from "file-saver";
 import { FieldDialogComponent } from '../field-dialog/field-dialog.component';
 
 

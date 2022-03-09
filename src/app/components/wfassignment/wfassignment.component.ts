@@ -943,14 +943,14 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             this.renderer.appendChild(historyNode, histLink);
                             this.renderer.appendChild(ownerNode, historyNode);
                         } else {
-                            const historyNode = this.renderer.createElement('div');
-                            this.renderer.addClass(historyNode, 'col-7');
-                            this.renderer.addClass(historyNode, 'text-right');
+                            const historyNode1 = this.renderer.createElement('div');
+                            this.renderer.addClass(historyNode1, 'col-7');
+                            this.renderer.addClass(historyNode1, 'text-right');
                             const histLink = this.renderer.createElement('a');
                             this.renderer.setAttribute(histLink, 'style', 'font-size: 9px;color: #535353;padding: 4px 6px;font-weight: 400;text-transform: initial;left: -45px;position: relative;border: 1px #e0dfdf solid;background: #f8f8f8;border-radius: 4px;top: 5px;visibility:hidden;');
                             this.renderer.appendChild(histLink, this.renderer.createText("Past Approver(s)"));
-                            this.renderer.appendChild(historyNode, histLink);
-                            this.renderer.appendChild(ownerNode, historyNode);
+                            this.renderer.appendChild(historyNode1, histLink);
+                            this.renderer.appendChild(ownerNode, historyNode1);
                         }
 
 
@@ -1055,7 +1055,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
         }
 
         console.log(select2Process)
-        const assignmentElems = $('[id^="assignment_"]');
         if (select2Process && select2Process.length > 0) {
             for (let i = 0; i < select2Process.length; i++) {
                 const node2Process = $('#' + select2Process[i]);
@@ -1088,9 +1087,9 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
 
         if (this.data.model.type === 'grant' && this.data.model.grant.grantStatus.internalStatus === 'ACTIVE') {
-            const val = event.currentTarget.value;
+            const val1 = event.currentTarget.value;
             const orgAss = this.data.model.workflowAssignment.filter(a => a.stateId === this.data.model.grant.grantStatus.id)[0];
-            if (orgAss.assignments !== Number(val)) {
+            if (orgAss.assignments !== Number(val1)) {
                 this.activeStateOwnerChanged = true;
             } else {
                 this.activeStateOwnerChanged = false;
@@ -1109,9 +1108,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
 
     showFlow(transitions: WorkflowTransition[]) {
-        const curves = [30, 40, 50, 60, 70, 80, 90, 100];
-        const labelPositions = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
-
         this.jsPlumbInstance.Defaults.Overlays = [];
         for (let transition of transitions) {
 
@@ -1122,7 +1118,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     fromLeft = !fromLeft ? 0 : Number(fromLeft.replace('px', ''));
                     toLeft = !toLeft ? 0 : Number(toLeft.replace('px', ''));
                     let a1 = (fromLeft === toLeft) ? ["Bottom", "Top"] : (fromLeft > toLeft) ? ["Left", "Top"] : (fromLeft < toLeft) ? ["Bottom", "Left"] : ["Bottom", "Top"];
-                    let a2 = (fromLeft < toLeft) ? "Bottom" : "LeftMiddle";
                     let tick = this.jsPlumbInstance.connect({
                         connector: ["Flowchart", { cssClass: 'connectorLink' + transition.toStateId }],
                         overlays: [
@@ -1621,9 +1616,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     position(transitionNodeId: any, parentNodeId: any, offset: any) {
 
         const t = $("#" + parentNodeId).css('left');
-        let parentTop = $("#" + parentNodeId).css('top');
-        let parentHeight = $("#" + parentNodeId).height();
-
         $("#" + transitionNodeId)
             .css('position', 'relative')
             .css('left', (t ? Number(t.replace('px', '')) : 0) + offset);

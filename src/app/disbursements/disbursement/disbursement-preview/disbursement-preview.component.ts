@@ -289,9 +289,9 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
                 this.disbursementService.changeMessage(disbursement);
                 this.currentDisbursement = disbursement;
 
-                const toState = this.currentDisbursement.flowPermissions.filter(a => a.toStateId === toState)[0].toName;
+                const toState1 = this.currentDisbursement.flowPermissions.filter(a => a.toStateId === toState)[0].toName;
                 const toStateOwner = this.currentDisbursement.assignments.filter(a => a.stateId === toState)[0].assignmentUser;
-                this.submitDisbursement(toState, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
+                this.submitDisbursement(toState, "Progessing for " + toState1 + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
               });
           } else {
             dialogRef.close();
