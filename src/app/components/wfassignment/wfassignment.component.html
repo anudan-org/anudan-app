@@ -1,24 +1,7 @@
 <span class="" style="position:absolute; right: 20px; left: auto;top: 10px;z-index:1;" (click)="onNoClick()">
   <mat-icon>close</mat-icon>
 </span>
-<!-- <ng-container *ngIf="this.data.model.type==='grant'">
-  <label class="workflow-info p-1">Workflow Type: <strong>Grant Workflow</strong></label>
-  <label class="workflow-info p-2">Grant Type:
-    <strong>{{getGrantTypeName(data.model.grant.grantTypeId)}}</strong></label>
-</ng-container>
-<ng-container *ngIf="this.data.model.type==='report'">
-  <div class="workflow-info p-1">Workflow Type: Report Workflow</div>
-  <div class="workflow-info p-2">Grant Type: {{getGrantTypeName(data.model.report.grant.grantTypeId)}}</div>
-</ng-container>
-<ng-container *ngIf="this.data.model.type==='disbursement'">
-  <div class="workflow-info p-1">Workflow Type: Disbursement Approval Request Workflow</div>
-  <div class="workflow-info p-2">Grant Type: {{getGrantTypeName(data.model.disbursement.grant.grantTypeId)}}</div>
-</ng-container>
-<ng-container *ngIf="this.data.model.type==='grant-closure'">
-  <div class="workflow-info p-1">Workflow Type: Grant Closure Workflow</div>
-  <div class="workflow-info p-2">Grant Type: {{getGrantTypeName(data.model.closure.grant.grantTypeId)}}</div>
 
-</ng-container> -->
 <div mat-dialog-title class="text-center w-100" style="font-size:18px;">
   <div [innerHTML]="title">
   </div>
@@ -27,10 +10,5 @@
 
 </div>
 <div mat-dialog-actions style="position:absolute;bottom:62px;background:#fff;">
-  <!--
-  <button class="btn text-dark" (click)="onNoClick()">Do it later</button>
--->
-  <!--button *ngIf="canManage" class="btn btn-primary m-0" (click)="onYesClick()">Save Assignments</button-->
-  <!--<button class="btn btn-primary" (click)="zoomOut()">Zoom Out</button>
-  <button class="btn btn-primary" (click)="zoomIn()">Zoom In</button>-->
+
 </div>

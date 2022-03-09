@@ -1,5 +1,4 @@
 <div class="col-12 bg-white" style="position: sticky; top: 80px; z-index: 1040">
-  <!--<span class="badge badge-dark text-white pull-right mt-2" matBadgeSize="medium">{{currentGrant.grantStatus.displayName}}</span>-->
   <div class="row">
     <h4 class="col-11 text-left my-3 section-header">
       <div *ngIf="currentDisbursement && currentDisbursement.canManage" style="display: flex">
@@ -60,7 +59,7 @@
         <ng-container>
           <hr />
           <button mat-menu-item (click)="manageGrant()">
-            <img class="ml-2 mr-3" style="width: 20px; height: 20px" src="./assets/img/dp.svg" />View Grant
+            <img class="ml-2 mr-3" alt="" style="width: 20px; height: 20px" src="./assets/img/dp.svg" />View Grant
           </button>
         </ng-container>
       </mat-menu>
@@ -193,25 +192,25 @@
               </div>
               <div class="col-12 px-0 mx-2 mt-3 mb-2" *ngIf="getGrantDisbursementAttribute()">
                 <p class="text-header">Planned Project Funds</p>
-                <table id="tablePlaceholderX" width="100%">
+                <table id="tablePlaceholderX" style="width:100%;">
+                  <caption></caption>
                   <tr style="background: #f9f9f9">
-                    <th id="planned_installment_entry_no" width="2%" class="text-center" valign="middle"
-                      style="border: 1px solid #e4e4e4">
+                    <th id="planned_installment_entry_no" style="width:2%;"
+                      class="text-center d-flex align-items-center" style="border: 1px solid #e4e4e4">
                       Planned Installment #
                     </th>
                     <ng-container *ngFor="
                     let column of getGrantDisbursementAttribute()
                       .fieldTableValue[0].columns;
-                    let i = index
-                  ">
-                      <th [id]="column.name.replace(' ','')+'_id'" *ngIf="column.name !== 'Notes'" width="15%"
-                        class="text-center" valign="middle" style="border: 1px solid #e4e4e4">
+                    let i = index">
+                      <th [id]="column.name.replace(' ','')+'_id'" *ngIf="column.name !== 'Notes'"
+                        class="text-center d-flex align-items-center" style="border: 1px solid #e4e4e4;width:15%;">
                         {{
                         column.name === "Notes" ? "Milestones/Notes" : column.name
                         }}
                       </th>
-                      <th [id]="column.name.replace(' ','')+'_id'" *ngIf="column.name === 'Notes'" width="50%"
-                        class="text-center" valign="middle" style="border: 1px solid #e4e4e4">
+                      <th [id]="column.name.replace(' ','')+'_id'" *ngIf="column.name === 'Notes'"
+                        class="text-center d-flex align-items-center" style="border: 1px solid #e4e4e4;width:50%">
                         {{
                         column.name === "Notes" ? "Milestones/Notes" : column.name
                         }}
@@ -223,19 +222,19 @@
                   let i = index
                 ">
                     <tr>
-                      <td width="2%" class="anu-input m-0 text-center" style="background: #f4f4f4 !important">
+                      <td class="anu-input m-0 text-center" style="background: #f4f4f4 !important;width:2%">
                         {{ row.name }}
                       </td>
                       <ng-container *ngFor="let column of row.columns; let j = index">
-                        <td width="15%" *ngIf="!column.dataType && column.name !== 'Notes'" class="anu-input m-0"
-                          style="background: #f4f4f4 !important">
+                        <td *ngIf="!column.dataType && column.name !== 'Notes'" class="anu-input m-0"
+                          style="background: #f4f4f4 !important;width:15%;">
                           {{ column.value }}
                         </td>
-                        <td width="50%" *ngIf="!column.dataType && column.name === 'Notes'" width="60%"
-                          class="anu-input m-0" style="background: #f4f4f4 !important">
+                        <td *ngIf="!column.dataType && column.name === 'Notes'" class="anu-input m-0"
+                          style="background: #f4f4f4 !important;width:60%;">
                           {{ column.value }}
                         </td>
-                        <td *ngIf="column.dataType === 'currency'" align="right" class="anu-input text-right m-0"
+                        <td *ngIf="column.dataType === 'currency'" class="anu-input text-right m-0"
                           style="background: #f4f4f4 !important">
                           {{ currencyService.getFormattedAmount(column.value) }}
                         </td>
@@ -245,7 +244,7 @@
                   <tr *ngIf="
                   getGrantDisbursementAttribute().fieldTableValue.length > 1
                 " style="background: #f4f4f4">
-                    <td class="py-2 anu-input" colspan="2" align="center" style="background: #f4f4f4 !important">
+                    <td class="py-2 anu-input" colspan="2" style="background: #f4f4f4 !important">
                       GRANT TOTALS:
                     </td>
                     <ng-container *ngFor="
@@ -276,19 +275,19 @@
                 <p class="text-header">Project Funds Received</p>
                 <table width="100%" style="background: #f2f2f2">
                   <tr>
-                    <th id="col#" style="border: 1px solid #e4e4e4" align="center" class="py-2" width="10%">
+                    <th id="col#" style="border: 1px solid #e4e4e4;width:20%;" class="py-2">
                       <strong>#</strong>
                     </th>
-                    <th id="disbursement_date" style="border: 1px solid #e4e4e4" align="center">
+                    <th id="disbursement_date" style="border: 1px solid #e4e4e4">
                       <strong>Disbursement Date</strong>
                     </th>
-                    <th id="disbursement_amount" style="border: 1px solid #e4e4e4" align="center">
+                    <th id="disbursement_amount" style="border: 1px solid #e4e4e4">
                       <strong>Disbursement Amount</strong>
                     </th>
-                    <th id="funds_from_other_sources" style="border: 1px solid #e4e4e4" align="center">
+                    <th id="funds_from_other_sources" style="border: 1px solid #e4e4e4">
                       <strong>Funds from Other Sources</strong>
                     </th>
-                    <th id="milestone" style="border: 1px solid #e4e4e4" align="center" width="40%">
+                    <th id="milestone" style="border: 1px solid #e4e4e4;width:40%">
                       <strong>Milestones/Notes</strong>
                     </th>
                   </tr>
@@ -298,10 +297,10 @@
                     let i = index
                   ">
                       <tr>
-                        <td style="border: 1px solid #e4e4e4" align="center">
+                        <td style="border: 1px solid #e4e4e4">
                           {{ i + 1 }}
                         </td>
-                        <td style="border: 1px solid #e4e4e4" align="center">
+                        <td style="border: 1px solid #e4e4e4">
                           <p class="m-0">
                             {{ ad.disbursementDate | date: "dd-MMM-yyyy" }}
                           </p>
@@ -320,7 +319,7 @@
                             }}
                           </p>
                         </td>
-                        <td style="border: 1px solid #e4e4e4" align="center" class="p-1">
+                        <td style="border: 1px solid #e4e4e4" class="p-1">
                           <p matInput class="m-0 text-left">{{ ad.note }}</p>
                         </td>
                       </tr>
@@ -333,7 +332,7 @@
                         <td colspan="2">
                           <label class="ml-4" style="font-weight: 600">TOTAL:</label>
                         </td>
-                        <td align="right">
+                        <td class="text-right">
                           <strong>{{
                             currencyService.getFormattedAmount(
                             disbursementService.getActualDisbursementsTotal(
@@ -342,7 +341,7 @@
                             )
                             }}</strong>
                         </td>
-                        <td align="right">
+                        <td class="text-right">
                           <strong>{{
                             currencyService.getFormattedAmount(
                             disbursementService.getFFOSTotal(currentDisbursement)
@@ -375,7 +374,7 @@
                   " style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Approved Disbursement
                       Amount:</span>
                     <div class="ml-0 mb-1">
-                      <b><img src="./assets/img/rupee.png" style="width: 10px" class="mr-1" />{{
+                      <b><img alt="" src="./assets/img/rupee.png" style="width: 10px" class="mr-1" />{{
                         getFormattedGrantAmount(
                         currentDisbursement.requestedAmount
                         )
@@ -401,26 +400,18 @@
 
               <div *ngIf="currentDisbursement.canRecordActuals" class="col-12 px-0 mx-2 mt-3 mb-2">
                 <p class="text-header">Record Disbursement</p>
-                <!-- <p
-              *ngIf="currentDisbursement.disabledByAmendment"
-              class="mb-0 text-red text-left"
-              style="font-weight: 400; font-size: 12px"
-            >
-              Cannot record actual disbursements because the reference Grant has
-              been amended or closed.
-            </p> -->
                 <table #tablePlaceholder width="100%" class="disbursements-class">
                   <tr>
-                    <th id="col#" style="border: 1px solid #e4e4e4" align="center" class="py-2" width="10%">
+                    <th id="col#" style="border: 1px solid #e4e4e4;width:10%;" class="py-2 text-center">
                       <strong>#</strong>
                     </th>
-                    <th id="disbursement_date" style="border: 1px solid #e4e4e4" align="center">
+                    <th id="disbursement_date" style="border: 1px solid #e4e4e4;" class="text-center">
                       <strong>Disbursement Date</strong>
                     </th>
-                    <th id="disbursement_amount" style="border: 1px solid #e4e4e4" align="center">
+                    <th id="disbursement_amount" style="border: 1px solid #e4e4e4" class="text-center">
                       <strong>Disbursed Amount</strong>
                     </th>
-                    <th id='disbursement_milestone' style="border: 1px solid #e4e4e4" align="center" width="40%">
+                    <th id='disbursement_milestone' style="border: 1px solid #e4e4e4;width:40%" class="text-center">
                       <strong>Milestones/Notes</strong>
                     </th>
                   </tr>
@@ -429,7 +420,7 @@
                   let i = index
                 ">
                     <tr>
-                      <td style="border: 1px solid #e4e4e4" align="center">
+                      <td style="border: 1px solid #e4e4e4" class="text-center">
                         {{ i + 1 }}
                         <mat-icon *ngIf="currentDisbursement.actualDisbursements.length > 1"
                           (click)="deleteDisbursementRow(actual, i)" aria-hidden="false" style="
@@ -509,7 +500,7 @@
                     <td colspan="2" style="border: 1px solid #e4e4e4" class="pl-5">
                       <strong>TOTALS</strong>
                     </td>
-                    <td style="border: 1px solid #e4e4e4" align="right" class="pr-3">
+                    <td style="border: 1px solid #e4e4e4" class="pr-3 text-right">
                       <strong>{{ currencyService.getFormattedAmount(getTotals()) }}</strong>
                     </td>
                     <td style="border: 1px solid #e4e4e4">&nbsp;</td>
@@ -542,18 +533,18 @@
               !currentDisbursement.canRecordActuals &&
               disbursementService.checkIfClosed(currentDisbursement)
             ">
-                <table #tablePlaceholder width="100%" class="disbursements-class">
+                <table #tablePlaceholder style="width:100%" class="disbursements-class">
                   <tr>
-                    <th id="col#" style="border: 1px solid #e4e4e4" align="center" class="py-2" width="10%">
+                    <th id="col#" style="border: 1px solid #e4e4e4;width:10%;" class="py-2 text-center">
                       <strong>#</strong>
                     </th>
-                    <th id="disbursement_date" style="border: 1px solid #e4e4e4" align="center">
+                    <th id="disbursement_date" style="border: 1px solid #e4e4e4" class="text-center">
                       <strong>Disbursement Date</strong>
                     </th>
-                    <th id="disbursement_amount" style="border: 1px solid #e4e4e4" align="center">
+                    <th id="disbursement_amount" style="border: 1px solid #e4e4e4" class="text-center">
                       <strong>Disbursed Amount</strong>
                     </th>
-                    <th id="note'" style="border: 1px solid #e4e4e4" align="center" width="40%">
+                    <th id="note'" style="border: 1px solid #e4e4e4;width:40%;" class="text-center">
                       <strong>Note</strong>
                     </th>
                   </tr>
@@ -562,10 +553,10 @@
                   let i = index
                 ">
                     <tr>
-                      <td style="border: 1px solid #e4e4e4" align="center">
+                      <td style="border: 1px solid #e4e4e4" class="text-center">
                         {{ i + 1 }}
                       </td>
-                      <td style="border: 1px solid #e4e4e4" align="center">
+                      <td style="border: 1px solid #e4e4e4" class="text-center">
                         <p class="m-0">
                           {{ actual.disbursementDate | date: "dd-MMM-yyyy" }}
                         </p>
@@ -577,7 +568,7 @@
                           }}
                         </p>
                       </td>
-                      <td style="border: 1px solid #e4e4e4" align="center" class="p-1">
+                      <td style="border: 1px solid #e4e4e4" class="text-center" class="p-1">
                         <p matInput class="m-0 text-left">{{ actual.note }}</p>
                       </td>
                     </tr>
@@ -586,7 +577,7 @@
                     <td colspan="2" style="border: 1px solid #e4e4e4" class="pl-5">
                       <strong>TOTALS</strong>
                     </td>
-                    <td style="border: 1px solid #e4e4e4" align="right" class="pr-3">
+                    <td style="border: 1px solid #e4e4e4" class="text-right" class="pr-3">
                       <strong>{{ currencyService.getFormattedAmount(getTotals()) }}</strong>
                     </td>
                     <td style="border: 1px solid #e4e4e4">&nbsp;</td>

@@ -1,8 +1,6 @@
-import { Grant, FlowAuthority } from './../../model/dahsboard';
 import { Report } from './../../model/report';
 import { Component, Inject, OnInit, AfterViewInit, ViewChild, ElementRef, Renderer2, HostListener } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef, MatButtonModule, MatDialog } from '@angular/material';
-import { WorkflowAssignmentModel } from '../../model/dahsboard';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
 import { WorkflowTransition } from '../../model/workflow-transition';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
@@ -11,7 +9,6 @@ import { User, UserRole } from 'app/model/user';
 import { MessagingComponent } from '../messaging/messaging.component';
 import { FieldDialogComponent } from '../field-dialog/field-dialog.component';
 import { OwnersPopupComponent } from '../owners-popup/owners-popup.component';
-import { environment } from 'environments/environment';
 
 declare var $: any;
 declare var jsPlumb: any;
@@ -106,24 +103,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     if (this.elemRef.nativeElement.querySelector('#' + nodeId) === null) {
                         const node = this.renderer.createElement('div');
                         this.renderer.addClass(node, this.getColorCodeByStatus(this.data.model.workflowStatuses.filter((status) => status.id === transition.fromStateId)[0].internalStatus));
-                        /* if (transition._from === 'GMT Review') {
-                            this.renderer.setStyle(node, 'position', 'relative');
-                            this.renderer.setStyle(node, 'left', '200px');
-                        }
-                        if (transition._from === 'GMT Review 2') {
-                            this.renderer.setStyle(node, 'position', 'relative');
-                            this.renderer.setStyle(node, 'left', '-200px');
-                        } */
-                        /* if (this.data.model.workflowStatuses.filter((status) => status.id === transition.fromStateId)[0].internalStatus === 'DRAFT') {
-                            const notesNode = this.renderer.createElement('span');
-                            this.renderer.appendChild(notesNode, this.renderer.createText('Workflow Note(s)'));
-                            this.renderer.setAttribute(notesNode, 'style', 'position: absolute; right: 7px; cursor: pointer; box-shadow: 2px 2px 4px #d3d3d3; padding: 2px 4px; border-radius: 4px; font-size: 12px;text-transform: none; font-weight: 400;');
-                            this.renderer.listen(notesNode, 'click', () => {
-                                this.data.adminComp.showHistory('grant', this.data.model.grant);
-                            });
-                            this.renderer.appendChild(node, notesNode);
-                        } */
-
 
                         const stateNode = this.renderer.createElement('div');
                         this.renderer.addClass(stateNode, 'col-12');
@@ -146,15 +125,11 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         }
 
                         const ownerNode = this.renderer.createElement('div');
-                        //this.renderer.addClass(ownerNode, 'col-6');
                         this.renderer.addClass(ownerNode, 'mt-2');
                         this.renderer.setAttribute(ownerNode, 'style', 'position: absolute;right: -125px;top: 15px;');
-                        //this.renderer.setStyle(ownerNode, 'right', '0');
                         const nodeOwner = this.renderer.createElement('select');
                         this.renderer.addClass(nodeOwner, 'anu-select');
                         this.renderer.addClass(nodeOwner, 'anu-wf-input');
-
-
 
                         this.renderer.setAttribute(nodeOwner, 'style', 'font-weight: 400;text-transform: initial;left: -95px;top: 23px;text-decoration: none;max-width: 125px;z-index: 1;background-color: rgba(200, 200, 200, 0.05) !important;border: none !important;');
                         const currentUserAssignment = this.data.model.workflowAssignment.filter((assignment) => assignment.assignments === JSON.parse(localStorage.getItem('USER')).id && assignment.stateId === this.data.model.grant.grantStatus.id);
@@ -168,9 +143,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                         const loggedInUser: User = JSON.parse(localStorage.getItem('USER'));
                         if (((currentUserAssignment.length > 0 || (ownerUser.length > 0) || isAdminRole) && this.data.model.grant.grantStatus.internalStatus !== 'ACTIVE' && this.data.model.grant.grantStatus.internalStatus !== 'CLOSED') && loggedInUser.organization.organizationType !== 'GRANTEE') {
+                            //Do nothing
                         } else {
-
-
                             this.canManage = false;
                             this.renderer.setAttribute(nodeOwner, 'disabled', 'disabled');
 
@@ -183,7 +157,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(nodeOwner, 'ml-0');
                         this.renderer.addClass(nodeOwner, 'px-2');
                         this.renderer.addClass(nodeOwner, 'text-left');
-                        //this.renderer.addClass(nodeOwner,'');
                         const assignment = this.data.model.workflowAssignment.filter((assignment) => assignment.stateId === transition.fromStateId);
                         if (assignment.length > 0) {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].assignmentUser ? String(assignment[0].assignmentUser.id) : String(0));
@@ -224,14 +197,12 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                         }
 
-                        //this.renderer.addClass(nodeOwner,'anu-wf-input');
                         this.renderer.appendChild(ownerNode, nodeOwner);
                         this.renderer.appendChild(stateNode, ownerNode);
 
                         const assForHistory = this.data.model.workflowAssignment.filter(a => a.stateId === transition.fromStateId);
                         if (assForHistory && assForHistory.length > 0 && assForHistory[0].history && assForHistory[0].history.length > 0) {
                             const historyNode = this.renderer.createElement('div');
-                            //this.renderer.addClass(historyNode, 'col-7');
                             this.renderer.addClass(historyNode, 'text-right');
                             const histLink = this.renderer.createElement('a');
                             this.renderer.setAttribute(histLink, 'style', 'font-size: 9px;color: #bbbbbb;padding: 4px 6px;font-weight: 400;text-transform: initial;right: 53px;border: 1px #e0dfdf solid;background: rgba(200, 200, 200, 0.05) !important;border-radius: 4px;top: 20px;');
@@ -330,7 +301,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             },
                 error => {
                     const errorMsg = error as HttpErrorResponse;
-                    //console.log(error);
                     this.toastr.error(errorMsg.error.message, errorMsg.error.messageTitle, {
                         enableHtml: true
                     });
@@ -359,15 +329,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         const node = this.renderer.createElement('div');
 
                         this.renderer.addClass(node, this.getColorCodeByStatusForReport(this.data.model.workflowStatuses.filter((status) => status.id === transition.fromStateId)[0].internalStatus, this.data.model.report));
-                        /* if (this.data.model.workflowStatuses.filter((status) => status.id === transition.fromStateId)[0].internalStatus === 'DRAFT') {
-                            const notesNode = this.renderer.createElement('span');
-                            this.renderer.appendChild(notesNode, this.renderer.createText('Workflow Note(s)'));
-                            this.renderer.setAttribute(notesNode, 'style', 'position: absolute; right: 7px; cursor: pointer; box-shadow: 2px 2px 4px #d3d3d3; padding: 2px 4px; border-radius: 4px; font-size: 12px;text-transform: none; font-weight: 400;');
-                            this.renderer.listen(notesNode, 'click', () => {
-                                this.data.adminComp.showHistory('report', this.data.model.report);
-                            });
-                            this.renderer.appendChild(node, notesNode);
-                        } */
 
                         const stateNode = this.renderer.createElement('div');
                         this.renderer.addClass(stateNode, 'col-12');
@@ -395,10 +356,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         }
 
                         const ownerNode = this.renderer.createElement('div');
-                        //this.renderer.addClass(ownerNode, 'col-6');
                         this.renderer.addClass(ownerNode, 'mt-2');
                         this.renderer.setAttribute(ownerNode, 'style', 'position: absolute;right: -125px;top: 15px;display: flex;flex-direction: column;');
-                        //this.renderer.setStyle(ownerNode, 'right', '0');
                         const nodeOwner = this.renderer.createElement('select');
                         this.renderer.setAttribute(nodeOwner, 'style', 'font-weight: 400;text-transform: initial;left: -95px;top: 23px;text-decoration: none;max-width: 125px;z-index: 1;background-color: rgba(200, 200, 200, 0.05) !important;border: none !important;');
                         this.renderer.addClass(nodeOwner, 'anu-select');
@@ -413,7 +372,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(nodeOwner, 'ml-0');
                         this.renderer.addClass(nodeOwner, 'px-2');
                         this.renderer.addClass(nodeOwner, 'text-left');
-                        //this.renderer.addClass(nodeOwner,'');
                         const assignment = this.data.model.workflowAssignments.filter((assignment) => assignment.stateId === transition.fromStateId);
                         if (assignment.length > 0) {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].assignmentUser ? String(assignment[0].assignmentUser.id) : String(0));
@@ -500,14 +458,12 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             }
                         }
 
-                        //this.renderer.addClass(nodeOwner,'anu-wf-input');
                         this.renderer.appendChild(ownerNode, nodeOwner);
                         this.renderer.appendChild(stateNode, ownerNode);
 
                         const assForHistory = this.data.model.workflowAssignments.filter(a => a.stateId === transition.fromStateId);
                         if (assForHistory && assForHistory.length > 0 && assForHistory[0].history && assForHistory[0].history.length > 0) {
                             const historyNode = this.renderer.createElement('div');
-                            //this.renderer.addClass(historyNode, 'col-7');
                             this.renderer.addClass(historyNode, 'text-right');
                             const histLink = this.renderer.createElement('a');
                             this.renderer.setAttribute(histLink, 'style', 'font-size: 9px;color: #bbbbbb;padding: 4px 6px;font-weight: 400;text-transform: initial;right: 53px;border: 1px #e0dfdf solid;background: rgba(200, 200, 200, 0.05) !important;border-radius: 4px;top: 20px;');
@@ -548,17 +504,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     const nodeId = 'state_' + transition.toStateId;
                     if (this.elemRef.nativeElement.querySelector('#' + nodeId) === null) {
                         const node = this.renderer.createElement('div');
-                        /* if (transition.toStateId === this.data.model.report.status.id) {
-                            const indicator = this.renderer.createElement('i');
-                            this.renderer.addClass(indicator, 'far');
-                            this.renderer.addClass(indicator, 'fa-file-alt');
-                            this.renderer.addClass(indicator, 'status-indicator');
-                            this.renderer.listen(indicator, 'click', () => {
-                                this.data.adminComp.showHistory('report', this.data.model.report);
-                            });
-                            this.renderer.addClass(node, 'node-highight');
-                            this.renderer.appendChild(node, indicator);
-                        } */
+
                         const nodeStateName = this.renderer.createText(transition._to);
                         const stateNode = this.renderer.createElement('div');
                         this.renderer.addClass(stateNode, 'col-12');
@@ -606,7 +552,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                 jsPlumb.Defaults.Endpoint = "Blank";
                 this.jsPlumbInstance = jsPlumb.getInstance(jsPlumb.Defaults);
-                //this.jsPlumbInstance.setContainer($('#flowContainer'));
                 this.showFlow(this.transitions);
 
                 $('.owner-class').on('change', function () {
@@ -616,7 +561,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             },
                 error => {
                     const errorMsg = error as HttpErrorResponse;
-                    //console.log(error);
                     this.toastr.error(errorMsg.error.message, errorMsg.error.messageTitle, {
                         enableHtml: true
                     });
@@ -627,7 +571,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             this.grantType = (!gtIdx || gtIdx === -1) ? "External Workflow" : this.data.model.grantTypes[gtIdx].name;
             this.title = `<p class="mb-0  text-subheader">Grant Closure Workflow | ` + this.grantType + `<p class='text-header'>` + ((this.data.model.closure.grant.grantStatus.internalStatus === 'ACTIVE' || this.data.model.grant.grantStatus.internalStatus === 'CLOSED') ? `<span class="text-subheader">[` + this.data.model.closure.grant.referenceNo + `] </span>` : ``) + this.data.model.closure.grant.name + `</p>`;
 
-            //this.title = `<p class="mb-0 text-header">Closure Request Workflow for Grant ` + this.data.model.closure.grant.name + `</p>`;
             const httpOptions = {
                 headers: new HttpHeaders({
                     'Content-Type': 'application/json',
@@ -646,31 +589,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     if (this.elemRef.nativeElement.querySelector('#' + nodeId) === null) {
                         const node = this.renderer.createElement('div');
                         this.renderer.addClass(node, this.getColorCodeByStatusForClosure(this.data.model.workflowStatuses.filter((status) => status.id === transition.fromStateId)[0].internalStatus, this.data.model.closure));
-                        /* if (transition.fromStateId === this.data.model.closure.status.id) {
-                            const indicator = this.renderer.createElement('i');
-                            this.renderer.addClass(indicator, 'fas');
-                            this.renderer.addClass(indicator, 'fa-book-reader');
-                            this.renderer.addClass(indicator, 'status-indicator');
-                            this.renderer.addClass(node, 'node-highight');
-                            this.renderer.appendChild(node, indicator);
-                        } */
-                        /* const historyNode = this.renderer.createElement('div');
-                        this.renderer.addClass(historyNode, 'col-3');
-                        const assForHistory = this.data.model.workflowAssignments.filter(a => a.stateId === transition.fromStateId);
-                        if (assForHistory && assForHistory.length > 0 && assForHistory[0].history && assForHistory[0].history.length > 0) {
-                            const histLink = this.renderer.createElement('a');
-                            this.renderer.setAttribute(histLink, 'style', 'font-size: 9px; color: #000; border-radius: 3px; padding: 4px 6px; box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5); font-weight: 400; background: rgba(200,200,200,0.95); text-transform: initial;');
-                            if (transition.internalStatus !== 'ACTIVE') {
-                                this.renderer.appendChild(histLink, this.renderer.createText("Past Approver(s)"));
-                                this.renderer.listen(histLink, 'click', (event) => this.showOwners(event, assForHistory[0].history, 'Past Approver(s)'));
-                            } else {
-                                this.renderer.appendChild(histLink, this.renderer.createText("Past Assignee(s)"));
-                                this.renderer.listen(histLink, 'click', (event) => this.showOwners(event, assForHistory[0].history, 'Past Assignee(s)'));
-                            }
 
-                            this.renderer.appendChild(historyNode, histLink);
-                        }
-                        this.renderer.appendChild(node, historyNode); */
 
                         const stateNode = this.renderer.createElement('div');
                         this.renderer.addClass(stateNode, 'col-12');
@@ -698,14 +617,12 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         }
 
                         const ownerNode = this.renderer.createElement('div');
-                        //this.renderer.addClass(ownerNode, 'col-6');
                         const nodeOwner = this.renderer.createElement('select');
                         this.renderer.setAttribute(ownerNode, 'style', 'position: absolute;right: -125px;top: 15px;display: flex;flex-direction: column;');
                         this.renderer.setAttribute(nodeOwner, 'style', 'font-weight: 400;text-transform: initial;left: -95px;top: 23px;text-decoration: none;max-width: 125px;z-index: 1;background-color: rgba(200, 200, 200, 0.05) !important;border: none !important;');
 
                         this.renderer.addClass(nodeOwner, 'anu-select');
                         this.renderer.addClass(nodeOwner, 'anu-wf-input');
-                        //this.renderer.setAttribute(nodeOwner, 'style', 'font-weight: 400;text-transform: initial;left: -95px;top: 23px;text-decoration: none;max-width: 125px;z-index: 1;background-color: rgba(200, 200, 200, 0.05) !important;border: none !important;');
 
                         const currentUserAssignment = this.data.model.workflowAssignments.filter((assignment) => assignment.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment.stateId === this.data.model.closure.status.id && JSON.parse(localStorage.getItem('USER')).organization.organizationType !== 'GRANTEE');
                         const ownerUser = this.data.model.workflowAssignments.filter((assignment) => assignment.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment.anchor);
@@ -717,7 +634,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(nodeOwner, 'ml-0');
                         this.renderer.addClass(nodeOwner, 'px-2');
                         this.renderer.addClass(nodeOwner, 'text-left');
-                        //this.renderer.addClass(nodeOwner,'');
                         const assignment = this.data.model.workflowAssignments.filter((assignment) => assignment.stateId === transition.fromStateId);
                         if (assignment.length > 0) {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].assignmentUser ? String(assignment[0].assignmentUser.id) : String(0));
@@ -802,11 +718,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             }
                         }
 
-                        //this.renderer.addClass(nodeOwner,'anu-wf-input');
                         this.renderer.appendChild(ownerNode, nodeOwner);
                         this.renderer.appendChild(stateNode, ownerNode);
-
-                        //this.renderer.addClass(historyNode, 'col-3');
                         const assForHistory = this.data.model.workflowAssignments.filter(a => a.stateId === transition.fromStateId);
                         if (assForHistory && assForHistory.length > 0 && assForHistory[0].history && assForHistory[0].history.length > 0) {
                             const historyNode = this.renderer.createElement('div');
@@ -832,9 +745,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             this.renderer.appendChild(historyNode, histLink);
                             this.renderer.appendChild(ownerNode, historyNode);
                         }
-                        //this.renderer.appendChild(node, historyNode);
-
-
 
                         this.renderer.setAttribute(node, 'id', nodeId);
                         this.renderer.addClass(node, 'state-node');
@@ -842,13 +752,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(node, 'my-5');
                         this.renderer.appendChild(this.flowContainer.nativeElement, node);
 
-                        //debugger;
                         this.rePositionNode(transition);
 
-                        /* if (transition._from === 'Grantee Sahara') {
-                            this.renderer.setStyle(node, 'position', 'relative');
-                            this.renderer.setStyle(node, 'left', '200px');
-                        } */
                         counter++;
                     }
 
@@ -858,14 +763,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     const nodeId = 'state_' + transition.toStateId;
                     if (this.elemRef.nativeElement.querySelector('#' + nodeId) === null) {
                         const node = this.renderer.createElement('div');
-                        /* if (transition.toStateId === this.data.model.closure.status.id) {
-                            const indicator = this.renderer.createElement('i');
-                            this.renderer.addClass(indicator, 'fas');
-                            this.renderer.addClass(indicator, 'fa-book-reader');
-                            this.renderer.addClass(indicator, 'status-indicator');
-                            this.renderer.addClass(node, 'node-highight');
-                            this.renderer.appendChild(node, indicator);
-                        } */
+
                         const nodeStateName = this.renderer.createText(transition._to);
                         const stateNode = this.renderer.createElement('div');
                         this.renderer.addClass(stateNode, 'col-12');
@@ -924,7 +822,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             },
                 error => {
                     const errorMsg = error as HttpErrorResponse;
-                    //console.log(error);
                     this.toastr.error(errorMsg.error.message, errorMsg.error.messageTitle, {
                         enableHtml: true
                     });
@@ -945,16 +842,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         const node = this.renderer.createElement('div');
                         this.renderer.addClass(node, this.getColorCodeByStatus(this.data.model.workflowStatuses.filter((status) => status.id === transition.fromStateId)[0].internalStatus));
 
-                        /* if (this.data.model.workflowStatuses.filter((status) => status.id === transition.fromStateId)[0].internalStatus === 'DRAFT') {
-                            const notesNode = this.renderer.createElement('span');
-                            this.renderer.appendChild(notesNode, this.renderer.createText('Workflow Note(s)'));
-                            this.renderer.setAttribute(notesNode, 'style', 'position: absolute; right: 7px; cursor: pointer; box-shadow: 2px 2px 4px #d3d3d3; padding: 2px 4px; border-radius: 4px; font-size: 12px;text-transform: none; font-weight: 400;');
-                            this.renderer.listen(notesNode, 'click', () => {
-                                this.data.adminComp.showHistory('disbursement', this.data.model.disbursement);
-                            });
-                            this.renderer.appendChild(node, notesNode);
-                        } */
-                        //this.renderer.appendChild(node, historyNode);
                         const stateNode = this.renderer.createElement('div');
                         this.renderer.addClass(stateNode, 'col-12');
                         this.renderer.addClass(stateNode, 'p-0');
@@ -1007,7 +894,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(nodeOwner, 'ml-0');
                         this.renderer.addClass(nodeOwner, 'px-2');
                         this.renderer.addClass(nodeOwner, 'text-left');
-                        //this.renderer.addClass(nodeOwner,'');
                         const assignment = this.data.model.workflowAssignments.filter((assignment) => assignment.stateId === transition.fromStateId);
                         if (assignment.length > 0) {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].owner);
@@ -1044,7 +930,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                         }
 
-                        //this.renderer.addClass(nodeOwner,'anu-wf-input');
                         this.renderer.appendChild(ownerNode, nodeOwner);
                         this.renderer.appendChild(stateNode, ownerNode);
 
@@ -1178,10 +1063,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 for (let j = 0; j < $(node2Process).children().length; j++) {
                     const usr = this.data.model.users.filter(u => u.id === Number($(node2Process).children()[j].value));
                     if (usr.length > 0 && usr[0].deleted && Number($(node2Process).children()[j].value) === val) {
-                        //////console.log(assignmentElems[i]);
                         $(node2Process).css('text-decoration', 'line-through');
                     } else if (usr.length > 0 && !usr[0].deleted && Number($(node2Process).children()[j].value) === val) {
-                        //////console.log(assignmentElems[i]);
                         $(node2Process).css('text-decoration', 'none');
                     }
 
@@ -1192,14 +1075,12 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         if (usr.length > 0 && !usr[0].deleted) {
                             $(node2Process).children()[j].removeAttribute('disabled');
                         }
-                        //child.removeAttribute('disabled');
                     }
                 }
             }
         }
 
 
-        //this.updateGrantAndDisbursementUsers();
         if (event.target.value === "0") {
             event.target.style.color = '#ffbf00'
         } else {
@@ -1216,39 +1097,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 this.activeStateOwnerChanged = false;
             }
         }
-        /* if (!environment.production) {
-            return;
-        } */
-
-        // const options = (<HTMLOptionElement>event.currentTarget).parentElement.parentElement.nextElementSibling.firstElementChild.nextElementSibling.nextElementSibling.firstElementChild;
-        // const previousOptions = (<HTMLOptionElement>event.currentTarget).parentElement.parentElement.previousElementSibling.firstElementChild.nextElementSibling.nextElementSibling.firstElementChild;
-
-        // if (previousOptions !== null && previousOptions.children.length > 0) {
-        //     for (var i = 0; i < previousOptions.children.length; i++) {
-        //         if (event.currentTarget.value === (<HTMLOptionElement>previousOptions[i]).value && event.currentTarget.value !== "0") {
-        //             previousOptions[i].setAttribute("disabled", "disabled");
-        //             //options[i].setAttribute("selected", "selected");
-        //         } /* else {
-        //             previousOptions[i].removeAttribute("disabled");
-        //         } */
-
-        //     }
-        // }
-
-        // if (options !== null && options.children.length > 0) {
-        //     for (var i = 0; i < options.children.length; i++) {
-        //         if (event.currentTarget.value === (<HTMLOptionElement>options[i]).value && event.currentTarget.value !== "0") {
-        //             options[i].setAttribute("disabled", "disabled");
-        //             //options[i].setAttribute("selected", "selected");
-        //             /* if (event.currentTarget.parentElement.parentElement.nextElementSibling.firstElementChild.nextElementSibling.firstElementChild.value === event.currentTarget.value) {
-        //                 event.currentTarget.parentElement.parentElement.nextElementSibling.firstElementChild.nextElementSibling.firstElementChild.value = "0";
-        //             } */
-
-        //         } else {
-        //             options[i].removeAttribute("disabled");
-        //         }
-        //     }
-        // }
     }
 
     ngOnDestroy() {
@@ -1257,15 +1105,13 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
 
     ngAfterViewInit() {
-        //this.showFlow(this.transitions);
+        console.log("Future scope");
     }
 
 
     showFlow(transitions: WorkflowTransition[]) {
         const curves = [30, 40, 50, 60, 70, 80, 90, 100];
         const labelPositions = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
-        let curvesCnt = 0;
-        let posCnt = 0;
 
         this.jsPlumbInstance.Defaults.Overlays = [];
         for (let transition of transitions) {
@@ -1291,32 +1137,10 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     });
                     $(tick).attr('id', 'coonector_id_' + transition.toStateId)
                 }, 50);
-
-
-
-            } /* else {
-                setTimeout(() => {
-                    this.jsPlumbInstance.connect({
-                        connector: ["Bezier", { curviness: curves[curvesCnt++] }],
-                        overlays: [
-                            ["Arrow", { width: 8, length: 8, location: 1 }],
-                            ['Label', { label: transition.action, location: labelPositions[posCnt++], cssClass: 'connectorLabel' }]
-                        ],
-                        source: 'state_' + transition.fromStateId, // it is the id of source div
-                        target: 'state_' + transition.toStateId, // it is the id of target div
-                        anchors: ["Right", "Right"]
-                    });
-                }, 150);
-            } */
-
-
+            }
         }
 
         setTimeout(() => {
-
-            /* $('svg[class^=connectorLink').children()[0].setAttribute('stroke', '#d4d4d4');
-            $('svg[class^=connectorLink').children()[1].setAttribute('stroke', '#d4d4d4'); */
-
             let backFlows;
             if (this.data.model.type === 'grant') {
                 backFlows = this.data.model.grant.flowAuthorities.filter(a => a.forwardDirection === false);
@@ -1327,7 +1151,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             } else if (this.data.model.type === 'grant-closure') {
                 backFlows = this.data.model.closure.flowAuthorities.filter(a => a.forwardDirection === false);
             }
-            //backFlows.splice(0, 1);
             if (backFlows && backFlows.length > 0) {
                 for (let nack of backFlows) {
                     $('.connectorLink' + nack.toStateId).children()[0].setAttribute('stroke-width', 3);
@@ -1342,29 +1165,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
     }
 
-    @HostListener('window:resize', ['$event'])
-    onResize(event) {
-        //this.jsPlumbInstance.repaintEverything();
-    }
 
-    @HostListener('window:scroll', ['$event']) getScrollHeight(event) {
-        //console.log(window.pageYOffset, event);
-    }
-
-    redrawOnScroll(ev) {
-
-        //this.jsPlumbInstance.repaintEverything();
-        /* //console.log(ev);
-        const off = (ev.target.scrollTop);
-        for (let e of $('.jtk-overlay')) {
-            let pos = $(e).offset().top;
-            $(e).offset({ top: pos - off });
-        } */
-        //$('.jtk-overlay').css('top', off * -1);
-        /* $('.jtk-overlay').remove();
-        $('.jtk-connector').remove(); */
-        //this.showFlow(this.transitions);
-    }
 
     onNoClick(): void {
         if (this.verifyChanges()) {
@@ -1391,10 +1192,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
     onYesClick(): void {
         if (this.data.model.type === 'grant') {
-            /* const dg = this.dialog.open(FieldDialogComponent, {
-                data: { title: "Would you like to save the assignment changes?", btnMain: "Save Assignments", btnSecondary: "Not Now" },
-                panelClass: "center-class"
-            }); */
             this.processGrantAssignments();
 
         } else if (this.data.model.type === 'report') {
@@ -1497,7 +1294,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     }
 
     scroll() {
-        //console.log('scrolled');
+        console.log('scrolled');
     }
 
     getColorCodeByStatus(status): string {
@@ -1551,7 +1348,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
         const container = this.flowContainer.nativeElement;
         $(container).animate({ 'zoom': 0.8 }, 400, () => {
-            //console.log('zommed out');
             this.jsPlumbInstance.deleteEveryEndpoint();
             this.jsPlumbInstance.deleteEveryConnection();
             this.jsPlumbInstance.setZoom(1, true);
@@ -1567,44 +1363,15 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             jsPlumb.Defaults.Endpoint = "Blank";
             jsPlumb.Defaults.Zoom = "1";
             this.jsPlumbInstance = jsPlumb.getInstance(jsPlumb.Defaults);
-            //this.jsPlumbInstance.repaintEverything();
         });
 
     }
 
-    showPopup() {
-        //console.log('popup');
-    }
+
 
     updateGrantAndDisbursementUsers() {
-        /* if (!environment.production) {
-            return;
-        } */
-
-        /* let transitions = this.transitions.filter(a => a.fromStateId === Number(assignmentElems[i].id.split('_')[2]));
-            let select2Process = []
-            for (let t of transitions) {
-                const assignments = this.data.model.workflowAssignments.filter(a => a.stateId === t.toStateId);
-                for (let a of assignments) {
-                    select2Process.push('assignment_' + a.id + '_' + a.stateId + '_' + a.closureId);
-                }
-            }
-
-            transitions = this.transitions.filter(a => a.toStateId === Number(assignmentElems[i].id.split('_')[2]));
-            for (let t of transitions) {
-                const assignments = this.data.model.workflowAssignments.filter(a => a.stateId === t.fromStateId);
-                for (let a of assignments) {
-                    select2Process.push('assignment_' + a.id + '_' + a.stateId + '_' + a.closureId);
-                }
-            }
-
-            console.log(select2Process) */
-
         const assignmentElems = $('[id^="assignment_"]');
         for (let i = 0; i < assignmentElems.length; i++) {
-            //console.log(assignmentElems[i].getAttribute('data-counter'));
-
-
 
             const prev = assignmentElems[i - 1] ? assignmentElems[i - 1].value : "-1";
             const next = assignmentElems[i + 1] ? assignmentElems[i + 1].value : "-1";
@@ -1616,10 +1383,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             for (let child of assignmentElems[i].children) {
                 const usr = this.data.model.users.filter(u => u.id === Number(child.value));
                 if (usr.length > 0 && usr[0].deleted && child.value === assignmentElems[i].value) {
-                    //////console.log(assignmentElems[i]);
                     assignmentElems[i].style.textDecoration = 'line-through';
                 } else if (usr.length > 0 && !usr[0].deleted && child.value === assignmentElems[i].value) {
-                    //////console.log(assignmentElems[i]);
                     assignmentElems[i].style.textDecoration = 'none';
                 }
 
@@ -1630,7 +1395,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     if (usr.length > 0 && !usr[0].deleted) {
                         child.removeAttribute('disabled');
                     }
-                    //child.removeAttribute('disabled');
                 }
             }
 
@@ -1638,12 +1402,9 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     }
 
     updateReportUsers() {
-        /* if (!environment.production) {
-            return;
-        } */
+
         const assignmentElems = $('[id^="assignment_"]');
         for (let i = 2; i < assignmentElems.length; i++) {
-            //console.log(assignmentElems[i].getAttribute('data-counter'));
 
             const prev = assignmentElems[i - 1] ? assignmentElems[i - 1].value : "-1";
             const next = assignmentElems[i + 1] ? assignmentElems[i + 1].value : "-1";
@@ -1656,10 +1417,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                 const usr = this.data.model.users.filter(u => u.id === Number(child.value));
                 if (usr.length > 0 && usr[0].deleted && child.value === assignmentElems[i].value) {
-                    ////console.log(assignmentElems[i]);
                     assignmentElems[i].style.textDecoration = 'line-through';
                 } else if (usr.length > 0 && !usr[0].deleted && child.value === assignmentElems[i].value) {
-                    ////console.log(assignmentElems[i]);
                     assignmentElems[i].style.textDecoration = 'none';
                 }
 
@@ -1676,12 +1435,9 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     }
 
     updateClosureUsers() {
-        /* if (!environment.production) {
-            return;
-        } */
+
         const assignmentElems = $('[id^="assignment_"]');
         for (let i = 2; i < assignmentElems.length; i++) {
-            //console.log(assignmentElems[i].getAttribute('data-counter'));
 
             const prev = assignmentElems[i - 1] ? assignmentElems[i - 1].value : "-1";
             const next = assignmentElems[i + 1] ? assignmentElems[i + 1].value : "-1";
@@ -1694,10 +1450,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                 const usr = this.data.model.users.filter(u => u.id === Number(child.value));
                 if (usr.length > 0 && usr[0].deleted && child.value === assignmentElems[i].value) {
-                    ////console.log(assignmentElems[i]);
                     assignmentElems[i].style.textDecoration = 'line-through';
                 } else if (usr.length > 0 && !usr[0].deleted && child.value === assignmentElems[i].value) {
-                    ////console.log(assignmentElems[i]);
                     assignmentElems[i].style.textDecoration = 'none';
                 }
 
@@ -1874,28 +1628,5 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
         $("#" + transitionNodeId)
             .css('position', 'relative')
             .css('left', (t ? Number(t.replace('px', '')) : 0) + offset);
-
-        /* if (!parentTop) {
-            parentTop = 0;
-        } else {
-            parentTop = Number(parentTop.replace('px', ''));
-        }
-
-        $("#" + transitionNodeId).css('top', parentTop + parentHeight); */
-
-        /* let parentElement;
-        const p = this.transitions.filter(t => t.toStateId === transition.fromStateId)[0];
-        if (p) {
-            parentElement = $("#state_" + p.fromStateId);
-        }
-        if (parentElement && parentElement.length > 0) {
-            // $("state_" + transition.toStateId).css('posistion', 'relative').css('left', $(parentElement[0]).css('left'));
-            this.renderer.setStyle($("#state_" + transition.fromStateId)[0], 'position', 'relative');
-            this.renderer.setStyle($("#state_" + transition.fromStateId)[0], 'left', $(parentElement[0]).css('left'));
-        } else {
-            //$("state_" + transition.fromStateId).css('posistion', 'relative').css('left', '0px');
-            this.renderer.setStyle($("#state_" + transition.fromStateId)[0], 'position', 'relative');
-            this.renderer.setStyle($("#state_" + transition.fromStateId)[0], 'left', '0px');
-        } */
     }
 }
