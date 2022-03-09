@@ -43,10 +43,9 @@
             (menuItem.title === 'Dashboard' || canManageOrg)
           " class="{{ menuItem.class }} nav-item text-left">
           <a class="nav-link" [routerLink]="[menuItem.path]">
-            <!--<em class="material-icons">{{menuItem.icon}}</em>-->
             <p>
-              <img src="./assets/img/{{ menuItem.icon }}" [ngClass]="menuItem.title === 'Dashboard' ? 'mr-2' : 'mr-2'"
-                [ngStyle]="
+              <img alt="" src="./assets/img/{{ menuItem.icon }}"
+                [ngClass]="menuItem.title === 'Dashboard' ? 'mr-2' : 'mr-2'" [ngStyle]="
                   menuItem.title === 'Dashboard' ? { width: '24px' } : {}
                 " />{{ menuItem.title }}
             </p>
@@ -63,7 +62,7 @@
           ">
           <mat-expansion-panel-header (click)="buildSectionsSideNav($event)" style="padding: 14px">
             <mat-panel-title style="display: flex; align-items: center; font-weight: 300" class="menu-sidenav-title">
-              <img src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Organization
+              <img alt="" src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Organization
             </mat-panel-title>
           </mat-expansion-panel-header>
           <li routerLinkActive="active" tabindex="{{ i }}" *ngFor="let orgMenuItem of orgMenuItems; let i = index"
@@ -130,7 +129,7 @@
           ">
           <mat-expansion-panel-header (click)="buildSectionsSideNav($event)" style="padding: 14px">
             <mat-panel-title style="display: flex; align-items: center; font-weight: 300" class="menu-sidenav-title">
-              <img src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Disbursements
+              <img alt="" src="./assets/img/{{ menuItem.icon }}" class="mr-2" />Disbursements
             </mat-panel-title>
           </mat-expansion-panel-header>
           <li routerLinkActive="active" tabindex="{{ i }}" *ngFor="
@@ -182,13 +181,13 @@
       <li tabindex="{{ i }}" cdkDrag (cdkDragStarted)="dragStarted($event)" routerLinkActive="active"
         *ngFor="let menuItem1 of sectionMenuItems; let i = index" class="{{ menuItem1.class }} nav-item text-left"
         style="cursor: move">
-        <i *ngIf="currentGrant && currentGrant.canManage" cdkDragHandle class="material-icons"
-          style="margin: 0px 14px 0px 20px">drag_indicator</i>
+        <em *ngIf="currentGrant && currentGrant.canManage" cdkDragHandle class="material-icons"
+          style="margin: 0px 14px 0px 20px">drag_indicator</em>
         <p *cdkDragPreview style="color: #fff">{{ menuItem1.title }}</p>
         <a class="nav-link py-0" [routerLink]="[menuItem1.path]"
           style="padding-top: 0; padding-bottom: 0; padding-left: 30px">
-          <i *ngIf="currentGrant && !currentGrant.canManage" class="material-icons" style="font-size: 18px">{{
-            menuItem1.icon }}</i>
+          <em *ngIf="currentGrant && !currentGrant.canManage" class="material-icons" style="font-size: 18px">{{
+            menuItem1.icon }}</em>
           <p>{{ menuItem1.title }}</p>
         </a>
       </li>
@@ -198,7 +197,7 @@
                   border-radius: 2px !important;
                   padding: 1px 10px 1px 10px;
                 ">
-          Add a section<img src="./assets/img/add.svg" class="ml-2" style="width: 24px" />
+          Add a section<img alt="" src="./assets/img/add.svg" class="ml-2" style="width: 24px" />
         </button>
       </li>
       </mat-expansion-panel>
@@ -237,14 +236,14 @@
       <li tabindex="{{ i }}" cdkDrag (cdkDragStarted)="dragStarted($event)" routerLinkActive="active"
         *ngFor="let menuItem1 of reportSectionMenuItems; let i = index" class="{{ menuItem1.class }} nav-item text-left"
         style="cursor: move">
-        <i *ngIf="
+        <em *ngIf="
                   this.currentReport.canManage && !currentReport.forGranteeUse
-                " cdkDragHandle class="material-icons" style="margin: 0px 14px 0px 20px">drag_indicator</i>
+                " cdkDragHandle class="material-icons" style="margin: 0px 14px 0px 20px">drag_indicator</em>
         <p *cdkDragPreview style="color: #fff">{{ menuItem1.title }}</p>
         <a class="nav-link py-0" [routerLink]="[menuItem1.path]"
           style="padding-top: 0; padding-bottom: 0; padding-left: 30px">
-          <i *ngIf="!this.currentReport.canManage" class="material-icons" style="font-size: 18px">{{ menuItem1.icon
-            }}</i>
+          <em *ngIf="!this.currentReport.canManage" class="material-icons" style="font-size: 18px">{{ menuItem1.icon
+            }}</em>
           <p [innerHTML]="menuItem1.title"></p>
         </a>
       </li>
@@ -254,7 +253,7 @@
                   border-radius: 2px !important;
                   padding: 1px 10px 1px 10px;
                 ">
-          Add a section<img src="./assets/img/add.svg" class="ml-2" style="width: 24px" />
+          Add a section<img alt="" src="./assets/img/add.svg" class="ml-2" style="width: 24px" />
         </button>
       </li>
       </mat-expansion-panel>
@@ -294,14 +293,14 @@
       <li tabindex="{{ i }}" cdkDrag (cdkDragStarted)="dragStarted($event)" routerLinkActive="active"
         *ngFor="let menuItem1 of closureSectionMenuItems; let i = index"
         class="{{ menuItem1.class }} nav-item text-left" style="cursor: move">
-        <i *ngIf="
+        <em *ngIf="
                   this.currentClosure.canManage && !currentClosure.forGranteeUse
-                " cdkDragHandle class="material-icons" style="margin: 0px 14px 0px 20px">drag_indicator</i>
+                " cdkDragHandle class="material-icons" style="margin: 0px 14px 0px 20px">drag_indicator</em>
         <p *cdkDragPreview style="color: #fff">{{ menuItem1.title }}</p>
         <a class="nav-link py-0" [routerLink]="[menuItem1.path]"
           style="padding-top: 0; padding-bottom: 0; padding-left: 30px">
-          <i *ngIf="!this.currentClosure.canManage" class="material-icons" style="font-size: 18px">{{ menuItem1.icon
-            }}</i>
+          <em *ngIf="!this.currentClosure.canManage" class="material-icons" style="font-size: 18px">{{ menuItem1.icon
+            }}</em>
           <p [innerHTML]="menuItem1.title"></p>
         </a>
       </li>

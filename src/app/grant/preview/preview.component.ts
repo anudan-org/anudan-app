@@ -138,7 +138,6 @@ export class PreviewComponent implements OnInit {
   @ViewChild("editFieldModal") editFieldModal: ElementRef;
   @ViewChild("createFieldModal") createFieldModal: ElementRef;
   @ViewChild("createSectionModal") createSectionModal: ElementRef;
-  @ViewChild("createKpiModal") createKpiModal: ElementRef;
   @ViewChild("addKpiButton") addKpiButton: ElementRef;
   @ViewChild("actionBlock") actionBlock: ElementRef;
   @ViewChild("saveGrantButton") saveGrantButton: ElementRef;
@@ -146,7 +145,6 @@ export class PreviewComponent implements OnInit {
   @ViewChild("kpiDescriptionElem") kpiDescriptionelem: ElementRef;
   @ViewChild("kpiBlock") kpiBlock: ElementRef;
   @ViewChild("sidenav") attachmentsSideNav: any;
-  @ViewChild("selectScheduleModal") selectScheduleModal: ElementRef;
   @ViewChild("container") container: ElementRef;
   @ViewChild("grantSummary") grantSummary: ElementRef;
   @ViewChild("previewarea") previewArea: ElementRef;
@@ -311,9 +309,6 @@ export class PreviewComponent implements OnInit {
       $("#sectionTitleInput").focus();
     });
 
-    $("#createKpiModal").on("shown.bs.modal", function (event) {
-      $("#kpiDescription").focus();
-    });
 
 
     this.adminService.getOrgTags(this.appComp.loggedInUser).then((tags: OrgTag[]) => {

@@ -98,8 +98,8 @@
                           <em *ngIf="currentDisbursement.grant.grantTags.length>1"
                             class="fas fa-tags fa-xs ml-2 grant-tags"></em>
 
-                          <b>Disbursement Approval Request for
-                            {{ currentDisbursement.grant.name }}</b>
+                          <strong>Disbursement Approval Request for
+                            {{ currentDisbursement.grant.name }}</strong>
                         </h4>
                         <h4 *ngIf="
                         disbursementService.checkIfActiveOrClosed(
@@ -111,8 +111,8 @@
                           <em *ngIf="currentDisbursement.grant.grantTags.length>1"
                             class="fas fa-tags fa-xs ml-2 grant-tags" style="font-size: 0.6em;"></em>
 
-                          <b>Disbursement Record against Approved Note for
-                            <em>{{ currentDisbursement.grant.name }}</em></b>
+                          <strong>Disbursement Record against Approved Note for
+                            <em>{{ currentDisbursement.grant.name }}</em></strong>
                         </h4>
                       </div>
                       <div class="col-12 text-left">
@@ -180,12 +180,12 @@
                   <div class="col-6 mb-2">
                     <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Grant Amount:</span>
                     <div class="ml-0 mb-3" style="display: flex; align-items: center">
-                      <b>{{
+                      <strong>{{
                         getFormattedGrantAmount(currentDisbursement.grant.amount)
                         }}&nbsp;&nbsp;&nbsp;
                         <small>{{
                           getGrantAmountInWords(currentDisbursement.grant.amount)
-                          }}</small></b>
+                          }}</small></strong>
                     </div>
                   </div>
                 </div>
@@ -274,6 +274,7 @@
             " class="col-12 px-0 mx-2 mt-3 mb-2">
                 <p class="text-header">Project Funds Received</p>
                 <table style="background: #f2f2f2;width:100%">
+                  <caption></caption>
                   <tr>
                     <th id="col#" style="border: 1px solid #e4e4e4;width:20%;" class="py-2">
                       <strong>#</strong>
@@ -374,11 +375,11 @@
                   " style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Approved Disbursement
                       Amount:</span>
                     <div class="ml-0 mb-1">
-                      <b><img alt="" src="./assets/img/rupee.png" style="width: 10px" class="mr-1" />{{
+                      <strong><img alt="" src="./assets/img/rupee.png" style="width: 10px" class="mr-1" />{{
                         getFormattedGrantAmount(
                         currentDisbursement.requestedAmount
                         )
-                        }}</b>
+                        }}</strong>
                       <br /><small>{{
                         getGrantAmountInWords(currentDisbursement.requestedAmount)
                         }}</small>
@@ -401,6 +402,7 @@
               <div *ngIf="currentDisbursement.canRecordActuals" class="col-12 px-0 mx-2 mt-3 mb-2">
                 <p class="text-header">Record Disbursement</p>
                 <table #tablePlaceholder class="disbursements-class" style="width:100%;">
+                  <caption></caption>
                   <tr>
                     <th id="col#" style="border: 1px solid #e4e4e4;width:10%;" class="py-2 text-center">
                       <strong>#</strong>
@@ -534,6 +536,7 @@
               disbursementService.checkIfClosed(currentDisbursement)
             ">
                 <table #tablePlaceholder style="width:100%" class="disbursements-class">
+                  <caption></caption>
                   <tr>
                     <th id="col#" style="border: 1px solid #e4e4e4;width:10%;" class="py-2 text-center">
                       <strong>#</strong>
