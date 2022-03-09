@@ -1,12 +1,11 @@
 import { DatePipe } from '@angular/common';
 import { ClosureDiff } from './../model/closures';
-import { DisbursementDiff, ActualDisbursement } from './../model/disbursement';
+import { DisbursementDiff } from './../model/disbursement';
 import { ReportDiff } from './../model/report';
 import { CurrencyService } from './../currency-service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { Grant, GrantDiff, SectionDiff, AttributeDiff } from './../model/dahsboard';
+import { GrantDiff, SectionDiff, AttributeDiff } from './../model/dahsboard';
 import { Component, Input, OnInit, Inject, Output, EventEmitter } from '@angular/core';
-import * as deepDiff from 'deep-object-diff';
 import * as inf from 'indian-number-format';
 import * as difference from 'simple-text-diff';
 
@@ -51,9 +50,6 @@ export class GrantCompareComponent implements OnInit {
       this.oldItem = itemsCompare.compareItems[1];
     }
 
-
-    const difference = deepDiff.detailedDiff(this.oldItem, this.newItem);
-    console.log(difference);
   }
 
   ngOnInit() {
@@ -84,40 +80,33 @@ export class GrantCompareComponent implements OnInit {
     }
     if (oldGrant.startDate !== newGrant.startDate) {
       this._getGrantDiff();
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grant Start Date changed','change':[{'old': oldGrant.stDate,'new':newGrant.stDate}]});
       this.grantDiff.oldGrantStartDate = oldGrant.startDate;
       this.grantDiff.newGrantStartDate = newGrant.startDate;
     }
     if (oldGrant.endDate !== newGrant.endDate) {
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grant End Date changed','change':[{'old': oldGrant.enDate,'new':newGrant.enDate}]});
       this._getGrantDiff();
       this.grantDiff.oldGrantEndDate = oldGrant.endDate;
       this.grantDiff.newGrantEndDate = newGrant.endDate;
     }
     if (oldGrant.amount !== newGrant.amount) {
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grant End Date changed','change':[{'old': oldGrant.enDate,'new':newGrant.enDate}]});
       this._getGrantDiff();
       this.grantDiff.oldGrantAmount = oldGrant.amount;
       this.grantDiff.newGrantAmount = newGrant.amount;
     }
     if (oldGrant.implementingOrganizationName && newGrant.implementingOrganizationName) {
       if (oldGrant.implementingOrganizationName !== newGrant.implementingOrganizationName) {
-        //resultHeader.push({'order':1,'category':'Grant Header','name':'Grantee changed','change':[{'old': oldGrant.organization.name,'new':newGrant.organization.name}]});
         this._getGrantDiff();
         this.grantDiff.oldGrantee = oldGrant.implementingOrganizationName;
         this.grantDiff.newGrantee = newGrant.implementingOrganizationName;
       }
     } else if (oldGrant.implementingOrganizationName === '' && newGrant.implementingOrganizationName != '') {
       this._getGrantDiff();
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grantee added','change':[{'old': '','new':newGrant.organization.name}]});
       this.grantDiff.newGrantee = newGrant.implementingOrganizationName;
     } else if (oldGrant.implementingOrganizationName != '' && newGrant.implementingOrganizationName === '') {
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grantee removed','change':[{'old': oldGrant.organization.name,'new':''}]});
       this._getGrantDiff();
       this.grantDiff.oldGrantee = oldGrant.implementingOrganizationName;
     }
     if (oldGrant.implementingOrganizationRepresentative !== newGrant.implementingOrganizationRepresentative) {
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grantee Representative changed','change':[{'old': oldGrant.representative,'new':newGrant.representative}]});
       this._getGrantDiff();
       this.grantDiff.oldRep = oldGrant.implementingOrganizationRepresentative;
       this.grantDiff.newRep = newGrant.implementingOrganizationRepresentative;
@@ -144,101 +133,95 @@ export class GrantCompareComponent implements OnInit {
                 this._getGrantDiffSections();
                 this.saveDifferences(oldSection, oldAttr, section, attr);
 
-              } else
-                if (oldAttr.type === attr.type && oldAttr.type === 'multiline' && oldAttr.value !== attr.value) {
+              } else if (oldAttr.type === attr.type && oldAttr.type === 'multiline' && oldAttr.value !== attr.value) {
+                this._getGrantDiffSections();
+                this.saveDifferences(oldSection, oldAttr, section, attr);
+              } else if (oldAttr.type === attr.type && oldAttr.type === 'kpi') {
+                const ot = (oldAttr.target === undefined || oldAttr.target === null) ? null : oldAttr.target;
+                const nt = (attr.target === undefined || attr.target === null) ? null : attr.target;
+                const of = (oldAttr.frequency === undefined || oldAttr.frequency === null) ? null : oldAttr.frequency;
+                const nf = (attr.frequency === undefined || attr.frequency === null) ? null : attr.frequency;
+                if (ot !== nt) {
                   this._getGrantDiffSections();
                   this.saveDifferences(oldSection, oldAttr, section, attr);
-                } else
+                } else if (of !== nf) {
+                  this._getGrantDiffSections();
+                  this.saveDifferences(oldSection, oldAttr, section, attr);
+                }
 
-                  if (oldAttr.type === attr.type && oldAttr.type === 'kpi') {
-                    const ot = (oldAttr.target === undefined || oldAttr.target === null) ? null : oldAttr.target;
-                    const nt = (attr.target === undefined || attr.target === null) ? null : attr.target;
-                    const of = (oldAttr.frequency === undefined || oldAttr.frequency === null) ? null : oldAttr.frequency;
-                    const nf = (attr.frequency === undefined || attr.frequency === null) ? null : attr.frequency;
-                    if (ot !== nt) {
+
+              } else if (oldAttr.type === attr.type && oldAttr.type === 'table') {
+                let hasTableDifferences = false;
+                if (oldAttr.tableValue.length !== attr.tableValue.length) {
+                  this._getGrantDiffSections();
+                  this.saveDifferences(oldSection, oldAttr, section, attr);
+                } else {
+                  for (let i = 0; i < oldAttr.tableValue.length; i++) {
+                    if (oldAttr.tableValue[i].header !== attr.tableValue[i].header || oldAttr.tableValue[i].name !== attr.tableValue[i].name || oldAttr.tableValue[i].columns.length !== attr.tableValue[i].columns.length) {
                       this._getGrantDiffSections();
                       this.saveDifferences(oldSection, oldAttr, section, attr);
-                    } else if (of !== nf) {
-                      this._getGrantDiffSections();
-                      this.saveDifferences(oldSection, oldAttr, section, attr);
-                    }
-
-
-                  } else
-                    if (oldAttr.type === attr.type && oldAttr.type === 'table') {
-                      let hasTableDifferences = false;
-                      if (oldAttr.tableValue.length !== attr.tableValue.length) {
-                        this._getGrantDiffSections();
-                        this.saveDifferences(oldSection, oldAttr, section, attr);
-                      } else {
-                        for (let i = 0; i < oldAttr.tableValue.length; i++) {
-                          if (oldAttr.tableValue[i].header !== attr.tableValue[i].header || oldAttr.tableValue[i].name !== attr.tableValue[i].name || oldAttr.tableValue[i].columns.length !== attr.tableValue[i].columns.length) {
-                            this._getGrantDiffSections();
-                            this.saveDifferences(oldSection, oldAttr, section, attr);
-                            hasTableDifferences = true;
-                            break;
-                          } else {
-                            for (let j = 0; j < oldAttr.tableValue[i].columns.length; j++) {
-                              if (oldAttr.tableValue[i].columns[j].name !== attr.tableValue[i].columns[j].name || oldAttr.tableValue[i].columns[j].value !== attr.tableValue[i].columns[j].value) {
-                                this._getGrantDiffSections();
-                                this.saveDifferences(oldSection, oldAttr, section, attr);
-                                hasTableDifferences = true;
-                                break;
-                              }
-                            }
-                            if (hasTableDifferences) {
-                              break;
-                            }
-                          }
-                        }
-                      }
-
-                    } else
-                      if (oldAttr.type === attr.type && oldAttr.type === 'document') {
-                        if (oldAttr.attachments && attr.attachments && oldAttr.attachments.length !== attr.attachments.length) {
+                      hasTableDifferences = true;
+                      break;
+                    } else {
+                      for (let j = 0; j < oldAttr.tableValue[i].columns.length; j++) {
+                        if (oldAttr.tableValue[i].columns[j].name !== attr.tableValue[i].columns[j].name || oldAttr.tableValue[i].columns[j].value !== attr.tableValue[i].columns[j].value) {
                           this._getGrantDiffSections();
                           this.saveDifferences(oldSection, oldAttr, section, attr);
-                        } else if (oldAttr.attachments && attr.attachments && oldAttr.attachments.length === attr.attachments.length) {
-                          for (let i = 0; i < oldAttr.attachments.length; i++) {
-                            if (oldAttr.attachments[i].name !== attr.attachments[i].name || oldAttr.attachments[i].type !== attr.attachments[i].type) {
-                              this._getGrantDiffSections();
-                              this.saveDifferences(oldSection, oldAttr, section, attr);
-                              break;
-                            }
-                          }
+                          hasTableDifferences = true;
+                          break;
                         }
+                      }
+                      if (hasTableDifferences) {
+                        break;
+                      }
+                    }
+                  }
+                }
 
-                      } else
-                        if (oldAttr.type === attr.type && oldAttr.type === 'disbursement') {
+              } else if (oldAttr.type === attr.type && oldAttr.type === 'document') {
+                if (oldAttr.attachments && attr.attachments && oldAttr.attachments.length !== attr.attachments.length) {
+                  this._getGrantDiffSections();
+                  this.saveDifferences(oldSection, oldAttr, section, attr);
+                } else if (oldAttr.attachments && attr.attachments && oldAttr.attachments.length === attr.attachments.length) {
+                  for (let i = 0; i < oldAttr.attachments.length; i++) {
+                    if (oldAttr.attachments[i].name !== attr.attachments[i].name || oldAttr.attachments[i].type !== attr.attachments[i].type) {
+                      this._getGrantDiffSections();
+                      this.saveDifferences(oldSection, oldAttr, section, attr);
+                      break;
+                    }
+                  }
+                }
 
-                          let hasDifferences = false;
+              } else if (oldAttr.type === attr.type && oldAttr.type === 'disbursement') {
 
-                          if (oldAttr.tableValue.length !== attr.tableValue.length) {
-                            hasDifferences = true;
-                          } else {
-                            for (let i = 0; i < oldAttr.tableValue.length; i++) {
+                let hasDifferences = false;
 
-                              if (oldAttr.tableValue[i].columns.length !== attr.tableValue[i].columns.length) {
-                                hasDifferences = true;
-                              } else {
-                                for (let j = 0; j < oldAttr.tableValue[i].columns.length; j++) {
-                                  if (oldAttr.tableValue[i].columns[j].name !== attr.tableValue[i].columns[j].name) {
-                                    hasDifferences = true;
-                                  }
-                                  if (((!oldAttr.tableValue[i].columns[j].value || oldAttr.tableValue[i].columns[j].value === null) ? "" : oldAttr.tableValue[i].columns[j].value) !== ((!attr.tableValue[i].columns[j].value || attr.tableValue[i].columns[j].value === null || attr.tableValue[i].columns[j].value === "0") ? "" : attr.tableValue[i].columns[j].value)) {
-                                    hasDifferences = true;
-                                  }
-                                }
-                              }
-                            }
-                          }
+                if (oldAttr.tableValue.length !== attr.tableValue.length) {
+                  hasDifferences = true;
+                } else {
+                  for (let i = 0; i < oldAttr.tableValue.length; i++) {
 
-                          if (hasDifferences) {
-                            this._getGrantDiffSections();
-                            this.saveDifferences(oldSection, oldAttr, section, attr);
-                          }
-
+                    if (oldAttr.tableValue[i].columns.length !== attr.tableValue[i].columns.length) {
+                      hasDifferences = true;
+                    } else {
+                      for (let j = 0; j < oldAttr.tableValue[i].columns.length; j++) {
+                        if (oldAttr.tableValue[i].columns[j].name !== attr.tableValue[i].columns[j].name) {
+                          hasDifferences = true;
                         }
+                        if (((!oldAttr.tableValue[i].columns[j].value || oldAttr.tableValue[i].columns[j].value === null) ? "" : oldAttr.tableValue[i].columns[j].value) !== ((!attr.tableValue[i].columns[j].value || attr.tableValue[i].columns[j].value === null || attr.tableValue[i].columns[j].value === "0") ? "" : attr.tableValue[i].columns[j].value)) {
+                          hasDifferences = true;
+                        }
+                      }
+                    }
+                  }
+                }
+
+                if (hasDifferences) {
+                  this._getGrantDiffSections();
+                  this.saveDifferences(oldSection, oldAttr, section, attr);
+                }
+
+              }
 
             } else if (!oldAttr) {
               this._getGrantDiffSections();
@@ -281,7 +264,6 @@ export class GrantCompareComponent implements OnInit {
         }
         if (oldSection.name !== section.name) {
           this._getGrantDiffSections();
-          //resultSections.push({'order':2,'category':'Grant Details','name':'Section name changed','change':[{'old': section.name,'new':currentSection.name}]});
           let secDiff = new SectionDiff();
           secDiff.oldSection = oldSection;
           secDiff.newSection = section;
@@ -289,11 +271,6 @@ export class GrantCompareComponent implements OnInit {
           secDiff.hasSectionLevelChanges = true;
           this.grantDiff.sectionDiffs.push(secDiff);
         }
-
-        /* if (oldSection.order !== section.order) {
-          this._getGrantSectionOrderDiffs();
-          this.grantDiff.orderDiffs.push({ name: section.name, type: 'new', order: section.order });
-        } */
 
 
         let hasDifferences = false;
@@ -329,7 +306,6 @@ export class GrantCompareComponent implements OnInit {
           this.grantDiff.sectionDiffs.push(secDiff);
         }
       } else {
-        //resultSections.push({'order':2,'category':'Grant Details','name':'Section deleted','change':[{'old': section.name,'new':''}]});
         this._getGrantDiffSections();
         let secDiff = new SectionDiff();
         secDiff.oldSection = null;
@@ -343,7 +319,6 @@ export class GrantCompareComponent implements OnInit {
     for (const section of oldGrant.sections) {
       const currentSection = newGrant.sections.filter((sec) => sec.name === section.name)[0];
       if (!currentSection) {
-        //resultSections.push({'order':2,'category':'Grant Details','name':'New section created','change':[{'old': '','new':section.name}]});
         this._getGrantDiffSections();
         let secDiff = new SectionDiff();
         secDiff.oldSection = section;
@@ -369,7 +344,6 @@ export class GrantCompareComponent implements OnInit {
       for (let a of newGrant.sections) {
         this._getGrantSectionOrderDiffs();
 
-        //secDiff.push({ name: a.name, type: 'new', order: a.order });
         this.grantDiff.orderDiffs.push({ name: a.name, type: 'new', order: a.order })
       }
 
@@ -377,19 +351,10 @@ export class GrantCompareComponent implements OnInit {
 
     if (this.grantDiff.orderDiffs && this.grantDiff.orderDiffs.length > 0) {
       for (let oldSec of oldGrant.sections) {
-        //secDiff.push({ name: oldSec.name, type: 'old', order: oldSec.order });
         this.grantDiff.orderDiffs.push({ name: oldSec.name, type: 'old', order: oldSec.order })
       }
 
     }
-
-    /* if (this.grantDiff.orderDiffs && this.grantDiff.orderDiffs.length > 0) {
-      for (let sec of oldGrant.sections) {
-        this.grantDiff.orderDiffs.push({ name: sec.name, type: 'old', order: sec.order })
-      }
-    } */
-
-
 
     this.changes.push(resultHeader);
     this.changes.push(resultSections);
@@ -416,40 +381,33 @@ export class GrantCompareComponent implements OnInit {
     }
     if (oldGrant.startDate !== newGrant.startDate) {
       this._getGrantDiff();
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grant Start Date changed','change':[{'old': oldGrant.stDate,'new':newGrant.stDate}]});
       this.grantDiff.oldGrantStartDate = oldGrant.startDate;
       this.grantDiff.newGrantStartDate = newGrant.startDate;
     }
     if (oldGrant.endDate !== newGrant.endDate) {
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grant End Date changed','change':[{'old': oldGrant.enDate,'new':newGrant.enDate}]});
       this._getGrantDiff();
       this.grantDiff.oldGrantEndDate = oldGrant.endDate;
       this.grantDiff.newGrantEndDate = newGrant.endDate;
     }
     if (oldGrant.amount !== newGrant.amount) {
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grant End Date changed','change':[{'old': oldGrant.enDate,'new':newGrant.enDate}]});
       this._getGrantDiff();
       this.grantDiff.oldGrantAmount = oldGrant.amount;
       this.grantDiff.newGrantAmount = newGrant.amount;
     }
     if (oldGrant.implementingOrganizationName && newGrant.implementingOrganizationName) {
       if (oldGrant.implementingOrganizationName !== newGrant.implementingOrganizationName) {
-        //resultHeader.push({'order':1,'category':'Grant Header','name':'Grantee changed','change':[{'old': oldGrant.organization.name,'new':newGrant.organization.name}]});
         this._getGrantDiff();
         this.grantDiff.oldGrantee = oldGrant.implementingOrganizationName;
         this.grantDiff.newGrantee = newGrant.implementingOrganizationName;
       }
     } else if (oldGrant.implementingOrganizationName === '' && newGrant.implementingOrganizationName != '') {
       this._getGrantDiff();
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grantee added','change':[{'old': '','new':newGrant.organization.name}]});
       this.grantDiff.newGrantee = newGrant.implementingOrganizationName;
     } else if (oldGrant.implementingOrganizationName != '' && newGrant.implementingOrganizationName === '') {
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grantee removed','change':[{'old': oldGrant.organization.name,'new':''}]});
       this._getGrantDiff();
       this.grantDiff.oldGrantee = oldGrant.implementingOrganizationName;
     }
     if (oldGrant.implementingOrganizationRepresentative !== newGrant.implementingOrganizationRepresentative) {
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grantee Representative changed','change':[{'old': oldGrant.representative,'new':newGrant.representative}]});
       this._getGrantDiff();
       this.grantDiff.oldRep = oldGrant.implementingOrganizationRepresentative;
       this.grantDiff.newRep = newGrant.implementingOrganizationRepresentative;
@@ -637,7 +595,6 @@ export class GrantCompareComponent implements OnInit {
         let attrDiff = [];
         if (hasDifferences) {
           for (let a of section.attributes) {
-            //this._getGrantSectionAttributeOrderDiffs();
             attrDiff.push({ name: a.name, type: 'new', order: a.order });
           }
 
@@ -734,19 +691,16 @@ export class GrantCompareComponent implements OnInit {
     }
     if (oldReport.startDate !== newReport.startDate) {
       this._getReportDiff();
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grant Start Date changed','change':[{'old': oldGrant.stDate,'new':newGrant.stDate}]});
       this.reportDiff.oldReportStartDate = oldReport.startDate;
       this.reportDiff.newReportStartDate = newReport.startDate;
     }
     if (oldReport.endDate !== newReport.endDate) {
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grant End Date changed','change':[{'old': oldGrant.enDate,'new':newGrant.enDate}]});
       this._getReportDiff();
       this.reportDiff.oldReportEndDate = oldReport.endDate;
       this.reportDiff.newReportEndDate = newReport.endDate;
     }
 
     if (oldReport.dueDate !== newReport.dueDate) {
-      //resultHeader.push({'order':1,'category':'Grant Header','name':'Grant End Date changed','change':[{'old': oldGrant.enDate,'new':newGrant.enDate}]});
       this._getReportDiff();
       this.reportDiff.oldReportDueDate = oldReport.dueDate;
       this.reportDiff.newReportDueDate = newReport.dueDate;
@@ -925,7 +879,6 @@ export class GrantCompareComponent implements OnInit {
         }
         if (oldSection.name !== section.name) {
           this._getReportDiffSections();
-          //resultSections.push({'order':2,'category':'Grant Details','name':'Section name changed','change':[{'old': section.name,'new':currentSection.name}]});
           let secDiff = new SectionDiff();
           secDiff.oldSection = oldSection;
           secDiff.newSection = section;
@@ -960,7 +913,6 @@ export class GrantCompareComponent implements OnInit {
           this._getReportDiffSections();
           const attrDiff1 = new AttributeDiff();
           attrDiff1.section = section.name;
-          //attrDiff1.newAttribute = attr;
           const sectionDiff = new SectionDiff();
           sectionDiff.oldSection = oldSection;
           sectionDiff.newSection = section;
@@ -970,7 +922,6 @@ export class GrantCompareComponent implements OnInit {
           this.reportDiff.sectionDiffs.push(sectionDiff);
         }
       } else {
-        //resultSections.push({'order':2,'category':'Grant Details','name':'Section deleted','change':[{'old': section.name,'new':''}]});
         this._getReportDiffSections();
         let secDiff = new SectionDiff();
         secDiff.oldSection = null;
@@ -984,7 +935,6 @@ export class GrantCompareComponent implements OnInit {
     for (const section of oldReport.sections) {
       const currentSection = newReport.sections.filter((sec) => sec.name === section.name)[0];
       if (!currentSection) {
-        //resultSections.push({'order':2,'category':'Grant Details','name':'New section created','change':[{'old': '','new':section.name}]});
         this._getReportDiffSections();
         let secDiff = new SectionDiff();
         secDiff.oldSection = section;
@@ -1014,7 +964,6 @@ export class GrantCompareComponent implements OnInit {
       for (let a of newReport.sections) {
         this._getReportSectionOrderDiffs();
 
-        //secDiff.push({ name: a.name, type: 'new', order: a.order });
         this.reportDiff.orderDiffs.push({ name: a.name, type: 'new', order: a.order })
       }
 
@@ -1022,7 +971,6 @@ export class GrantCompareComponent implements OnInit {
 
     if (this.reportDiff && this.reportDiff.orderDiffs && this.reportDiff.orderDiffs.length > 0) {
       for (let oldSec of oldReport.sections) {
-        //secDiff.push({ name: oldSec.name, type: 'old', order: oldSec.order });
         this.grantDiff.orderDiffs.push({ name: oldSec.name, type: 'old', order: oldSec.order })
       }
 
@@ -1249,7 +1197,6 @@ export class GrantCompareComponent implements OnInit {
         }
         if (oldSection.name !== section.name) {
           this._getClosureDiffSections();
-          //resultSections.push({'order':2,'category':'Grant Details','name':'Section name changed','change':[{'old': section.name,'new':currentSection.name}]});
           let secDiff = new SectionDiff();
           secDiff.oldSection = oldSection;
           secDiff.newSection = section;
@@ -1341,7 +1288,6 @@ export class GrantCompareComponent implements OnInit {
 
     if (this.closureDiff && this.closureDiff.orderDiffs && this.closureDiff.orderDiffs.length > 0) {
       for (let oldSec of oldClosure.sections) {
-        //secDiff.push({ name: oldSec.name, type: 'old', order: oldSec.order });
         this.closureDiff.orderDiffs.push({ name: oldSec.name, type: 'old', order: oldSec.order })
       }
 
@@ -1529,18 +1475,14 @@ export class GrantCompareComponent implements OnInit {
     for (let i = 0; i < tabData[0].columns.length; i++) {
 
 
-      //if(tabData[0].columns[i].name.trim() !== ''){
       html += '<td>' + this.getTheDifference(String((oldData && oldData.length > 0 && oldData[0].columns[i] && oldData[0].columns[i].name && oldData[0].columns[i].name.trim() === '') ? oldData[0].columns[i].name : '&nbsp;'), String(tabData && tabData.length > 0 && tabData[0].columns[i] && tabData[0].columns[i].name && tabData[0].columns[i].name.trim() === '' ? '&nbsp;' : tabData[0].columns[i].name)).after + '</td>';
-      //}
     }
     html += '</tr>';
     for (let i = 0; i < tabData.length; i++) {
 
       html += '<tr><td>' + this.getTheDifference(oldData && oldData.length > 0 && oldData[i] ? oldData[i].name : '', tabData[i].name).after + '</td>';
       for (let j = 0; j < tabData[i].columns.length; j++) {
-        //if(tabData[i].columns[j].name.trim() !== ''){
         html += '<td>' + this.getTheDifference(oldData && oldData.length > 0 && oldData[i] ? String(oldData[i].columns[j].value.trim() === '' ? '&nbsp;' : oldData[i].columns[j].value) : '', String(tabData[i].columns[j].value.trim() === '' ? '&nbsp;' : tabData[i].columns[j].value)).after + '</td>';
-        //}
       }
       html += '</tr>';
     }
@@ -1556,9 +1498,7 @@ export class GrantCompareComponent implements OnInit {
     for (let i = 0; i < tabData[0].columns.length; i++) {
 
 
-      //if(tabData[0].columns[i].name.trim() !== ''){
       html += '<td>' + this.getTheDifference(String(oldData && oldData.length > 0 && oldData[0].columns[i].name.trim() === '' ? '&nbsp;' : oldData[0].columns[i].name), String(tabData && tabData.length > 0 && tabData[0].columns[i].name.trim() === '' ? '&nbsp;' : tabData[0].columns[i].name)).before + '</td>';
-      //}
     }
     html += '</tr>';
     for (let i = 0; i < tabData.length; i++) {
@@ -1567,9 +1507,7 @@ export class GrantCompareComponent implements OnInit {
       }
       html += '<tr><td>' + this.getTheDifference(oldData && oldData.length > 0 && oldData[i] ? oldData[i].name : '', tabData && tabData.length > 0 && tabData[i].name ? tabData[i].name : '').before + '</td>';
       for (let j = 0; j < tabData[i].columns.length; j++) {
-        //if(tabData[i].columns[j].name.trim() !== ''){
         html += '<td>' + this.getTheDifference(oldData[i] ? String(oldData[i].columns[j].value.trim() === '' ? '&nbsp;' : oldData[i].columns[j].value) : '', String(tabData[i].columns[j].value.trim() === '' ? '&nbsp;' : tabData[i].columns[j].value)).before + '</td>';
-        //}
       }
       html += '</tr>';
     }
@@ -1586,23 +1524,17 @@ export class GrantCompareComponent implements OnInit {
       for (let i = 0; i < tabData[0].columns.length; i++) {
 
 
-        //if(tabData[0].columns[i].name.trim() !== ''){
         html += '<td>' + this.getTheDifference(oldData[0].columns[i].name ? oldData[0].columns[i].name : '', tabData[0].columns[i].name).after + '</td>';
-        //}
       }
       html += '</tr>';
       for (let i = 0; i < tabData.length; i++) {
         html += '<tr><td>' + this.getTheDifference(oldData[i] && oldData[i].name ? oldData[i].name : '', tabData[i].name).after + '</td>';
         for (let j = 0; j < tabData[i].columns.length; j++) {
-          //if(tabData[i].columns[j].name.trim() !== ''){
           if (!tabData[i].columns[j].dataType) {
             html += '<td>' + this.getTheDifference(oldData[i] && oldData[i].columns[j].value ? oldData[i].columns[j].value : '', tabData[i].columns[j].value).after + '</td>';
           } else if (tabData[i].columns[j].dataType === 'currency') {
             html += '<td class="text-right">₹ ' + this.getTheDifference(inf.format(Number(oldData[i] && oldData[i].columns[j].value && oldData[i].columns[j].value.trim() !== '' ? oldData[i].columns[j].value : 0), 2), inf.format(Number(tabData[i] && tabData[i].columns[j].value && tabData[i].columns[j].value.trim() !== '' ? tabData[i].columns[j].value : 0), 2)).after + '</td>';
           }
-
-
-          //}
         }
         html += '</tr>';
       }
@@ -1620,9 +1552,7 @@ export class GrantCompareComponent implements OnInit {
       for (let i = 0; i < tabData[0].columns.length; i++) {
 
 
-        //if(tabData[0].columns[i].name.trim() !== ''){
         html += '<td>' + this.getTheDifference(oldData[0].columns[i].name ? oldData[0].columns[i].name : '', tabData[0].columns[i].name).before + '</td>';
-        //}
       }
       html += '</tr>';
       for (let i = 0; i < tabData.length; i++) {
@@ -1631,15 +1561,11 @@ export class GrantCompareComponent implements OnInit {
         }
         html += '<tr><td>' + this.getTheDifference(oldData[i] && oldData[i].name ? oldData[i].name : '', tabData[i].name).before + '</td>';
         for (let j = 0; j < tabData[i].columns.length; j++) {
-          //if(tabData[i].columns[j].name.trim() !== ''){
           if (!tabData[i].columns[j].dataType) {
             html += '<td>' + this.getTheDifference(oldData[i] && oldData[i].columns[j].value ? oldData[i].columns[j].value : '', tabData[i].columns[j].value).before + '</td>';
           } else if (tabData[i].columns[j].dataType === 'currency') {
             html += '<td class="text-right">₹ ' + this.getTheDifference(inf.format(Number(oldData[i] && oldData[i].columns[j].value && oldData[i].columns[j].value.trim() !== '' ? oldData[i].columns[j].value : 0), 2), inf.format(Number(tabData[i] && tabData[i].columns[j].value && tabData[i].columns[j].value.trim() !== '' ? tabData[i].columns[j].value : 0), 2)).before + '</td>';
           }
-
-
-          //}
         }
         html += '</tr>';
       }
@@ -1725,25 +1651,19 @@ export class GrantCompareComponent implements OnInit {
     for (let i = 0; i < tabData[0].columns.length; i++) {
 
 
-      //if(tabData[0].columns[i].name.trim() !== ''){
       html += '<td>' + String(tabData[0].columns[i].name.trim() === '' ? '&nbsp;' : tabData[0].columns[i].name) + '</td>';
-      //}
     }
     html += '</tr>';
     for (let i = 0; i < tabData.length; i++) {
 
       html += '<tr><td>' + tabData[i].name + '</td>';
       for (let j = 0; j < tabData[i].columns.length; j++) {
-        //if(tabData[i].columns[j].name.trim() !== ''){
         html += '<td>' + String(tabData[i].columns[j].value.trim() === '' ? '&nbsp;' : tabData[i].columns[j].value) + '</td>';
-        //}
       }
       html += '</tr>';
     }
 
     html += '</table>'
-    //document.getElementById('attribute_' + elemId).innerHTML = '';
-    //document.getElementById('attribute_' + elemId).append('<H1>Hello</H1>');
     return html;
   }
 
@@ -1755,16 +1675,13 @@ export class GrantCompareComponent implements OnInit {
       for (let i = 0; i < tabData[0].columns.length; i++) {
 
 
-        //if(tabData[0].columns[i].name.trim() !== ''){
         html += '<td>' + tabData[0].columns[i].name + '</td>';
-        //}
       }
       html += '</tr>';
       for (let i = 0; i < tabData.length; i++) {
 
         html += '<tr><td>' + tabData[i].name + '</td>';
         for (let j = 0; j < tabData[i].columns.length; j++) {
-          //if(tabData[i].columns[j].name.trim() !== ''){
           if (!tabData[i].columns[j].dataType) {
             html += '<td>' + tabData[i].columns[j].value + '</td>';
           } else if (tabData[i].columns[j].dataType === 'currency') {
@@ -1772,15 +1689,12 @@ export class GrantCompareComponent implements OnInit {
           }
 
 
-          //}
         }
         html += '</tr>';
       }
     }
 
     html += '</table>'
-    //document.getElementById('attribute_' + elemId).innerHTML = '';
-    //document.getElementById('attribute_' + elemId).append('<H1>Hello</H1>');
     return html;
   }
 
@@ -1805,17 +1719,6 @@ export class GrantCompareComponent implements OnInit {
 
     }
     html += '</tr>';
-    /* for (let i = 0; i < tabData.length; i++) {
-
-      html += '<tr><td>' + this.getTheDifference(oldData && oldData.length > 0 && oldData[i] ? oldData[i].name : '', tabData[i].name).after + '</td>';
-      for (let j = 0; j < tabData[i].columns.length; j++) {
-        //if(tabData[i].columns[j].name.trim() !== ''){
-        html += '<td>' + this.getTheDifference(oldData && oldData.length > 0 && oldData[i] ? String(oldData[i].columns[j].value.trim() === '' ? '&nbsp;' : oldData[i].columns[j].value) : '', String(tabData[i].columns[j].value.trim() === '' ? '&nbsp;' : tabData[i].columns[j].value)).after + '</td>';
-        //}
-      }
-      html += '</tr>';
-    } */
-
     html += '</table>'
     return html;
   }
@@ -1824,11 +1727,7 @@ export class GrantCompareComponent implements OnInit {
     let html = '<table width="100%" border="1" class="bg-white"><tr>';
 
     let tabData;
-    /* if (data) {
-      tabData = data;
-    } else { */
     tabData = oldData;
-    /*  } */
     html += '<td>#</td><td>Refund Date</td><td>Refund Amount</td><td>Note</td></tr>';
     for (let i = 0; i < tabData.length; i++) {
 
@@ -1839,18 +1738,6 @@ export class GrantCompareComponent implements OnInit {
         '<td>' + this.getTheDifference((oldData[i] && oldData[i].note) ? String(oldData[i].note) : '', tabData[i].note ? String(tabData[i].note) : '').before + '</td></tr>';
 
     }
-    //html += '</tr>';
-    /* for (let i = 0; i < tabData.length; i++) {
-
-      html += '<tr><td>' + this.getTheDifference(oldData && oldData.length > 0 && oldData[i] ? oldData[i].name : '', tabData[i].name).after + '</td>';
-      for (let j = 0; j < tabData[i].columns.length; j++) {
-        //if(tabData[i].columns[j].name.trim() !== ''){
-        html += '<td>' + this.getTheDifference(oldData && oldData.length > 0 && oldData[i] ? String(oldData[i].columns[j].value.trim() === '' ? '&nbsp;' : oldData[i].columns[j].value) : '', String(tabData[i].columns[j].value.trim() === '' ? '&nbsp;' : tabData[i].columns[j].value)).after + '</td>';
-        //}
-      }
-      html += '</tr>';
-    } */
-
     html += '</table>'
     return html;
   }

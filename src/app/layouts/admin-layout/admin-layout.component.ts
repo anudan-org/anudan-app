@@ -142,7 +142,6 @@ export class AdminLayoutComponent implements OnInit {
         .getElementsByTagName("body")[0]
         .classList.contains("sidebar-mini")
     ) {
-      // if we are on windows OS we activate the perfectScrollbar function
 
       const scrollableHtmlColl = document
         .getElementsByClassName("anudan-scrollable");
@@ -186,9 +185,6 @@ export class AdminLayoutComponent implements OnInit {
     }
 
     this.appComponent.initAppUI();
-    /*interval(30000).subscribe(t => {
-              this.appComponent.initAppUI();
-            });*/
 
     this.intervalSubscription = interval(15000).subscribe((t) => {
       if ($("#messagepopover").css("display") === "block") {
@@ -294,18 +290,6 @@ export class AdminLayoutComponent implements OnInit {
               }
             }
 
-            /* for (let notif of notifications) {
-                        const plain = notif.message.match(/<a [^>]+>([^<]+)<\/a>/);
-                        if (plain !== null) {
-                            if (notif.notificationFor === "DISBURSEMENT") {
-                                notif.message = notif.message.replace(/<a[\s]+([^>]+)>((?:.(?!\<\/a\>))*.)<\/a>/g, " <i> < GO TO APPROVAL NOTE ></i> button below ");
-                            } else if (notif.notificationFor === "GRANT") {
-                                notif.message = notif.message.replace(/<a[\s]+([^>]+)>((?:.(?!\<\/a\>))*.)<\/a>/g, " <i> < GO TO GRANT> </i> button below ");
-                            } else if (notif.notificationFor === "REPORT") {
-                                notif.message = notif.message.replace(/<a[\s]+([^>]+)>((?:.(?!\<\/a\>))*.)<\/a>/g, " Click on <i>< GO TO REPORT > </i> button below to review");
-                            }
-                        }
-                    } */
             this.appComponent.notifications = notifications;
             this.appComponent.unreadMessages = 0;
             for (let notice of this.appComponent.notifications) {
@@ -361,7 +345,6 @@ export class AdminLayoutComponent implements OnInit {
             const config: Partial<IndividualConfig> = y;
             if (errorMsg.error && errorMsg.error.message === "Token Expired") {
               this.intervalSubscription.unsubscribe();
-              //this.toastr.error('Logging you out now...',"Your session has expired", errorconfig);
               alert("Your session has timed out. Please sign in again.");
               this.appComponent.logout();
             } else {
@@ -409,8 +392,6 @@ export class AdminLayoutComponent implements OnInit {
   }
 
   showAllGrants(grant: Grant, action: string) {
-    //this.subscription.unsubscribe();
-    //this.dataService.changeMessage(0);
     this.appComponent.reportSaved = true;
     this.appComponent.showSaving = false;
 
@@ -544,7 +525,6 @@ export class AdminLayoutComponent implements OnInit {
                 const errorconfig: Partial<IndividualConfig> = x;
                 const config: Partial<IndividualConfig> = y;
                 if (errorMsg.error.message === "Token Expired") {
-                  //this.toastr.error('Logging you out now...',"Your session has expired", errorconfig);
                   alert("Your session has timed out. Please sign in again.");
                   this.appComponent.logout();
                 } else {
@@ -639,7 +619,6 @@ export class AdminLayoutComponent implements OnInit {
                 const errorconfig: Partial<IndividualConfig> = x;
                 const config: Partial<IndividualConfig> = y;
                 if (errorMsg.error.message === "Token Expired") {
-                  //this.toastr.error('Logging you out now...',"Your session has expired", errorconfig);
                   alert("Your session has timed out. Please sign in again.");
                   this.appComponent.logout();
                 } else {
@@ -703,7 +682,6 @@ export class AdminLayoutComponent implements OnInit {
     } else if (this.appComponent.currentView === "grant-closure") {
       const wfModel = new ClosureWorkflowAssignmentModel();
       wfModel.users = this.appComponent.tenantUsers;
-      //wfModel.granteeUsers = this.currentReport.granteeUsers;
       wfModel.workflowStatuses = this.appComponent.closureWorkflowStatuses;
       wfModel.workflowAssignments = this.currentClosure.workflowAssignment;
       wfModel.type = this.appComponent.currentView;
@@ -779,7 +757,6 @@ export class AdminLayoutComponent implements OnInit {
                 const errorconfig: Partial<IndividualConfig> = x;
                 const config: Partial<IndividualConfig> = y;
                 if (errorMsg.error.message === "Token Expired") {
-                  //this.toastr.error('Logging you out now...',"Your session has expired", errorconfig);
                   alert("Your session has timed out. Please sign in again.");
                   this.appComponent.logout();
                 } else {
