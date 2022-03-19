@@ -706,7 +706,7 @@ export class BasicComponent implements OnInit {
         newAttr.fieldValue = "";
         newAttr.deletable = true;
         newAttr.required = false;
-        newAttr.id = 0 - Math.round(Math.random() * 1000000000);
+        newAttr.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
         section.attributes.push(newAttr);
         break;
       }
@@ -732,7 +732,7 @@ export class BasicComponent implements OnInit {
         attribute.fieldName = fieldName.val();
         attribute.fieldType = fieldType.val();
         attribute.fieldValue = "";
-        attribute.id = 0 - Math.round(Math.random() * 10000000000);
+        attribute.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
         section.attributes.push(attribute);
         break;
       }
@@ -841,7 +841,7 @@ export class BasicComponent implements OnInit {
     const currentSections = this.currentGrant.grantDetails.sections;
     const newSection = new Section();
     newSection.attributes = [];
-    newSection.id = 0 - Math.round(Math.random() * 10000000000);
+    newSection.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
     newSection.sectionName = sectionName.val();
 
     currentSections.push(newSection);
@@ -878,7 +878,7 @@ export class BasicComponent implements OnInit {
   saveKpi() {
     const kpiModal = this.createKpiModal.nativeElement;
     const kpiDesc = $(this.kpiDescriptionelem.nativeElement);
-    const id = 0 - Math.round(Math.random() * 10000000000);
+    const id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
 
     const kpi = new Kpi();
     kpi.id = id;
@@ -913,7 +913,7 @@ export class BasicComponent implements OnInit {
         const quantKpi = new QuantitiaveKpisubmission();
         quantKpi.goal = 0;
         quantKpi.toReport = true;
-        quantKpi.id = 0 - Math.round(Math.random() * 10000000000);
+        quantKpi.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
         quantKpi.grantKpi = grantKpi;
 
         sub.quantitiaveKpisubmissions.push(quantKpi);
@@ -921,7 +921,7 @@ export class BasicComponent implements OnInit {
         const qualKpi = new QualitativeKpiSubmission();
         qualKpi.goal = "";
         qualKpi.toReport = true;
-        qualKpi.id = 0 - Math.round(Math.random() * 10000000000);
+        qualKpi.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
         qualKpi.grantKpi = grantKpi;
 
         sub.qualitativeKpiSubmissions.push(qualKpi);
@@ -929,7 +929,7 @@ export class BasicComponent implements OnInit {
         const docKpi = new DocumentKpiSubmission();
         docKpi.goal = "";
         docKpi.toReport = true;
-        docKpi.id = 0 - Math.round(Math.random() * 10000000000);
+        docKpi.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
         docKpi.grantKpi = grantKpi;
 
         sub.documentKpiSubmissions.push(docKpi);
@@ -1438,7 +1438,7 @@ export class BasicComponent implements OnInit {
     );
     if (selectedOrg.length === 0) {
       const newOrg = new Organization();
-      newOrg.id = 0 - Math.round(Math.random() * 1000000000);
+      newOrg.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
       newOrg.organizationType = "GRANTEE";
       newOrg.type = "GRANTEE";
       newOrg.name = 'Add a new Organisation: "' + value + '"';

@@ -1,7 +1,7 @@
-import {Component, Inject, OnInit} from '@angular/core';
-import {MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef} from '@angular/material';
-import {FileTemplates, Template} from '../../model/dahsboard';
-import {ToastrService} from "ngx-toastr";
+import { Component, Inject, OnInit } from '@angular/core';
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material';
+import { FileTemplates, Template } from '../../model/dahsboard';
+import { ToastrService } from "ngx-toastr";
 
 @Component({
   selector: 'app-bottomsheet',
@@ -13,9 +13,9 @@ export class BottomsheetComponent implements OnInit {
   passedTemplatesInfo: FileTemplates;
 
   constructor(
-      private _bottomSheetRef: MatBottomSheetRef<BottomsheetComponent>
-  , @Inject(MAT_BOTTOM_SHEET_DATA) public data: FileTemplates,
-      private toastr: ToastrService) {
+    private _bottomSheetRef: MatBottomSheetRef<BottomsheetComponent>
+    , @Inject(MAT_BOTTOM_SHEET_DATA) public data: FileTemplates,
+    private toastr: ToastrService) {
     this.passedTemplatesInfo = this.data;
   }
 
@@ -42,7 +42,7 @@ export class BottomsheetComponent implements OnInit {
       const reader: FileReader = new FileReader();
 
       const newTemplate = new Template();
-      const id = 0 - Math.round(Math.random() * 10000000000);
+      const id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
       newTemplate.id = id;
       reader.constructor(id);
       newTemplate.name = file.name;
@@ -52,19 +52,19 @@ export class BottomsheetComponent implements OnInit {
 
       reader.onloadend = () => {
         const data = reader.result.toString();
-        setTimeout(()=> {
+        setTimeout(() => {
           console.log(data);
           for (const tmplt of this.passedTemplatesInfo.templates) {
             if (tmplt.id === newTemplate.id) {
 
-              if(data==='data:'){
-                this.toastr.error('Error processing the file. Please try again','File Error');
+              if (data === 'data:') {
+                this.toastr.error('Error processing the file. Please try again', 'File Error');
               }
 
               console.log('>>>>>>>>  ' + newTemplate.id);
             }
           }
-        },3000);
+        }, 3000);
 
       }
 

@@ -645,7 +645,7 @@ export class SectionsComponent
         attribute.fieldName = fieldName.val();
         attribute.fieldType = fieldType.val();
         attribute.fieldValue = "";
-        attribute.id = 0 - Math.round(Math.random() * 10000000000);
+        attribute.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
         section.attributes.push(attribute);
         break;
       }
@@ -751,7 +751,7 @@ export class SectionsComponent
     const currentSections = this.currentGrant.grantDetails.sections;
     const newSection = new Section();
     newSection.attributes = [];
-    newSection.id = 0 - Math.round(Math.random() * 10000000000);
+    newSection.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
     newSection.sectionName = sectionName.val();
 
     currentSections.push(newSection);
@@ -1107,7 +1107,7 @@ export class SectionsComponent
   addColumn(attr: Attribute) {
     for (let row of attr.fieldTableValue) {
       const col = new ColumnData();
-      col.id = Math.round(Math.random() * 1000000000);
+      col.id = window.crypto.getRandomValues(new Uint32Array(10))[0];
       col.name = "";
       col.value = "";
       row.columns.push(col);

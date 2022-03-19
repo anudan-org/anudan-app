@@ -367,7 +367,7 @@ export class ClosureHeaderComponent implements OnInit {
     );
     if (selectedReason.length === 0) {
       const newReason = new Reason();
-      newReason.id = 0 - Math.round(Math.random() * 1000000000);
+      newReason.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
       newReason.organizationId = this.appComp.loggedInUser.organization.id;
       newReason.reason = 'Add a new Closure Reason: "' + value + '"';
       selectedReason.push(newReason);

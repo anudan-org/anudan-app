@@ -195,22 +195,22 @@
                 <table id="tablePlaceholderX" style="width:100%;">
                   <caption></caption>
                   <tr style="background: #f9f9f9">
-                    <th id="planned_installment_entry_no" style="width:2%;"
-                      class="text-center d-flex align-items-center" style="border: 1px solid #e4e4e4">
+                    <th id="planned_installment_entry_no" style="width:2%;" class="text-center"
+                      style="border: 1px solid #e4e4e4">
                       Planned Installment #
                     </th>
                     <ng-container *ngFor="
                     let column of getGrantDisbursementAttribute()
                       .fieldTableValue[0].columns;
                     let i = index">
-                      <th [id]="column.name.replace(' ','')+'_id'" *ngIf="column.name !== 'Notes'"
-                        class="text-center d-flex align-items-center" style="border: 1px solid #e4e4e4;width:15%;">
+                      <th [id]="column.name.replace(' ','')+'_id'" *ngIf="column.name !== 'Notes'" class="text-center"
+                        style="border: 1px solid #e4e4e4;width:15%;">
                         {{
                         column.name === "Notes" ? "Milestones/Notes" : column.name
                         }}
                       </th>
-                      <th [id]="column.name.replace(' ','')+'_id'" *ngIf="column.name === 'Notes'"
-                        class="text-center d-flex align-items-center" style="border: 1px solid #e4e4e4;width:50%">
+                      <th [id]="column.name.replace(' ','')+'_id'" *ngIf="column.name === 'Notes'" class="text-center"
+                        style="border: 1px solid #e4e4e4;width:50%">
                         {{
                         column.name === "Notes" ? "Milestones/Notes" : column.name
                         }}

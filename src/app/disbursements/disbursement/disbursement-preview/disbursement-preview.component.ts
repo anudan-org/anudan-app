@@ -402,6 +402,7 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
             action: "cd",
           };
         }
+        this.router.navigate(['disbursements/in-progress']);
       });
   }
 

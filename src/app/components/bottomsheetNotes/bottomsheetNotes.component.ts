@@ -1,7 +1,7 @@
-import {Component, ElementRef, Inject, OnInit, ViewChild} from '@angular/core';
-import {MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef} from '@angular/material';
-import {AttachmentTemplates, Doc, Note, NoteTemplates, Template} from '../../model/dahsboard';
-import {User} from "../../model/user";
+import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material';
+import { AttachmentTemplates, Doc, Note, NoteTemplates, Template } from '../../model/dahsboard';
+import { User } from "../../model/user";
 
 @Component({
     selector: 'app-bottomsheetattachments',
@@ -38,7 +38,7 @@ export class BottomsheetNotesComponent implements OnInit {
 
         const note = new Note();
         note.message = msg.value;
-        note.id = 0 - Math.round(Math.random()*10000000000);
+        note.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
         note.postedBy = (JSON.parse(localStorage.getItem('USER')));
         note.postedOn = new Date();
         this.passedNotesInfo.notes.push(note);
@@ -54,7 +54,7 @@ export class BottomsheetNotesComponent implements OnInit {
             const reader: FileReader = new FileReader();
 
             const newDoc = new Doc();
-            const id = 0 - Math.round(Math.random() * 10000000000);
+            const id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
             newDoc.id = id;
             newDoc.fileName = file.name;
             newDoc.fileType = file.name.substr(file.name.lastIndexOf('.') + 1);

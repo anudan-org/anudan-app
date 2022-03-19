@@ -324,6 +324,7 @@ export class ReportPreviewComponent implements OnInit {
                             this.singleReportDataService.changeMessage(report);
                             //this.appComp.selectedTemplate = grant.grantTemplate;
                             this.fetchCurrentReport();
+                            this.router.navigate(['reports/submitted']);
                         });
 
                     } else {
@@ -333,12 +334,15 @@ export class ReportPreviewComponent implements OnInit {
                             //this.appComp.selectedTemplate = grant.grantTemplate;
                             dialogRef.close();
                             this.fetchCurrentReport();
+                            this.router.navigate(['reports/submitted']);
                         });
 
                     }
                 });
             } else {
                 this.fetchCurrentReport();
+                this.appComp.currentView = 'upcoming';
+                this.router.navigate(['reports/upcoming']);
             }
 
         }, error => {

@@ -1040,7 +1040,7 @@ export class ReportSectionsComponent implements OnInit {
   addColumn(attr: Attribute) {
     for (let row of attr.fieldTableValue) {
       const col = new ColumnData();
-      col.id = Math.round(Math.random() * 1000000000);
+      col.id = window.crypto.getRandomValues(new Uint32Array(10))[0];
       col.name = "";
       col.value = "";
       row.columns.push(col);

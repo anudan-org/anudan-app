@@ -555,7 +555,7 @@ export class PreviewComponent implements OnInit {
         newAttr.fieldValue = "";
         newAttr.deletable = true;
         newAttr.required = false;
-        newAttr.id = 0 - Math.round(Math.random() * 1000000000);
+        newAttr.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
         section.attributes.push(newAttr);
         break;
       }
@@ -581,7 +581,7 @@ export class PreviewComponent implements OnInit {
         attribute.fieldName = fieldName.val();
         attribute.fieldType = fieldType.val();
         attribute.fieldValue = "";
-        attribute.id = 0 - Math.round(Math.random() * 10000000000);
+        attribute.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
         section.attributes.push(attribute);
         break;
       }
@@ -693,7 +693,7 @@ export class PreviewComponent implements OnInit {
     const currentSections = this.currentGrant.grantDetails.sections;
     const newSection = new Section();
     newSection.attributes = [];
-    newSection.id = 0 - Math.round(Math.random() * 10000000000);
+    newSection.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
     newSection.sectionName = sectionName.val();
 
     currentSections.push(newSection);

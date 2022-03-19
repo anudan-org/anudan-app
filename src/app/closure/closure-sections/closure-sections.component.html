@@ -699,8 +699,7 @@
                                 <table id="tablePlaceholderX" style="width:100%;">
                                   <caption></caption>
                                   <tr style="background: #f9f9f9">
-                                    <th id="planned" class="d-flex align-items-center justify-content-center"
-                                      style="border: 1px solid #e4e4e4;width:10%;">
+                                    <th id="planned" style="border: 1px solid #e4e4e4;width:10%;">
                                       <label class="m-0"><span>Planned Installment #</span></label>
                                     </th>
                                     <ng-container *ngFor="
@@ -708,8 +707,7 @@
                                 .fieldTableValue[0].columns;
                               let i = index
                             ">
-                                      <th [id]="'col_1_'+i" class="d-flex align-items-center justify-content-center"
-                                        [ngStyle]="
+                                      <th [id]="'col_1_'+i" [ngStyle]="
                                 (column.name === 'Funds from other Sources')
                                   ? {
                                       border: '1px solid #e4e4e4',
@@ -769,8 +767,7 @@
                             getGrantDisbursementAttribute()
                               .fieldTableValue.length > 1
                           " style="background: #f4f4f4">
-                                    <td class="py-2" class="d-flex justify-content-center"
-                                      style="position: sticky; left: 0; z-index: 1">
+                                    <td class="py-2" style="position: sticky; left: 0; z-index: 1">
                                       <label class="w-100" style="font-weight: 600">TOTAL:</label>
                                     </td>
                                     <ng-container *ngIf="
@@ -781,7 +778,7 @@
                                 let column of getGrantDisbursementAttribute()
                                   .fieldTableValue[0].columns;
                                 let j = index
-                              " class="d-flex align-items-center justify-content-center">
+                              ">
                                         <label class="text-right pr-3 my-0 w-100"
                                           *ngIf="column.dataType === 'currency'"><strong class="pf">{{
                                             getTotals(
@@ -813,8 +810,7 @@
                                   </ng-container>
                                   <tr>
                                     <ng-container *ngIf="attribute.fieldTableValue">
-                                      <td class="d-flex align-items-center justify-content-center"
-                                        style="border: 1px solid #e4e4e4;width:10%;">
+                                      <td style="border: 1px solid #e4e4e4;width:10%;">
                                         <label class="m-0">#</label>
                                       </td>
                                     </ng-container>
@@ -827,7 +823,7 @@
                                   .columns;
                                 let i = index
                               ">
-                                        <td class="d-flex align-items-center justify-content-center" [ngStyle]="
+                                        <td [ngStyle]="
                                   column.name ===
                                   'Funds from Other Sources'
                                     ? {
@@ -1542,8 +1538,7 @@
                             attribute.fieldTableValue &&
                             attribute.fieldTableValue.length > 1
                           " style="background: #f4f4f4">
-                                    <td class="py-2 d-flex justify-content-center"
-                                      style="position: sticky; left: 0; z-index: 1">
+                                    <td class="py-2" style="position: sticky; left: 0; z-index: 1">
                                       <label class="w-100" style="font-weight: 600">TOTAL:</label>
                                     </td>
                                     <ng-container *ngIf="attribute.fieldTableValue[0]">
@@ -1551,7 +1546,7 @@
                                 let column of attribute.fieldTableValue[0]
                                   .columns;
                                 let j = index
-                              " class="d-flex align-items-center justify-content-center">
+                              ">
                                         <label class="text-right pr-3 my-0 w-100"
                                           *ngIf="column.dataType === 'currency'"><strong class="rf">{{
                                             getTotals(j, attribute.fieldTableValue)
