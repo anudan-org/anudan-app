@@ -165,7 +165,7 @@ export class DocumentLibraryComponent implements OnInit {
         return;
       }
 
-      const ext = file.name.substr(file.name.lastIndexOf('.'));
+      const ext = file.name.substring(file.name.lastIndexOf('.'));
       if (this.appComponent.acceptedFileTypes.filter(d => d === ext).length === 0) {
         this.dialog.open(MessagingComponent, {
           data: 'Detected an unsupported file type. Supported file types are ' + this.appComponent.acceptedFileTypes.toString() + '. Unable to upload.',

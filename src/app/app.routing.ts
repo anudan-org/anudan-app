@@ -10,7 +10,6 @@ import { PasswordResetComponent } from './password-reset/password-reset.componen
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { HomeComponent } from './home/home.component';
 import { WelcomeComponent } from './welcome/welcome.component';
-import { KpisubmissionComponent } from './kpisubmission/kpisubmission.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { AuthGuardService } from './auth-guard.service';
 

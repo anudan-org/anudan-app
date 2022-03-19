@@ -1491,7 +1491,7 @@ export class PreviewComponent implements OnInit {
 
   getCleanClosureNote() {
     if (this.appComp.loggedInUser.organization.organizationType !== 'GRANTEE') {
-      return this.currentGrant.note.substr(this.currentGrant.note.lastIndexOf('</i>') + 4);
+      return this.currentGrant.note.substring(this.currentGrant.note.lastIndexOf('</i>') + 4);
     } else {
       return 'This grant has been closed.'
     }
