@@ -25,7 +25,7 @@ import { MatSnackBar, MatDialog } from '@angular/material';
 import { SingleReportDataService } from './single.report.data.service';
 import { DisbursementDataService } from './disbursement.data.service';
 
-
+//App Component
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
