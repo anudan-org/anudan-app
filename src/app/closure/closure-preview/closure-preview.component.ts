@@ -476,15 +476,9 @@ export class ClosurePreviewComponent implements OnInit {
   previewDocument(_for, attach) {
     this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentClosure.id, attach.id).then((result: any) => {
       let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
-      let docUrl;
-      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/view.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
-      } else if (docType === 'pdf' || docType === 'txt') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
-      }
       this.dialog.open(DocpreviewComponent, {
         data: {
-          url: docUrl,
+          url: result.url,
           type: docType,
           title: attach.name + '.' + attach.type,
           userId: this.appComp.loggedInUser.id,
@@ -503,8 +497,7 @@ export class ClosurePreviewComponent implements OnInit {
   }
 
   getForwardFlow() {
-    const forwardStates = this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === true);
-    return forwardStates;
+    return this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === true);
   }
 
   getSingleBackwardFlow() {
@@ -512,8 +505,7 @@ export class ClosurePreviewComponent implements OnInit {
     if (this.appComp.loggedInUser.organization.organizationType === 'GRANTEE') {
       return this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false)[0];
     }
-    const backwardState = this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false)[0];
-    return backwardState;
+    return this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false)[0];
   }
 
   hasMultipleBackwardFlow() {
@@ -572,7 +564,7 @@ export class ClosurePreviewComponent implements OnInit {
     if (amount) {
       return inf.format(amount, 2);
     }
-    return inf.format(0, 2);;
+    return inf.format(0, 2);
   }
 
   downloadSingleClosureDoc(attachmentId: number) {

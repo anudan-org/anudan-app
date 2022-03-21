@@ -324,6 +324,7 @@ export class ReportPreviewComponent implements OnInit {
                             this.singleReportDataService.changeMessage(report);
                             //this.appComp.selectedTemplate = grant.grantTemplate;
                             this.fetchCurrentReport();
+                            this.router.navigate(['reports/submitted']);
                         });
 
                     } else {
@@ -333,12 +334,15 @@ export class ReportPreviewComponent implements OnInit {
                             //this.appComp.selectedTemplate = grant.grantTemplate;
                             dialogRef.close();
                             this.fetchCurrentReport();
+                            this.router.navigate(['reports/submitted']);
                         });
 
                     }
                 });
             } else {
                 this.fetchCurrentReport();
+                this.appComp.currentView = 'upcoming';
+                this.router.navigate(['reports/upcoming']);
             }
 
         }, error => {
@@ -608,15 +612,10 @@ export class ReportPreviewComponent implements OnInit {
     previewDocument(_for, attach) {
         this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentReport.id, attach.id).then((result: any) => {
             let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
-            let docUrl;
-            if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
-                docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/view.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
-            } else if (docType === 'pdf' || docType === 'txt') {
-                docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
-            }
+
             this.dialog.open(DocpreviewComponent, {
                 data: {
-                    url: docUrl,
+                    url: result.url,
                     type: docType,
                     title: attach.name + '.' + attach.type,
                     userId: this.appComp.loggedInUser.id,
@@ -635,13 +634,11 @@ export class ReportPreviewComponent implements OnInit {
     }
 
     getForwardFlow() {
-        const forwardStates = this.currentReport.flowAuthorities.filter(a => a.forwardDirection === true);
-        return forwardStates;
+        return this.currentReport.flowAuthorities.filter(a => a.forwardDirection === true);
     }
 
     getSingleBackwardFlow() {
-        const backwardState = this.currentReport.flowAuthorities.filter(a => a.forwardDirection === false)[0];
-        return backwardState;
+        return this.currentReport.flowAuthorities.filter(a => a.forwardDirection === false)[0];
     }
 
     hasMultipleBackwardFlow() {

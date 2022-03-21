@@ -10,9 +10,7 @@ import {
   WorkflowStatus,
 } from "../../../model/dahsboard";
 import {
-  MatBottomSheet,
   MatDatepicker,
-  MatDatepickerInputEvent,
   MatDialog,
   MAT_DATE_FORMATS,
   DateAdapter,
@@ -25,9 +23,6 @@ import {
   ActivatedRoute,
   Router,
   NavigationStart,
-  NavigationEnd,
-  ActivationEnd,
-  RouterEvent,
 } from "@angular/router";
 import { AppComponent } from "../../../app.component";
 import {
@@ -254,7 +249,6 @@ export class ReportHeaderComponent implements OnInit {
           "Last saved @ " +
           this.datePipe.transform(new Date(), "hh:mm:ss a") +
           "     ";
-        //this.appComp.showSaving = false;
       });
   }
 
@@ -301,12 +295,10 @@ export class ReportHeaderComponent implements OnInit {
           this.singleReportDataService.changeMessage(info.report);
 
           sectionName.val("");
-          //$('#section_' + newSection.id).css('display', 'block');
           $(createSectionModal).modal("hide");
           this.appComp.sectionAdded = true;
           this.sidebar.buildSectionsSideNav(null);
           this.appComp.sectionInModification = false;
-          //  this.appComp.selectedTemplate = info.report.template;
           this.router.navigate([
             "report/section/" +
             this.getCleanText(
@@ -407,8 +399,6 @@ export class ReportHeaderComponent implements OnInit {
         day <= new Date(this.currentReport.dueDate) &&
         day <= new Date(this.currentReport.endDate)
       );
-    } else if (this.currentReport.dueDate) {
-      return day <= new Date(this.currentReport.dueDate);
     }
     return true;
   };
@@ -475,7 +465,7 @@ export class ReportHeaderComponent implements OnInit {
   showGrantTags() {
     this.adminService.getOrgTags(this.appComp.loggedInUser).then((tags: OrgTag[]) => {
 
-      const dg = this.dialog.open(GrantTagsComponent, {
+      this.dialog.open(GrantTagsComponent, {
         data: { orgTags: tags, grantTags: this.currentReport.grant.tags, grant: this.currentReport.grant, appComp: this.appComp, type: 'report' },
         panelClass: "grant-template-class"
       });

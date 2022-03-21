@@ -1,0 +1,122 @@
+name: Test Developer Code
+
+on:
+   workflow_dispatch: 
+   push:
+    branches: [ feature** ]
+    paths-ignore: 
+      - '.github/**'
+      - '.gitignore'
+      - '**.md'
+      - '**.json'
+      - '**.properties'
+      - '**.js'
+      - '**.iml'
+      - 'frontend/**'
+      - 'e2e/**' 
+      - '/.github/CODEOWNERS'
+   
+
+
+# creating env variable for head commit meassge 
+env:
+  commitmsg: ${{ github.event.head_commit.message }} 
+
+# This block of code will do a clean install of node dependencies, cache/restore them.
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions   
+jobs:    
+
+  Test-Frontend-Build:
+    runs-on: ubuntu-latest
+    name: Build Frontend | test 
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        repository: anudan-org/anudan-app
+        token: ${{ secrets.MY_PAT }}
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@master
+      with:
+        node-version: '12.x'
+        cache: 'npm'
+    - name: list ouput    
+      run: |
+       #npm install -g @angular/cli@latest
+       #npm install --save-dev @angular-devkit/build-angular
+       #npm ci
+       #ng build --prod --no-aot --output-hashing=all --sourceMap=false --base-href=/ --extractLicenses=false --build-optimizer false
+       #ls -lrt dist 
+  # this block of code will do unit and functinal testing      
+  unit-and-functional-testing-Frontend:
+    runs-on: ubuntu-latest
+    name: Test Frontend | Units and Functions | test
+    steps: 
+    - name: test frontend code(functional)
+      run: |
+        ls -l
+    - name: test frontend code(unit)
+      run: | 
+        ls   
+  # this block of code will do static code analysis 
+  # For more information see: https://github.com/sonarsource/sonarcloud-github-action
+
+  Static-Code-Analysis-Sonarqube-Frontend:
+    runs-on: ubuntu-latest
+    name: Analyse Static Code | Sonarqube | test
+    steps:
+    - name: checkout anudap-app repo
+      uses: actions/checkout@v2  
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
+    #- name: SonarCloud Scan
+     # uses: sonarsource/sonarcloud-github-action@master  
+      #env:
+       #   GITHUB_TOKEN: ${{ secrets.MY_PAT }}
+        #  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+      #with:
+       #  args: >
+        #  -Dsonar.organization=anudan
+         # -Dsonar.projectKey=anudan-app-dev
+          #-Dsonar.projectName=anudan-app/dev
+          #-Dsonar.projectVersion=1.0
+          #-Dsonar.sources=src/app
+          #-Dsonar.exclusions=src/app/**.spec.ts
+          #-Dsonar.sourceEncoding=UTF-8          
+                     
+
+
+  # this block of code will send email notifications. 
+  # For more information see: https://github.com/wadeww/send-email-action
+  Notify-on-email:
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [Test-Frontend-Build, unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend]
+    name: EmailNotify | test
+    steps:
+      - name: Send some mail
+        uses: wadeww/send-email-action@master
+        with:
+          server_address: smtp.gmail.com
+          port: ${{ secrets.SMTP_SERVER_PORT }}
+          username: ${{ secrets.AUTH_USER }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Test Developer code Workflow Finished
+          body: Organization Name/Repository - ${{github.repository}} 
+               
+                ${{ github.actor }} commit message - ${{ env.commitmsg }}
+
+
+                1. Build Result - ${{needs.Test-Frontend-Build.result}} 
+
+
+                2. Test Result (units and functionals) - ${{needs.unit-and-functional-testing-Frontend.result}}
+
+
+                3. Static Code Analysis Result - ${{needs.Static-Code-Analysis-Sonarqube-Frontend.result}} 
+
+
+          to: ${{ secrets.TO_ADDRESSES }} 
+          from: ${{ secrets.FROM_ADDRESS }}
+
+  

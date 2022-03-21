@@ -2,7 +2,6 @@ import { MessagingComponent } from 'app/components/messaging/messaging.component
 import { DocpreviewComponent } from './../../docpreview/docpreview.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DocpreviewService } from './../../docpreview.service';
-import { DocManagementService } from './../../doc-management.service';
 import { AdminService } from './../../admin.service';
 import { TemplateLibrary, AttachmentDownloadRequest } from './../../model/dahsboard';
 import { FieldDialogComponent } from './../../components/field-dialog/field-dialog.component';
@@ -113,13 +112,7 @@ export class DocumentLibraryComponent implements OnInit {
             }
           }
 
-          this.adminService.deleteSelectedLibraryDocs(this.appComponent.loggedInUser, selectedAttachments).then(() => {
-            for (let a of selectedAttachments.attachmentIds) {
-              const index = this.docs.findIndex(d => d.id === Number(a));
-              this.docs.splice(index, 1);
-              this.appComponent.currentTenant.templateLibrary = this.docs;
-            }
-          });
+          this.deleteDocumentLibrary(selectedAttachments);
         }
       } else {
         dReg.close();
@@ -127,6 +120,16 @@ export class DocumentLibraryComponent implements OnInit {
     });
 
 
+  }
+
+  private deleteDocumentLibrary(selectedAttachments: AttachmentDownloadRequest) {
+    this.adminService.deleteSelectedLibraryDocs(this.appComponent.loggedInUser, selectedAttachments).then(() => {
+      for (let a of selectedAttachments.attachmentIds) {
+        const index = this.docs.findIndex(d => d.id === Number(a));
+        this.docs.splice(index, 1);
+        this.appComponent.currentTenant.templateLibrary = this.docs;
+      }
+    });
   }
 
   canCreateDoc() {
@@ -162,7 +165,7 @@ export class DocumentLibraryComponent implements OnInit {
         return;
       }
 
-      const ext = file.name.substr(file.name.lastIndexOf('.'));
+      const ext = file.name.substring(file.name.lastIndexOf('.'));
       if (this.appComponent.acceptedFileTypes.filter(d => d === ext).length === 0) {
         this.dialog.open(MessagingComponent, {
           data: 'Detected an unsupported file type. Supported file types are ' + this.appComponent.acceptedFileTypes.toString() + '. Unable to upload.',
@@ -196,15 +199,10 @@ export class DocumentLibraryComponent implements OnInit {
   previewDocument(_for, attach) {
     this.docPreviewService.previewDoc(_for, this.appComponent.loggedInUser.id, attach.id, 0).then((result: any) => {
       let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
-      let docUrl;
-      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/view.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
-      } else if (docType === 'pdf' || docType === 'txt') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
-      }
+
       this.dialog.open(DocpreviewComponent, {
         data: {
-          url: docUrl,
+          url: result.url,
           type: docType,
           title: attach.name + '.' + attach.fileType,
           userId: this.appComponent.loggedInUser.id,
@@ -240,13 +238,7 @@ export class DocumentLibraryComponent implements OnInit {
         selectedAttachments.attachmentIds = [];
         selectedAttachments.attachmentIds.push(attachmentId);
 
-        this.adminService.deleteSelectedLibraryDocs(this.appComponent.loggedInUser, selectedAttachments).then(() => {
-          for (let a of selectedAttachments.attachmentIds) {
-            const index = this.docs.findIndex(d => d.id === Number(a));
-            this.docs.splice(index, 1);
-            this.appComponent.currentTenant.templateLibrary = this.docs;
-          }
-        });
+        this.deleteDocumentLibrary(selectedAttachments);
       }
     });
   }

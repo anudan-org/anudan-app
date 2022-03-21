@@ -2,12 +2,12 @@ import { UtilsService } from './../../utils.service';
 import { WorkflowDataService } from 'app/workflow.data.service';
 import { WorkflowStatus } from './../../model/dahsboard';
 import { ClosureHistory } from './../../model/closures';
-import { Component, Inject, OnInit, ViewChild, ElementRef, Renderer2, HostListener } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef, MatButtonModule } from '@angular/material';
-import { Grant, GrantHistory } from '../../model/dahsboard';
+import { Component, Inject, OnInit, ElementRef, Renderer2 } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { GrantHistory } from '../../model/dahsboard';
 import { ReportHistory } from '../../model/report';
 import { WorkflowTransition } from '../../model/workflow-transition';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { DisbursementHistory } from 'app/model/disbursement';
 
 declare var $: any;
@@ -178,9 +178,9 @@ export class GranthistoryComponent implements OnInit {
         toId = this.data.data.grantStatus.id
       } else if (_for === 'report') {
         toId = this.data.data.status.id
-      } if (_for === 'disbursement') {
-        toId = this.data.data.status.id
-      } else if (_for === 'closure') {
+      }
+
+      if (_for === 'disbursement' || _for === 'closure') {
         toId = this.data.data.status.id
       }
 
@@ -189,67 +189,4 @@ export class GranthistoryComponent implements OnInit {
     return entry.length > 0 ? 'fas fa-long-arrow-alt-right text-light-green' : 'fas fa-long-arrow-alt-right text-light-red';
   }
 
-  getPreviousOwner(idx, _for) {
-    if (_for === 'grant') {
-      const status = this.grantHistory[idx];
-      if (status) {
-        const ass = this.data.data.workflowAssignments.filter(a => a.stateId === status.grantStatus.id)[0];
-        if (ass) {
-          return '&nbsp;';//ass.assignmentUser.firstName + ' ' + ass.assignmentUser.lastName;
-        } else {
-          return '&nbsp;';
-        }
-
-      } else {
-        const currentAss = this.data.data.workflowAssignments.filter(a => a.stateId === this.data.data.grantStatus.id)[0].assignmentUser;
-        return '&nbsp;';//currentAss.firstName + ' ' + currentAss.lastName;
-      }
-    } else if (_for === 'report') {
-      const status = this.reportHistory[idx];
-      if (status) {
-        const ass = this.data.data.workflowAssignments.filter(a => a.stateId === status.status.id)[0];
-        if (ass) {
-          return '&nbsp;';//ass.assignmentUser.firstName + ' ' + ass.assignmentUser.lastName;
-        } else {
-          return '&nbsp;';
-        }
-
-      } else {
-
-        const currentAss = this.data.data.workflowAssignments.filter(a => a.stateId === this.data.data.status.id)[0].assignmentUser;
-        return '&nbsp;';//currentAss.firstName + ' ' + currentAss.lastName;
-      }
-    } else if (_for === 'disbursement') {
-      const status = this.disbursementHistory[idx];
-      if (status) {
-        const ass = this.data.data.assignments.filter(a => a.stateId === status.status.id)[0];
-        if (ass) {
-          return '&nbsp;';//ass.assignmentUser.firstName + ' ' + ass.assignmentUser.lastName;
-        } else {
-          return '&nbsp;';
-        }
-
-      } else {
-
-        const currentAss = this.data.data.assignments.filter(a => a.stateId === this.data.data.status.id)[0].assignmentUser;
-        return '&nbsp;';//currentAss.firstName + ' ' + currentAss.lastName;
-      }
-    } else if (_for === 'closure') {
-      const status = this.closureHistory[idx];
-      if (status) {
-        const ass = this.data.data.workflowAssignment.filter(a => a.stateId === status.status.id)[0];
-        if (ass) {
-          return '&nbsp;';//ass.assignmentUser.firstName + ' ' + ass.assignmentUser.lastName;
-        } else {
-          return '&nbsp;';
-        }
-
-      } else {
-
-        const currentAss = this.data.data.workflowAssignment.filter(a => a.stateId === this.data.data.status.id)[0].assignmentUser;
-        return '&nbsp;';//currentAss.firstName + ' ' + currentAss.lastName;
-      }
-    }
-
-  }
 }

@@ -1,3 +1,4 @@
+import { DomSanitizer } from '@angular/platform-browser';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Component, OnInit, Inject } from '@angular/core';
@@ -10,7 +11,12 @@ import { Component, OnInit, Inject } from '@angular/core';
 export class DocpreviewComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<DocpreviewComponent>
-    , @Inject(MAT_DIALOG_DATA) public message: any, private http: HttpClient) {
+    , @Inject(MAT_DIALOG_DATA) public message: any, private http: HttpClient, private sanitizer: DomSanitizer) {
+    if (message.type === 'doc' || message.type === 'docx' || message.type === 'xls' || message.type === 'xlsx' || message.type === 'ppt' || message.type === 'pptx') {
+      message.url = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/view.aspx?src=" + location.origin + "/api/public/doc/" + message.url);
+    } else if (message.type === 'pdf' || message.type === 'txt') {
+      message.url = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + message.url);
+    }
     console.log(message.url)
   }
 

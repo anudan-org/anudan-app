@@ -97,6 +97,15 @@ import { ClosureSelectionComponent } from 'app/components/closure-selection/clos
         border: 2px dashed #aaa;
         padding: 10px;
       }
+
+      ::ng-deep #tablePlaceholder .mat-form-field-wrapper {
+        padding: 0 !important;
+      }
+
+      ::ng-deep #tablePlaceholder .mat-form-field-infix {
+        padding: 0 !important;
+        border:0 !important;
+      }
     `,
   ],
 })
@@ -138,7 +147,6 @@ export class PreviewComponent implements OnInit {
   @ViewChild("editFieldModal") editFieldModal: ElementRef;
   @ViewChild("createFieldModal") createFieldModal: ElementRef;
   @ViewChild("createSectionModal") createSectionModal: ElementRef;
-  @ViewChild("createKpiModal") createKpiModal: ElementRef;
   @ViewChild("addKpiButton") addKpiButton: ElementRef;
   @ViewChild("actionBlock") actionBlock: ElementRef;
   @ViewChild("saveGrantButton") saveGrantButton: ElementRef;
@@ -146,7 +154,6 @@ export class PreviewComponent implements OnInit {
   @ViewChild("kpiDescriptionElem") kpiDescriptionelem: ElementRef;
   @ViewChild("kpiBlock") kpiBlock: ElementRef;
   @ViewChild("sidenav") attachmentsSideNav: any;
-  @ViewChild("selectScheduleModal") selectScheduleModal: ElementRef;
   @ViewChild("container") container: ElementRef;
   @ViewChild("grantSummary") grantSummary: ElementRef;
   @ViewChild("previewarea") previewArea: ElementRef;
@@ -311,9 +318,6 @@ export class PreviewComponent implements OnInit {
       $("#sectionTitleInput").focus();
     });
 
-    $("#createKpiModal").on("shown.bs.modal", function (event) {
-      $("#kpiDescription").focus();
-    });
 
 
     this.adminService.getOrgTags(this.appComp.loggedInUser).then((tags: OrgTag[]) => {
@@ -551,7 +555,7 @@ export class PreviewComponent implements OnInit {
         newAttr.fieldValue = "";
         newAttr.deletable = true;
         newAttr.required = false;
-        newAttr.id = 0 - Math.round(Math.random() * 1000000000);
+        newAttr.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
         section.attributes.push(newAttr);
         break;
       }
@@ -577,7 +581,7 @@ export class PreviewComponent implements OnInit {
         attribute.fieldName = fieldName.val();
         attribute.fieldType = fieldType.val();
         attribute.fieldValue = "";
-        attribute.id = 0 - Math.round(Math.random() * 10000000000);
+        attribute.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
         section.attributes.push(attribute);
         break;
       }
@@ -689,7 +693,7 @@ export class PreviewComponent implements OnInit {
     const currentSections = this.currentGrant.grantDetails.sections;
     const newSection = new Section();
     newSection.attributes = [];
-    newSection.id = 0 - Math.round(Math.random() * 10000000000);
+    newSection.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
     newSection.sectionName = sectionName.val();
 
     currentSections.push(newSection);
@@ -1487,7 +1491,7 @@ export class PreviewComponent implements OnInit {
 
   getCleanClosureNote() {
     if (this.appComp.loggedInUser.organization.organizationType !== 'GRANTEE') {
-      return this.currentGrant.note.substr(this.currentGrant.note.lastIndexOf('</i>') + 4);
+      return this.currentGrant.note.substring(this.currentGrant.note.lastIndexOf('</i>') + 4);
     } else {
       return 'This grant has been closed.'
     }
@@ -1572,15 +1576,10 @@ export class PreviewComponent implements OnInit {
 
     this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentGrant.id, attach.id).then((result: any) => {
       let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
-      let docUrl;
-      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/view.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
-      } else if (docType === 'pdf' || docType === 'txt') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
-      }
+
       this.dialog.open(DocpreviewComponent, {
         data: {
-          url: docUrl,
+          url: result.url,
           type: docType,
           title: attach.name + "." + attach.type,
           userId: this.appComp.loggedInUser.id,
@@ -1592,13 +1591,11 @@ export class PreviewComponent implements OnInit {
   }
 
   getForwardFlow() {
-    const forwardStates = this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === true);
-    return forwardStates;
+    return this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === true);
   }
 
   getSingleBackwardFlow() {
-    const backwardState = this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === false)[0];
-    return backwardState;
+    return this.currentGrant.flowAuthorities.filter(a => a.forwardDirection === false)[0];
   }
 
   hasMultipleBackwardFlow() {

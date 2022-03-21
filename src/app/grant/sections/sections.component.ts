@@ -73,7 +73,6 @@ import {
   MatAutocomplete,
 } from "@angular/material/autocomplete";
 import { MatChipInputEvent } from "@angular/material/chips";
-import { saveAs } from "file-saver";
 import { AdminLayoutComponent } from "../../layouts/admin-layout/admin-layout.component";
 import { User } from "../../model/user";
 
@@ -646,7 +645,7 @@ export class SectionsComponent
         attribute.fieldName = fieldName.val();
         attribute.fieldType = fieldType.val();
         attribute.fieldValue = "";
-        attribute.id = 0 - Math.round(Math.random() * 10000000000);
+        attribute.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
         section.attributes.push(attribute);
         break;
       }
@@ -752,7 +751,7 @@ export class SectionsComponent
     const currentSections = this.currentGrant.grantDetails.sections;
     const newSection = new Section();
     newSection.attributes = [];
-    newSection.id = 0 - Math.round(Math.random() * 10000000000);
+    newSection.id = 0 - window.crypto.getRandomValues(new Uint32Array(10))[0];
     newSection.sectionName = sectionName.val();
 
     currentSections.push(newSection);
@@ -1108,7 +1107,7 @@ export class SectionsComponent
   addColumn(attr: Attribute) {
     for (let row of attr.fieldTableValue) {
       const col = new ColumnData();
-      col.id = Math.round(Math.random() * 1000000000);
+      col.id = window.crypto.getRandomValues(new Uint32Array(10))[0];
       col.name = "";
       col.value = "";
       row.columns.push(col);
@@ -1949,15 +1948,10 @@ export class SectionsComponent
 
     this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentGrant.id, attach.id).then((result: any) => {
       let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
-      let docUrl;
-      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/view.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
-      } else if (docType === 'pdf' || docType === 'txt') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
-      }
+
       this.dialog.open(DocpreviewComponent, {
         data: {
-          url: docUrl,
+          url: result.url,
           type: docType,
           title: attach.name + '.' + attach.type,
           userId: this.appComp.loggedInUser.id,

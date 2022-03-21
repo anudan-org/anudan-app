@@ -289,9 +289,9 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
                 this.disbursementService.changeMessage(disbursement);
                 this.currentDisbursement = disbursement;
 
-                const toState = this.currentDisbursement.flowPermissions.filter(a => a.toStateId === toState)[0].toName;
+                const toState1 = this.currentDisbursement.flowPermissions.filter(a => a.toStateId === toState)[0].toName;
                 const toStateOwner = this.currentDisbursement.assignments.filter(a => a.stateId === toState)[0].assignmentUser;
-                this.submitDisbursement(toState, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
+                this.submitDisbursement(toState, "Progessing for " + toState1 + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
               });
           } else {
             dialogRef.close();
@@ -402,6 +402,7 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
             action: "cd",
           };
         }
+        this.router.navigate(['disbursements/in-progress']);
       });
   }
 
@@ -533,15 +534,10 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
 
     this.docPreviewService.previewDoc(_for, this.appComponent.loggedInUser.id, attach.id, this.currentDisbursement.id).then((result: any) => {
       let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
-      let docUrl;
-      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/view.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
-      } else if (docType === 'pdf' || docType === 'txt') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
-      }
+
       this.dialog.open(DocpreviewComponent, {
         data: {
-          url: docUrl,
+          url: result.url,
           type: docType,
           title: attach.name + '.' + attach.location.substring(attach.location.lastIndexOf(".") + 1),
           userId: this.appComponent.loggedInUser.id,
@@ -560,13 +556,11 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
   }
 
   getForwardFlow() {
-    const forwardStates = this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === true);
-    return forwardStates;
+    return this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === true);
   }
 
   getSingleBackwardFlow() {
-    const backwardState = this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === false)[0];
-    return backwardState;
+    return this.currentDisbursement.flowPermissions.filter(a => a.forwardDirection === false)[0];
   }
 
   hasMultipleBackwardFlow() {

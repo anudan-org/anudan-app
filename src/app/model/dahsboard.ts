@@ -1,9 +1,7 @@
-import { GrantClosure } from 'app/model/closures';
 import { User } from "./user";
 import * as moment from "moment";
 import _date = moment.unitOfTime._date;
 import { NativeDateAdapter } from "@angular/material";
-import { Report } from "./report";
 
 export class Organization {
   id: number;
@@ -201,6 +199,7 @@ export class Attribute {
   deletable: boolean;
   required: boolean;
   canEdit: boolean;
+  grantLevelTarget: any;
 }
 
 export class Attachment {

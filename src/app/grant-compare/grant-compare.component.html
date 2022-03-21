@@ -840,9 +840,6 @@
                     <div *ngIf="attrDiff.oldAttribute.type==='table'" class="col-12"
                       [innerHTML]="getTabularDataOld(attrDiff.oldAttribute.tableValue,attrDiff.newAttribute.tableValue)">
                     </div>
-                    <div *ngIf="attrDiff.oldAttribute.type==='disbursement'" class="col-12"
-                      [innerHTML]="getDisbursementTabularDataOld(attrDiff.oldAttribute.tableValue,attrDiff.oldAttribute.tableValue)">
-                    </div>
                     <div *ngIf="attrDiff.oldAttribute.type==='document'" class="col-12">
                       <div [innerHTML]="getDocumentNameOld(attrDiff.oldAttribute.value,attrDiff.newAttribute.value)">
                       </div>

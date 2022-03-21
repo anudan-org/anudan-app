@@ -60,7 +60,6 @@ import {
 } from "@angular/material";
 import { FieldDialogComponent } from "../../../components/field-dialog/field-dialog.component";
 import { AdminLayoutComponent } from "../../../layouts/admin-layout/admin-layout.component";
-import { saveAs } from "file-saver";
 import { Configuration } from "../../../model/app-config";
 import { User } from "../../../model/user";
 import * as inf from "indian-number-format";
@@ -1041,7 +1040,7 @@ export class ReportSectionsComponent implements OnInit {
   addColumn(attr: Attribute) {
     for (let row of attr.fieldTableValue) {
       const col = new ColumnData();
-      col.id = Math.round(Math.random() * 1000000000);
+      col.id = window.crypto.getRandomValues(new Uint32Array(10))[0];
       col.name = "";
       col.value = "";
       row.columns.push(col);
@@ -1437,15 +1436,10 @@ export class ReportSectionsComponent implements OnInit {
   previewDocument(_for, attach) {
     this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentReport.id, attach.id).then((result: any) => {
       let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
-      let docUrl;
-      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/view.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
-      } else if (docType === 'pdf' || docType === 'txt') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
-      }
+
       this.dialog.open(DocpreviewComponent, {
         data: {
-          url: docUrl,
+          url: result.url,
           type: docType,
           title: attach.name + "." + attach.type,
           userId: this.appComp.loggedInUser.id,

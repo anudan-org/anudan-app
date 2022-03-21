@@ -200,12 +200,13 @@
                         font-size: 15px;
                         font-family: Roboto, sans-serif;
                       ">{{ 'Actual Refunds' }}</span>
-                        <table width="100%" border="1">
+                        <table style="width:100%;border:1px solid #d4d4d4;">
+                          <caption></caption>
                           <tr>
-                            <th>S. No.</th>
-                            <th>Refund Date</th>
-                            <th>Refund Amount</th>
-                            <th>Note</th>
+                            <th id="">S. No.</th>
+                            <th id="">Refund Date</th>
+                            <th id="">Refund Amount</th>
+                            <th id="">Note</th>
                           </tr>
                           <tr *ngFor="let rf of currentClosure.grant.actualRefunds;let i=index">
                             <td>{{i+1}}</td>
@@ -233,7 +234,7 @@
                                     <em class="far fa-file-pdf text-danger ml-1"></em>
                                   </ng-container>
                                   <ng-container *ngIf="doc.extension === 'txt'">
-                                    <i class="far fa-file-alt ml-1"></i>
+                                    <em class="far fa-file-alt ml-1"></em>
                                   </ng-container>
                                   <ng-container *ngIf="
                                   doc.extension === 'xls' || doc.extension === 'xlsx'
@@ -427,7 +428,7 @@
                                       <em class="far fa-file-pdf text-danger ml-1"></em>
                                     </ng-container>
                                     <ng-container *ngIf="doc.type === 'txt'">
-                                      <i class="far fa-file-alt ml-1"></i>
+                                      <em class="far fa-file-alt ml-1"></em>
                                     </ng-container>
                                     <ng-container *ngIf="
                                     doc.type === 'xls' || doc.type === 'xlsx'
@@ -520,7 +521,7 @@
                               <ng-container *ngIf="attribute.fieldTableValue">
                                 <th id="col#1" style="
                                 padding: 5px;
-                                font-size: 16px;
+                                font-size: 14px;
                                 font-family: Roboto, sans-serif;
                               ">
                                   <strong>#</strong>
@@ -537,7 +538,7 @@
                               ">
                                   <th [id]="'col#2_'+i" class="pl-2" style="
                                   padding: 5px;
-                                  font-size: 16px;
+                                  font-size: 14px;
                                   font-family: Roboto, sans-serif;
                                 ">
                                     <strong>{{
@@ -563,7 +564,7 @@
                               ">
                                   <td style="
                                   padding: 5px;
-                                  font-size: 16px;
+                                  font-size: 14px;
                                   font-family: Roboto, sans-serif;
                                 ">
                                     <ng-container *ngIf="row.enteredByGrantee &&
@@ -578,7 +579,7 @@
                                     <td *ngIf="j === 1 || j === 2" style="
                                     min-width: 150px;
                                     padding: 5px;
-                                    font-size: 16px;
+                                    font-size: 14px;
                                     font-family: Roboto, sans-serif;
                                   ">
                                       <ng-container *ngIf="column.dataType === 'currency'">
@@ -592,7 +593,7 @@
                                     column.name !== 'Notes'
                                   " style="
                                     padding: 5px;
-                                    font-size: 16px;
+                                    font-size: 14px;
                                     font-family: Roboto, sans-serif;
                                   ">
                                       <ng-container>{{
@@ -605,7 +606,7 @@
                                     column.name === 'Notes'
                                   " style="
                                     padding: 5px;
-                                    font-size: 16px;
+                                    font-size: 14px;
                                     font-family: Roboto, sans-serif;
                                   ">
                                       <ng-container>{{
@@ -624,7 +625,7 @@
                             " style="background: #f4f4f4">
                                 <td style="
                                 padding: 5px;
-                                font-size: 16px;
+                                font-size: 14px;
                                 font-family: Roboto, sans-serif;
                               ">
                                   <strong>Totals:</strong>
@@ -632,7 +633,7 @@
                                 <ng-container *ngIf="attribute.fieldTableValue[0]">
                                   <td style="
                                   padding: 5px;
-                                  font-size: 16px;
+                                  font-size: 14px;
                                   font-family: Roboto, sans-serif;
                                 " *ngFor="
                                   let column of attribute.fieldTableValue[0]

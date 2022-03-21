@@ -1,4 +1,3 @@
-import { RefundpopupComponent } from './../../refundpopup/refundpopup.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DocpreviewComponent } from './../../docpreview/docpreview.component';
 import { DocpreviewService } from './../../docpreview.service';
@@ -7,8 +6,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { MatAutocomplete } from '@angular/material/autocomplete';
 import { startWith, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { COMMA } from '@angular/cdk/keycodes';
-import { ENTER } from '@angular/cdk/keycodes';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { AdminService } from './../../admin.service';
 import { FormControl } from '@angular/forms';
 import { Grant, TemplateLibrary, AttachmentDownloadRequest, ActualRefund } from './../../model/dahsboard';
@@ -27,16 +25,13 @@ import { APP_DATE_FORMATS } from './../../reports/report/report-sections/report-
 import { DatePipe } from '@angular/common';
 import { MatDatepicker, MatDialog, DateAdapter, MAT_DATE_FORMATS, MatDatepickerInputEvent, MatAutocompleteSelectedEvent } from '@angular/material';
 import { ToastrService, IndividualConfig } from 'ngx-toastr';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { HttpHeaders } from '@angular/common/http';
-
+import { HttpHeaders, HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { AppComponent } from 'app/app.component';
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { SidebarComponent } from 'app/components/sidebar/sidebar.component';
 import { Attribute, ColumnData, CustomDateAdapter, Section, TableData } from 'app/model/dahsboard';
 import { GrantClosure } from 'app/model/closures';
 import { ClosureDataService } from 'app/closure.data.service';
-import { saveAs } from "file-saver";
 import * as inf from "indian-number-format";
 
 
@@ -201,11 +196,6 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
         this.appComp.currentView = 'dashboard';
         this.router.navigate(['dashboard']);
       }
-      if (this.currentClosure.grant.actualRefunds.length === 0) {
-        //this.addActualRefunds();
-      }
-
-      console.log(this.currentClosure);
     });
   }
 
@@ -338,7 +328,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   deleteSection(secId: number, title: string) {
 
     if (this.currentClosure.closureDetails.sections.length === 1) {
-      const dg = this.dialog.open(MessagingComponent, {
+      this.dialog.open(MessagingComponent, {
         data: "<p>At least one section is required for a closure.</p><p><small>Please rename the current section or create an additional section before deleteing this one.</small></p>",
         panelClass: "center-class"
       });
@@ -594,7 +584,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   addColumn(attr: Attribute) {
     for (let row of attr.fieldTableValue) {
       const col = new ColumnData();
-      col.id = Math.round(Math.random() * 1000000000);
+      col.id = window.crypto.getRandomValues(new Uint32Array(10))[0];
       col.name = "";
       col.value = "";
       row.columns.push(col);
@@ -672,7 +662,9 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       },
       "100",
       "linear",
-      function () { }
+      function () {
+        //Do nothing
+      }
     );
   }
 
@@ -683,7 +675,9 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       },
       "100",
       "linear",
-      function () { }
+      function () {
+        //Do nothing
+      }
     );
   }
 
@@ -828,7 +822,6 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       ev.value,
       "dd-MMM-yyyy"
     );
-    //this.selectedARColumn.refundDate = this.selectedARDateField.target.value;
     this.selectedARColumn.refundDateStr = this.selectedARDateField.target.value.toString();
 
     this.updateRefundLineItem(this.selectedARColumn);
@@ -839,7 +832,6 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       this.selectedARColumn = response;
       const idx = this.currentClosure.grant.actualRefunds.findIndex(a => a.id === this.selectedARColumn.id);
       this.currentClosure.grant.actualRefunds[idx] = this.selectedARColumn;
-      //this.currentClosure.grant.actualRefunds.push(af);
     });
   }
 
@@ -914,31 +906,25 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       filterValue = value.name;
     }
 
-    const selectedDoc = this.options.filter((option) =>
+    return this.options.filter((option) =>
       option.name.toLowerCase().includes(filterValue)
     );
-    return selectedDoc;
   }
 
   displayFn = (doc) => {
     return doc ? doc.name : undefined;
   };
 
-  ////////////////////////
   add(attribute: Attribute, event: MatChipInputEvent): void {
-    // Add fruit only when MatAutocomplete is not open
-    // To make sure this does not conflict with OptionSelected Event
     if (!this.matAutocomplete.isOpen) {
       const input = event.input;
       const value = event.value;
 
-      // Add our fruit
       if (value || "") {
         const index = attribute.docs.findIndex((a) => a.name === value);
         attribute.docs.push(this.options[index]);
       }
 
-      // Reset the input value
       if (input) {
         input.value = "";
       }
@@ -1170,7 +1156,6 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       .post<any>(endpoint, formData, httpOptions)
       .subscribe((info: GrantClosure) => {
         this.closureService.changeMessage(info, this.appComp.loggedInUser.id);
-        //this.currentClosure = info.closure;
 
       });
   }
@@ -1432,8 +1417,6 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       sectionName.focus();
       return;
     }
-
-    const createSectionModal = this.createSectionModal.nativeElement;
     this.callCreateSectionAPI(sectionName.val(), false)
   }
 
@@ -1504,15 +1487,10 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   previewDocument(_for, attach) {
     this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentClosure.id, attach.id).then((result: any) => {
       let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
-      let docUrl;
-      if (docType === 'doc' || docType === 'docx' || docType === 'xls' || docType === 'xlsx' || docType === 'ppt' || docType === 'pptx') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl("https://view.officeapps.live.com/op/view.aspx?src=" + location.origin + "/api/public/doc/" + result.url);
-      } else if (docType === 'pdf' || docType === 'txt') {
-        docUrl = this.sanitizer.bypassSecurityTrustResourceUrl(location.origin + "/api/public/doc/" + result.url);
-      }
+
       this.dialog.open(DocpreviewComponent, {
         data: {
-          url: docUrl,
+          url: result.url,
           type: docType,
           title: attach.name + "." + attach.type,
           userId: this.appComp.loggedInUser.id,
@@ -1572,17 +1550,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   }
 
   captureRefund() {
-    /*  const dg = this.dialog.open(RefundpopupComponent, {
-       data: { title: `<p class='text-header'>Refund Request<p><p class='text-subheader'>` + (this.currentClosure.grant.referenceNo ? '[' + this.currentClosure.grant.referenceNo + '] ' : '') + this.currentClosure.grant.name + `</p>` },
-       panelClass: "center-class",
-     }); */
-
-    /* dg.afterClosed().subscribe(result => {
-      if (result.status) { */
-    //this.refundRequested.nativeElement.innerHTML = this.currencyService.getFormattedAmount(Number(result.amount));
     this.callCreateSectionAPI("Project Refund Details", true);
-    /* }
-  }); */
   }
 
   getOngoingDisbursementAmount() {
@@ -1660,10 +1628,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   }
 
   getFormattedGrantAmount(amount: number): string {
-    if (amount) {
-      return inf.format(amount, 2);
-    }
-    return "<div class='amountPlaceholder'>Enter grant amount</div>";
+    return this.getFormattedRefundAmount(amount)
   }
 
   getFormattedRefundAmount(amount: number): string {
@@ -1737,7 +1702,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     const peices1 = $(pf[0]).html().replace('₹ ', '').split(',');
     const p1 = Number(peices1.join(""));
     const peices2 = $(pf[1]).html().replace('₹ ', '').split(',');
-    const p2 = Number(peices1.join(""));
+    const p2 = Number(peices2.join(""));
     return this.currencyService.getFormattedAmount(p1 - 0 - this.getActualRefundsForGrant() + p2);
   }
 

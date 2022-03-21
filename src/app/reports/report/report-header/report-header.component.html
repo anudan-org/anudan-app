@@ -1,10 +1,7 @@
 <div class="col-12 bg-white" style="position: sticky; top: 80px; z-index: 1040">
-  <!--<span class="badge badge-dark text-white pull-right mt-2" matBadgeSize="medium">{{currentGrant.grantStatus.displayName}}</span>-->
   <div class="row">
     <h4 class="col-11 text-left my-3 section-header">Report Header</h4>
     <div class="col-1 text-right" style="display: flex; align-items: center; justify-content: flex-start">
-      <!--<button *ngIf="canManage" class="btn btn-sm btn-green float-right">
-                  <em class="fas fa-plus-square mr-2"></em>Add new Section</button>-->
       <mat-icon mat-button [matMenuTriggerFor]="menu" class="float-right" style="cursor: pointer">more_vert
       </mat-icon>
       <mat-menu #menu="matMenu">
@@ -17,7 +14,7 @@
         <ng-container>
           <hr />
           <button mat-menu-item (click)="manageGrant()">
-            <img class="ml-2 mr-3" style="width: 20px; height: 20px" src="./assets/img/dp.svg" />View Grant
+            <img alt="" class="ml-2 mr-3" style="width: 20px; height: 20px" src="./assets/img/dp.svg" />View Grant
           </button>
         </ng-container>
       </mat-menu>
