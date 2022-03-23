@@ -1117,7 +1117,16 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     let toLeft = $('#state_' + transition.toStateId).css('left');
                     fromLeft = !fromLeft ? 0 : Number(fromLeft.replace('px', ''));
                     toLeft = !toLeft ? 0 : Number(toLeft.replace('px', ''));
-                    let a1 = (fromLeft === toLeft) ? ["Bottom", "Top"] : (fromLeft > toLeft) ? ["Left", "Top"] : (fromLeft < toLeft) ? ["Bottom", "Left"] : ["Bottom", "Top"];
+                    let a1 = [];
+                    if (fromLeft === toLeft) {
+                        a1 = ["Bottom", "Top"]
+                    } else if (fromLeft > toLeft) {
+                        a1 = ["Left", "Top"]
+                    } else if (fromLeft < toLeft) {
+                        a1 = ["Bottom", "Left"];
+                    } else {
+                        a1 = ["Bottom", "Top"];
+                    }
                     let tick = this.jsPlumbInstance.connect({
                         connector: ["Flowchart", { cssClass: 'connectorLink' + transition.toStateId }],
                         overlays: [

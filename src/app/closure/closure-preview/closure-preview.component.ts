@@ -527,7 +527,16 @@ export class ClosurePreviewComponent implements OnInit {
 
   returnClosure() {
     let flows = this.currentClosure.flowAuthorities.filter(a => a.forwardDirection === false).filter((v, i, a) => a.findIndex(t => (t.toStateId === v.toStateId)) === i);
-    flows.sort((a, b) => a.seqOrder > b.seqOrder ? -1 : b.seqOrder > a.seqOrder ? 1 : 0);
+    flows.sort((a, b) => {
+      if (a.seqOrder > b.seqOrder) {
+        return -1;
+      }
+      if (b.seqOrder > a.seqOrder) {
+        return 1;
+      } else {
+        return 0
+      }
+    });
 
     const gtIdx = this.appComp.grantTypes.findIndex(gt => gt.id === this.currentClosure.grant.grantTypeId);
     const grantType = (!gtIdx || gtIdx === -1) ? "External Workflow" : this.appComp.grantTypes[gtIdx].name;
