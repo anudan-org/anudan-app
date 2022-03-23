@@ -36,4 +36,8 @@ export class UtilsService {
     const gtIdx = this.grantTypes.findIndex(gt => gt.id === grantTypeId);
     return (!gtIdx || gtIdx === -1) ? "External Workflow" : this.grantTypes[gtIdx].name;
   }
+
+  getEmailPattern() {
+    return /(?=.*\d.*)(?=.*[a-zA-Z].*)(?=.*[\@#\$%].*).{8,}/;
+  }
 }

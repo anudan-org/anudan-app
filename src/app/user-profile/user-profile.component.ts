@@ -1,3 +1,4 @@
+import { UtilsService } from './../utils.service';
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { User } from '../model/user';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
@@ -23,7 +24,7 @@ declare var $: any;
 export class UserProfileComponent implements OnInit {
 
   user: User;
-  constructor(private http: HttpClient, private elem: ElementRef, private router: Router, public appComp: AppComponent, private toastr: ToastrService) { }
+  constructor(private http: HttpClient, private elem: ElementRef, private router: Router, public appComp: AppComponent, private toastr: ToastrService, private util: UtilsService) { }
 
   ngOnInit() {
     this.user = JSON.parse(localStorage.getItem('USER'));
@@ -51,7 +52,7 @@ export class UserProfileComponent implements OnInit {
       alert('Your new and repeat passwords do not match');
       return;
     }
-    const pattern: RegExp = /(?=.*\d.*)(?=.*[a-zA-Z].*)(?=.*[\@#\$%].*).{8,}/;
+    const pattern: RegExp = this.util.getEmailPattern();
     if (!pattern.test(newPwdElem.value) || !pattern.test(repeatPwdElem.value)) {
       alert('Your new and repeat passwords do not match the allowed pattern');
       return;
