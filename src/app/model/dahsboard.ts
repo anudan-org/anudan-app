@@ -302,6 +302,7 @@ export class Grant {
   refundReason: string;
   ongoingDisbursementAmount: number;
   actualRefunds: ActualRefund[];
+  actualSpent: number;
 }
 
 export class ActualRefund {
@@ -381,8 +382,8 @@ export class WorkflowAssignments {
   assignmentUser: User;
   anchor: boolean;
   history: any[];
-  constructor() { }
 }
+
 export class GrantTemplate {
   id: number;
   name: string;
@@ -529,7 +530,6 @@ export class WorkflowAssignmentModel {
   type: string;
   canManage: boolean;
   grantTypes: GrantType[];
-  constructor() { }
 }
 
 export class AttachmentDownloadRequest {
@@ -572,9 +572,8 @@ export class CustomDateAdapter extends NativeDateAdapter {
   format(date: Date, displayFormat: Object): string {
     if (displayFormat === "input") {
       const day = date.getDate();
-      const month = moment(date).format("MMM"); //date.getUTCMonth() + 1;
+      const month = moment(date).format("MMM");
       const year = date.getFullYear();
-      // Return the format as per your requirement
       return `${day}-${month}-${year}`;
     } else {
       return date.toDateString();

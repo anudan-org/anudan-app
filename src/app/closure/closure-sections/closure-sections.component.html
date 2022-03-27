@@ -351,101 +351,117 @@
                             <div *ngIf="attribute.fieldType === 'disbursement'" class="col-12 mb-3">
                               <div class="row mb-3">
                                 <div class="col-4" style="display: flex;align-items: center;">
-                                  <p class="text-header mb-0">Summary</p>
+                                  <p class="text-header">Project Refund Summary</p>
                                 </div>
                                 <div class="col-8" style="display: flex; justify-content: right; align-items: center;">
 
                                 </div>
+                                <div class="col-12">
+                                  <div class="row">
+                                    <div class="col-3">
+                                      <mat-form-field>
+                                        <input matInput disabled readonly placeholder="Grant Commitment"
+                                          [value]="getPlannedFunds(0)">
+                                      </mat-form-field>
+                                    </div>
+                                    <div class="col-3">
+                                      <mat-form-field>
+                                        <input matInput disabled readonly placeholder="Disbursed Till Date"
+                                          [value]="getReceivedFunds(0)">
+                                      </mat-form-field>
+                                    </div>
+                                    <div class="col-3">
+                                      <mat-form-field>
+                                        <input matInput disabled readonly placeholder="Undisbursed Amount"
+                                          [value]="getPlannedDiff(0)">
+                                      </mat-form-field>
+                                    </div>
+                                    <div class="col-3">
+                                      <button class="btn btn-sm btn-green"
+                                        *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) && this.getActualRefundsForGrant()===0"
+                                        [disabled]="currentClosure.grant.hasOngoingDisbursement ">{{currentClosure.grant.hasOngoingDisbursement?'Disbursement
+                                        Request In-Progress':'Initiate Disbursement'}}</button>
+                                    </div>
+                                    <div class="col-3">
+                                      <mat-form-field>
+                                        <input matInput disabled readonly placeholder="Other Sources Commitment"
+                                          [value]="getPlannedFunds(1)">
+                                      </mat-form-field>
+                                    </div>
+                                    <div class="col-3">
+                                      <mat-form-field>
+                                        <input matInput disabled readonly placeholder="Received Till Date"
+                                          [value]="getReceivedFunds(1)">
+                                      </mat-form-field>
+                                    </div>
+                                    <div class="col-3">
+                                      <mat-form-field>
+                                        <input matInput disabled readonly placeholder="Pending Amount"
+                                          [value]="getPlannedDiff(1)">
+                                      </mat-form-field>
+                                    </div>
+                                    <div class="col-12">
+                                      <hr />
+                                    </div>
+                                    <div class="col-3">
+                                      <mat-form-field>
+                                        <input matInput disabled readonly placeholder="Disbursed Till Date"
+                                          [value]="getReceivedFunds(0)">
+                                      </mat-form-field>
+                                    </div>
+                                    <div class="col-3">
+                                      <mat-form-field *ngIf="
+                                currentClosure.canManage &&
+                                !currentClosure.forGranteeUse
+                              ">
+                                        <input (blur)="showFormattedActualSpent($event)" #refundAmount
+                                          [(ngModel)]="currentClosure.grant.actualSpent" class="anu-input"
+                                          [ngModelOptions]="{ standAlone: true }" matInput
+                                          placeholder="Record Spent (₹) - Till Date" />
+                                        <p #grantRefundFormatted (click)="showActualSpentInput($event)"
+                                          class="anu-input w-100 text-right"
+                                          style="position: absolute; top: 5px; cursor: text"
+                                          [innerHtml]="getFormattedRefundAmount(currentClosure.grant.actualSpent)"></p>
+                                      </mat-form-field>
+                                    </div>
+                                    <div class="col-3">
+                                      <mat-form-field>
+                                        <input matInput disabled readonly placeholder="Unspent Amount"
+                                          [value]="getRecievedDiff(0)">
+                                      </mat-form-field>
+                                    </div>
+                                    <div class="col-3">
+                                      <button
+                                        *ngIf="!currentClosure.grant.hasOngoingDisbursement && !currentClosure.grant.refundAmount"
+                                        class="btn btn-sm btn-green" (click)="captureRefund()">Initiate
+                                        Refund</button>
+                                    </div>
+                                    <div class="col-12">
+                                      <hr />
+                                    </div>
+                                    <div class="col-3">
+                                      <mat-form-field>
+                                        <input matInput disabled readonly placeholder="Refund Requested"
+                                          [value]="getRefundAmount()">
+                                      </mat-form-field>
+                                    </div>
+                                    <div class="col-3">
+                                      <mat-form-field>
+                                        <input matInput disabled readonly placeholder="Refund Received"
+                                          [value]="getRefundReceived()">
+                                      </mat-form-field>
+                                    </div>
+                                    <div class="col-3">
+                                      <mat-form-field>
+                                        <input matInput disabled readonly placeholder="Pending Amount"
+                                          [value]="'₹ 50000'">
+                                      </mat-form-field>
+                                    </div>
+                                  </div>
+
+                                </div>
                               </div>
-                              <table border="1" style="width: 100%;">
-                                <caption></caption>
-                                <tr>
-                                  <th id="aref1"></th>
-                                  <th id="aref2" class="text-center" style="width: 12.5%;">Committed / Planned</th>
-                                  <th id="aref3" class="text-center" style="width: 12.5%;">Received Funds</th>
-                                  <th id="aref4" class="text-center" style="width: 12.5%;">Refund Received</th>
-                                  <th id="aref5" class="text-center" style="width: 12.5%;">Actuals Spent</th>
-                                  <th id="aref6" class="text-center" style="width: 12.5%;">Yet to Receive</th>
-                                  <th id="aref7" class="text-center" style="width: 12.5%;">Yet to Spend</th>
-                                  <th id="aref8" class="text-center" style="width: 12.5%;">Disbursement Reqested</th>
-                                  <th id="aref9" class="text-center" style="width: 12.5%;">Refund Requested</th>
-                                </tr>
-                                <tr>
-                                  <td class="px-1 text-subheader">Project</td>
-                                  <td class="text-right px-1 text-subheader">{{getPlannedFunds(0)}}</td>
-                                  <td class="text-right px-1 text-subheader">{{getReceivedFunds(0)}}</td>
-                                  <td class="text-right px-1 text-subheader">{{getRefundReceived()}}</td>
-                                  <td class="text-right px-1 text-subheader"></td>
-                                  <td class="text-right px-1 text-subheader">{{getPlannedDiff(0)}}</td>
-                                  <td class="text-right px-1 text-subheader">{{getRecievedDiff(0)}}</td>
-                                  <td class="text-right px-1 text-subheader"><span
-                                      #ongoingDisbursementAmount>{{getOngoingDisbursementAmount()}}</span>
-                                  </td>
-                                  <td class="text-right px-1 text-subheader"><span
-                                      #refundRequested>{{getRefundAmount()}}</span></td>
-                                </tr>
-                                <tr>
-                                  <td class="px-1 text-subheader">Funds from other sources</td>
-                                  <td class="text-right px-1 text-subheader">{{getPlannedFunds(1)}}</td>
-                                  <td class="text-right px-1 text-subheader">{{getReceivedFunds(1)}}</td>
-                                  <td class="text-right px-1 text-subheader"></td>
-                                  <td class="text-right px-1 text-subheader"></td>
-                                  <td class="text-right px-1 text-subheader">{{getPlannedDiff(1)}}</td>
-                                  <td class="text-right px-1 text-subheader">{{getRecievedDiff(1)}}</td>
-                                  <td class="text-right px-1 text-subheader"></td>
-                                  <td class="text-right px-1 text-subheader"></td>
-                                </tr>
-                                <tr>
-                                  <td class="text-subheader text-right text-bold pr-2">Totals</td>
-                                  <td class="text-subheader text-right text-bold pr-2">{{getPlannedTotal()}}</td>
-                                  <td class="text-subheader text-right text-bold pr-2">{{getReceivedTotal()}}</td>
-                                  <td class="text-subheader text-right text-bold pr-2">{{getRefundReceived()}}</td>
-                                  <td class="text-subheader text-right text-bold pr-2"></td>
-                                  <td class="text-subheader text-right text-bold pr-2">{{getPlannedDiffTotal()}}</td>
-                                  <td class="text-subheader text-right text-bold pr-2">{{getRecievedDiffTotals()}}</td>
-                                  <td class="text-subheader text-right text-bold pr-2">
-                                    {{getOngoingDisbursementAmount()}}</td>
-                                  <td></td>
-                                </tr>
-                                <tr
-                                  *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) || !currentClosure.grant.hasOngoingDisbursement &&  this.getActualRefundsForGrant()!==0">
-                                  <td></td>
-                                  <td colspan="4"></td>
-
-                                  <td><button class="btn btn-sm btn-green"
-                                      *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) && this.getActualRefundsForGrant()===0"
-                                      [disabled]="currentClosure.grant.hasOngoingDisbursement ">{{currentClosure.grant.hasOngoingDisbursement?'Disbursement
-                                      Request In-Progress':'Initiate Disbursement'}}</button>
-                                  </td>
-                                  <td><button
-                                      *ngIf="!currentClosure.grant.hasOngoingDisbursement && !currentClosure.grant.refundAmount"
-                                      class="btn btn-sm btn-green" (click)="captureRefund()">Initiate
-                                      Refund</button></td>
-                                  <td colspan="2"></td>
-                                </tr>
-                              </table>
                             </div>
-                            <div class="col-sm-8 col-lg-8" *ngIf="attribute.fieldType === 'disbursement'">
-
-                              <mat-form-field *ngIf="
-                        currentClosure.canManage &&
-                        !currentClosure.forGranteeUse
-                      ">
-                                <input disabled id="field_{{ attribute.id }}" [(ngModel)]="attribute.fieldName"
-                                  class="anu-input" [ngModelOptions]="{ standAlone: true }" matInput
-                                  placeholder="Title" />
-                              </mat-form-field>
-                              <mat-form-field *ngIf="
-                        (currentClosure.canManage &&
-                          currentClosure.forGranteeUse) ||
-                        !currentClosure.canManage
-                      ">
-                                <input id="field_{{ attribute.id }}" [(ngModel)]="attribute.fieldName" class="anu-input"
-                                  [ngModelOptions]="{ standAlone: true }" style="background: #f0f1f0 !important"
-                                  matInput placeholder="Title" readonly disabled />
-                              </mat-form-field>
-                            </div>
-
                             <div class="col-sm-4 col-lg-8" *ngIf="
                       attribute.fieldType === 'kpi' &&
                       currentClosure.canManage &&
@@ -485,20 +501,7 @@
                       !currentClosure.forGranteeUse &&
                       attribute.canEdit
                     ">
-                              <mat-form-field>
-                                <mat-label>Type</mat-label>
-                                <mat-select [disabled]="attribute.fieldType==='disbursement'" (selectionChange)="
-                          handleTypeChange($event, attribute, section)
-                        " [ngModel]="attribute.fieldType" class="anu-input" [ngModelOptions]="{ standAlone: true }">
-                                  <mat-option value="multiline">Descriptive</mat-option>
-                                  <mat-option value="kpi">Measurement/KPI</mat-option>
-                                  <mat-option value="table">Tablular</mat-option>
-                                  <mat-option value="document">Document</mat-option>
-                                  <mat-option value="disbursement" [disabled]="checkAbilityToAddDisbursements()">
-                                    Disbursement</mat-option>
-                                </mat-select>
 
-                              </mat-form-field>
                               <label *ngIf="
                         (currentClosure.canManage &&
                           currentClosure.forGranteeUse) ||
@@ -742,8 +745,8 @@
                                 let column of row.columns;
                                 let j = index
                               ">
-                                        <td [width]="
-                                  column.name === 'Notes' ? '20%' : '12%'
+                                        <td [ngStyle]="
+                                  column.name === 'Notes' ? {width:'20%'} : {width:'12%'}
                                 " [ngStyle]="
                                   column.name ===
                                   'Funds from other Sources'
@@ -1018,10 +1021,10 @@
                                           border: '1px solid #e4e4e4',
                                           'padding-top': '0'
                                         }
-                                  " [width]="
+                                  " [ngStyle]="
                                     column.name === 'Notes'
-                                      ? '23%'
-                                      : '12%'
+                                      ? {background:'23%'}
+                                      : {background:'12%'}
                                   ">
                                             <mat-form-field style="margin-top: 3px"
                                               *ngIf="!currentClosure.forGranteeUse">
@@ -1388,10 +1391,10 @@
                                           border: '1px solid #e4e4e4',
                                           'padding-top': '0'
                                         }
-                                  " [width]="
+                                  " [ngStyle]="
                                     column.name === 'Notes'
-                                      ? '23%'
-                                      : '12%'
+                                      ? {background:'23%'}
+                                      : {background:'12%'}
                                   ">
                                             <mat-form-field style="margin-top: 3px"
                                               *ngIf="!currentClosure.forGranteeUse">

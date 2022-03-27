@@ -1,26 +1,20 @@
 import { UtilsService } from './utils.service';
 import { GrantClosure } from './model/closures';
-import { MessagingComponent } from './components/messaging/messaging.component';
-import { AfterViewChecked, ChangeDetectorRef, Component, enableProdMode, ApplicationRef, Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { Router, ActivatedRoute, ParamMap, NavigationEnd } from '@angular/router';
+import { AfterViewChecked, ChangeDetectorRef, Component, ApplicationRef } from '@angular/core';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Router, ActivatedRoute } from '@angular/router';
 import { User } from './model/user';
-import { Report } from './model/report';
+import { Report, ReportTemplate } from './model/report';
 import { Release } from './model/release';
 import { ToastrService, IndividualConfig } from 'ngx-toastr';
 import { AppConfig } from './model/app-config';
-import { WorkflowStatus, Notifications, Organization, Tenant, GrantTemplate, Grant, TemplateLibrary, GrantType } from "./model/dahsboard";
-import { ReportTemplate } from "./model/report";
+import { WorkflowStatus, Tenant, GrantTemplate, Grant, GrantType } from "./model/dahsboard";
 import { WorkflowTransition } from "./model/workflow-transition";
-import { Time } from "@angular/common";
-import { concat, interval, BehaviorSubject } from 'rxjs';
+import { interval, BehaviorSubject } from 'rxjs';
 import { GrantDataService } from './grant.data.service';
 import { UpdateService } from './update.service';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { AppModule } from './app.module';
 import { environment } from '../environments/environment';
 import { SwUpdate } from '@angular/service-worker';
-import { first, tap, switchMap } from 'rxjs/operators';
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { SingleReportDataService } from './single.report.data.service';
 import { DisbursementDataService } from './disbursement.data.service';
@@ -162,22 +156,6 @@ export class AppComponent implements AfterViewChecked {
 
 
     this.loggedInUser = localStorage.getItem('USER') === 'undefined' ? {} : JSON.parse(localStorage.getItem('USER'));
-    //this.initAppUI();
-    //this.getLogo()
-    const isLocal = this.isLocalhost();
-    /*if ( this.loggedIn ) {
-      this.router.navigate(['/grants']);
-    } else {
-      this.router.navigate(['/home']);
-    }*/
-
-
-    /*interval(30000).subscribe(t => {
-      this.initAppUI();
-    });*/
-
-
-
     interval(10000).subscribe(t => {
       console.log('checking updates');
       if (environment.production) {
@@ -241,7 +219,7 @@ export class AppComponent implements AfterViewChecked {
       this.logo = "/api/public/images/" + localStorage.getItem("X-TENANT-CODE") + '/logo?' + (new Date().getTime()).toString();
     }
 
-  };
+  }
 
   subdomain(): string {
     const hostName = location.hostname;
@@ -260,7 +238,6 @@ export class AppComponent implements AfterViewChecked {
   }
 
   getAppUI(hostName) {
-    //console.log('hostName = ' + hostName);
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -280,16 +257,11 @@ export class AppComponent implements AfterViewChecked {
       if (this.appConfig.closureWorkflowStatuses) {
         this.closureWorkflowStatuses = this.appConfig.closureWorkflowStatuses;
       }
-      //localStorage.setItem('X-TENANT-CODE', this.appConfig.tenantCode);
-
     }, error => {
       const errorMsg = error as HttpErrorResponse;
-      const x = { 'enableHtml': true, 'preventDuplicates': true, 'positionClass': 'toast-top-full-width', 'progressBar': true } as Partial<IndividualConfig>;
       const y = { 'enableHtml': true, 'preventDuplicates': true, 'positionClass': 'toast-top-right', 'progressBar': true } as Partial<IndividualConfig>;
-      const errorconfig: Partial<IndividualConfig> = x;
       const config: Partial<IndividualConfig> = y;
       if (errorMsg.error && errorMsg.error.message === 'Token Expired') {
-        //this.toastr.error('Logging you out now...',"Your session has expired", errorconfig);
         alert("Your session has timed out. Please sign in again.")
         this.logout();
       } else if (errorMsg.error) {
@@ -305,16 +277,7 @@ export class AppComponent implements AfterViewChecked {
   }
 
   queryParam() {
-
-
     return location.hostname.split('.')[0];
-
-    // this.route.queryParamMap.subscribe(
-    //   (queryParams: ParamMap) => {
-    //     console.log(queryParams);
-    //     return queryParams.get('org');
-    //   }
-    // );
   }
 
   getQueryStringValue(key: string): string {
@@ -340,11 +303,20 @@ export class AppComponent implements AfterViewChecked {
     if (this.confgSubscription) {
       this.confgSubscription.unsubscribe();
     }
+    let navToLogin = false;
+    if (this.loggedInUser.organization.organizationType === 'GRANTER') {
+      navToLogin = true;
+    }
     this.loggedInUser = null;
     this.currentView = 'grants';
-    // localStorage.removeItem('X-TENANT-CODE');
     this.loggedIn = false;
-    this.router.navigate(['/login']);
+
+    if (navToLogin) {
+      this.router.navigate(['login']);
+    } else {
+      this.router.navigate(['home']);
+    }
+
   }
 
   goToHome() {
