@@ -601,8 +601,8 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     row.name = "";
 
     row.columns = JSON.parse(JSON.stringify(attr.fieldTableValue[0].columns));
-    for (let i = 0; i < row.columns.length; i++) {
-      row.columns[i].value = "";
+    for (let col of row.columns) {
+      col.value = "";
     }
 
     attr.fieldTableValue.push(row);
@@ -726,7 +726,8 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
 
     const p = Number(pieces.join(""));//.replaceAll(',', ''));
 
-    return this.currencyService.getFormattedAmount(p - 0 + this.getActualRefundsForGrant());
+    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+    return this.currencyService.getFormattedAmount(p - spent + this.getActualRefundsForGrant());
   }
 
 
@@ -739,7 +740,8 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
 
     const peices = $(pf[i]).html().replace('₹ ', '').split(',');
     const p = Number(peices.join(""));
-    return this.currencyService.getFormattedAmount(p - 0 - this.getActualRefundsForGrant());
+    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+    return this.currencyService.getFormattedAmount(p - spent - this.getActualRefundsForGrant());
   }
 
   getTotals(idx: number, fieldTableValue: TableData[]): string {
@@ -1622,7 +1624,17 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     this.grantRefundFormatted.nativeElement.style.visibility = "visible";
   }
 
+  showFormattedActualSpent(evt: any) {
+    evt.currentTarget.style.visibility = "hidden";
+    this.grantRefundFormatted.nativeElement.style.visibility = "visible";
+  }
+
   showRefundAmountInput(evt: any) {
+    evt.currentTarget.style.visibility = "hidden";
+    this.refundAmount.nativeElement.style.visibility = "visible";
+  }
+
+  showActualSpentInput(evt: any) {
     evt.currentTarget.style.visibility = "hidden";
     this.refundAmount.nativeElement.style.visibility = "visible";
   }
@@ -1677,6 +1689,10 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       return this.currencyService.getFormattedAmount(total);
     }
     return this.currencyService.getFormattedAmount(0);
+  }
+
+  getActualSpent(i) {
+    return this.currencyService.getFormattedAmount(this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0);
   }
 
   getPlannedDiffTotal() {
