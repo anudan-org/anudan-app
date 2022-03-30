@@ -4,7 +4,7 @@
 
 ### Demo https://demo.anudan.org
 - Overview
-- License 
+- License  
 - Technology Stack and Architecture
 - Development Environment Setup
 - Installation (in a production environment)
