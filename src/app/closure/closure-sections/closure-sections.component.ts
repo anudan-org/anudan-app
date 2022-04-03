@@ -1647,7 +1647,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     if (amount) {
       return inf.format(amount, 2);
     }
-    return "<div class='amountPlaceholder'>Enter grant amount</div>";
+    return "<div class='amountPlaceholder'>Enter refund amount</div>";
   }
 
   getPlannedTotal() {

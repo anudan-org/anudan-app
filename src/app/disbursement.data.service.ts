@@ -22,6 +22,8 @@ import { saveAs } from "file-saver";
 export class DisbursementDataService {
   private messageSource = new BehaviorSubject<Disbursement>(null);
   private ngUnsubscribe = new Subject();
+  public initiateDisbursement = new BehaviorSubject<boolean>(false);
+
   url: string = "/api/user/%USERID%/disbursements";
   months: string[] = [
     "Jan",
@@ -46,6 +48,10 @@ export class DisbursementDataService {
     public currencyService: CurrencyService,
     private dp: DatePipe,
   ) { }
+
+  startDisbursement(val) {
+    this.initiateDisbursement.next(val);
+  }
 
   changeMessage(message: Disbursement) {
     if (message !== undefined && message !== null) {

@@ -53,6 +53,9 @@ export class ClosurePreviewComponent implements OnInit {
   closureWorkflowStatuses: WorkflowStatus[];
   tenantUsers: User[];
   logoUrl: string;
+  actualSpent: number;
+  @ViewChild("grantRefundFormatted") grantRefundFormatted: ElementRef;
+  @ViewChild("refundAmount") refundAmount: ElementRef;
 
   constructor(private closureService: ClosureDataService,
     public appComp: AppComponent,
@@ -581,5 +584,200 @@ export class ClosurePreviewComponent implements OnInit {
     selectedAttachments.attachmentIds = [];
     selectedAttachments.attachmentIds.push(attachmentId);
     this.docManagementService.callClosureDocsDownload(selectedAttachments, this.appComp, this.currentClosure);
+  }
+
+  getReceivedFunds(i) {
+    const funds = document.getElementsByClassName('rf');
+    return (funds && funds.length) > 0 ? funds[i].innerHTML : '';
+  }
+
+  getPlannedFunds(i) {
+    const funds = document.getElementsByClassName('pf');
+    return (funds && funds.length) > 0 ? funds[i].innerHTML : '';
+  }
+
+  getPlannedDiff(i) {
+    const pf = $('.pf');
+    if (!pf || pf.length === 0) {
+      return '';
+    }
+
+    const pieces = $(pf[i]).html().replace('₹ ', '').split(",")
+
+    const p = Number(pieces.join(""));//.replaceAll(',', ''));
+
+    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+    return this.currencyService.getFormattedAmount(p - spent + this.getActualRefundsForGrant());
+  }
+
+
+
+  getRecievedDiff(i) {
+    const pf = $('.rf');
+    if (!pf || pf.length === 0) {
+      return '';
+    }
+
+    const peices = $(pf[i]).html().replace('₹ ', '').split(',');
+    const p = Number(peices.join(""));
+    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+    return this.currencyService.getFormattedAmount(p - spent - this.getActualRefundsForGrant());
+  }
+
+  getActualRefundsForGrant() {
+    let actualRfundsTotal = 0;
+    if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {
+      for (let rf of this.currentClosure.grant.actualRefunds) {
+        actualRfundsTotal += (rf.amount ? rf.amount : 0);
+      }
+    }
+    return actualRfundsTotal;
+  }
+
+
+  showFormattedActualSpent(evt: any) {
+    this.currentClosure.grant.actualSpent = this.actualSpent;
+    evt.currentTarget.style.visibility = "hidden";
+    this.grantRefundFormatted.nativeElement.style.visibility = "visible";
+  }
+
+  showActualSpentInput(evt: any) {
+    evt.currentTarget.style.visibility = "hidden";
+    this.refundAmount.nativeElement.style.visibility = "visible";
+  }
+
+
+  getRefundAmount() {
+    if (this.currentClosure.grant.refundAmount) {
+      return this.currencyService.getFormattedAmount(this.currentClosure.grant.refundAmount);
+    } else {
+      return this.currencyService.getFormattedAmount(0);
+    }
+  }
+
+  getRefundReceived() {
+    if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {
+      let total = 0;
+      for (let rf of this.currentClosure.grant.actualRefunds) {
+        total += rf.amount ? rf.amount : 0;
+      }
+      return this.currencyService.getFormattedAmount(total);
+    }
+    return this.currencyService.getFormattedAmount(0);
+  }
+
+  getGrantDisbursementAttribute(): Attribute {
+    for (let section of this.currentClosure.grant.grantDetails.sections) {
+      if (section.attributes) {
+        for (let attr of section.attributes) {
+          if (attr.fieldType === "disbursement") {
+            return attr;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  captureRefund() {
+    this.callCreateSectionAPI("Project Refund Details", true);
+  }
+
+  getFieldTypeDisplayValue(type: string): string {
+    if (type === "multiline") {
+      return "Descriptive";
+    } else if (type === "kpi") {
+      return "Measurement/KPI";
+    } else if (type === "table") {
+      return "Tablular";
+    } else if (type === "document") {
+      return "Document";
+    } else if (type === "disbursement") {
+      return "Disbursement";
+    }
+    return "";
+  }
+
+  getTotals(idx: number, fieldTableValue: TableData[]): string {
+    let total = 0;
+    for (let row of fieldTableValue) {
+      let i = 0;
+      for (let col of row.columns) {
+        if (i === idx) {
+          total += Number(
+            col.value !== undefined &&
+              col.value !== null &&
+              col.value !== "null"
+              ? col.value
+              : "0"
+          );
+        }
+        i++;
+      }
+    }
+    return this.currencyService.getFormattedAmount(total);
+  }
+
+  callCreateSectionAPI(nameOfSection, isRefund) {
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+    const url =
+      "/api/user/" +
+      this.appComp.loggedInUser.id +
+      "/closure/" +
+      this.currentClosure.id +
+      "/template/" +
+      this.currentClosure.template.id +
+      "/section/" +
+      nameOfSection + "/" + isRefund;
+
+    this.http
+      .post<ClosureSectionInfo>(url, this.currentClosure, httpOptions)
+      .subscribe(
+        (info: ClosureSectionInfo) => {
+          this.closureService.changeMessage(info.closure, this.appComp.loggedInUser.id);
+          this.appComp.sectionAdded = true;
+          this.sidebar.buildSectionsSideNav(null);
+          this.appComp.sectionInModification = false;
+          this.router.navigate([
+            "grant-closure/section/" +
+            this.getCleanText(
+              info.closure.closureDetails.sections.filter(
+                (a) => a.id === info.sectionId
+              )[0]
+            ),
+          ]);
+        },
+        (error) => {
+          const errorMsg = error as HttpErrorResponse;
+          console.log(error);
+          const x = { enableHtml: true, preventDuplicates: true } as Partial<
+            IndividualConfig
+          >;
+          const config: Partial<IndividualConfig> = x;
+          if (errorMsg.error.message === "Token Expired") {
+            this.toastr.error(
+              "Your session has expired",
+              "Logging you out now...",
+              config
+            );
+            setTimeout(() => {
+              this.appComp.logout();
+            }, 4000);
+          } else {
+            this.toastr.error(
+              errorMsg.error.message,
+              "23 We encountered an error",
+              config
+            );
+          }
+        }
+      );
   }
 }
