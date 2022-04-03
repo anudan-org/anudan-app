@@ -656,4 +656,119 @@ export class ClosurePreviewComponent implements OnInit {
     }
     return this.currencyService.getFormattedAmount(0);
   }
+
+  getGrantDisbursementAttribute(): Attribute {
+    for (let section of this.currentClosure.grant.grantDetails.sections) {
+      if (section.attributes) {
+        for (let attr of section.attributes) {
+          if (attr.fieldType === "disbursement") {
+            return attr;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  captureRefund() {
+    this.callCreateSectionAPI("Project Refund Details", true);
+  }
+
+  getFieldTypeDisplayValue(type: string): string {
+    if (type === "multiline") {
+      return "Descriptive";
+    } else if (type === "kpi") {
+      return "Measurement/KPI";
+    } else if (type === "table") {
+      return "Tablular";
+    } else if (type === "document") {
+      return "Document";
+    } else if (type === "disbursement") {
+      return "Disbursement";
+    }
+    return "";
+  }
+
+  getTotals(idx: number, fieldTableValue: TableData[]): string {
+    let total = 0;
+    for (let row of fieldTableValue) {
+      let i = 0;
+      for (let col of row.columns) {
+        if (i === idx) {
+          total += Number(
+            col.value !== undefined &&
+              col.value !== null &&
+              col.value !== "null"
+              ? col.value
+              : "0"
+          );
+        }
+        i++;
+      }
+    }
+    return this.currencyService.getFormattedAmount(total);
+  }
+
+  callCreateSectionAPI(nameOfSection, isRefund) {
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+    const url =
+      "/api/user/" +
+      this.appComp.loggedInUser.id +
+      "/closure/" +
+      this.currentClosure.id +
+      "/template/" +
+      this.currentClosure.template.id +
+      "/section/" +
+      nameOfSection + "/" + isRefund;
+
+    this.http
+      .post<ClosureSectionInfo>(url, this.currentClosure, httpOptions)
+      .subscribe(
+        (info: ClosureSectionInfo) => {
+          this.closureService.changeMessage(info.closure, this.appComp.loggedInUser.id);
+          this.appComp.sectionAdded = true;
+          this.sidebar.buildSectionsSideNav(null);
+          this.appComp.sectionInModification = false;
+          this.router.navigate([
+            "grant-closure/section/" +
+            this.getCleanText(
+              info.closure.closureDetails.sections.filter(
+                (a) => a.id === info.sectionId
+              )[0]
+            ),
+          ]);
+        },
+        (error) => {
+          const errorMsg = error as HttpErrorResponse;
+          console.log(error);
+          const x = { enableHtml: true, preventDuplicates: true } as Partial<
+            IndividualConfig
+          >;
+          const config: Partial<IndividualConfig> = x;
+          if (errorMsg.error.message === "Token Expired") {
+            this.toastr.error(
+              "Your session has expired",
+              "Logging you out now...",
+              config
+            );
+            setTimeout(() => {
+              this.appComp.logout();
+            }, 4000);
+          } else {
+            this.toastr.error(
+              errorMsg.error.message,
+              "23 We encountered an error",
+              config
+            );
+          }
+        }
+      );
+  }
 }
