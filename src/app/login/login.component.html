@@ -1,32 +1,22 @@
 <!-- <div class="row align-items-center"> -->
 
 <div class="row m-0 h-100" style="background: #f1f1f4">
-  <div
-    class="col-12"
-    style="
+  <div class="col-12" style="
       height: 90px;
-      background: #424652;
       display: flex;
       align-items: center;
-    "
-  >
-    <img
-      [src]="logoURL"
-      alt="logo"
-      class="img-fluid"
-      style="
+    " [ngStyle]="{background:navbar}">
+    <img [src]="logoURL" alt="logo" class="img-fluid" style="
         height: 80%;
         padding: 5px;
         margin: 5px 3px;
         border-radius: 2px;
-      "
-    />
-    <span style="color: #fff; font-weight: 400; font-size: 25px"
-      >{{ orgName }}
+      " />
+    <span style="color: #fff; font-weight: 400; font-size: 25px">{{ orgName }}
     </span>
   </div>
   <div class="col-lg-7 col-md-12">
-    <img alt="img"src="./assets/img/landing.svg" class="w-75 mt-4" />
+    <img alt="img" src="./assets/img/landing.svg" class="w-75 mt-4" />
   </div>
   <div class="col-lg-5 col-md-12">
     <div style="display: flex; align-items: center; justify-content: center">
@@ -34,93 +24,47 @@
         <form id="formLogin" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <!-- <label for="emailId">Email Id</label> -->
           <div class="my-2">
-            <input
-              required
-              type="text"
-              class="form-control form-control-sm anu-input mb-3"
-              id="emailId"
-              data-html="true"
-              [value]="currentEmail"
-              (disabled)="(currentEmail !== '')"
-              placeholder="Email Address"
-              formControlName="emailId"
-              autocomplete="current-password"
-              (focus)="showPopover('hello')"
-            />
+            <input required type="text" class="form-control form-control-sm anu-input mb-3" id="emailId"
+              data-html="true" [value]="currentEmail" (disabled)="(currentEmail !== '')" placeholder="Email Address"
+              formControlName="emailId" autocomplete="current-password" (focus)="showPopover('hello')" />
           </div>
 
           <!-- <label for="password">Password</label> -->
           <div class="input-group input-group-alternative form-group-email">
-            <input
-              class="form-control form-control-sm mb-4 anu-input"
-              id="password"
-              placeholder="Password"
-              formControlName="password"
-              required="true"
-              [type]="showPassword ? 'text' : 'password'"
-            />
-            <img
-              (click)="togglePassword('hide')"
-              *ngIf="showPassword"
-              src="./assets/img/off.svg"
-              style="position: absolute; right: 10px; top: 2px"
-            />
-            <img
-              (click)="togglePassword('show')"
-              *ngIf="!showPassword"
-              src="./assets/img/on.svg"
-              style="position: absolute; right: 10px; top: 2px"
-            />
+            <input class="form-control form-control-sm mb-4 anu-input" id="password" placeholder="Password"
+              formControlName="password" required="true" [type]="showPassword ? 'text' : 'password'" />
+            <img (click)="togglePassword('hide')" *ngIf="showPassword" src="./assets/img/off.svg"
+              style="position: absolute; right: 10px; top: 2px" />
+            <img (click)="togglePassword('show')" *ngIf="!showPassword" src="./assets/img/on.svg"
+              style="position: absolute; right: 10px; top: 2px" />
           </div>
-          <re-captcha
-            #reCaptcha
-            *ngIf="loginForm.valid"
-            (resolved)="resolved($event)"
-            type="image"
-            siteKey="6LdUFvYUAAAAADIq0DlLpSJgrbuCKtR7H7FcpnFn"
-          ></re-captcha>
-          <button
-            id="btn-signin"
-            class="btn anu-btn w-100 mx-0 mt-3"
-            style="background: #4dc252"
-            type="submit"
-            [disabled]="!(loginForm.valid && reCaptchaResolved)"
-          >
+          <re-captcha #reCaptcha *ngIf="loginForm.valid" (resolved)="resolved($event)" type="image"
+            siteKey="6LdUFvYUAAAAADIq0DlLpSJgrbuCKtR7H7FcpnFn"></re-captcha>
+          <button id="btn-signin" class="btn anu-btn w-100 mx-0 mt-3" style="background: #4dc252" type="submit"
+            [disabled]="!(loginForm.valid && reCaptchaResolved)">
             Sign In
           </button>
         </form>
         <p class="mb-0 text-green">
           Having trouble signing in?
-          <a style="text-decoration: underline" (click)="requestPasswordReset()"
-            >Reset your password</a
-          >
+          <a style="text-decoration: underline" (click)="requestPasswordReset()">Reset your password</a>
         </p>
         <hr />
         <div class="row">
-          <div
-            class="col-4"
-            style="
+          <div class="col-4" style="
               display: flex;
               align-items: center;
               justify-content: flex-end;
-            "
-          >
+            ">
             Or sign in with
           </div>
           <div class="col-4 text-left pr-0">
-            <button
-              class="btn btn-sm btn-google m-0"
-              (click)="signInWithGoogle()"
-            >
+            <button class="btn btn-sm btn-google m-0" (click)="signInWithGoogle()">
               <span class="fa fa-google mr-1"></span> Google
             </button>
           </div>
           <div class="col-4 text-left pl-0">
-            <button
-              class="btn btn-sm btn-linkedin m-0"
-              disabled
-              (click)="signInWithGoogle()"
-            >
+            <button class="btn btn-sm btn-linkedin m-0" disabled (click)="signInWithGoogle()">
               <span class="fa fa-linkedin mr-1"></span> LinkedIn
             </button>
           </div>
@@ -130,23 +74,17 @@
     <div class="text-center f-12">
       <div class="w-100">
         <p style="color: #7d7d7d; font-size: 16px" class="mb-0">
-          <small class="ml-4 mt-3 d-flex align-items-center justify-content-center"
-            > 
-            <img
-              src="./assets/img/code-alpha.svg"
-              alt="logo"
-              class="img-fluid ml-2"
-              style="
-                width: 75px;
+          <small class="ml-4 mt-3 d-flex align-items-center justify-content-center">
+            <img src="./assets/img/anudan.svg" alt="logo" class="img-fluid ml-2" style="
+                width: 25px;
                 
                 border-radius: 2px;
-              "
-            />
+              " />&nbsp;&nbsp;Anudan
           </small>
-          <p style="color: #7d7d7d; font-size: 16px">
-            <small class="ml-4">{{ appComponent.releaseVersion }}</small>
-          </p>
-        
+        <p style="color: #7d7d7d; font-size: 16px">
+          <small class="ml-4">{{ appComponent.releaseVersion }}</small>
+        </p>
+
       </div>
     </div>
   </div>

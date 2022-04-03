@@ -22,7 +22,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
 
     console.log('here');
-    this.router.navigate(['login']);
+    //this.router.navigate(['login']);
 
   }
 

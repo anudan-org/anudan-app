@@ -47,6 +47,7 @@ export class LoginComponent implements OnInit {
 
   @ViewChild('reCaptcha') reCaptcha: RecaptchaComponent;
   cookieEnabled: boolean;
+  navbar: string;
 
   constructor(private http: HttpClient,
     private router: Router,
@@ -75,6 +76,13 @@ export class LoginComponent implements OnInit {
     this.http.get(url, { responseType: 'text' }).subscribe((orgName) => {
       localStorage.setItem('ORG-NAME', orgName);
       this.orgName = localStorage.getItem('ORG-NAME');
+    }, error => {
+    });
+
+    const url2 = '/api/public/tenant/' + tenantCode + "/navbar";
+    this.http.get(url2, { responseType: 'text' }).subscribe((navbar) => {
+      localStorage.setItem('NAV-BAR', navbar);
+      this.navbar = localStorage.getItem('NAV-BAR');
     }, error => {
     });
   }

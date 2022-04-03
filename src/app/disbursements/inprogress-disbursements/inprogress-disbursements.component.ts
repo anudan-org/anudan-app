@@ -31,13 +31,19 @@ export class InprogressDisbursementsComponent implements OnInit {
 
   public constructor(
     public appComponent: AppComponent,
-    private httpClient: HttpClient,
     private dialog: MatDialog,
     public disbursementDataService: DisbursementDataService,
     private router: Router,
     public currencyService: CurrencyService,
-    public uiService: UiUtilService
-  ) { };
+    public uiService: UiUtilService,
+  ) {
+
+    disbursementDataService.initiateDisbursement.subscribe((val) => {
+      if (val == true) {
+        this.showOwnedActiveGrants();
+      }
+    });
+  };
 
 
   ngOnInit() {
@@ -56,7 +62,7 @@ export class InprogressDisbursementsComponent implements OnInit {
 
 
   showOwnedActiveGrants() {
-
+    this.disbursementDataService.startDisbursement(false);
     this.disbursementDataService.showOwnedActiveGrants()
       .then(ownedGrants => {
         if (ownedGrants !== null) {
@@ -118,6 +124,7 @@ export class InprogressDisbursementsComponent implements OnInit {
         this.disbursementDataService.deleteDisbursement(disbursement)
           .then(disbs => {
             this.disbursements = disbs;
+            this.filteredDisbursements = this.disbursements;
           })
       } else {
         dialogRef.close();

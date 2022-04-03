@@ -19,7 +19,7 @@
           </p>
         </h4>
         <h4 class="col-8 text-left my-3 section-header"
-          [innerHTML]="section.systemGenerated?section.sectionName+'<sup>*</sup>':section.sectionName">
+          [innerHTML]="section.systemGenerated?section.sectionName+'<sup class=sys-gen></sup>':section.sectionName">
         </h4>
         <div class="col-3" style="
               display: flex;
@@ -349,118 +349,7 @@
                             </div>
 
                             <div *ngIf="attribute.fieldType === 'disbursement'" class="col-12 mb-3">
-                              <div class="row mb-3">
-                                <div class="col-4" style="display: flex;align-items: center;">
-                                  <p class="text-header">Project Refund Summary</p>
-                                </div>
-                                <div class="col-8" style="display: flex; justify-content: right; align-items: center;">
 
-                                </div>
-                                <div class="col-12">
-                                  <div class="row">
-                                    <div class="col-3">
-                                      <mat-form-field>
-                                        <input matInput disabled readonly placeholder="Grant Commitment"
-                                          [value]="getPlannedFunds(0)">
-                                      </mat-form-field>
-                                    </div>
-                                    <div class="col-3">
-                                      <mat-form-field>
-                                        <input matInput disabled readonly placeholder="Disbursed Till Date"
-                                          [value]="getReceivedFunds(0)">
-                                      </mat-form-field>
-                                    </div>
-                                    <div class="col-3">
-                                      <mat-form-field>
-                                        <input matInput disabled readonly placeholder="Undisbursed Amount"
-                                          [value]="getPlannedDiff(0)">
-                                      </mat-form-field>
-                                    </div>
-                                    <div class="col-3">
-                                      <button class="btn btn-sm btn-green"
-                                        *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) && this.getActualRefundsForGrant()===0"
-                                        [disabled]="currentClosure.grant.hasOngoingDisbursement ">{{currentClosure.grant.hasOngoingDisbursement?'Disbursement
-                                        Request In-Progress':'Initiate Disbursement'}}</button>
-                                    </div>
-                                    <div class="col-3">
-                                      <mat-form-field>
-                                        <input matInput disabled readonly placeholder="Other Sources Commitment"
-                                          [value]="getPlannedFunds(1)">
-                                      </mat-form-field>
-                                    </div>
-                                    <div class="col-3">
-                                      <mat-form-field>
-                                        <input matInput disabled readonly placeholder="Received Till Date"
-                                          [value]="getReceivedFunds(1)">
-                                      </mat-form-field>
-                                    </div>
-                                    <div class="col-3">
-                                      <mat-form-field>
-                                        <input matInput disabled readonly placeholder="Pending Amount"
-                                          [value]="getPlannedDiff(1)">
-                                      </mat-form-field>
-                                    </div>
-                                    <div class="col-12">
-                                      <hr />
-                                    </div>
-                                    <div class="col-3">
-                                      <mat-form-field>
-                                        <input matInput disabled readonly placeholder="Disbursed Till Date"
-                                          [value]="getReceivedFunds(0)">
-                                      </mat-form-field>
-                                    </div>
-                                    <div class="col-3">
-                                      <mat-form-field *ngIf="
-                                currentClosure.canManage &&
-                                !currentClosure.forGranteeUse
-                              ">
-                                        <input (blur)="showFormattedActualSpent($event)" #refundAmount
-                                          [(ngModel)]="currentClosure.grant.actualSpent" class="anu-input"
-                                          [ngModelOptions]="{ standAlone: true }" matInput
-                                          placeholder="Record Spent (₹) - Till Date" />
-                                        <p #grantRefundFormatted (click)="showActualSpentInput($event)"
-                                          class="anu-input w-100 text-right"
-                                          style="position: absolute; top: 5px; cursor: text"
-                                          [innerHtml]="getFormattedRefundAmount(currentClosure.grant.actualSpent)"></p>
-                                      </mat-form-field>
-                                    </div>
-                                    <div class="col-3">
-                                      <mat-form-field>
-                                        <input matInput disabled readonly placeholder="Unspent Amount"
-                                          [value]="getRecievedDiff(0)">
-                                      </mat-form-field>
-                                    </div>
-                                    <div class="col-3">
-                                      <button
-                                        *ngIf="!currentClosure.grant.hasOngoingDisbursement && !currentClosure.grant.refundAmount"
-                                        class="btn btn-sm btn-green" (click)="captureRefund()">Initiate
-                                        Refund</button>
-                                    </div>
-                                    <div class="col-12">
-                                      <hr />
-                                    </div>
-                                    <div class="col-3">
-                                      <mat-form-field>
-                                        <input matInput disabled readonly placeholder="Refund Requested"
-                                          [value]="getRefundAmount()">
-                                      </mat-form-field>
-                                    </div>
-                                    <div class="col-3">
-                                      <mat-form-field>
-                                        <input matInput disabled readonly placeholder="Refund Received"
-                                          [value]="getRefundReceived()">
-                                      </mat-form-field>
-                                    </div>
-                                    <div class="col-3">
-                                      <mat-form-field>
-                                        <input matInput disabled readonly placeholder="Pending Amount"
-                                          [value]="'₹ 50000'">
-                                      </mat-form-field>
-                                    </div>
-                                  </div>
-
-                                </div>
-                              </div>
                             </div>
                             <div class="col-sm-4 col-lg-8" *ngIf="
                       attribute.fieldType === 'kpi' &&
