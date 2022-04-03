@@ -53,6 +53,9 @@ export class ClosurePreviewComponent implements OnInit {
   closureWorkflowStatuses: WorkflowStatus[];
   tenantUsers: User[];
   logoUrl: string;
+  actualSpent: number;
+  @ViewChild("grantRefundFormatted") grantRefundFormatted: ElementRef;
+  @ViewChild("refundAmount") refundAmount: ElementRef;
 
   constructor(private closureService: ClosureDataService,
     public appComp: AppComponent,
@@ -572,5 +575,85 @@ export class ClosurePreviewComponent implements OnInit {
     selectedAttachments.attachmentIds = [];
     selectedAttachments.attachmentIds.push(attachmentId);
     this.docManagementService.callClosureDocsDownload(selectedAttachments, this.appComp, this.currentClosure);
+  }
+
+  getReceivedFunds(i) {
+    const funds = document.getElementsByClassName('rf');
+    return (funds && funds.length) > 0 ? funds[i].innerHTML : '';
+  }
+
+  getPlannedFunds(i) {
+    const funds = document.getElementsByClassName('pf');
+    return (funds && funds.length) > 0 ? funds[i].innerHTML : '';
+  }
+
+  getPlannedDiff(i) {
+    const pf = $('.pf');
+    if (!pf || pf.length === 0) {
+      return '';
+    }
+
+    const pieces = $(pf[i]).html().replace('₹ ', '').split(",")
+
+    const p = Number(pieces.join(""));//.replaceAll(',', ''));
+
+    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+    return this.currencyService.getFormattedAmount(p - spent + this.getActualRefundsForGrant());
+  }
+
+
+
+  getRecievedDiff(i) {
+    const pf = $('.rf');
+    if (!pf || pf.length === 0) {
+      return '';
+    }
+
+    const peices = $(pf[i]).html().replace('₹ ', '').split(',');
+    const p = Number(peices.join(""));
+    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+    return this.currencyService.getFormattedAmount(p - spent - this.getActualRefundsForGrant());
+  }
+
+  getActualRefundsForGrant() {
+    let actualRfundsTotal = 0;
+    if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {
+      for (let rf of this.currentClosure.grant.actualRefunds) {
+        actualRfundsTotal += (rf.amount ? rf.amount : 0);
+      }
+    }
+    return actualRfundsTotal;
+  }
+
+
+  showFormattedActualSpent(evt: any) {
+    this.currentClosure.grant.actualSpent = this.actualSpent;
+    evt.currentTarget.style.visibility = "hidden";
+    this.grantRefundFormatted.nativeElement.style.visibility = "visible";
+  }
+
+  showActualSpentInput(evt: any) {
+    evt.currentTarget.style.visibility = "hidden";
+    this.refundAmount.nativeElement.style.visibility = "visible";
+  }
+
+
+  getRefundAmount() {
+    if (this.currentClosure.grant.refundAmount) {
+      return this.currencyService.getFormattedAmount(this.currentClosure.grant.refundAmount);
+    } else {
+      return this.currencyService.getFormattedAmount(0);
+    }
+  }
+
+  getRefundReceived() {
+    if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {
+      let total = 0;
+      for (let rf of this.currentClosure.grant.actualRefunds) {
+        total += rf.amount ? rf.amount : 0;
+      }
+      return this.currencyService.getFormattedAmount(total);
+    }
+    return this.currencyService.getFormattedAmount(0);
   }
 }

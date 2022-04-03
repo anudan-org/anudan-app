@@ -76,7 +76,6 @@ export class LoginComponent implements OnInit {
     this.http.get(url, { responseType: 'text' }).subscribe((orgName) => {
       localStorage.setItem('ORG-NAME', orgName);
       this.orgName = localStorage.getItem('ORG-NAME');
-    }, error => {
     });
 
     const url2 = '/api/public/tenant/' + tenantCode + "/navbar";

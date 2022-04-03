@@ -167,6 +167,159 @@
                   <strong>{{ currentClosure.description}}</strong>
                 </div>
               </div>
+
+              //SUMMARY
+              <div class="col-12">
+                <div class="row px-3">
+                  <div class="col-12 app-summary-class"
+                    style="background: rgb(255, 255, 255); border-left-color: rgb(255, 191, 0); border-left-width: 4px; box-shadow: rgb(215, 215, 215) 4px 4px 10px; cursor: pointer;">
+                    <div class="row h-100">
+                      <div class="col-4 px-0 my-3 d-flex flex-column justify-content-center align-items-start">
+                        <div class="text-center w-100"
+                          style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                          {{getPlannedFunds(0)}}</div>
+                        <div class="text-center w-100"
+                          style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                          Grant Commitment</div>
+                      </div>
+                      <div class="col-4 px-0 my-3 d-flex flex-column justify-content-center align-items-start">
+                        <div class="text-center w-100"
+                          style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                          {{getReceivedFunds(0)}}</div>
+                        <div class="text-center w-100"
+                          style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                          Disbursed Till Date</div>
+                      </div>
+                      <div class="col-4 px-0 my-3 d-flex flex-column justify-content-center align-items-start">
+                        <div class="text-center w-100"
+                          style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                          {{getPlannedDiff(0)}}</div>
+                        <div class="text-center w-100"
+                          style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                          Undisbursed Amount</div>
+                      </div>
+                      <div class="col-4 px-0 my-3 d-flex flex-column justify-content-center align-items-start">
+                        <div class="text-center w-100 text-grey"
+                          style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                          {{getPlannedFunds(1)}}</div>
+                        <div class="text-center w-100"
+                          style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                          Other Sources Commitment</div>
+                      </div>
+                      <div class="col-4 px-0 my-3 d-flex flex-column justify-content-center align-items-start">
+                        <div class="text-center w-100 text-grey"
+                          style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                          {{getReceivedFunds(1)}}</div>
+                        <div class="text-center w-100"
+                          style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                          Received Till Date</div>
+                      </div>
+                      <div class="col-4 px-0 my-3 d-flex flex-column justify-content-center align-items-start">
+                        <div class="text-center w-100 text-grey"
+                          style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                          {{getPlannedDiff(1)}}</div>
+                        <div class="text-center w-100"
+                          style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                          Pending Amount</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="col-12">
+                    <hr />
+                  </div>
+                  <div class="col-12 px-0">
+                    <p class="text-header">Record of Spends</p>
+                  </div>
+                  <div class="col-4 unspent-class px-0">
+                    <mat-form-field *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse">
+                      <input (blur)="showFormattedActualSpent($event)" #refundAmount [(ngModel)]="actualSpent"
+                        class="anu-input" [ngModelOptions]="{ standAlone: true }" matInput />
+                      <p #grantRefundFormatted (click)="showActualSpentInput($event)" class="anu-input w-100 text-right"
+                        style="position: absolute; top: 5px; cursor: text"
+                        [innerHtml]="getFormattedRefundAmount(currentClosure.grant.actualSpent)"></p>
+                    </mat-form-field>
+
+                    <div class="text-center w-100"
+                      style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                      Record Spent (₹) - Till Date</div>
+                  </div>
+                  <div class="col-4">
+                    <div class="text-center w-100"
+                      style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                      {{getRecievedDiff(0)}}</div>
+                    <div class="text-center w-100"
+                      style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                      Unspent Amount</div>
+                  </div>
+
+                  <div class="col-12">
+                    <hr />
+                  </div>
+                  <div class="col-12 px-0" *ngIf="currentClosure.grant.refundAmount!==undefined">
+                    <p class="text-header">Closure Actions</p>
+                  </div>
+                  <div class="col-4" *ngIf="currentClosure.grant.refundAmount!==undefined">
+                    <div class="text-center w-100"
+                      style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                      {{getRefundAmount()}}</div>
+                    <div class="text-center w-100"
+                      style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                      Refund Requested</div>
+                  </div>
+                  <div class="col-4" *ngIf="currentClosure.grant.refundAmount!==undefined">
+                    <div class="text-center w-100"
+                      style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                      {{getRefundReceived()}}</div>
+                    <div class="text-center w-100"
+                      style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                      Refund Received</div>
+                  </div>
+                  <div class="col-4" *ngIf="currentClosure.grant.refundAmount!==undefined">
+                    <div class="text-center w-100"
+                      style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                      {{'₹ 50000'}}</div>
+                    <div class="text-center w-100"
+                      style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                      Pending Amount</div>
+                  </div>
+                  <div class="col-12 px-0" *ngIf="currentClosure.grant.hasOngoingDisbursement">
+                    <p class="text-header">Closure Actions</p>
+                  </div>
+
+                  <div class="row px-3" *ngIf="currentClosure.grant.hasOngoingDisbursement">
+                    <div class="col-4">
+                      <div class="text-center w-100"
+                        style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                        {{getFormattedCurrency(currentClosure.grant.ongoingDisbursementAmount)}}</div>
+                      <div class="text-center w-100"
+                        style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                        Requested Disbursement Amount</div>
+                    </div>
+                    <div class="col-4">
+                      <div class="text-center w-100"
+                        style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                        {{getFormattedCurrency(currentClosure.grant.actualOngoingDisbursementRecorded)}}</div>
+                      <div class="text-center w-100"
+                        style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                        Recorded Actual Disbursement</div>
+                    </div>
+                    <div class="col-4">
+                      <div class="text-center w-100"
+                        style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                        {{currentClosure.grant.ongoingDisbursementNote}}</div>
+                      <div class="text-center w-100"
+                        style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                        Disbursement Request Note</div>
+                    </div>
+                    <div class="col-12 px-0">
+                      <hr>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              //SUMMARY END
               <div class="col-12">
                 <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
                   <hr />

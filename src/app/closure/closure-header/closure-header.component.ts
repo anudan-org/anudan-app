@@ -17,7 +17,7 @@ import { TitleCasePipe, DatePipe } from '@angular/common';
 import { AdminLayoutComponent } from 'app/layouts/admin-layout/admin-layout.component';
 import { GrantClosure, ClosureSectionInfo, Reason } from './../../model/closures';
 import { AppComponent } from 'app/app.component';
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 import * as inf from "indian-number-format";
 import * as indianCurrencyInWords from "indian-currency-in-words";
@@ -659,14 +659,10 @@ export class ClosureHeaderComponent implements OnInit {
   }
 
   hidePlannedCommitmentDetails() {
-    //$(this.plannedProjectFundsModal.nativeElement).hide();
     $(this.plannedModal).modal('hide');
-    //$(".modal-backdrop").remove();
   }
   hideReceivedFundsDetails() {
-    //$(this.plannedProjectFundsModal.nativeElement).hide();
     $(this.receivedModal).modal('hide');
-    //$(".modal-backdrop").remove();
   }
 
   initiateDisbursement() {

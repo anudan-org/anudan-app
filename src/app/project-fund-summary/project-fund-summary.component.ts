@@ -27,9 +27,12 @@ export class ProjectFundSummaryComponent implements OnInit {
   @ViewChild("refundAmount") refundAmount: ElementRef;
 
 
-  constructor() { }
+  constructor() {
+    //Do nothing
+  }
 
   ngOnInit() {
+    //Do nothing
   }
 
   showFormattedActualSpent(evt: any) {
@@ -49,7 +52,4 @@ export class ProjectFundSummaryComponent implements OnInit {
     return "<div class='amountPlaceholder'>Enter grant amount</div>";
   }
 
-  captureRefund() {
-
-  }
 }
