@@ -33,10 +33,10 @@
           <div class="input-group input-group-alternative form-group-email">
             <input class="form-control form-control-sm mb-4 anu-input" id="password" placeholder="Password"
               formControlName="password" required="true" [type]="showPassword ? 'text' : 'password'" />
-            <img (click)="togglePassword('hide')" *ngIf="showPassword" src="./assets/img/off.svg"
-              style="position: absolute; right: 10px; top: 2px" />
-            <img (click)="togglePassword('show')" *ngIf="!showPassword" src="./assets/img/on.svg"
-              style="position: absolute; right: 10px; top: 2px" />
+            <img alt="toggle password 1" (click)="togglePassword('hide')" *ngIf="showPassword"
+              src="./assets/img/off.svg" style="position: absolute; right: 10px; top: 2px" />
+            <img alt="toggle password 2" (click)="togglePassword('show')" *ngIf="!showPassword"
+              src="./assets/img/on.svg" style="position: absolute; right: 10px; top: 2px" />
           </div>
           <re-captcha #reCaptcha *ngIf="loginForm.valid" (resolved)="resolved($event)" type="image"
             siteKey="6LdUFvYUAAAAADIq0DlLpSJgrbuCKtR7H7FcpnFn"></re-captcha>
