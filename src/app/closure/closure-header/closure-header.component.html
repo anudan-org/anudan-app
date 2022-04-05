@@ -212,9 +212,19 @@
                               [innerHtml]="getFormattedRefundAmount(currentClosure.grant.actualSpent)"></p>
                           </mat-form-field>
 
-                          <div class="text-center w-100"
+                          <div *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse"
+                            class="text-center w-100"
                             style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                             Record Spent (₹) - Till Date</div>
+                          <div *ngIf="currentClosure.forGranteeUse"
+                            class="col-4 px-0 my-3 d-flex flex-column justify-content-center align-items-start">
+                            <div class="text-center w-100"
+                              style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                              {{getFormattedRefundAmount(currentClosure.grant.actualSpent)}}</div>
+                            <div class="text-center w-100"
+                              style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                              Record Spent (₹) - Till Date</div>
+                          </div>
                         </div>
                         <div class="col-4">
                           <div class="text-center w-100"
@@ -315,7 +325,85 @@
 
                     </div>
 
+                    <div class="col-12 mt-4">
+                      <p class="text-header px-0">Associated Closure Documents</p>
+                    </div>
+                    <div class="col-sm-12 col-lg-12 text-left">
+                      <div class="row mx-3">
+                        <div class="col-6">
+                          <button class="btn btn-sm btn-green w-100" disabled>
+                            <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                              business
+                            </mat-icon>
+                            Browse from library
+                          </button>
+                        </div>
+                        <div class="col-6 pl-0 pr-2">
+                          <label for="projectDocument" class="btn btn-sm btn-green w-100 ml-0">
+                            <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                              computer
+                            </mat-icon>
+                            Browse from system
+                          </label>
+                          <input id="projectDocument" type="file" style="height: 0; visibility: hidden;" multiple
+                            (change)="
+                            processSelectedClosureDocFiles($event)
+                              " [accept]="appComp.acceptedFileTypes" />
+                        </div>
+                      </div>
+                      <mat-nav-list>
+                        <ng-container *ngFor="let attachment of currentClosure.closureDocuments">
+                          <mat-list-item>
+                            <p [id] mat-line style="
+                                  border-bottom: 1px solid #d4d4d4;
+                                  padding-left: 0;font-size: 14px;
+                                ">
+                              {{ attachment.name }}
+                            </p>
+                            <input id='closure_attachment_{{attachment.id}}' mat-list-icon class="attachment-checkbox"
+                              type="checkbox" (change)="
+                                  handleClosureDocSelection(attachment.id)
+                                " style="width: 18px;" />
+                            <button [disabled]="noSingleClosureDocAction" class='single-doc'
+                              (click)="previewDocument('closure-document',attachment)">
+                              <mat-icon class="float-right"
+                                [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                remove_red_eye</mat-icon>
+                            </button>
+                            <button [disabled]="noSingleClosureDocAction" class='single-doc'>
+                              <mat-icon class=" float-right" (click)="downloadSingleClosureDoc(attachment.id)"
+                                [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                file_download</mat-icon>
+                            </button>
+                            <button [disabled]="noSingleClosureDocAction" class='single-doc'
+                              (click)="deleteSingleClosureDoc(attachment.id)">
+                              <mat-icon class="float-right"
+                                [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                delete_outlined</mat-icon>
+                            </button>
+                          </mat-list-item>
+                        </ng-container>
+                        <mat-list-item *ngIf="
+                             currentClosure.closureDocuments &&
+                             currentClosure.closureDocuments.length > 0
+                            ">
+                          <button id="downloadBtn" [disabled]="!downloadAndDeleteClosureDocsAllowed"
+                            class="btn btn-sm btn-blue" (click)="downloadClosureDocsSelection()">
+                            <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                              system_update_alt</mat-icon>
+                            Download Selected Documents
+                          </button>
 
+                          <button id="deleteBtn" class="btn btn-sm btn-blue ml-4"
+                            [disabled]="!downloadAndDeleteClosureDocsAllowed" (click)="deleteClosureDocsSelection()">
+                            <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                              delete_outlined
+                            </mat-icon>Delete
+                            Selected Documents
+                          </button>
+                        </mat-list-item>
+                      </mat-nav-list>
+                    </div>
 
                     <div class="col-12" style="position:absolute; top :-2000px;">
                       <ng-container *ngFor="let section of currentClosure.closureDetails.sections">

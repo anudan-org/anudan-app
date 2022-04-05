@@ -24,7 +24,7 @@
                   ? 'mr-1 btn btn-sm btn-green-primary'
                   : 'mr-1 btn btn-sm btn-green'
               ">
-              <span *ngIf="!currentGrant.closureInProgress">Initiate Closure</span>
+              <span *ngIf="!currentGrant.closureInProgress && grantOwner()">Initiate Closure</span>
               <span *ngIf="currentGrant.closureInProgress">Closure In-Progress</span>
             </button>
           </div>

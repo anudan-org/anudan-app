@@ -1640,4 +1640,14 @@ export class PreviewComponent implements OnInit {
 
     return toStateOwner ? (toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>") : "";
   }
+
+  grantOwner() {
+    const grantActiveStateUser: User = this.currentGrant.workflowAssignments.filter(a => a.stateId === this.currentGrant.grantStatus.id)[0].assignmentUser;
+
+    if (grantActiveStateUser.id === this.appComp.loggedInUser.id) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

@@ -1,3 +1,8 @@
+import { DocpreviewComponent } from './../../docpreview/docpreview.component';
+import { DocpreviewService } from './../../docpreview.service';
+import { FieldDialogComponent } from './../../components/field-dialog/field-dialog.component';
+import { DocManagementService } from './../../doc-management.service';
+import { MessagingComponent } from './../../components/messaging/messaging.component';
 import { DisbursementDataService } from 'app/disbursement.data.service';
 import { CurrencyService } from './../../currency-service';
 import { User } from './../../model/user';
@@ -5,7 +10,7 @@ import { Configuration } from './../../model/app-config';
 import { startWith, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
-import { Grant, WorkflowStatus, Section, Attribute, TableData } from './../../model/dahsboard';
+import { Grant, WorkflowStatus, Section, Attribute, TableData, AttachmentDownloadRequest } from './../../model/dahsboard';
 import { APP_DATE_FORMATS } from './../../reports/report/report-sections/report-sections.component';
 import { SectionUtilService } from './../../section-util.service';
 import { Router, ActivatedRoute, NavigationStart } from '@angular/router';
@@ -21,7 +26,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 
 import * as inf from "indian-number-format";
 import * as indianCurrencyInWords from "indian-currency-in-words";
-import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material';
+import { DateAdapter, MAT_DATE_FORMATS, MatDialog } from '@angular/material';
 import { CustomDateAdapter } from 'app/model/dahsboard';
 
 
@@ -93,6 +98,9 @@ export class ClosureHeaderComponent implements OnInit {
 
   plannedModal: any;
   receivedModal: any;
+  noSingleClosureDocAction: boolean = false;
+  downloadAndDeleteClosureDocsAllowed: boolean = false;
+  newField: any;
 
 
   constructor(public appComp: AppComponent,
@@ -107,7 +115,13 @@ export class ClosureHeaderComponent implements OnInit {
     private route: ActivatedRoute,
     private datePipe: DatePipe,
     private currencyService: CurrencyService,
-    private disbursementDataService: DisbursementDataService) {
+    private disbursementDataService: DisbursementDataService,
+    private dialog: MatDialog,
+    private elem: ElementRef,
+    private docManagementService: DocManagementService,
+    private docPreviewService: DocpreviewService,
+
+  ) {
 
     this.route.params.subscribe((p) => {
       this.action = p["action"];
@@ -678,5 +692,275 @@ export class ClosureHeaderComponent implements OnInit {
     } else {
       return false;
     }
+  }
+
+  processSelectedClosureDocFiles(event) {
+    let files = event.target.files;
+
+    const endpoint =
+      "/api/user/" +
+      this.appComp.loggedInUser.id +
+      "/closure/" +
+      this.currentClosure.id +
+      "/upload/docs";
+    let formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      if (files.item(i).size === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected a file with no content. Unable to upload.',
+          panelClass: "center-class"
+        });
+        event.target.value = "";
+        break;
+      }
+
+      const ext = files.item(i).name.substr(files.item(i).name.lastIndexOf('.'));
+      if (this.appComp.acceptedFileTypes.filter(d => d === ext).length === 0) {
+        this.dialog.open(MessagingComponent, {
+          data: 'Detected an unsupported file type. Supported file types are ' + this.appComp.acceptedFileTypes.toString() + '. Unable to upload.',
+          panelClass: "center-class"
+        });
+        event.target.value = "";
+        break;
+      }
+      formData.append("file", files.item(i));
+      const fileExistsCheck = this._checkAttachmentExists(
+        files.item(i).name.substring(0, files.item(i).name.lastIndexOf("."))
+      );
+      if (fileExistsCheck.status) {
+        alert(
+          "Document " +
+          files.item(i).name +
+          " is already attached under " +
+          fileExistsCheck.message
+        );
+        event.target.value = "";
+        return;
+      }
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+      reportProgress: true,
+    };
+
+    this.http
+      .post<any>(endpoint, formData, httpOptions)
+      .subscribe((info: GrantClosure) => {
+        this.closureService.changeMessage(info, this.appComp.loggedInUser.id);
+
+      });
+  }
+
+  handleClosureDocSelection(attachmentId) {
+    const docElems = this.elem.nativeElement.querySelectorAll(
+      '[id^="closure_attachment_' + attachmentId + '"]'
+    );
+    if (docElems.length > 0) {
+      let found = false;
+      for (let docElem of docElems) {
+        if (docElem.checked) {
+          found = true;
+        }
+      }
+
+      if (found) {
+        this.noSingleClosureDocAction = true;
+        this.downloadAndDeleteClosureDocsAllowed = true;
+      } else {
+        this.noSingleClosureDocAction = false;
+        this.downloadAndDeleteClosureDocsAllowed = false;
+      }
+    }
+  }
+
+  downloadSelection(attribId) {
+    const elems = this.elem.nativeElement.querySelectorAll(
+      '[id^="attriute_' + attribId + '_attachment_"]'
+    );
+    const selectedAttachments = new AttachmentDownloadRequest();
+    if (elems.length > 0) {
+      selectedAttachments.attachmentIds = [];
+      for (let singleElem of elems) {
+        if (singleElem.checked) {
+          selectedAttachments.attachmentIds.push(singleElem.id.split("_")[3]);
+        }
+      }
+      this.docManagementService.callClosureDocDownload(selectedAttachments, this.appComp, this.currentClosure);
+    }
+  }
+
+  downloadClosureDocsSelection(attachmentId) {
+    const elems = this.elem.nativeElement.querySelectorAll(
+      '[id^="closure_attachment_"]'
+    );
+    const selectedClosureDocsAttachments = new AttachmentDownloadRequest();
+    if (elems.length > 0) {
+      selectedClosureDocsAttachments.attachmentIds = [];
+      for (let singleElem of elems) {
+        if (singleElem.checked) {
+          selectedClosureDocsAttachments.attachmentIds.push(singleElem.id.split("_")[2]);
+        }
+      }
+      this.docManagementService.callClosureDocsDownload(selectedClosureDocsAttachments, this.appComp, this.currentClosure);
+    }
+  }
+
+  deleteSelection(attribId) {
+
+    const dReg = this.dialog.open(FieldDialogComponent, {
+      data: { title: 'Are you sure you want to delete the selected document(s)?', btnMain: "Delete Document(s)", btnSecondary: "Not Now" },
+      panelClass: 'center-class'
+    });
+
+    dReg.afterClosed().subscribe(result => {
+      if (result) {
+        const elems = this.elem.nativeElement.querySelectorAll(
+          '[id^="attriute_' + attribId + '_attachment_"]'
+        );
+        const selectedAttachments = new AttachmentDownloadRequest();
+        if (elems.length > 0) {
+          selectedAttachments.attachmentIds = [];
+          for (let singleElem of elems) {
+            if (singleElem.checked) {
+              selectedAttachments.attachmentIds.push(singleElem.id.split("_")[3]);
+            }
+          }
+        }
+        for (let item of selectedAttachments.attachmentIds) {
+          this.deleteAttachment(attribId, item);
+        }
+      } else {
+        dReg.close();
+      }
+    });
+  }
+
+  deleteClosureDocsSelection(attachmentId) {
+
+    const dReg = this.dialog.open(FieldDialogComponent, {
+      data: { title: 'Are you sure you want to delete the selected document(s)?', btnMain: "Delete Document(s)", btnSecondary: "Not Now" },
+      panelClass: 'center-class'
+    });
+
+    dReg.afterClosed().subscribe(result => {
+      if (result) {
+        const elems = this.elem.nativeElement.querySelectorAll(
+          '[id^="closure_attachment_"]'
+        );
+        const selectedClosureDocsAttachments = new AttachmentDownloadRequest();
+        if (elems.length > 0) {
+          selectedClosureDocsAttachments.attachmentIds = [];
+          for (let singleElem of elems) {
+            if (singleElem.checked) {
+              selectedClosureDocsAttachments.attachmentIds.push(singleElem.id.split("_")[2]);
+            }
+          }
+        }
+        for (let item of selectedClosureDocsAttachments.attachmentIds) {
+          this.deleteClosureDocsAttachment(item);
+        }
+      } else {
+        dReg.close();
+      }
+    });
+  }
+
+  deleteAttachment(attributeId, attachmentId) {
+    this.docManagementService.deleteClosureAttachment(attachmentId, this.appComp.loggedInUser.id, attributeId, this.currentClosure.id, this.currentClosure)
+      .then((closure: GrantClosure) => {
+        this.closureService.changeMessage(closure, this.appComp.loggedInUser.id);
+        this.currentClosure = closure;
+        for (let section of this.currentClosure.closureDetails.sections) {
+          if (section && section.attributes) {
+            for (let attr of section.attributes) {
+              if (attributeId === attr.id) {
+                if (attr.attachments && attr.attachments.length > 0) {
+                  this.newField =
+                    "attriute_" +
+                    attributeId +
+                    "_attachment_" +
+                    attr.attachments[attr.attachments.length - 1].id;
+                }
+              }
+            }
+          }
+        }
+      });
+  }
+
+  deleteClosureDocsAttachment(attachmentId) {
+    this.docManagementService.deleteClosureDocsAttachment(attachmentId, this.appComp.loggedInUser.id, this.currentClosure.id, this.currentClosure)
+      .then((closure: GrantClosure) => {
+        this.closureService.changeMessage(closure, this.appComp.loggedInUser.id);
+        this.currentClosure = closure;
+
+      });
+  }
+
+  _checkAttachmentExists(filename): any {
+    for (let section of this.currentClosure.closureDetails.sections) {
+      if (section && section.attributes) {
+        for (let attr of section.attributes) {
+          if (attr && attr.fieldType === "document") {
+            if (attr.attachments && attr.attachments.length > 0) {
+              for (let attach of attr.attachments) {
+                if (attach.name === filename) {
+                  return {
+                    status: true,
+                    message: section.sectionName + " | " + attr.fieldName,
+                  };
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    return { status: false, message: "" };
+  }
+
+  previewDocument(_for, attach) {
+    this.docPreviewService.previewDoc(_for, this.appComp.loggedInUser.id, this.currentClosure.id, attach.id).then((result: any) => {
+      let docType = result.url.substring(result.url.lastIndexOf(".") + 1);
+
+      this.dialog.open(DocpreviewComponent, {
+        data: {
+          url: result.url,
+          type: docType,
+          title: attach.name + "." + attach.type,
+          userId: this.appComp.loggedInUser.id,
+          tempFileName: result.url
+        },
+        panelClass: "wf-assignment-class"
+      });
+    });
+  }
+
+  downloadSingleClosureDoc(attachmentId: number) {
+    const selectedAttachments = new AttachmentDownloadRequest();
+    selectedAttachments.attachmentIds = [];
+    selectedAttachments.attachmentIds.push(attachmentId);
+    this.docManagementService.callClosureDocsDownload(selectedAttachments, this.appComp, this.currentClosure);
+  }
+
+  deleteSingleClosureDoc(attachmentId) {
+    const dReg = this.dialog.open(FieldDialogComponent, {
+      data: {
+        title: "Are you sure you want to delete the selected document?",
+        btnMain: "Delete Document",
+        btnSecondary: "Not Now"
+      },
+      panelClass: "grant-template-class",
+    });
+
+    dReg.afterClosed().subscribe((result) => {
+      if (result) {
+        this.deleteClosureDocsAttachment(attachmentId);
+      }
+    });
   }
 }
