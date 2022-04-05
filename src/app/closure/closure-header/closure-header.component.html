@@ -293,17 +293,17 @@
 
                           <div class="row px-3">
                             <div class="col-12 px-0"
-                              *ngIf="(getPlannedFunds(0)!==getReceivedFunds(0) &&  (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null )) || (!currentClosure.grant.hasOngoingDisbursement && (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null))">
+                              *ngIf="(getPlannedFunds(0)!==getReceivedFunds(0) &&  (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null ) && grantOwner()) || (!currentClosure.grant.hasOngoingDisbursement && (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null) && grantOwner())">
                               <p class="text-header">Closure Actions</p>
                             </div>
                             <div class="col-3 px-0"
-                              *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) &&  (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null )">
+                              *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) &&  (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null )&& grantOwner()">
                               <button class="btn btn-sm btn-green" (click)="initiateDisbursement()"
                                 [disabled]="currentClosure.grant.hasOngoingDisbursement ">{{currentClosure.grant.hasOngoingDisbursement?'Disbursement
                                 Request In-Progress':'Initiate Disbursement'}}</button>
                             </div>
                             <div class="col-3 px-0"
-                              *ngIf="!currentClosure.grant.hasOngoingDisbursement && (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null)">
+                              *ngIf="!currentClosure.grant.hasOngoingDisbursement && (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null) && grantOwner()">
                               <button class="btn btn-sm btn-green" (click)="captureRefund()">Initiate
                                 Refund</button>
                             </div>
@@ -432,7 +432,7 @@
                                         </div>
                                         <div class="col-3">
                                           <button class="btn btn-sm btn-green"
-                                            *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) &&  (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null )"
+                                            *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) &&  (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null ) && grantOwner()"
                                             [disabled]="currentClosure.grant.hasOngoingDisbursement ">{{currentClosure.grant.hasOngoingDisbursement?'Disbursement
                                             Request In-Progress':'Initiate Disbursement'}}</button>
                                         </div>

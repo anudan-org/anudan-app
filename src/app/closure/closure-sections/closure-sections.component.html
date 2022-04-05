@@ -100,8 +100,8 @@
                 background: #fcfcfc;
               ">
                         <ng-container class="mb-2">
-                          <div class="col-4">
-                            <mat-form-field>
+                          <div class="col-5">
+                            <mat-form-field style="max-width: 190px;">
                               <input (blur)="showFormattedRefundAmount($event)" #refundAmount
                                 [(ngModel)]="currentClosure.grant.refundAmount" class="anu-input"
                                 [ngModelOptions]="{ standAlone: true }" matInput placeholder="Refund Amount (₹)" />
@@ -109,10 +109,12 @@
                                 class="anu-input w-100 text-right" style="position: absolute; top: 5px; cursor: text"
                                 [innerHtml]="getFormattedRefundAmount(currentClosure.grant.refundAmount)"></p>
                             </mat-form-field>
+                            <span class="text-subheader">Unspent Amount + Refunds Received:
+                              {{currencyService.getFormattedAmount(getUnspentPlusRefundsReceivedTotal())}}</span>
                           </div>
                         </ng-container>
                         <ng-container class="mb-2">
-                          <div class="col-8">
+                          <div class="col-7">
                             <mat-form-field>
                               <input [(ngModel)]="currentClosure.grant.refundReason" class="anu-input"
                                 [ngModelOptions]="{ standAlone: true }" matInput placeholder="Refund Note" />
@@ -120,7 +122,7 @@
                           </div>
                         </ng-container>
                         <ng-container>
-                          <div class="col-12">
+                          <div class="col-12 pt-4">
                             <div class="row">
                               <div class="col-12">
                                 <p class="text-header px-0">Actual Refunds</p>
@@ -390,7 +392,19 @@
                       !currentClosure.forGranteeUse &&
                       attribute.canEdit
                     ">
-
+                              <mat-form-field *ngIf="attribute.fieldType!=='disbursement'">
+                                <mat-label>Type</mat-label>
+                                <mat-select [disabled]="attribute.fieldType==='disbursement'" (selectionChange)="
+                handleTypeChange($event, attribute, section)
+              " [ngModel]="attribute.fieldType" class="anu-input" [ngModelOptions]="{ standAlone: true }">
+                                  <mat-option value="multiline">Descriptive</mat-option>
+                                  <mat-option value="kpi">Measurement/KPI</mat-option>
+                                  <mat-option value="table">Tablular</mat-option>
+                                  <mat-option value="document">Document</mat-option>
+                                  <mat-option value="disbursement" [disabled]="checkAbilityToAddDisbursements()">
+                                    Disbursement</mat-option>
+                                </mat-select>
+                              </mat-form-field>
                               <label *ngIf="
                         (currentClosure.canManage &&
                           currentClosure.forGranteeUse) ||

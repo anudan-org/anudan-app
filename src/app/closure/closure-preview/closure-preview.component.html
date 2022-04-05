@@ -171,6 +171,10 @@
               <!-- SUMMARY -->
               <div class="col-12">
                 <div class="row px-3">
+                  <div class="col-3 px-0">
+                    <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Project Funds
+                      Summary:</span>
+                  </div>
                   <div class="col-12 app-summary-class"
                     style="background: rgb(255, 255, 255); border-left-color: rgb(255, 191, 0); border-left-width: 4px; box-shadow: rgb(215, 215, 215) 4px 4px 10px; cursor: pointer;">
                     <div class="row h-100">
@@ -229,7 +233,7 @@
                     <hr />
                   </div>
                   <div class="col-12 px-0">
-                    <p class="text-header">Record of Spends</p>
+                    <p style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Record of Spends</p>
                   </div>
                   <div class="col-4 unspent-class px-0">
                     <div class="text-center w-100"
@@ -253,7 +257,7 @@
                     <hr />
                   </div>
                   <div class="col-12 px-0" *ngIf="currentClosure.grant.refundAmount!==undefined">
-                    <p class="text-header">Refund Request</p>
+                    <p style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Refund Request</p>
                   </div>
                   <div class="col-4" *ngIf="currentClosure.grant.refundAmount!==undefined">
                     <div class="text-center w-100"
@@ -280,7 +284,8 @@
                       Pending Amount</div>
                   </div>
                   <div class="col-12 px-0" *ngIf="currentClosure.grant.hasOngoingDisbursement">
-                    <p class="text-header">On-going Disbursement</p>
+                    <p style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">On-going Disbursement
+                    </p>
                   </div>
 
                   <div class="row px-3" *ngIf="currentClosure.grant.hasOngoingDisbursement">
@@ -736,8 +741,7 @@
                             <div id="tableArea" #plannedProjectFundsModal role="dialog"
                               class="row modal mt-5 plannedProjectFundsModal"
                               style="padding-left: 15px; padding-right: 15px;margin-top: 100px;">
-                              <span class="" style="position:absolute; right: 20px; left: auto;top: 10px;z-index:1;"
-                                (click)="hidePlannedCommitmentDetails()">
+                              <span class="" style="position:absolute; right: 20px; left: auto;top: 10px;z-index:1;">
                                 <mat-icon>close</mat-icon>
                               </span>
                               <p class="text-header">Planned Project Funds</p>

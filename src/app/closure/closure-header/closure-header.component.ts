@@ -669,4 +669,14 @@ export class ClosureHeaderComponent implements OnInit {
     this.disbursementDataService.startDisbursement(true);
     this.router.navigate(['disbursements/in-progress'])
   }
+
+  grantOwner() {
+    const grantActiveStateUser: User = this.currentClosure.grant.workflowAssignments.filter(a => a.stateId === this.currentClosure.grant.grantStatus.id)[0].assignmentUser;
+
+    if (grantActiveStateUser.id === this.appComp.loggedInUser.id) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

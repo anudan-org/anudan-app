@@ -104,6 +104,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   downloadAndDeleteAllowed: boolean = false;
   downloadAndDeleteClosureDocsAllowed: boolean = false;
   subscribers: any = {};
+  calcSet: any;
 
   constructor(public appComp: AppComponent,
     private closureService: ClosureDataService,
@@ -115,7 +116,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     private sidebar: SidebarComponent,
     private adminComp: AdminLayoutComponent,
     private attributeService: AttributeService,
-    private currencyService: CurrencyService,
+    public currencyService: CurrencyService,
     private disbursementService: DisbursementDataService,
     private datepipe: DatePipe,
     public amountValidator: AmountValidator,
@@ -1720,6 +1721,30 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     const peices2 = $(pf[1]).html().replace('₹ ', '').split(',');
     const p2 = Number(peices2.join(""));
     return this.currencyService.getFormattedAmount(p1 - 0 - this.getActualRefundsForGrant() + p2);
+  }
+
+  getUnspentPlusRefundsReceivedTotal() {
+    if (this.calcSet) {
+      return this.calcSet;
+    }
+    const pf = $('.rf');
+    if (!pf || pf.length === 0) {
+      return;
+    }
+
+    const peices = $(pf[0]).html().replace('₹ ', '').split(',');
+    const p = Number(peices.join(""));
+    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+    const part1 = p - spent - this.getActualRefundsForGrant();
+
+    let part2 = 0;
+    if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {
+      for (let rf of this.currentClosure.grant.actualRefunds) {
+        part2 += rf.amount ? rf.amount : 0;
+      }
+    }
+
+    this.calcSet = part1 + part2;
   }
 
 }
