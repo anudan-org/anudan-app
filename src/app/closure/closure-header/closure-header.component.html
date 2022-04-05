@@ -216,15 +216,13 @@
                             class="text-center w-100"
                             style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                             Record Spent (₹) - Till Date</div>
-                          <div *ngIf="currentClosure.forGranteeUse"
-                            class="col-4 px-0 my-3 d-flex flex-column justify-content-center align-items-start">
-                            <div class="text-center w-100"
-                              style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                              {{getFormattedRefundAmount(currentClosure.grant.actualSpent)}}</div>
-                            <div class="text-center w-100"
-                              style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                              Record Spent (₹) - Till Date</div>
-                          </div>
+
+                          <div *ngIf="currentClosure.forGranteeUse" class="text-center w-100"
+                            style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                            {{getFormattedRefundAmount(currentClosure.grant.actualSpent)}}</div>
+                          <div *ngIf="currentClosure.forGranteeUse" class="text-center w-100"
+                            style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                            Record Spent (₹) - Till Date</div>
                         </div>
                         <div class="col-4">
                           <div class="text-center w-100"
@@ -269,7 +267,7 @@
                           <p class="text-header">Closure Actions</p>
                         </div>
 
-                        <div class="row px-3" *ngIf="currentClosure.grant.hasOngoingDisbursement">
+                        <div class="row px-5" *ngIf="currentClosure.grant.hasOngoingDisbursement">
                           <div class="col-4">
                             <div class="text-center w-100"
                               style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
@@ -301,7 +299,7 @@
 
                         <div class="col-12 px-0">
 
-                          <div class="row px-3">
+                          <div class="row px-5">
                             <div class="col-12 px-0"
                               *ngIf="(getPlannedFunds(0)!==getReceivedFunds(0) &&  (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null ) && grantOwner()) || (!currentClosure.grant.hasOngoingDisbursement && (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null) && grantOwner())">
                               <p class="text-header">Closure Actions</p>
@@ -405,7 +403,7 @@
                       </mat-nav-list>
                     </div>
 
-                    <div class="col-12" style="position:absolute; top :-2000px;">
+                    <div class="col-12" style="position:absolute; top :-2000px;z-index: -1;">
                       <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
                         <div>
                           <ng-container #sectionsContainer *ngFor="let attribute of section.attributes; let i = index">
