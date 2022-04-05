@@ -1373,6 +1373,7 @@ footer{
     width: calc(100% - 300px) !important;
     right: 0 !important;
     background-color: #f4f4f4 !important;
+    z-index: 1;
 }
 
 ::ng-deep .progress-summary-class .mat-progress-bar-fill::after {
