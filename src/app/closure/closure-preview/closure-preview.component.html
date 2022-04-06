@@ -811,10 +811,9 @@
                                     </ng-container>
                                   </tr>
                                 </ng-container>
-                                <tr *ngIf="
-                            getGrantDisbursementAttribute()
-                              .fieldTableValue.length > 1
-                          " style="background: #f4f4f4">
+                                <tr
+                                  [ngStyle]="getGrantDisbursementAttribute()
+                                .fieldTableValue.length > 1?{background: '#f4f4f4'}:{background: '#f4f4f4',visibility:'hidden'}">
                                   <td class="py-2" style="position: sticky; left: 0; z-index: 1">
                                     <label class="w-100" style="font-weight: 600">TOTAL:</label>
                                   </td>
@@ -1578,9 +1577,9 @@
                                     </div>
                                   </div>
                                   <tr *ngIf="
-                            attribute.fieldTableValue &&
-                            attribute.fieldTableValue.length > 1
-                          " style="background: #f4f4f4">
+                            attribute.fieldTableValue
+                            
+                          " [ngStyle]="attribute.fieldTableValue.length > 1?{background: '#f4f4f4'}:{background: '#f4f4f4',visibility:'hidden'}">
                                     <td class="py-2" style="position: sticky; left: 0; z-index: 1">
                                       <label class="w-100" style="font-weight: 600">TOTAL:</label>
                                     </td>
@@ -1809,10 +1808,10 @@
                         font-size: 15px;
                         font-family: Roboto, sans-serif;
                       ">{{ 'Actual Refunds' }}</span>
-                        <table style="width:100%;border:1px solid #d4d4d4;">
+                        <table border="1" style="width:100%;border:1px solid #3f3f3f;">
                           <caption></caption>
                           <tr>
-                            <th id="">S. No.</th>
+                            <th id="">#</th>
                             <th id="">Refund Date</th>
                             <th id="">Refund Amount</th>
                             <th id="">Note</th>
@@ -1820,7 +1819,7 @@
                           <tr *ngFor="let rf of currentClosure.grant.actualRefunds;let i=index">
                             <td>{{i+1}}</td>
                             <td>{{rf.refundDate | date : 'dd-MMM-yyyy'}}</td>
-                            <td>{{rf.amount}}</td>
+                            <td class="text-right">₹ {{rf.amount}}</td>
                             <td>{{rf.note}}</td>
                           </tr>
                         </table>

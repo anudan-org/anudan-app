@@ -105,6 +105,8 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   downloadAndDeleteClosureDocsAllowed: boolean = false;
   subscribers: any = {};
   calcSet: any;
+  pf: number;
+  rf: number;
 
   constructor(public appComp: AppComponent,
     private closureService: ClosureDataService,
@@ -859,6 +861,14 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     column.value = "";
   }
 
+  clearRowDate(actual: ActualRefund, i) {
+    actual.refundDate = null;
+    const el = document.querySelector('#actual_' + i);
+    (el as HTMLInputElement).value = null;
+  }
+
+
+
   showAmountInput(evt: any) {
     evt.currentTarget.style.visibility = "hidden";
     const id = evt.target.attributes.id.value.replace("label_", "");
@@ -1601,6 +1611,8 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     $(ev.currentTarget).css('visibility', 'hidden');
     $('#' + inputDisplay).css('visibility', 'visible');
     this.updateRefundLineItem(af);
+    this.calcSet = undefined;
+    this.getUnspentPlusRefundsReceivedTotal();
   }
 
   getRedundDate(dt) {
@@ -1646,7 +1658,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
 
   getFormattedRefundAmount(amount: number): string {
     if (amount) {
-      return inf.format(amount, 2);
+      return this.currencyService.getFormattedAmount(amount);
     }
     return "<div class='amountPlaceholder'>Enter refund amount</div>";
   }
@@ -1727,24 +1739,36 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     if (this.calcSet) {
       return this.calcSet;
     }
-    const pf = $('.rf');
-    if (!pf || pf.length === 0) {
-      return;
-    }
+    let p = 0;
+    let r = 0;
 
-    const peices = $(pf[0]).html().replace('₹ ', '').split(',');
-    const p = Number(peices.join(""));
-    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
-    const part1 = p - spent - this.getActualRefundsForGrant();
-
-    let part2 = 0;
-    if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {
-      for (let rf of this.currentClosure.grant.actualRefunds) {
-        part2 += rf.amount ? rf.amount : 0;
+    if (this.pf === undefined) {
+      const pf = $('.pf');
+      if (pf && pf.length > 0) {
+        const pieces1 = $(pf[0]).html().replace('₹ ', '').split(",")
+        p = Number(pieces1.join(""));
+        this.pf = p;
+      } else {
+        this.pf = 0;
       }
     }
 
-    this.calcSet = part1 + part2;
+
+    if (this.rf === undefined) {
+      const rf = $('.rf');
+      if (rf && rf.length > 0) {
+        const pieces2 = $(rf[0]).html().replace('₹ ', '').split(",")
+        r = Number(pieces2.join(""));
+        this.rf = r;
+      } else {
+        this.rf = 0;
+      }
+    }
+
+    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+    ;
+
+    this.calcSet = this.pf - this.rf - spent + this.getActualRefundsForGrant();
   }
 
 }

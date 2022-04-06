@@ -29,7 +29,7 @@
         <div #container class="container text-left mt-2 px-0 py-2">
           <!--MANAGEMENT SECTION-->
           <div *ngIf="currentClosure.canManage">
-            <div class="row w-100 p-0 mt-3 mb-2 mx-0 grants-section">
+            <div class="row w-100 pr-1 pt-1 mt-3 mb-2 mx-0 grants-section">
               <div class="col-12">
                 <div class="row p-2" style="background: #fafafa">
                   <div class="col-12 mb-1">
@@ -258,7 +258,7 @@
                         <div class="col-4" *ngIf="currentClosure.grant.refundAmount!==undefined">
                           <div class="text-center w-100"
                             style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                            {{'₹ 50000'}}</div>
+                            {{getPendingAmount()}}</div>
                           <div class="text-center w-100"
                             style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                             Pending Amount</div>
@@ -403,7 +403,7 @@
                       </mat-nav-list>
                     </div>
 
-                    <div class="col-12" style="position:absolute; top :-2000px;z-index: -1;">
+                    <div class="col-12" style="position:absolute; top :-2000px;">
                       <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
                         <div>
                           <ng-container #sectionsContainer *ngFor="let attribute of section.attributes; let i = index">
@@ -902,10 +902,8 @@
                                           </ng-container>
                                         </tr>
                                       </ng-container>
-                                      <tr *ngIf="
-                                  getGrantDisbursementAttribute()
-                                    .fieldTableValue.length > 1
-                                " style="background: #f4f4f4">
+                                      <tr
+                                        [ngStyle]="getGrantDisbursementAttribute().fieldTableValue.length > 1?{background: '#f4f4f4'}:{background: '#f4f4f4',visibility:'hidden'}">
                                         <td class="py-2" style="position: sticky; left: 0; z-index: 1">
                                           <label class="w-100" style="font-weight: 600">TOTAL:</label>
                                         </td>
@@ -1673,9 +1671,8 @@
                                           </div>
                                         </div>
                                         <tr *ngIf="
-                                  attribute.fieldTableValue &&
-                                  attribute.fieldTableValue.length > 1
-                                " style="background: #f4f4f4">
+                                  attribute.fieldTableValue 
+                                " [ngStyle]="attribute.fieldTableValue.length>1? {background: '#f4f4f4'}:{background: '#f4f4f4',visibility:'hidden'}">
                                           <td class="py-2" style="position: sticky; left: 0; z-index: 1">
                                             <label class="w-100" style="font-weight: 600">TOTAL:</label>
                                           </td>

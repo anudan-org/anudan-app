@@ -103,22 +103,38 @@
                           <div class="col-5">
                             <mat-form-field style="max-width: 190px;">
                               <input (blur)="showFormattedRefundAmount($event)" #refundAmount
-                                [(ngModel)]="currentClosure.grant.refundAmount" class="anu-input"
-                                [ngModelOptions]="{ standAlone: true }" matInput placeholder="Refund Amount (₹)" />
-                              <p #grantRefundFormatted (click)="showRefundAmountInput($event)"
+                                placeholder="Refund Amount (₹)" [(ngModel)]="currentClosure.grant.refundAmount"
+                                class="anu-input" [ngModelOptions]="{ standAlone: true }" matInput />
+                              <p *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
+                                #grantRefundFormatted (click)="showRefundAmountInput($event)"
                                 class="anu-input w-100 text-right" style="position: absolute; top: 5px; cursor: text"
                                 [innerHtml]="getFormattedRefundAmount(currentClosure.grant.refundAmount)"></p>
+                              <p *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'"
+                                #grantRefundFormatted class="anu-input w-100 text-right"
+                                style="position: absolute; top: 5px; background:#e6e6e6 !important;"
+                                [innerHtml]="getFormattedRefundAmount(currentClosure.grant.refundAmount)"></p>
                             </mat-form-field>
-                            <span class="text-subheader">Unspent Amount + Refunds Received:
+
+                            <span class="text-subheader" style="position: absolute; bottom: 0px;">Unspent Amount +
+                              Refunds Received:
                               {{currencyService.getFormattedAmount(getUnspentPlusRefundsReceivedTotal())}}</span>
                           </div>
                         </ng-container>
                         <ng-container class="mb-2">
                           <div class="col-7">
-                            <mat-form-field>
+                            <mat-form-field *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'">
                               <input [(ngModel)]="currentClosure.grant.refundReason" class="anu-input"
                                 [ngModelOptions]="{ standAlone: true }" matInput placeholder="Refund Note" />
+
                             </mat-form-field>
+                            <label class="mat-form-field-label-wrapper"
+                              style="font-weight: normal; font-family: Lato; color: rgba(0,0,0,0.5);"
+                              *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'">Refund
+                              Note</label>
+                            <p *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'" class="anu-input"
+                              style="background: #e6e6e6 !important; position: absolute; top: 18px; width: 100%; left: 0;">
+                              {{currentClosure.grant.refundReason}}
+                            </p>
                           </div>
                         </ng-container>
                         <ng-container>
@@ -129,7 +145,7 @@
                               </div>
                               <ng-container *ngIf="currentClosure.grant.actualRefunds.length>0">
                                 <div class="row refunds-holder mx-3">
-                                  <div class="col-1 text-header py-1" style="border:1px solid #d4d4d4;">S.No.</div>
+                                  <div class="col-1 text-header py-1" style="border:1px solid #d4d4d4;">#</div>
                                   <div class="col-3 text-center text-header py-1" style="border:1px solid #d4d4d4;">
                                     Refund
                                     Date</div>
@@ -143,7 +159,8 @@
                                     <div class="col-1 py-1"
                                       style="border:1px solid #d4d4d4;display:flex;align-items:center;justify-content:center;">
                                       {{i+1}}
-                                      <mat-icon *ngIf="currentClosure.grant.actualRefunds.length > 1"
+                                      <mat-icon
+                                        *ngIf="currentClosure.grant.actualRefunds.length > 1 && appComp.loggedInUser.organization.organizationType==='GRANTER'"
                                         (click)="deleteActualRefundRow(af, i)" aria-hidden="false"
                                         style="font-size: 12px; top: 38%; position: absolute; right: 9px; z-index: 1; cursor: pointer; width: auto; height: auto;"
                                         aria-label="Example home icon" inline="false" title="Delete this row">
@@ -152,33 +169,83 @@
                                     </div>
                                     <div class="col-3 py-1" style="border:1px solid #d4d4d4;">
                                       <mat-form-field>
-                                        <input (click)='openARDate(af,$event)' [value]="getRedundDate(af.refundDate)"
+                                        <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
+                                          (click)='openARDate(af,$event)' [value]="getRedundDate(af.refundDate)"
                                           class="anu-input text-center" [ngModel]="af.refundDate | date: 'dd-MMM-yyyy'"
                                           [ngModelOptions]="{ standAlone: true }" matInput placeholder="" readonly />
+                                        <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'"
+                                          [value]="getRedundDate(af.refundDate)" class="anu-input text-center"
+                                          [ngModel]="af.refundDate | date: 'dd-MMM-yyyy'"
+                                          [ngModelOptions]="{ standAlone: true }" matInput placeholder="" readonly
+                                          style="background:#e6e6e6 !important;" />
+                                        <mat-icon *ngIf="
+                                        af.refundDate !== undefined &&
+                                        af.refundDate !== null && appComp.loggedInUser.organization.organizationType==='GRANTER'
+                        " (click)="clearRowDate(af,i)" style="
+                          transform: scale(0.65);
+                          position: absolute;
+                          right: 0;
+                          top: 20%;
+                          cursor: pointer;
+                          color: #7f7f7f;
+                        ">clear</mat-icon>
+                                        <mat-icon (click)="openARDate(af,$event)" [ngStyle]="
+                                        af.refundDate !== undefined &&
+                                        af.refundDate !== null && appComp.loggedInUser.organization.organizationType==='GRANTER'
+                            ? {
+                                transform: 'scale(0.55)',
+                                color: '#7f7f7f',
+                                position: 'absolute',
+                                right: '16px',
+                                top: '20%',
+                                cursor: 'pointer'
+                              }
+                            : {
+                                transform: 'scale(0.55)',
+                                color: '#7f7f7f',
+                                position: 'absolute',
+                                right: '0',
+                                top: '27%',
+                                cursor: 'pointer'
+                              }
+                        ">calendar_today</mat-icon>
                                       </mat-form-field>
                                     </div>
                                     <div class="col-3 py-1" style="border:1px solid #d4d4d4;">
                                       <mat-form-field>
-                                        <p [id]="'afp_'+af.id" (click)="toggleARAmountInput($event)"
+                                        <p *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
+                                          [id]="'afp_'+af.id" (click)="toggleARAmountInput($event)"
                                           class="anu-input text-right"
                                           style="position: absolute; height: 100%; width: 100%; margin: 0; visibility: visible;">
                                           {{getFormattedARAmount(af.amount)}}</p>
-                                        <input style="visibility: hidden;" [id]="'afinput_'+af.id" type="number"
+                                        <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
+                                          style="visibility: hidden;" [id]="'afinput_'+af.id" type="number"
                                           (blur)="toggleARInput($event,af)" [(ngModel)]="af.amount" class="anu-input"
+                                          [ngModelOptions]="{ standAlone: true }" matInput placeholder="" />
+                                        <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'"
+                                          disabled [id]="'afinput_'+af.id" type="text"
+                                          [value]="currencyService.getFormattedAmount(af.amount)"
+                                          class="anu-input text-right" style="background:#e6e6e6 !important;"
                                           [ngModelOptions]="{ standAlone: true }" matInput placeholder="" />
 
                                       </mat-form-field>
                                     </div>
                                     <div class="col-5 py-1" style="border:1px solid #d4d4d4;">
                                       <mat-form-field>
-                                        <input [(ngModel)]="af.note" class="anu-input" (blur)="updateRefundLineItem(af)"
+                                        <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
+                                          [(ngModel)]="af.note" class="anu-input" (blur)="updateRefundLineItem(af)"
                                           [ngModelOptions]="{ standAlone: true }" matInput placeholder="" />
+                                        <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'"
+                                          disabled [(ngModel)]="af.note" class="anu-input"
+                                          (blur)="updateRefundLineItem(af)" [ngModelOptions]="{ standAlone: true }"
+                                          matInput placeholder="" style="background:#e6e6e6 !important;" />
                                       </mat-form-field>
                                     </div>
                                   </ng-container>
                                 </div>
                               </ng-container>
-                              <div class="col-12">
+                              <div *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
+                                class="col-12">
                                 <span (click)="addActualRefunds()" style="cursor: pointer"><em
                                     class="fas fa-plus-circle text-green mr-1"></em>Add a row</span>
                               </div>
@@ -590,10 +657,9 @@
                                       </ng-container>
                                     </tr>
                                   </ng-container>
-                                  <tr *ngIf="
-                            getGrantDisbursementAttribute()
-                              .fieldTableValue.length > 1
-                          " style="background: #f4f4f4">
+                                  <tr
+                                    [ngStyle]="getGrantDisbursementAttribute()
+                                  .fieldTableValue.length > 1?{background: '#f4f4f4'}:{background: '#f4f4f4',visibility:'hidden'}">
                                     <td class="py-2" style="position: sticky; left: 0; z-index: 1">
                                       <label class="w-100" style="font-weight: 600">TOTAL:</label>
                                     </td>
@@ -1362,9 +1428,8 @@
                                     </div>
                                   </div>
                                   <tr *ngIf="
-                            attribute.fieldTableValue &&
-                            attribute.fieldTableValue.length > 1
-                          " style="background: #f4f4f4">
+                            attribute.fieldTableValue 
+                          " [ngStyle]="attribute.fieldTableValue.length>0?{background: '#f4f4f4'}:{background: '#f4f4f4',visibility:'hidden'}">
                                     <td class="py-2" style="position: sticky; left: 0; z-index: 1">
                                       <label class="w-100" style="font-weight: 600">TOTAL:</label>
                                     </td>

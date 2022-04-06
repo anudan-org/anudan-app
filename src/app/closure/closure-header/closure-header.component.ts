@@ -445,40 +445,56 @@ export class ClosureHeaderComponent implements OnInit {
 
   getReceivedFunds(i) {
     const funds = document.getElementsByClassName('rf');
-    return (funds && funds.length) > 0 ? funds[i].innerHTML : '';
+    return (funds && funds.length) > 0 ? funds[i].innerHTML : this.currencyService.getFormattedAmount(0);
   }
 
   getPlannedFunds(i) {
     const funds = document.getElementsByClassName('pf');
-    return (funds && funds.length) > 0 ? funds[i].innerHTML : '';
+    return (funds && funds.length) > 0 ? funds[i].innerHTML : this.currencyService.getFormattedAmount(0);
   }
 
   getPlannedDiff(i) {
+    let p = 0;
+    let r = 0;
+
     const pf = $('.pf');
     if (!pf || pf.length === 0) {
-      return '';
+      return this.currencyService.getFormattedAmount(0);
     }
+    const pieces1 = $(pf[i]).html().replace('₹ ', '').split(",")
+    p = Number(pieces1.join(""));//.replaceAll(',', ''));
 
-    const pieces = $(pf[i]).html().replace('₹ ', '').split(",")
+    const rf = $('.rf');
+    if (!rf || rf.length === 0) {
+      return this.currencyService.getFormattedAmount(p);
+    }
+    const pieces2 = $(rf[i]).html().replace('₹ ', '').split(",")
+    r = Number(pieces2.join(""));//.replaceAll(',', ''));
 
-    const p = Number(pieces.join(""));//.replaceAll(',', ''));
-
-    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
-    return this.currencyService.getFormattedAmount(p - spent + this.getActualRefundsForGrant());
+    return this.currencyService.getFormattedAmount(p - r);
   }
 
 
 
   getRecievedDiff(i) {
-    const pf = $('.rf');
-    if (!pf || pf.length === 0) {
-      return '';
+    let p = 0;
+    let r = 0;
+
+    const pf = $('.pf');
+    if (pf && pf.length > 0) {
+      const pieces1 = $(pf[i]).html().replace('₹ ', '').split(",")
+      p = Number(pieces1.join(""));//.replaceAll(',', ''));
     }
 
-    const peices = $(pf[i]).html().replace('₹ ', '').split(',');
-    const p = Number(peices.join(""));
+
+    const rf = $('.rf');
+    if (rf && rf.length > 0) {
+      const pieces2 = $(rf[i]).html().replace('₹ ', '').split(",")
+      r = Number(pieces2.join(""));//.replaceAll(',', ''));
+    }
+
     const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
-    return this.currencyService.getFormattedAmount(p - spent - this.getActualRefundsForGrant());
+    return this.currencyService.getFormattedAmount(p - r - spent + this.getActualRefundsForGrant());
   }
 
   getActualRefundsForGrant() {
@@ -962,5 +978,24 @@ export class ClosureHeaderComponent implements OnInit {
         this.deleteClosureDocsAttachment(attachmentId);
       }
     });
+  }
+
+  getPendingAmount() {
+    let p = 0;
+    let r = 0;
+    if (this.currentClosure.grant.refundAmount) {
+      p = this.currentClosure.grant.refundAmount;
+    }
+
+    if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {
+      let total = 0;
+      for (let rf of this.currentClosure.grant.actualRefunds) {
+        total += rf.amount ? rf.amount : 0;
+      }
+      r = total;
+    }
+
+    return this.currencyService.getFormattedAmount(p - r);
+
   }
 }
