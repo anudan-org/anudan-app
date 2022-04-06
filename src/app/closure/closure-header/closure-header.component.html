@@ -209,7 +209,7 @@
                               class="anu-input" [ngModelOptions]="{ standAlone: true }" matInput />
                             <p #grantRefundFormatted (click)="showActualSpentInput($event)"
                               class="anu-input w-100 text-right" style="position: absolute; top: 5px; cursor: text"
-                              [innerHtml]="getFormattedRefundAmount(currentClosure.grant.actualSpent)"></p>
+                              [innerHtml]="getFormattedRefundAmount(actualSpent)"></p>
                           </mat-form-field>
 
                           <div *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse"
