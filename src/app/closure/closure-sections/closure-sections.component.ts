@@ -32,7 +32,6 @@ import { SidebarComponent } from 'app/components/sidebar/sidebar.component';
 import { Attribute, ColumnData, CustomDateAdapter, Section, TableData } from 'app/model/dahsboard';
 import { GrantClosure } from 'app/model/closures';
 import { ClosureDataService } from 'app/closure.data.service';
-import * as inf from "indian-number-format";
 
 
 @Component({
@@ -1766,7 +1765,6 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     }
 
     const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
-    ;
 
     this.calcSet = this.pf - this.rf - spent + this.getActualRefundsForGrant();
   }
