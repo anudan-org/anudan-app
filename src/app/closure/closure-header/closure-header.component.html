@@ -403,7 +403,7 @@
                       </mat-nav-list>
                     </div>
 
-                    <div class="col-12" style="position:absolute; top :-2000px;">
+                    <div class="col-12" style="position:absolute; top :-2000px;z-index:-1;">
                       <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
                         <div>
                           <ng-container #sectionsContainer *ngFor="let attribute of section.attributes; let i = index">
