@@ -112,7 +112,6 @@ jobs:
   Anudan-config:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev'
-    needs: DEV-Frontend-Build
     name: Checkout application.yaml | Anudan Config
     steps: 
       - name: Check out anudan-config repo
