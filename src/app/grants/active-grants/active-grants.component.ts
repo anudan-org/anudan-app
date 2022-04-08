@@ -12,7 +12,7 @@ import {
 import { User } from "../../model/user";
 import { GrantType, Tenant, Tenants } from "../../model/dahsboard";
 import { AppComponent } from "../../app.component";
-import { Router, ActivatedRoute } from "@angular/router";
+import { Router } from "@angular/router";
 import { GrantDataService } from "../../grant.data.service";
 import { DataService } from "../../data.service";
 import { GrantUpdateService } from "../../grant.update.service";
@@ -277,12 +277,6 @@ export class ActiveGrantsComponent implements OnInit {
         },
         (error) => {
           const errorMsg = error as HttpErrorResponse;
-          const x = {
-            enableHtml: true,
-            preventDuplicates: true,
-            positionClass: "toast-top-full-width",
-            progressBar: true,
-          } as Partial<IndividualConfig>;
           const y = {
             enableHtml: true,
             preventDuplicates: true,
