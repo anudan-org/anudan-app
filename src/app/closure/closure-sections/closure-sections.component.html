@@ -242,6 +242,14 @@
                                       </mat-form-field>
                                     </div>
                                   </ng-container>
+                                  <ng-container *ngIf="currentClosure.grant.actualRefunds.length>1">
+                                    <div class="col-1" style="border:1px solid #d4d4d4;">Total</div>
+                                    <div class="col-3" style="border:1px solid #d4d4d4;"></div>
+                                    <div class="col-3 text-right pr-4" style="border:1px solid #d4d4d4;">
+                                      {{getActualRefundsTotal()}}
+                                    </div>
+                                    <div class="col-5" style="border:1px solid #d4d4d4;"></div>
+                                  </ng-container>
                                 </div>
                               </ng-container>
                               <div *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"

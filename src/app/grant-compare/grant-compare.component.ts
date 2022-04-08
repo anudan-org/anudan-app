@@ -1702,9 +1702,9 @@ export class GrantCompareComponent implements OnInit {
     for (let i = 0; i < tabData.length; i++) {
 
 
-      html += '<tr><td>' + (i + 1) + '</td><td>' + this.getTheDifference((oldData[i] && oldData[i].refundDate) ? String(this.datePipe.transform(oldData[i].refundDate, 'dd-MMM-yyyy')) : '', tabData[i].refundDate ? String(this.datePipe.transform(tabData[i].refundDate, 'dd-MMM-yyyy')) : '').after + '</td>' +
-        '<td>' + this.getTheDifference((oldData[i] && oldData[i].amount) ? String(oldData[i].amount) : '', tabData[i].amount ? String(tabData[i].amount) : '').after + '</td>' +
-        '<td>' + this.getTheDifference((oldData[i] && oldData[i].note) ? String(oldData[i].note) : '', tabData[i].note ? String(tabData[i].note) : '').after + '</td>';
+      html += '<tr><td>' + (i + 1) + '</td><td>' + this.getTheDifference((oldData && oldData[i] && oldData[i].refundDate) ? String(this.datePipe.transform(oldData[i].refundDate, 'dd-MMM-yyyy')) : '', tabData[i].refundDate ? String(this.datePipe.transform(tabData[i].refundDate, 'dd-MMM-yyyy')) : '').after + '</td>' +
+        '<td>' + this.getTheDifference((oldData && oldData[i] && oldData[i].amount) ? String(oldData[i].amount) : '', tabData[i].amount ? String(tabData[i].amount) : '').after + '</td>' +
+        '<td>' + this.getTheDifference((oldData && oldData[i] && oldData[i].note) ? String(oldData[i].note) : '', tabData[i].note ? String(tabData[i].note) : '').after + '</td>';
 
     }
     html += '</tr>';
@@ -1717,6 +1717,9 @@ export class GrantCompareComponent implements OnInit {
 
     let tabData;
     tabData = oldData;
+    if (!tabData) {
+      return 'Not available';
+    }
     html += '<td>#</td><td>Refund Date</td><td>Refund Amount</td><td>Note</td></tr>';
     for (let i = 0; i < tabData.length; i++) {
 

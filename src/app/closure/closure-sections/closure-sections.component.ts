@@ -1769,4 +1769,13 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     this.calcSet = this.pf - this.rf - spent + this.getActualRefundsForGrant();
   }
 
+  getActualRefundsTotal() {
+    let total = 0;
+    if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {
+      for (let af of this.currentClosure.grant.actualRefunds) {
+        total += af.amount ? af.amount : 0
+      }
+    }
+    return this.currencyService.getFormattedAmount(total);
+  }
 }
