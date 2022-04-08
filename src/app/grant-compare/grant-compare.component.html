@@ -1105,12 +1105,12 @@
       <div *ngIf="closureDiff.newClosureActualRefunds && closureDiff.oldClosureActualRefunds" class="mb-2 change-box">
         <span class="change-title"><span>Closure Refunds | </span>Project Actual Refunds changed</span>
         <ng-container>
-          AX<div class="col-12 change-new my-2 p-3"
+          <div class="col-12 change-new my-2 p-3"
             [innerHTML]="getActualRefundsTabularDataNew(closureDiff.oldClosureActualRefunds,closureDiff.newClosureActualRefunds)">
           </div>
         </ng-container>
         <ng-container>
-          BX<div class="col-12 change-old my-2 p-3"
+          <div class="col-12 change-old my-2 p-3"
             [innerHTML]="getActualRefundsTabularDataOld(closureDiff.oldClosureActualRefunds,closureDiff.newClosureActualRefunds)">
           </div>
         </ng-container>
@@ -1119,10 +1119,20 @@
       <div *ngIf="!closureDiff.newClosureActualRefunds && closureDiff.oldClosureActualRefunds" class="mb-2 change-box">
         <span class="change-title"><span>Closure Refunds | </span>Project Actual Refunds deleted</span>
         <ng-container *ngFor="let entry of closureDiff.oldClosureActualRefunds">
-          CX<div class="col-12 change-old my-2 p-3"
+          <div class="col-12 change-old my-2 p-3"
             [innerHTML]="getActualRefundsTabularDataOld(closureDiff.oldClosureActualRefunds,closureDiff.newClosureActualRefunds)">
           </div>
         </ng-container>
+      </div>
+
+      <div *ngIf="closureDiff.newClosureActualRefunds && !closureDiff.oldClosureActualRefunds" class="mb-2 change-box">
+        <span class="change-title"><span>Closure Refunds | </span>Project Actual Refunds added</span>
+        <div class="col-12 change-new my-2 p-3"
+          [innerHTML]="getActualRefundsTabularDataNew(closureDiff.oldClosureActualRefunds,closureDiff.newClosureActualRefunds)">
+        </div>
+        <div class="col-12 change-old my-2 p-3"
+          [innerHTML]="getActualRefundsTabularDataOld(closureDiff.oldClosureActualRefunds,closureDiff.newClosureActualRefunds)">
+        </div>
       </div>
 
 
@@ -1228,8 +1238,7 @@
                 added</span>
               <div class="change-new">
                 <ng-container *ngIf="sectionDiff.newSection.attributes">
-                  <div class="row py-2" *ngFor="let at of sectionDiff.newSection.attributes"
-                    style="border-bottom: 1px solid #c3c3c3; margin: 0;">
+                  <div class="row py-2" *ngFor="let at of sectionDiff.newSection.attributes" style="margin: 0;">
                     <div class="col-4"><label class="mb-0 text-subheader">Field Name:</label>
                       <p>{{at.name}}</p>
                     </div>
