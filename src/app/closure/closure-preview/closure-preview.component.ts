@@ -122,7 +122,7 @@ export class ClosurePreviewComponent implements OnInit {
     this.logoUrl = "/api/public/images/" + this.currentClosure.grant.grantorOrganization.code + "/logo";
   }
 
-  submitClosure(toStateId: number, transitionTitle: string) {
+  submitClosure(toStateId: number, transitionTitle: string, direction: boolean) {
 
     for (let assignment of this.currentClosure.workflowAssignment) {
       const status1 = this.closureWorkflowStatuses.filter((status) => status.id === assignment.stateId);
@@ -140,7 +140,7 @@ export class ClosurePreviewComponent implements OnInit {
       }
     }
 
-    this.wfvalidationService.validateGrantWorkflow(this.currentClosure.id, 'CLOSURE', this.appComp.loggedInUser.id, this.currentClosure.status.id, toStateId).then(result => {
+    this.wfvalidationService.validateGrantWorkflow(this.currentClosure.id, 'CLOSURE', this.appComp.loggedInUser.id, this.currentClosure.status.id, toStateId, null, direction).then(result => {
       this.openBottomSheetForClosureNotes(toStateId, result, transitionTitle);
       this.wfDisabled = true;
     });
@@ -191,7 +191,7 @@ export class ClosurePreviewComponent implements OnInit {
           this.currentClosure = closure;
           const toState = this.currentClosure.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
           const toStateOwner = this.currentClosure.workflowAssignment.filter(a => a.stateId === toStateId)[0].assignmentUser;
-          this.submitClosure(toStateId, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
+          this.submitClosure(toStateId, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>", true);
         }, error => {
           const errorMsg = error as HttpErrorResponse;
 
@@ -555,7 +555,7 @@ export class ClosurePreviewComponent implements OnInit {
         const toState = this.currentClosure.flowAuthorities.filter(a => a.fromStateId === response.toStateId)[0].fromName;
         const toStateOwner = this.currentClosure.workflowAssignment.filter(a => a.stateId === response.toStateId)[0].assignmentUser;
 
-        this.submitClosure(response.toStateId, "<span class='text-light-red'>Returning to </span>" + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
+        this.submitClosure(response.toStateId, "<span class='text-light-red'>Returning to </span>" + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>", false);
       }
     });
   }

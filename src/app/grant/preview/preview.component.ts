@@ -722,7 +722,7 @@ export class PreviewComponent implements OnInit {
   }
 
 
-  submitGrant(toStateId: number, transitionTitle: string) {
+  submitGrant(toStateId: number, transitionTitle: string, direction: boolean) {
 
     if (this.currentGrant.grantStatus.internalStatus === 'ACTIVE') {
       const dialogRef = this.dialog.open(ClosureSelectionComponent, {
@@ -798,7 +798,7 @@ export class PreviewComponent implements OnInit {
       }
     }
 
-    this.wfValidationService.validateGrantWorkflow(this.currentGrant.id, 'GRANT', this.appComp.loggedInUser.id, this.currentGrant.grantStatus.id, toStateId).then(result => {
+    this.wfValidationService.validateGrantWorkflow(this.currentGrant.id, 'GRANT', this.appComp.loggedInUser.id, this.currentGrant.grantStatus.id, toStateId, null, direction).then(result => {
       this.openBottomSheetForGrantNotes(toStateId, result, transitionTitle);
       this.wfDisabled = true;
     });
@@ -1221,7 +1221,7 @@ export class PreviewComponent implements OnInit {
                 const toState = this.currentGrant.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
                 const toStateOwner = this.currentGrant.workflowAssignments.filter(a => a.stateId === toStateId)[0].assignmentUser;
 
-                this.submitGrant(toStateId, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
+                this.submitGrant(toStateId, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>", true);
               },
               (error) => {
                 const errorMsg = error as HttpErrorResponse;
@@ -1623,7 +1623,7 @@ export class PreviewComponent implements OnInit {
         const toState = this.currentGrant.flowAuthorities.filter(a => a.fromStateId === response.toStateId)[0].fromName;
         const toStateOwner = this.currentGrant.workflowAssignments.filter(a => a.stateId === response.toStateId)[0].assignmentUser;
 
-        this.submitGrant(response.toStateId, "<span class='text-light-red'>Returning to  </span>" + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
+        this.submitGrant(response.toStateId, "<span class='text-light-red'>Returning to  </span>" + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>", false);
       }
     });
   }

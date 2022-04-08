@@ -7,7 +7,7 @@
             <button *ngIf="currentGrant.grantStatus.internalStatus!=='ACTIVE'" [disabled]="
                 wfDisabled
               " mat-stroked-button
-              (click)="submitGrant(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId,true))"
+              (click)="submitGrant(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId,true),true)"
               id="{{ flow.action }}" [class]="
                 flow.seqOrder === 0
                   ? 'mr-1 btn btn-sm btn-green-primary'
@@ -18,7 +18,7 @@
             <button *ngIf="currentGrant.grantStatus.internalStatus==='ACTIVE'" [disabled]="
                 wfDisabled || currentGrant.closureInProgress
               " mat-stroked-button
-              (click)="submitGrant(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId,true))"
+              (click)="submitGrant(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId,true),true)"
               id="{{ flow.action }}" [class]="
                 flow.seqOrder === 0
                   ? 'mr-1 btn btn-sm btn-green-primary'

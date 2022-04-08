@@ -1,8 +1,19 @@
 <!-- <input class="anu-input" placeholder="Search" > -->
 <mat-form-field class="example-form-field" style="width:400px;">
   <mat-label></mat-label>
-  <input #searchCompField id="searchCompField" matInput type="text" (keyup)="startFilter($event.target.value)" class="anu-input" placeholder="Search">
-    <button matSuffix [disabled]="searchString===undefined || searchString.trim()===''" mat-icon-button class="d-flex align-items-center justify-content-center"><mat-icon matSuffix (click)="navgiateToSearch('forward')" class="d-flex align-items-center justify-content-center" style="font-size: 16px; width: 24px; height: 24px;">expand_more</mat-icon></button>
-    <button [disabled]="searchString===undefined || searchString.trim()===''" matSuffix mat-icon-button class="d-flex align-items-center justify-content-center"><mat-icon matSuffix (click)="navgiateToSearch('backward')" class="d-flex align-items-center justify-content-center" style="font-size: 16px; width: 24px; height: 24px;">expand_less</mat-icon></button>
-    <button matSuffix mat-icon-button (click)="closeSearch()"><mat-icon matSuffix  style="font-size: 16px;">close</mat-icon></button>
+  <input #searchCompField id="searchCompField" autoComplete="off" matInput type="text"
+    (keyup)="startFilter($event.target.value)" class="anu-input" placeholder="Search">
+  <button matSuffix [disabled]="searchString===undefined || searchString.trim()===''" mat-icon-button
+    class="d-flex align-items-center justify-content-center">
+    <mat-icon matSuffix (click)="navgiateToSearch('forward')" class="d-flex align-items-center justify-content-center"
+      style="font-size: 16px; width: 24px; height: 24px;">expand_more</mat-icon>
+  </button>
+  <button [disabled]="searchString===undefined || searchString.trim()===''" matSuffix mat-icon-button
+    class="d-flex align-items-center justify-content-center">
+    <mat-icon matSuffix (click)="navgiateToSearch('backward')" class="d-flex align-items-center justify-content-center"
+      style="font-size: 16px; width: 24px; height: 24px;">expand_less</mat-icon>
+  </button>
+  <button matSuffix mat-icon-button (click)="closeSearch()">
+    <mat-icon matSuffix style="font-size: 16px;">close</mat-icon>
+  </button>
 </mat-form-field>

@@ -4,7 +4,7 @@
       <div *ngIf="currentReport.canManage" style="display: flex">
         <div *ngFor="let flow of getForwardFlow()">
           <button [disabled]="wfDisabled" mat-stroked-button
-            (click)="submitReport(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId,true))"
+            (click)="submitReport(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId,true),true)"
             id="{{ flow.action }}" [class]="
                 flow.seqOrder === 0
                   ? 'mr-1 btn btn-sm btn-green-primary'

@@ -291,7 +291,7 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
 
                 const toState1 = this.currentDisbursement.flowPermissions.filter(a => a.toStateId === toState)[0].toName;
                 const toStateOwner = this.currentDisbursement.assignments.filter(a => a.stateId === toState)[0].assignmentUser;
-                this.submitDisbursement(toState, "Progessing for " + toState1 + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
+                this.submitDisbursement(toState, "Progessing for " + toState1 + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>", true);
               });
           } else {
             dialogRef.close();
@@ -300,7 +300,7 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
       });
   }
 
-  submitDisbursement(toState: number, transitionTitle: string) {
+  submitDisbursement(toState: number, transitionTitle: string, direction: boolean) {
     this.disableRecordButton = true;
     this.workflowDataService
       .getDisbursementWorkflowStatuses(this.currentDisbursement, this.appComponent)
@@ -342,7 +342,7 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
         const paramsList: ColumnData[] = [];
         paramsList.push(params);
 
-        this.wfValidationService.validateGrantWorkflow(this.currentDisbursement.id, 'DISBURSEMENT', this.appComponent.loggedInUser.id, this.currentDisbursement.status.id, toState, paramsList).then(result => {
+        this.wfValidationService.validateGrantWorkflow(this.currentDisbursement.id, 'DISBURSEMENT', this.appComponent.loggedInUser.id, this.currentDisbursement.status.id, toState, paramsList, direction).then(result => {
           this.openBottomSheetForReportNotes(toState, result, transitionTitle);
           this.wfDisabled = true;
         });
@@ -588,7 +588,7 @@ export class DisbursementPreviewComponent implements OnInit, OnDestroy {
         const toState = this.currentDisbursement.flowPermissions.filter(a => a.fromStateId === response.toStateId)[0].fromName;
         const toStateOwner = this.currentDisbursement.assignments.filter(a => a.stateId === response.toStateId)[0].assignmentUser;
 
-        this.submitDisbursement(response.toStateId, "<span class='text-light-red'>Returning to </span>" + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
+        this.submitDisbursement(response.toStateId, "<span class='text-light-red'>Returning to </span>" + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>", false);
       }
     });
   }

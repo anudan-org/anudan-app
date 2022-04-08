@@ -1,7 +1,4 @@
-import { ElementRef } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { BehaviorSubject } from 'rxjs';
-import { Component, EventEmitter, Input, OnInit, Output, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 declare var require: any;
 import * as $ from "jquery";
 const Mark = require('mark.js');
@@ -28,20 +25,20 @@ export class SearchFilterComponent implements OnInit, OnChanges {
   @ViewChild("searchCompField") searchCompField: ElementRef;
 
 
-  constructor() { }
+  constructor() {
+    //do nothing
+  }
 
   ngOnInit() {
+    //do nothing
   }
 
   ngOnChanges(changes: SimpleChanges) {
     for (let property in changes) {
       if (property === 'ready') {
-        //if (this.ready) {
         this.highlightText(this.searchString);
         this.highlightDone.emit(false);
-        //}
       }
-      //$('#searchCompField').focus();
       this.searchCompField.nativeElement.focus();
     }
   }
@@ -83,7 +80,6 @@ export class SearchFilterComponent implements OnInit, OnChanges {
 
   navgiateToSearch(direction: any) {
     let marks = $('mark');
-    let currentMark = $('mark.current');
     if (marks.length > 0) {
       $(marks[this.currentIndex]).removeClass('current');
       this.currentIndex += direction === 'forward' ? 1 : -1;

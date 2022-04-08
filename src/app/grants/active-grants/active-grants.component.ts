@@ -8,22 +8,18 @@ import {
   HttpErrorResponse,
   HttpHeaders,
   HttpParams,
-  HTTP_INTERCEPTORS,
 } from "@angular/common/http";
 import { User } from "../../model/user";
-import { GrantType, SerializationHelper, Tenant, Tenants } from "../../model/dahsboard";
+import { GrantType, Tenant, Tenants } from "../../model/dahsboard";
 import { AppComponent } from "../../app.component";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Router, ActivatedRoute } from "@angular/router";
 import { GrantDataService } from "../../grant.data.service";
 import { DataService } from "../../data.service";
 import { GrantUpdateService } from "../../grant.update.service";
 import { Grant, GrantTemplate } from "../../model/dahsboard";
-import * as $ from "jquery";
 import { ToastrService, IndividualConfig } from "ngx-toastr";
 import { GrantComponent } from "../../grant/grant.component";
 import {
-  MatBottomSheet,
-  MatDatepickerInputEvent,
   MatDialog,
 } from "@angular/material";
 import { GrantTemplateDialogComponent } from "../../components/grant-template-dialog/grant-template-dialog.component";
@@ -91,8 +87,7 @@ export class ActiveGrantsComponent implements OnInit {
     private http: HttpClient,
     public appComponent: AppComponent,
     private router: Router,
-    private route: ActivatedRoute,
-    private data: GrantDataService,
+    public data: GrantDataService,
     private toastr: ToastrService,
     public grantComponent: GrantComponent,
     private dataService: DataService,
@@ -117,9 +112,7 @@ export class ActiveGrantsComponent implements OnInit {
     this.fetchDashboard(user.id, this.currentGrant);
     this.getGrantsUnderClosure();
     this.grantUpdateService.currentMessage.subscribe((id) => {
-      if (id) {
-        //this.fetchDashboard(user.id);
-      }
+      //do nothing
     });
 
     const tenantCode = localStorage.getItem("X-TENANT-CODE");
@@ -226,10 +219,8 @@ export class ActiveGrantsComponent implements OnInit {
       const url = "/api/users/" + userId + "/dashboard";
       this.http.get<Tenants>(url, httpOptions).subscribe(
         (tenants: Tenants) => {
-          // this.tenants = new Tenants();
           this.tenants = tenants;
           console.log(this.tenants);
-          // this.tenants = tenants;
           if (
             this.tenants &&
             this.tenants.tenants &&
@@ -242,38 +233,37 @@ export class ActiveGrantsComponent implements OnInit {
             this.grantsDraft = [];
             this.grantsActive = [];
             this.grantsClosed = [];
-            for (const grant of this.currentTenant.grants) {
+            for (const grant1 of this.currentTenant.grants) {
               if (
-                grant.grantStatus.internalStatus === "DRAFT" ||
-                grant.grantStatus.internalStatus === "REVIEW"
+                grant1.grantStatus.internalStatus === "DRAFT" ||
+                grant1.grantStatus.internalStatus === "REVIEW"
               ) {
-                this.grantsDraft.push(grant);
-              } else if (grant.grantStatus.internalStatus === "ACTIVE") {
-                this.grantsActive.push(grant);
-              } else if (grant.grantStatus.internalStatus === "CLOSED") {
-                this.grantsClosed.push(grant);
+                this.grantsDraft.push(grant1);
+              } else if (grant1.grantStatus.internalStatus === "ACTIVE") {
+                this.grantsActive.push(grant1);
+              } else if (grant1.grantStatus.internalStatus === "CLOSED") {
+                this.grantsClosed.push(grant1);
               }
 
               if (
-                grant.workflowAssignment.filter(
+                grant1.workflowAssignment.filter(
                   (wf) =>
-                    wf.stateId === grant.grantStatus.id &&
+                    wf.stateId === grant1.grantStatus.id &&
                     wf.assignments === this.appComponent.loggedInUser.id
                 ).length > 0 &&
                 this.appComponent.loggedInUser.organization.organizationType !==
                 "GRANTEE" &&
-                grant.grantStatus.internalStatus !== "ACTIVE" &&
-                grant.grantStatus.internalStatus !== "CLOSED"
+                grant1.grantStatus.internalStatus !== "ACTIVE" &&
+                grant1.grantStatus.internalStatus !== "CLOSED"
               ) {
-                grant.canManage = true;
+                grant1.canManage = true;
               } else {
-                grant.canManage = false;
+                grant1.canManage = false;
               }
-              for (const submission of grant.submissions) {
+              for (const submission of grant1.submissions) {
                 if (submission.flowAuthorities) {
                   this.hasKpisToSubmit = true;
                   this.kpiSubmissionTitle = submission.title;
-                  // this.kpiSubmissionDate = submission.submitBy;
                   break;
                 }
               }
@@ -299,10 +289,8 @@ export class ActiveGrantsComponent implements OnInit {
             positionClass: "toast-top-right",
             progressBar: true,
           } as Partial<IndividualConfig>;
-          const errorconfig: Partial<IndividualConfig> = x;
           const config: Partial<IndividualConfig> = y;
           if (errorMsg.error.message === "Token Expired") {
-            //this.toastr.error('Logging you out now...',"Your session has expired", errorconfig);
             alert("Your session has timed out. Please sign in again.");
             this.appComponent.logout();
           } else {
@@ -331,30 +319,30 @@ export class ActiveGrantsComponent implements OnInit {
 
     const url = "/api/user/" + this.appComponent.loggedInUser.id + "/grant/" + grant.id;
 
-    this.http.get(url, httpOptions).subscribe((grant: Grant) => {
+    this.http.get(url, httpOptions).subscribe((grant1: Grant) => {
       if (
-        grant.workflowAssignments.filter(
+        grant1.workflowAssignments.filter(
           (wf) =>
-            wf.stateId === grant.grantStatus.id &&
+            wf.stateId === grant1.grantStatus.id &&
             wf.assignments === this.appComponent.loggedInUser.id
         ).length > 0 &&
         this.appComponent.loggedInUser.organization.organizationType !==
         "GRANTEE" &&
-        grant.grantStatus.internalStatus !== "ACTIVE" &&
-        grant.grantStatus.internalStatus !== "CLOSED"
+        grant1.grantStatus.internalStatus !== "ACTIVE" &&
+        grant1.grantStatus.internalStatus !== "CLOSED"
       ) {
-        grant.canManage = true;
+        grant1.canManage = true;
       } else {
-        grant.canManage = false;
+        grant1.canManage = false;
       }
-      this.dataService.changeMessage(grant.id);
-      this.data.changeMessage(grant, this.appComponent.loggedInUser.id);
-      this.appComponent.originalGrant = JSON.parse(JSON.stringify(grant));
+      this.dataService.changeMessage(grant1.id);
+      this.data.changeMessage(grant1, this.appComponent.loggedInUser.id);
+      this.appComponent.originalGrant = JSON.parse(JSON.stringify(grant1));
       this.appComponent.currentView = "grant";
 
-      this.appComponent.selectedTemplate = grant.grantTemplate;
+      this.appComponent.selectedTemplate = grant1.grantTemplate;
 
-      if (grant.canManage) {
+      if (grant1.canManage) {
         this.router.navigate(["grant/basic-details"]);
       } else {
         this.appComponent.action = "preview";
@@ -402,11 +390,6 @@ export class ActiveGrantsComponent implements OnInit {
     }
 
     this.appComponent.autosaveDisplay = "Saving changes...     ";
-    /*const errors = this.validateFields();
-    if (errors) {
-        this.toastr.error($(this.erroredElement).attr('placeholder') + ' is required', 'Missing entries');
-        $(this.erroredElement).focus();
-    } else {*/
     const httpOptions = {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
@@ -420,22 +403,12 @@ export class ActiveGrantsComponent implements OnInit {
 
     this.http.put<Grant>(url, grant, httpOptions).subscribe(
       (grant: Grant) => {
-        //this.originalGrant = JSON.parse(JSON.stringify(grant));
         this.data.changeMessage(grant, this.appComponent.loggedInUser.id);
-        //this.setDateDuration();
-        //this.dataService.changeMessage(grant.id);
-        //this.currentGrant = grant;
-        //this._setEditMode(false);
-        //this.currentSubmission = null;
-        //this.checkGrantPermissions();
-
         this.appComponent.autosave = false;
-        //this.appComponent.autosaveDisplay = 'Last saved @ ' + this.datepipe.transform(new Date(), 'hh:mm:ss a') + '     ';
         this.fetchDashboard(String(this.appComponent.loggedInUser.id), null);
       },
       (error) => {
         const errorMsg = error as HttpErrorResponse;
-        //console.log(error);
         const x = { enableHtml: true, preventDuplicates: true } as Partial<
           IndividualConfig
         >;
@@ -562,10 +535,10 @@ export class ActiveGrantsComponent implements OnInit {
 
     const user = JSON.parse(localStorage.getItem('USER'));
     let url = '/api/user/' + user.id + '/closure/' + closure.id;
-    this.http.get<GrantClosure>(url, httpOptions).subscribe((closure: GrantClosure) => {
+    this.http.get<GrantClosure>(url, httpOptions).subscribe((closure1: GrantClosure) => {
       this.appComponent.currentView = 'grant-closure';
-      this.closureService.changeMessage(closure, this.appComponent.loggedInUser.id);
-      if (closure.canManage && closure.status.internalStatus != 'CLOSED') {
+      this.closureService.changeMessage(closure1, this.appComponent.loggedInUser.id);
+      if (closure1.canManage && closure1.status.internalStatus != 'CLOSED') {
         this.appComponent.action = 'grant-closure';
         this.router.navigate(['grant-closure/header']);
       } else {

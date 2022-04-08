@@ -148,7 +148,7 @@
               </div>
             </div>
           </mat-tab>
-          <mat-tab *ngIf="filteredClosures && filteredClosures.length>0" label="Commitments under Closure">
+          <mat-tab *ngIf="closures && closures.length>0" label="Commitments under Closure">
             <div *ngIf="!filteredClosures">
               <img alt="img" src="./assets/img/loader.gif" style="width: 10%" />
               <p style="color: black">Loading in-progress closures...</p>

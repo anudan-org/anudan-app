@@ -164,7 +164,7 @@ export class ReportPreviewComponent implements OnInit {
         }
     }
 
-    submitReport(toStateId: number, transitionTitle: string) {
+    submitReport(toStateId: number, transitionTitle: string, direction: boolean) {
 
         /* if ((this.workflowValidationService.getStatusByStatusIdForReport(toStateId, this.appComp).internalStatus === 'ACTIVE' || this.workflowValidationService.getStatusByStatusIdForReport(toStateId, this.appComp).internalStatus === 'CLOSED') && this.reportValidationService.checkIfHeaderHasMissingEntries(this.currentReport)) {
             const dialogRef = this.dialog.open(MessagingComponent, {
@@ -190,7 +190,7 @@ export class ReportPreviewComponent implements OnInit {
             }
         }
 
-        this.wfValidationService.validateGrantWorkflow(this.currentReport.id, 'REPORT', this.appComp.loggedInUser.id, this.currentReport.status.id, toStateId).then(result => {
+        this.wfValidationService.validateGrantWorkflow(this.currentReport.id, 'REPORT', this.appComp.loggedInUser.id, this.currentReport.status.id, toStateId, null, direction).then(result => {
             this.openBottomSheetForReportNotes(toStateId, result, transitionTitle);
             this.wfDisabled = true;
         });
@@ -259,7 +259,7 @@ export class ReportPreviewComponent implements OnInit {
 
                     const toState = this.currentReport.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
                     const toStateOwner = this.currentReport.workflowAssignments.filter(a => a.stateId === toStateId)[0].assignmentUser;
-                    this.submitReport(toStateId, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
+                    this.submitReport(toStateId, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>", true);
                 }, error => {
                     const errorMsg = error as HttpErrorResponse;
                     const x = { 'enableHtml': true, 'preventDuplicates': true, 'positionClass': 'toast-top-full-width', 'progressBar': true } as Partial<IndividualConfig>;
@@ -666,7 +666,7 @@ export class ReportPreviewComponent implements OnInit {
                 const toState = this.currentReport.flowAuthorities.filter(a => a.fromStateId === response.toStateId)[0].fromName;
                 const toStateOwner = this.currentReport.workflowAssignments.filter(a => a.stateId === response.toStateId)[0].assignmentUser;
 
-                this.submitReport(response.toStateId, "<span class='text-light-red'>Returning to </span>" + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>");
+                this.submitReport(response.toStateId, "<span class='text-light-red'>Returning to </span>" + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>", false);
             }
         });
     }

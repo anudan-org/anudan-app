@@ -4,7 +4,7 @@
       <div *ngIf="currentClosure.canManage" style="display: flex">
         <div *ngFor="let flow of getForwardFlow()">
           <button [disabled]="wfDisabled" mat-stroked-button
-            (click)="submitClosure(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId,true))"
+            (click)="submitClosure(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId,true),true)"
             id="{{ flow.action }}" [class]="
                 flow.seqOrder === 0
                   ? 'mr-1 btn btn-sm btn-green-primary'
@@ -26,7 +26,7 @@
           <ng-container>
             <button [disabled]="
           wfDisabled" mat-stroked-button
-              (click)="submitClosure(getSingleBackwardFlow().toStateId,'<span class=\'text-light-red\'>Returning to </span>' + getStateNameAndOwner(getSingleBackwardFlow().fromStateId,false))"
+              (click)="submitClosure(getSingleBackwardFlow().fromStateId,'<span class=\'text-light-red\'>Returning to </span>' + getStateNameAndOwner(getSingleBackwardFlow().fromStateId,false),false)"
               [class]="'mr-1 btn btn-sm btn-green border-light-red'">
               Request Modifications
             </button>

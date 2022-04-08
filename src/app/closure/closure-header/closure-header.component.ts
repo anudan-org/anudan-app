@@ -999,4 +999,9 @@ export class ClosureHeaderComponent implements OnInit {
     return this.currencyService.getFormattedAmount(p - r);
 
   }
+
+  checkIfGrantHasRefundAmount() {
+    const refundDetailsSection = this.currentClosure.closureDetails.sections.filter(a => a.sectionName === "Project Refund Details" && a.systemGenerated);
+    return refundDetailsSection.length > 0;
+  }
 }

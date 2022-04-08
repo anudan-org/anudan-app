@@ -236,10 +236,10 @@
                         <div class="col-12">
                           <hr />
                         </div>
-                        <div class="col-12 px-0" *ngIf="currentClosure.grant.refundAmount!==undefined">
+                        <div class="col-12 px-0" *ngIf="checkIfGrantHasRefundAmount()">
                           <p class="text-header">Closure Actions</p>
                         </div>
-                        <div class="col-4" *ngIf="currentClosure.grant.refundAmount!==undefined">
+                        <div class="col-4" *ngIf="checkIfGrantHasRefundAmount()">
                           <div class="text-center w-100"
                             style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
                             {{getRefundAmount()}}</div>
@@ -247,7 +247,7 @@
                             style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                             Refund Requested</div>
                         </div>
-                        <div class="col-4" *ngIf="currentClosure.grant.refundAmount!==undefined">
+                        <div class="col-4" *ngIf="checkIfGrantHasRefundAmount()">
                           <div class="text-center w-100"
                             style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
                             {{getRefundReceived()}}</div>
@@ -255,7 +255,7 @@
                             style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                             Refund Received</div>
                         </div>
-                        <div class="col-4" *ngIf="currentClosure.grant.refundAmount!==undefined">
+                        <div class="col-4" *ngIf="checkIfGrantHasRefundAmount()">
                           <div class="text-center w-100"
                             style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
                             {{getPendingAmount()}}</div>
@@ -301,17 +301,17 @@
 
                           <div class="row px-5">
                             <div class="col-12 px-0"
-                              *ngIf="(getPlannedFunds(0)!==getReceivedFunds(0) &&  (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null ) && grantOwner()) || (!currentClosure.grant.hasOngoingDisbursement && (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null) && grantOwner())">
+                              *ngIf="(getPlannedFunds(0)!==getReceivedFunds(0) &&  (!checkIfGrantHasRefundAmount() ) && grantOwner()) || (!currentClosure.grant.hasOngoingDisbursement && (!checkIfGrantHasRefundAmount()) && grantOwner())">
                               <p class="text-header">Closure Actions</p>
                             </div>
                             <div class="col-3 px-0"
-                              *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) &&  (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null )&& grantOwner()">
+                              *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) &&  (!checkIfGrantHasRefundAmount() )&& grantOwner()">
                               <button class="btn btn-sm btn-green" (click)="initiateDisbursement()"
                                 [disabled]="currentClosure.grant.hasOngoingDisbursement ">{{currentClosure.grant.hasOngoingDisbursement?'Disbursement
                                 Request In-Progress':'Initiate Disbursement'}}</button>
                             </div>
                             <div class="col-3 px-0"
-                              *ngIf="!currentClosure.grant.hasOngoingDisbursement && (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null) && grantOwner()">
+                              *ngIf="!currentClosure.grant.hasOngoingDisbursement && (!checkIfGrantHasRefundAmount()) && grantOwner()">
                               <button class="btn btn-sm btn-green" (click)="captureRefund()">Initiate
                                 Refund</button>
                             </div>
