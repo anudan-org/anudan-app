@@ -1,17 +1,15 @@
 <div class="row search-panel">
   <div class="col-9 search-panel-container">
-    <app-search-filter #appSearchFilter *ngIf="!searchClosed" [ready]="filterReady" (highlightDone)="resetFilterFlag($event)" (filterCriteria)="startFilter($event)" (close)="closeSearch($event)"></app-search-filter>
+    <app-search-filter #appSearchFilter *ngIf="!searchClosed" [ready]="filterReady"
+      (highlightDone)="resetFilterFlag($event)" (filterCriteria)="startFilter($event)" (close)="closeSearch($event)">
+    </app-search-filter>
     <mat-icon (click)="openSearch()" style="position: absolute; right: 0; margin-right: 20px;">search</mat-icon>
   </div>
   <div class="col-3 d-flex align-items-center justify-content-end p-0">
-    <button
-      *ngIf="
+    <button *ngIf="
         appComponent.loggedInUser.organization.organizationType ===
         'GRANTER'
-      "
-      class="btn btn-sm btn-green float-right"
-      (click)="showOwnedActiveGrants()"
-    >New Disbursement Request</button>
+      " class="btn btn-sm btn-green float-right" (click)="showOwnedActiveGrants()">New Disbursement Request</button>
   </div>
 </div>
 <div class="main-content" style="margin-top: 40px;">
@@ -20,7 +18,7 @@
       <div class="col-lg-12 col-md-12 col-sm-12">
         <div>
           <div *ngIf="!disbursements">
-            <img alt="img"src="./assets/img/loader.gif" style="width: 10%" />
+            <img alt="img" src="./assets/img/loader.gif" style="width: 10%" />
             <p style="color: black">Loading Disbursements...</p>
           </div>
 
@@ -30,32 +28,38 @@
             </p>
           </div>
           <div *ngIf="disbursements && disbursements.length > 0">
-            <div
-              [ngClass]="uiService.getDisbursementCardStyle(disbursement,appComponent)"
-              style="cursor: pointer"
+            <div [ngClass]="uiService.getDisbursementCardStyle(disbursement,appComponent)" style="cursor: pointer"
               *ngFor="let disbursement of filteredDisbursements; let i = index"
-              (click)="manageDisbursement(disbursement)"
-            >
-            <div class="d-flex align-items-center disbursement-delete" *ngIf="(disbursement.canManage && disbursement.status.internalStatus === 'DRAFT')" (click)="deleteDisbursement(disbursement)">
-              <mat-icon class="text-red">delete_outline</mat-icon>
-            </div>
+              (click)="manageDisbursement(disbursement)">
+              <div class="d-flex align-items-center disbursement-delete"
+                *ngIf="(disbursement.canManage && disbursement.status.internalStatus === 'DRAFT')"
+                (click)="deleteDisbursement(disbursement)">
+                <mat-icon class="text-red">delete_outline</mat-icon>
+              </div>
               <div class="col-9 mb-1 search-context px-0 mt-2">
-                <div *ngIf="disbursement.disabledByAmendment" class="mb-0 text-subheader d-flex align-items-center text-left" style="font-weight: 600; font-size: 12px">
+                <div *ngIf="disbursement.disabledByAmendment"
+                  class="mb-0 text-subheader d-flex align-items-center text-left"
+                  style="font-weight: 600; font-size: 12px">
                   <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
                     info_outline
                   </mat-icon>
                   Underlying grant has been amended. Please check if this
                   disbursement is still valid
                 </div>
-                
-                <div class="text-subheader text-left mb-0 mt-2 ml-3">
-                 <div class="mb-1"><span>{{ (disbursement.grant.referenceNo? disbursement.grant.referenceNo + " | ": "") + disbursement.grant.name}}</span></div>
-                 <div class="mb-1"><span *ngIf="isExternalGrant(disbursement.grant)">{{disbursement.grant.organization? disbursement.grant.organization.name: ""}}</span> </div>
-                 <div class="mb-1"><span *ngIf="!isExternalGrant(disbursement.grant)">{{disbursement.grant.grantorOrganization.name}}</span></div>
 
-                 <div class="mt-1">
-                  <span>{{currencyService.getFormattedAmount(disbursement.grant.amount)}}</span>
-                    &nbsp;&nbsp;<span class="text-subheader"><small>({{currencyService.getAmountInWords(disbursement.grant.amount)}})</small></span>
+                <div class="text-subheader text-left mb-0 mt-2 ml-3">
+                  <div class="mb-1"><span>{{ (disbursement.grant.referenceNo? disbursement.grant.referenceNo + " | ":
+                      "") + disbursement.grant.name}}</span></div>
+                  <div class="mb-1"><span *ngIf="isExternalGrant(disbursement.grant)">{{disbursement.grant.organization?
+                      disbursement.grant.organization.name: ""}}</span> </div>
+                  <div class="mb-1"><span
+                      *ngIf="!isExternalGrant(disbursement.grant)">{{disbursement.grant.grantorOrganization.name}}</span>
+                  </div>
+
+                  <div class="mt-1">
+                    <span>{{currencyService.getFormattedAmount(disbursement.grant.amount)}}</span>
+                    &nbsp;&nbsp;<span
+                      class="text-subheader"><small>({{currencyService.getAmountInWords(disbursement.grant.amount)}})</small></span>
                   </div>
                 </div>
               </div>
@@ -73,18 +77,19 @@
               <div class="col-10 text-left pt-3" (click)="manageDisbursement(disbursement)">
                 <div class="row mb-2">
                   <div class="col-12">
-                    <div class="text-subheader mb-1"><p class="mb-0">Requested Amount:</p> <span class="text-header search-context">
-                      {{
+                    <div class="text-subheader mb-1">
+                      <p class="mb-0">Requested Amount:</p> <span class="text-header search-context">
+                        {{
                         currencyService.getFormattedAmount(
-                          disbursement.requestedAmount
-                        )
-                      }}</span>&nbsp;&nbsp;<span class="text-subheader ml-3"><small>
-                    {{
-                      currencyService.getAmountInWords(
                         disbursement.requestedAmount
-                      )
-                    }}</small></span>
-                  </div>
+                        )
+                        }}</span>&nbsp;&nbsp;<span class="text-subheader ml-3"><small>
+                          {{
+                          currencyService.getAmountInWords(
+                          disbursement.requestedAmount
+                          )
+                          }}</small></span>
+                    </div>
                   </div>
                 </div>
               </div>

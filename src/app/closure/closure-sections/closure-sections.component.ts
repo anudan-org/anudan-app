@@ -1659,7 +1659,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     if (amount) {
       return this.currencyService.getFormattedAmount(amount);
     }
-    return "<div class='amountPlaceholder'>Enter refund amount</div>";
+    return "";
   }
 
   getPlannedTotal() {

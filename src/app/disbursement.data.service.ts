@@ -4,13 +4,11 @@ import { BehaviorSubject, Subject } from "rxjs";
 import {
   Disbursement,
   DisbursementWorkflowAssignment,
-  DisbursementSnapshot,
   ActualDisbursement,
 } from "./model/disbursement";
 import { HttpHeaders, HttpClient } from "@angular/common/http";
 import { Grant, TableData } from "./model/dahsboard";
 import { UserService } from "./user.service";
-import { User } from "./model/user";
 import { CurrencyService } from "./currency-service";
 import { Report } from "./model/report";
 import { DatePipe } from "@angular/common";
@@ -22,7 +20,7 @@ import { saveAs } from "file-saver";
 export class DisbursementDataService {
   private messageSource = new BehaviorSubject<Disbursement>(null);
   private ngUnsubscribe = new Subject();
-  public initiateDisbursement = new BehaviorSubject<boolean>(false);
+  public initiateDisbursement = new BehaviorSubject<Grant>(new Grant());
 
   url: string = "/api/user/%USERID%/disbursements";
   months: string[] = [
@@ -74,14 +72,13 @@ export class DisbursementDataService {
   }
 
   private getHeader() {
-    const httpOptions = {
+    return {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
         "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
         Authorization: localStorage.getItem("AUTH_TOKEN"),
       }),
     };
-    return httpOptions;
   }
 
   saveDisbursement(currentDisbursement: Disbursement): Promise<Disbursement> {
@@ -133,7 +130,7 @@ export class DisbursementDataService {
       .then<Disbursement[]>((d: Disbursement[]) => {
         if (d && d.length > 0) {
           for (let disb of d) {
-            disb = this.setPermission(disb);
+            this.setPermission(disb);
           }
         }
         return Promise.resolve<Disbursement[]>(d);
@@ -149,18 +146,13 @@ export class DisbursementDataService {
     return this.httpClient
       .get(this.getUrl() + "/status/ACTIVE", this.getHeader())
       .toPromise()
-      .then<Disbursement[]>((d: Disbursement[]) => {
-        if (d && d.length > 0) {
-          for (let disb of d) {
-            disb = this.setPermission(disb);
+      .then<Disbursement[]>((d2: Disbursement[]) => {
+        if (d2 && d2.length > 0) {
+          for (let disb of d2) {
+            this.setPermission(disb);
           }
         }
-        return Promise.resolve<Disbursement[]>(d);
-      })
-      .catch((err) => {
-        return Promise.reject<Disbursement[]>(
-          "Could not retrieve disbursements"
-        );
+        return Promise.resolve<Disbursement[]>(d2);
       });
   }
 
@@ -168,18 +160,13 @@ export class DisbursementDataService {
     return this.httpClient
       .get(this.getUrl() + "/status/CLOSED", this.getHeader())
       .toPromise()
-      .then<Disbursement[]>((d: Disbursement[]) => {
-        if (d && d.length > 0) {
-          for (let disb of d) {
-            disb = this.setPermission(disb);
+      .then<Disbursement[]>((d1: Disbursement[]) => {
+        if (d1 && d1.length > 0) {
+          for (let disb of d1) {
+            this.setPermission(disb);
           }
         }
-        return Promise.resolve<Disbursement[]>(d);
-      })
-      .catch((err) => {
-        return Promise.reject<Disbursement[]>(
-          "Could not retrieve disbursements"
-        );
+        return Promise.resolve<Disbursement[]>(d1);
       });
   }
 
@@ -218,8 +205,8 @@ export class DisbursementDataService {
         .toPromise()
         .then<Disbursement[]>((d: Disbursement[]) => {
           if (d && d.length > 0) {
-            for (let disb of d) {
-              disb = this.setPermission(disb);
+            for (let disb1 of d) {
+              this.setPermission(disb1);
             }
           }
           return Promise.resolve<Disbursement[]>(d);
@@ -297,7 +284,7 @@ export class DisbursementDataService {
     }
   }
 
-  getDisbursement(disbursementId: Number): Promise<Disbursement> {
+  getDisbursement(disbursementId: number): Promise<Disbursement> {
     if (disbursementId !== undefined && disbursementId !== null) {
       return this.httpClient
         .get(this.getUrl() + "/" + disbursementId, this.getHeader())
@@ -355,12 +342,7 @@ export class DisbursementDataService {
           this.getHeader()
         )
         .toPromise()
-        .then<any>()
-        .catch((err) => {
-          return Promise.reject<any>(
-            "Could not retieve Disbursement snapshot"
-          );
-        });
+        .then<any>();
     } else {
       return Promise.resolve(null);
     }

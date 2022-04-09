@@ -102,9 +102,10 @@
                         <ng-container class="mb-2">
                           <div class="col-5">
                             <mat-form-field style="max-width: 190px;">
-                              <input (blur)="showFormattedRefundAmount($event)" #refundAmount
-                                placeholder="Refund Amount (₹)" [(ngModel)]="currentClosure.grant.refundAmount"
-                                class="anu-input" [ngModelOptions]="{ standAlone: true }" matInput />
+                              <mat-label>Refund Amount (₹)</mat-label>
+                              <input matInput (blur)="showFormattedRefundAmount($event)" #refundAmount
+                                [(ngModel)]="currentClosure.grant.refundAmount" class="anu-input"
+                                [ngModelOptions]="{ standAlone: true }" matInput />
                               <p *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
                                 #grantRefundFormatted (click)="showRefundAmountInput($event)"
                                 class="anu-input w-100 text-right" style="position: absolute; top: 5px; cursor: text"
@@ -123,8 +124,9 @@
                         <ng-container class="mb-2">
                           <div class="col-7">
                             <mat-form-field *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'">
-                              <input [(ngModel)]="currentClosure.grant.refundReason" class="anu-input"
-                                [ngModelOptions]="{ standAlone: true }" matInput placeholder="Refund Note" />
+                              <mat-label for="rn">Refund Note</mat-label>
+                              <input id="rn" matInput [(ngModel)]="currentClosure.grant.refundReason" class="anu-input"
+                                [ngModelOptions]="{ standAlone: true }" matInput placeholder="Enter Refund Note" />
 
                             </mat-form-field>
                             <label class="mat-form-field-label-wrapper"

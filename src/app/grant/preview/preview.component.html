@@ -15,7 +15,7 @@
               ">
               {{ flow.action }}
             </button>
-            <button *ngIf="currentGrant.grantStatus.internalStatus==='ACTIVE'" [disabled]="
+            <button *ngIf="currentGrant.grantStatus.internalStatus==='ACTIVE' && grantOwner()" [disabled]="
                 wfDisabled || currentGrant.closureInProgress
               " mat-stroked-button
               (click)="submitGrant(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId,true),true)"

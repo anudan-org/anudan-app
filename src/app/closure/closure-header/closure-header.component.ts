@@ -95,6 +95,7 @@ export class ClosureHeaderComponent implements OnInit {
   @ViewChild("refundAmount") refundAmount: ElementRef;
   @ViewChild("plannedProjectFundsModal") plannedProjectFundsModal: ElementRef;
   @ViewChild("receivedProjectFundsModal") receivedProjectFundsModal: ElementRef;
+  @ViewChild("popupcontainer") popupcontainer: ElementRef;
 
   plannedModal: any;
   receivedModal: any;
@@ -495,7 +496,7 @@ export class ClosureHeaderComponent implements OnInit {
     }
 
     const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
-    return this.currencyService.getFormattedAmount(p - r - spent + this.getActualRefundsForGrant());
+    return this.currencyService.getFormattedAmount(r - spent - this.getActualRefundsForGrant());
   }
 
   getActualRefundsForGrant() {
@@ -697,7 +698,7 @@ export class ClosureHeaderComponent implements OnInit {
   }
 
   initiateDisbursement() {
-    this.disbursementDataService.startDisbursement(true);
+    this.disbursementDataService.startDisbursement(this.currentClosure.grant);
     this.router.navigate(['disbursements/in-progress'])
   }
 
