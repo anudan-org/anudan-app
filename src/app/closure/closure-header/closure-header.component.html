@@ -236,10 +236,12 @@
                         <div class="col-12">
                           <hr />
                         </div>
-                        <div class="col-12 px-0" *ngIf="checkIfGrantHasRefundAmount()">
+                        <div class="col-12 px-0"
+                          *ngIf="checkIfGrantHasRefundAmount() && isExternalGrant(currentClosure.grant)">
                           <p class="text-header">Closure Actions</p>
                         </div>
-                        <div class="col-4" *ngIf="checkIfGrantHasRefundAmount()">
+                        <div class="col-4"
+                          *ngIf="checkIfGrantHasRefundAmount()&& isExternalGrant(currentClosure.grant)">
                           <div class="text-center w-100"
                             style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
                             {{getRefundAmount()}}</div>
@@ -247,7 +249,8 @@
                             style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                             Refund Requested</div>
                         </div>
-                        <div class="col-4" *ngIf="checkIfGrantHasRefundAmount()">
+                        <div class="col-4"
+                          *ngIf="checkIfGrantHasRefundAmount()&& isExternalGrant(currentClosure.grant)">
                           <div class="text-center w-100"
                             style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
                             {{getRefundReceived()}}</div>
@@ -255,7 +258,8 @@
                             style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                             Refund Received</div>
                         </div>
-                        <div class="col-4" *ngIf="checkIfGrantHasRefundAmount()">
+                        <div class="col-4"
+                          *ngIf="checkIfGrantHasRefundAmount()&& isExternalGrant(currentClosure.grant)">
                           <div class="text-center w-100"
                             style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
                             {{getPendingAmount()}}</div>
@@ -299,9 +303,9 @@
 
                         <div class="col-12 px-0">
 
-                          <div class="row px-5">
+                          <div class="row px-3">
                             <div class="col-12 px-0"
-                              *ngIf="(getPlannedFunds(0)!==getReceivedFunds(0) &&  (!checkIfGrantHasRefundAmount() ) && grantOwner()) || (!currentClosure.grant.hasOngoingDisbursement && (!checkIfGrantHasRefundAmount()) && grantOwner())">
+                              *ngIf="(getPlannedFunds(0)!==getReceivedFunds(0) &&  (!checkIfGrantHasRefundAmount() ) && grantOwner() && isExternalGrant(currentClosure.grant)) || (!currentClosure.grant.hasOngoingDisbursement && (!checkIfGrantHasRefundAmount()) && grantOwner() && isExternalGrant(currentClosure.grant))">
                               <p class="text-header">Closure Actions</p>
                             </div>
                             <div class="col-3 px-0"
@@ -311,7 +315,7 @@
                                 Request In-Progress':'Initiate Disbursement'}}</button>
                             </div>
                             <div class="col-3 px-0"
-                              *ngIf="!currentClosure.grant.hasOngoingDisbursement && (!checkIfGrantHasRefundAmount()) && grantOwner()">
+                              *ngIf="!currentClosure.grant.hasOngoingDisbursement && (!checkIfGrantHasRefundAmount()) && grantOwner() && isExternalGrant(currentClosure.grant)">
                               <button class="btn btn-sm btn-green" (click)="captureRefund()">Initiate
                                 Refund</button>
                             </div>
@@ -403,7 +407,7 @@
                       </mat-nav-list>
                     </div>
 
-                    <div class="col-12" style="position:absolute; top :-2000px;z-index:-1;">
+                    <div #popupcontainer class="col-12" style="position:absolute; top :-2000px;z-index:1041;">
                       <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
                         <div>
                           <ng-container #sectionsContainer *ngFor="let attribute of section.attributes; let i = index">
@@ -414,421 +418,21 @@
                         background: #fcfcfc;
                       ">
                               <ng-container class="mb-2">
-                                <div class="col-sm-4 col-lg-8" *ngIf="
-                            attribute.fieldType === 'multiline' &&
-                            currentClosure.canManage &&
-                            !currentClosure.forGranteeUse
-                          ">
-                                  <mat-form-field>
-                                    <input id="field_{{ attribute.id }}" [(ngModel)]="attribute.fieldName"
-                                      class="anu-input" [ngModelOptions]="{ standAlone: true }" matInput
-                                      placeholder="Title" />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-4 col-lg-8" *ngIf="
-                            attribute.fieldType === 'multiline' &&
-                            currentClosure.canManage &&
-                            currentClosure.forGranteeUse
-                          ">
 
-                                  <label>Title:</label>
-                                  <p>{{ attribute.fieldName }}</p>
-                                </div>
-                                <div class="col-sm-4 col-lg-8" *ngIf="attribute.fieldType === 'document'">
-                                  <mat-form-field *ngIf="
-                              currentClosure.canManage &&
-                              !currentClosure.forGranteeUse
-                            ">
 
-                                    <input id="field_{{ attribute.id }}" [(ngModel)]="attribute.fieldName"
-                                      class="anu-input" [ngModelOptions]="{ standAlone: true }" matInput
-                                      placeholder="Title" />
-                                  </mat-form-field>
-                                  <label *ngIf="
-                              (currentClosure.canManage &&
-                                currentClosure.forGranteeUse) ||
-                              !currentClosure.canManage
-                            ">Title:</label>
-                                  <p class="anu-input" *ngIf="
-                              (currentClosure.canManage &&
-                                currentClosure.forGranteeUse) ||
-                              !currentClosure.canManage
-                            " style="background: #f0f1f0 !important">
-                                    {{ attribute.fieldName }}
-                                  </p>
-                                </div>
-                                <div class="col-sm-4 col-lg-8" *ngIf="attribute.fieldType === 'text'">
-                                  <mat-form-field>
-                                    <input id="field_{{ attribute.id }}" [(ngModel)]="attribute.fieldName"
-                                      class="anu-input" [ngModelOptions]="{ standAlone: true }" matInput
-                                      placeholder="Title" />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-8 col-lg-8" *ngIf="attribute.fieldType === 'table'">
-                                  <mat-form-field *ngIf="
-                              currentClosure.canManage &&
-                              !currentClosure.forGranteeUse
-                            ">
-                                    <input id="field_{{ attribute.id }}" [(ngModel)]="attribute.fieldName"
-                                      class="anu-input" [ngModelOptions]="{ standAlone: true }" matInput
-                                      placeholder="Title" />
-                                  </mat-form-field>
-                                  <label *ngIf="
-                              (currentClosure.canManage &&
-                                currentClosure.forGranteeUse) ||
-                              !currentClosure.canManage
-                            ">Title:</label>
-                                  <p class="anu-input" *ngIf="
-                              (currentClosure.canManage &&
-                                currentClosure.forGranteeUse) ||
-                              !currentClosure.canManage
-                            " style="background: #f0f1f0 !important">
-                                    {{ attribute.fieldName }}
-                                  </p>
-                                </div>
 
-                                <div *ngIf="attribute.fieldType === 'disbursement'" class="col-12 mb-3">
-                                  <div class="row mb-3">
-                                    <div class="col-4" style="display: flex;align-items: center;">
-                                      <p class="text-header">Project Fund Summary</p>
-                                    </div>
-                                    <div class="col-8"
-                                      style="display: flex; justify-content: right; align-items: center;">
 
-                                    </div>
-                                    <div class="col-12">
-                                      <div class="row">
-                                        <div class="col-3">
-                                          <mat-form-field>
-                                            <input matInput disabled readonly placeholder="Grant Commitment"
-                                              [value]="getPlannedFunds(0)">
-                                          </mat-form-field>
-                                        </div>
-                                        <div class="col-3">
-                                          <mat-form-field>
-                                            <input matInput disabled readonly placeholder="Disbursed Till Date"
-                                              [value]="getReceivedFunds(0)">
-                                          </mat-form-field>
-                                        </div>
-                                        <div class="col-3">
-                                          <mat-form-field>
-                                            <input matInput disabled readonly placeholder="Undisbursed Amount"
-                                              [value]="getPlannedDiff(0)">
-                                          </mat-form-field>
-                                        </div>
-                                        <div class="col-3">
-                                          <button class="btn btn-sm btn-green"
-                                            *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) &&  (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null ) && grantOwner()"
-                                            [disabled]="currentClosure.grant.hasOngoingDisbursement ">{{currentClosure.grant.hasOngoingDisbursement?'Disbursement
-                                            Request In-Progress':'Initiate Disbursement'}}</button>
-                                        </div>
-                                        <div class="col-3">
-                                          <mat-form-field>
-                                            <input matInput disabled readonly placeholder="Other Sources Commitment"
-                                              [value]="getPlannedFunds(1)">
-                                          </mat-form-field>
-                                        </div>
-                                        <div class="col-3">
-                                          <mat-form-field>
-                                            <input matInput disabled readonly placeholder="Received Till Date"
-                                              [value]="getReceivedFunds(1)">
-                                          </mat-form-field>
-                                        </div>
-                                        <div class="col-3">
-                                          <mat-form-field>
-                                            <input matInput disabled readonly placeholder="Pending Amount"
-                                              [value]="getPlannedDiff(1)">
-                                          </mat-form-field>
-                                        </div>
-                                        <div class="col-12">
-                                          <hr />
-                                        </div>
 
-                                        <div class="col-3">
-                                          <mat-form-field *ngIf="
-                                      currentClosure.canManage &&
-                                      !currentClosure.forGranteeUse
-                                    ">
-                                            <input (blur)="showFormattedActualSpent($event)" #refundAmount
-                                              [(ngModel)]="currentClosure.grant.actualSpent" class="anu-input"
-                                              [ngModelOptions]="{ standAlone: true }" matInput
-                                              placeholder="Record Spent (₹) - Till Date" />
-                                            <p #grantRefundFormatted (click)="showActualSpentInput($event)"
-                                              class="anu-input w-100 text-right"
-                                              style="position: absolute; top: 5px; cursor: text"
-                                              [innerHtml]="getFormattedRefundAmount(currentClosure.grant.actualSpent)">
-                                            </p>
-                                          </mat-form-field>
-                                        </div>
-                                        <div class="col-3">
-                                          <mat-form-field>
-                                            <input matInput disabled readonly placeholder="Unspent Amount"
-                                              [value]="getRecievedDiff(0)">
-                                          </mat-form-field>
-                                        </div>
-                                        <div class="col-3">
-                                          <button
-                                            *ngIf="!currentClosure.grant.hasOngoingDisbursement && (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null)"
-                                            class="btn btn-sm btn-green" (click)="captureRefund()">Initiate
-                                            Refund</button>
-                                        </div>
-                                        <div class="col-12">
-                                          <hr />
-                                        </div>
-                                        <div class="col-3">
-                                          <mat-form-field>
-                                            <input matInput disabled readonly placeholder="Refund Requested"
-                                              [value]="getRefundAmount()">
-                                          </mat-form-field>
-                                        </div>
-                                        <div class="col-3">
-                                          <mat-form-field>
-                                            <input matInput disabled readonly placeholder="Refund Received"
-                                              [value]="getRefundReceived()">
-                                          </mat-form-field>
-                                        </div>
-                                        <div class="col-3">
-                                          <mat-form-field>
-                                            <input matInput disabled readonly placeholder="Pending Amount"
-                                              [value]="'₹ 50000'">
-                                          </mat-form-field>
-                                        </div>
-                                      </div>
 
-                                    </div>
-                                  </div>
-                                </div>
-                                <div class="col-sm-4 col-lg-8" *ngIf="
-                            attribute.fieldType === 'kpi' &&
-                            currentClosure.canManage &&
-                            !currentClosure.forGranteeUse &&
-                            attribute.canEdit
-                          ">
-                                  <mat-form-field>
-                                    <input [(ngModel)]="attribute.fieldName" class="anu-input"
-                                      [ngModelOptions]="{ standAlone: true }" matInput placeholder="Title" />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-4 col-lg-8" *ngIf="
-                            attribute.fieldType === 'kpi' &&
-                            currentClosure.canManage &&
-                            !currentClosure.forGranteeUse &&
-                            !attribute.canEdit
-                          ">
-                                  <mat-form-field>
-                                    <input [(ngModel)]="attribute.fieldName" class="anu-input"
-                                      [ngModelOptions]="{ standAlone: true }" disabled readonly
-                                      style="background: #f0f1f0 !important" matInput placeholder="Title" />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-4 col-lg-8" *ngIf="
-                            attribute.fieldType === 'kpi' &&
-                            currentClosure.canManage &&
-                            currentClosure.forGranteeUse
-                          ">
-                                  <mat-form-field>
-                                    <input [(ngModel)]="attribute.fieldName" class="anu-input"
-                                      [ngModelOptions]="{ standAlone: true }" readonly disabled
-                                      style="background: #f0f1f0 !important" matInput placeholder="Title" />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                            currentClosure.canManage &&
-                            !currentClosure.forGranteeUse &&
-                            attribute.canEdit
-                          ">
 
-                                  <label *ngIf="
-                              (currentClosure.canManage &&
-                                currentClosure.forGranteeUse) ||
-                              !currentClosure.canManage
-                            ">Type:</label>
-                                  <p class="anu-input" *ngIf="
-                              (currentClosure.canManage &&
-                                currentClosure.forGranteeUse) ||
-                              !currentClosure.canManage
-                            " style="background: #f0f1f0 !important">
-                                    {{ getFieldTypeDisplayValue(attribute.fieldType) }}
-                                  </p>
-                                </div>
 
-                                <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                            currentClosure.canManage &&
-                            !currentClosure.forGranteeUse &&
-                            !attribute.canEdit
-                          ">
-                                  <mat-form-field>
-                                    <input matInput placeholder="Type:" disabled readonly class="anu-input"
-                                      style="background: #f0f1f0 !important" [value]="
-                                getFieldTypeDisplayValue(attribute.fieldType)
-                              " />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                            currentClosure.canManage &&
-                            currentClosure.forGranteeUse
-                          ">
-                                  <mat-form-field>
-                                    <input matInput placeholder="Type:" disabled readonly class="anu-input"
-                                      style="background: #f0f1f0 !important" [value]="
-                                getFieldTypeDisplayValue(attribute.fieldType)
-                              " />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-3 col-lg-3 text-left" *ngIf="attribute.fieldType === 'text'">
-                                  <mat-form-field>
-                                    <input matInput [(ngModel)]="attribute.fieldValue" class="anu-input"
-                                      [ngModelOptions]="{ standAlone: true }" placeholder="Field Value" />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-12 col-lg-11 text-left" *ngIf="attribute.fieldType === 'table'">
-                                  <div class="row">
-                                    <div class="col-12 text-right">
-                                      <span *ngIf="
-                                  currentClosure.canManage &&
-                                  !currentClosure.forGranteeUse
-                                " style="cursor: pointer"><em class="fas fa-plus-circle text-green mr-1"></em>Add a
-                                        column</span>
-                                    </div>
-                                    <div style="margin-left: 250px">
-                                      <em class="fas fa-arrow-alt-circle-left mr-3"></em><em
-                                        class="fas fa-arrow-alt-circle-right"></em>
-                                    </div>
-                                  </div>
-                                  <div id="tableArea" class="row flex-row flex-nowrap"
-                                    style="overflow: hidden; overflow-x: scroll">
-                                    <table id="tablePlaceholderX" class='refunds-holder'>
-                                      <caption></caption>
-                                      <tr>
-                                        <th id="col1" style="
-                                    min-width: 250px;width:20%;
-                                    position: sticky;
-                                    left: 0;
-                                    z-index: 1;
-                                    background: rgb(244, 244, 244);
-                                  ">
-                                          &nbsp;
-                                        </th>
-                                        <ng-container *ngIf="attribute.fieldTableValue[0]">
-                                          <ng-container *ngFor="
-                                      let column of attribute.fieldTableValue[0]
-                                        .columns;
-                                      let i = index
-                                    ">
-                                            <th [id]="'col_'+i" style="border: 1px solid #e4e4e4">
-                                              <mat-form-field *ngIf="
-                                          currentClosure.canManage &&
-                                          !currentClosure.forGranteeUse
-                                        ">
-                                                <mat-icon *ngIf="
-                                            currentClosure.canManage &&
-                                            !currentClosure.forGranteeUse
-                                          " aria-hidden="false" style="
-                                            font-size: 18px;
-                                            position: relative;
-                                            left: 90%;
-                                            z-index: 0;
-                                            cursor: pointer;
-                                            top: 3px;
-                                          " aria-label="Example home icon" inline="false" title="Delete this column">
-                                                  delete_outline
-                                                </mat-icon>
-                                                <label>Column Description</label>
-                                                <input id="column_{{ column.id }}" matInput [(ngModel)]="column.name"
-                                                  class="anu-input" [ngModelOptions]="{
-                                            standAlone: true
-                                          }" />
-                                              </mat-form-field>
-                                              <p class="anu-input-plain" *ngIf="
-                                          (currentClosure.canManage &&
-                                            currentClosure.forGranteeUse) ||
-                                          !currentClosure.canManage
-                                        " style="background: #f0f1f0 !important">
-                                                {{ column.name }}
-                                              </p>
-                                            </th>
-                                          </ng-container>
-                                        </ng-container>
-                                      </tr>
-                                      <ng-container *ngFor="
-                                  let row of attribute.fieldTableValue;
-                                  let i = index
-                                ">
-                                        <tr>
-                                          <td style="
-                                      position: sticky;
-                                      width: 20%;
-                                      left: 0;
-                                      z-index: 1;
-                                      background: rgb(244, 244, 244);
-                                    ">
-                                            <mat-form-field *ngIf="
-                                        currentClosure.canManage &&
-                                        !currentClosure.forGranteeUse
-                                      ">
-                                              <mat-icon *ngIf="
-                                          currentClosure.canManage &&
-                                          !currentClosure.forGranteeUse
-                                        " aria-hidden="false" style="
-                                          font-size: 18px;
-                                          top: 25px;
-                                          position: relative;
-                                          left: 90%;
-                                          z-index: 1;
-                                          cursor: pointer;
-                                        " aria-label="Example home icon" inline="false" title="Delete this row">
-                                                delete_outline
-                                              </mat-icon>
-                                              <label style="
-                                          width: 100%;
-                                          position: relative;
-                                          text-align: center;
-                                        ">Row Description</label>
-                                              <textarea matInput [(ngModel)]="row.name" class="anu-input"
-                                                style="height: 80px !important"
-                                                [ngModelOptions]="{ standAlone: true }"></textarea>
-                                            </mat-form-field>
-                                            <p class="anu-input-plain" *ngIf="
-                                        (currentClosure.canManage &&
-                                          currentClosure.forGranteeUse) ||
-                                        !currentClosure.canManage
-                                      " style="background: #f0f1f0 !important">
-                                              {{ row.name }}
-                                            </p>
-                                          </td>
-                                          <ng-container *ngFor="let column of row.columns">
-                                            <td style="
-                                        border: 1px solid #e4e4e4;
-                                        min-width: 200px;
-                                        padding-top: 0;
-                                      ">
-                                              <mat-form-field>
-                                                <input matInput [(ngModel)]="column.value" class="anu-input"
-                                                  [ngModelOptions]="{
-                                            standAlone: true
-                                          }" placeholder="Value" />
-                                              </mat-form-field>
-                                            </td>
-                                          </ng-container>
-                                        </tr>
-                                      </ng-container>
-                                    </table>
-                                  </div>
-                                  <div class="row">
-                                    <div class="col-12">
-                                      <span *ngIf="
-                                  currentClosure.canManage &&
-                                  !currentClosure.forGranteeUse
-                                " style="cursor: pointer"><em class="fas fa-plus-circle text-green mr-1"></em>Add a
-                                        row</span>
-                                    </div>
-                                  </div>
-                                </div>
+
+
                                 <div class="col-sm-12 col-lg-12 text-left"
                                   *ngIf="attribute.fieldType === 'disbursement'">
                                   <div id="tableArea" #plannedProjectFundsModal role="dialog"
                                     class="row modal mt-5 plannedProjectFundsModal"
-                                    style="padding-left: 15px; padding-right: 15px;margin-top: 100px;">
+                                    style="padding-left: 15px; padding-right: 15px;margin-top: 100px;z-index:0;">
                                     <span class=""
                                       style="position:absolute; right: 20px; left: auto;top: 10px;z-index:1;"
                                       (click)="hidePlannedCommitmentDetails()">
@@ -1696,173 +1300,18 @@
 
                                 </div>
 
-                                <div class="col-sm-4 col-lg-8 text-left" *ngIf="
-                            attribute.fieldType === 'kpi' &&
-                            currentClosure.canManage &&
-                            !currentClosure.forGranteeUse
-                          ">
-                                  <mat-form-field>
-                                    <input matInput disabled placeholder="Grant Level Target:"
-                                      style="background: #f0f1f0 !important" class="anu-input" [value]="
-                                attribute.grantLevelTarget &&
-                                attribute.grantLevelTarget !== null
-                                  ? attribute.grantLevelTarget
-                                  : 'N/A'
-                              " />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-4 col-lg-8 text-left" *ngIf="
-                            attribute.fieldType === 'kpi' &&
-                            currentClosure.canManage &&
-                            currentClosure.forGranteeUse
-                          ">
-                                  <mat-form-field>
-                                    <input matInput disabled placeholder="Grant Level Target:"
-                                      style="background: #f0f1f0 !important" class="anu-input" [value]="
-                                attribute.grantLevelTarget &&
-                                attribute.grantLevelTarget !== null
-                                  ? attribute.grantLevelTarget
-                                  : 'N/A'
-                              " />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-4 col-lg-4 text-left" *ngIf="attribute.fieldType === 'kpi'">
-                                  <mat-form-field>
-                                    <input class="anu-input" matInput placeholder="Frequency:"
-                                      style="background: #f0f1f0 !important" [value]="
-                                attribute.frequency === 'Half-yearly'
-                                  ? 'Half-Yearly'
-                                  : attribute.frequency === 'adhoc'
-                                  ? 'N/A'
-                                  : (attribute.frequency | titlecase)
-                              " readonly disabled />
-                                  </mat-form-field>
-                                </div>
 
-                                <div class="col-sm-4 col-lg-4 text-left" *ngIf="attribute.fieldType === 'kpi'">
-                                  <mat-form-field>
-                                    <mat-label>Grant Level
-                                      Achieved<sup>&nbsp;(1)</sup>:</mat-label>
-                                    <input matInput style="background: #f0f1f0 !important" [value]="
-                                attribute.cumulativeActuals
-                                  ? attribute.cumulativeActuals
-                                  : 'N/A'
-                              " readonly disabled class="anu-input" />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                            attribute.fieldType === 'kpi' &&
-                            appComp.loggedInUser.organization
-                              .organizationType === 'GRANTER' &&
-                            currentClosure.canManage &&
-                            !currentClosure.forGranteeUse
-                          ">
-                                  <mat-form-field>
-                                    <input matInput [(ngModel)]="attribute.target" class="anu-input" type="number"
-                                      [ngModelOptions]="{ standAlone: true }" placeholder="Report Level Target:" />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                            attribute.fieldType === 'kpi' &&
-                            appComp.loggedInUser.organization
-                              .organizationType === 'GRANTEE' &&
-                            currentClosure.canManage &&
-                            currentClosure.forGranteeUse
-                          ">
-                                  <mat-form-field>
-                                    <input matInput placeholder="Report Level Target:"
-                                      style="background: #f0f1f0 !important" [value]="
-                                attribute.target ? attribute.target : null
-                              " readonly disabled class="anu-input" />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                            attribute.fieldType === 'kpi' &&
-                            
-                            currentClosure.canManage &&
-                            ((!currentClosure.forGranteeUse && isExternalGrant(currentClosure.grant)))
-                          ">
-                                  <mat-form-field>
-                                    <input matInput placeholder="Report Level Accomplishment:" [value]="
-                                attribute.actualTarget
-                                  ? attribute.actualTarget
-                                  : 'To be filled by implementing organization'
-                              " readonly disabled style="background: #f0f1f0 !important" class="anu-input" />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                            attribute.fieldType === 'kpi' &&
-                            
-                            currentClosure.canManage &&
-                            ((currentClosure.forGranteeUse && isExternalGrant(currentClosure.grant)) || (!currentClosure.forGranteeUse && !isExternalGrant(currentClosure.grant)))
-                          ">
-                                  <mat-form-field>
-                                    <input matInput [(ngModel)]="attribute.actualTarget" class="anu-input" type="number"
-                                      [ngModelOptions]="{ standAlone: true }"
-                                      placeholder="Report Level Accomplishment:" />
-                                  </mat-form-field>
-                                </div>
-                                <div class="col-sm-12 col-lg-12 text-left" *ngIf="attribute.fieldType === 'multiline'">
-                                  <textarea [(ngModel)]="attribute.fieldValue" class="anu-input h-100 w-100"
-                                    [ngModelOptions]="{ standAlone: true }"></textarea>
-                                </div>
+
+
+
+
+
+
+
+
+
 
                               </ng-container>
-                              <div class="col-12" *ngIf="
-                          currentClosure.canManage &&
-                          !currentClosure.forGranteeUse
-                        ">
-                                <div class="row mt-3">
-                                  <div class="col-6 text-left" *ngIf="attribute.fieldType === 'kpi'">
-                                    <sup>(1) - Totals based on all approved reports for
-                                      grant</sup>
-                                  </div>
-                                  <div class="col-6 text-right" *ngIf="attribute.fieldType === 'kpi'">
-                                    <a [class]="i === 0 ? 'isDisabled' : ''">
-                                      <mat-icon style='color:#676767;'>keyboard_arrow_up</mat-icon>
-                                    </a>
-                                    <a [class]="
-                                i === section.attributes.length - 1
-                                  ? 'isDisabled'
-                                  : ''
-                              ">
-                                      <mat-icon style='color:#676767;'>keyboard_arrow_down</mat-icon>
-                                    </a>
-                                    <a><img alt="separator" src="./assets/img/Line.svg" class="w-10 mr-2"
-                                        style="width: 1px" /></a>
-                                    <a href="javascript:">
-                                      <mat-icon style='color:#676767;'>delete_outlined</mat-icon>
-                                    </a>
-                                  </div>
-                                  <div class="col-12 text-right" *ngIf="attribute.fieldType !== 'kpi'">
-                                    <a [class]="i === 0 ? 'isDisabled' : ''">
-                                      <mat-icon style='color:#676767;'>keyboard_arrow_up</mat-icon>
-                                    </a>
-                                    <a [class]="
-                                i === section.attributes.length - 1
-                                  ? 'isDisabled'
-                                  : ''
-                              ">
-                                      <mat-icon style='color:#676767;'>keyboard_arrow_down</mat-icon>
-                                    </a>
-                                    <a><img alt="separator" src="./assets/img/Line.svg" class="w-10 mr-2"
-                                        style="width: 1px" /></a>
-                                    <a href="javascript:">
-                                      <mat-icon style='color:#676767;'>delete_outlined</mat-icon>
-                                    </a>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="col-12" *ngIf="
-                          currentClosure.canManage && currentClosure.forGranteeUse
-                        ">
-                                <div class="row mt-3">
-                                  <div class="col-12 text-left" *ngIf="attribute.fieldType === 'kpi'">
-                                    <sup>(1) - Totals based on all approved reports for
-                                      grant</sup>
-                                  </div>
-                                </div>
-                              </div>
                             </div>
                           </ng-container>
                         </div>

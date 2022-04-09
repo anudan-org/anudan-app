@@ -26,6 +26,9 @@ export class InprogressDisbursementsComponent implements OnInit {
   filterReady = false;
   filterCriteria: any;
   @ViewChild("appSearchFilter") appSearchFilter: SearchFilterComponent;
+  selectedGrantId: number;
+  selectedGrantFromClosure: Grant;
+  disbSubs: any;
 
   public constructor(
     public appComponent: AppComponent,
@@ -36,11 +39,13 @@ export class InprogressDisbursementsComponent implements OnInit {
     public uiService: UiUtilService,
   ) {
 
-    disbursementDataService.initiateDisbursement.subscribe((val) => {
-      if (val) {
-        this.showOwnedActiveGrants();
+    this.disbSubs = disbursementDataService.initiateDisbursement.subscribe((val) => {
+      if (val.hasOwnProperty("id")) {
+        this.disbursementDataService.startDisbursement(new Grant());
+        this.showOwnedActiveGrants(val);
       }
     });
+    this.disbSubs.unsubscribe();
   }
 
 
@@ -59,28 +64,29 @@ export class InprogressDisbursementsComponent implements OnInit {
   }
 
 
-  showOwnedActiveGrants() {
-    this.disbursementDataService.startDisbursement(false);
-    this.disbursementDataService.showOwnedActiveGrants()
-      .then(ownedGrants => {
-        if (ownedGrants !== null) {
-          const dialogRef = this.dialog.open(GrantSelectionDialogComponent, {
-            data: ownedGrants,
-            panelClass: 'grant-template-class'
-          });
-          /* this.searchClosed = true;
-          if (this.appSearchFilter) {
-            this.appSearchFilter.closeSearch();
-          } */
-          dialogRef.afterClosed().subscribe((result) => {
-            if (result.result) {
-              this.createDisbursement(result.selectedGrant);
-            } else {
-              dialogRef.close();
-            }
-          });
-        }
-      });
+  showOwnedActiveGrants(grant: Grant) {
+
+    if (!grant) {
+      this.disbursementDataService.showOwnedActiveGrants()
+        .then(ownedGrants => {
+          if (ownedGrants !== null) {
+            const dialogRef = this.dialog.open(GrantSelectionDialogComponent, {
+              data: ownedGrants,
+              panelClass: 'grant-template-class'
+            });
+
+            dialogRef.afterClosed().subscribe((result) => {
+              if (result.result) {
+                this.createDisbursement(result.selectedGrant);
+              } else {
+                dialogRef.close();
+              }
+            });
+          }
+        });
+    } else {
+      this.createDisbursement(grant);
+    }
 
 
 
