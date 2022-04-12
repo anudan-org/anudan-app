@@ -183,29 +183,29 @@ export class GrantCompareComponent implements OnInit {
 
               } else if (oldAttr.type === attr.type && oldAttr.type === 'disbursement') {
 
-                let hasDifferences = false;
+                let hasDifferences2 = false;
 
                 if (oldAttr.tableValue.length !== attr.tableValue.length) {
-                  hasDifferences = true;
+                  hasDifferences2 = true;
                 } else {
                   for (let i = 0; i < oldAttr.tableValue.length; i++) {
 
                     if (oldAttr.tableValue[i].columns.length !== attr.tableValue[i].columns.length) {
-                      hasDifferences = true;
+                      hasDifferences2 = true;
                     } else {
                       for (let j = 0; j < oldAttr.tableValue[i].columns.length; j++) {
                         if (oldAttr.tableValue[i].columns[j].name !== attr.tableValue[i].columns[j].name) {
-                          hasDifferences = true;
+                          hasDifferences2 = true;
                         }
                         if (((!oldAttr.tableValue[i].columns[j].value || oldAttr.tableValue[i].columns[j].value === null) ? "" : oldAttr.tableValue[i].columns[j].value) !== ((!attr.tableValue[i].columns[j].value || attr.tableValue[i].columns[j].value === null || attr.tableValue[i].columns[j].value === "0") ? "" : attr.tableValue[i].columns[j].value)) {
-                          hasDifferences = true;
+                          hasDifferences2 = true;
                         }
                       }
                     }
                   }
                 }
 
-                if (hasDifferences) {
+                if (hasDifferences2) {
                   this._getGrantDiffSections();
                   this.saveDifferences(oldSection, oldAttr, section, attr);
                 }
@@ -214,15 +214,15 @@ export class GrantCompareComponent implements OnInit {
 
             } else if (!oldAttr) {
               this._getGrantDiffSections();
-              const attrDiff = new AttributeDiff();
-              attrDiff.section = section.name;
-              attrDiff.newAttribute = attr;
+              const attrDiff2 = new AttributeDiff();
+              attrDiff2.section = section.name;
+              attrDiff2.newAttribute = attr;
               const sectionDiff = new SectionDiff();
               sectionDiff.oldSection = oldSection;
               sectionDiff.newSection = section;
               sectionDiff.attributesDiffs = [];
               sectionDiff.order = section.order
-              sectionDiff.attributesDiffs.push(attrDiff);
+              sectionDiff.attributesDiffs.push(attrDiff2);
               this.grantDiff.sectionDiffs.push(sectionDiff);
             }
           }
@@ -236,16 +236,16 @@ export class GrantCompareComponent implements OnInit {
               oldAttr = section.attributes.filter((a) => a.name === attr.name)[0];
               if (!oldAttr) {
                 this._getGrantDiffSections();
-                const attrDiff = new AttributeDiff();
-                attrDiff.section = section.name;
-                attrDiff.oldAttribute = attr;
-                attrDiff.newAttribute = null;
+                const attrDiff3 = new AttributeDiff();
+                attrDiff3.section = section.name;
+                attrDiff3.oldAttribute = attr;
+                attrDiff3.newAttribute = null;
                 const sectionDiff = new SectionDiff();
                 sectionDiff.oldSection = oldSection;
                 sectionDiff.newSection = section;
                 sectionDiff.order = section.order
                 sectionDiff.attributesDiffs = [];
-                sectionDiff.attributesDiffs.push(attrDiff);
+                sectionDiff.attributesDiffs.push(attrDiff3);
                 this.grantDiff.sectionDiffs.push(sectionDiff);
               }
             }
@@ -253,12 +253,12 @@ export class GrantCompareComponent implements OnInit {
         }
         if (oldSection.name !== section.name) {
           this._getGrantDiffSections();
-          let secDiff = new SectionDiff();
-          secDiff.oldSection = oldSection;
-          secDiff.newSection = section;
-          secDiff.order = section.order
-          secDiff.hasSectionLevelChanges = true;
-          this.grantDiff.sectionDiffs.push(secDiff);
+          let secDiff2 = new SectionDiff();
+          secDiff2.oldSection = oldSection;
+          secDiff2.newSection = section;
+          secDiff2.order = section.order
+          secDiff2.hasSectionLevelChanges = true;
+          this.grantDiff.sectionDiffs.push(secDiff2);
         }
 
 
@@ -994,6 +994,11 @@ export class GrantCompareComponent implements OnInit {
       this.closureDiff.oldClosureDescription = oldClosure.description;
       this.closureDiff.newClosureDescription = newClosure.description;
     }
+    if (oldClosure.actualSpent !== newClosure.actualSpent) {
+      this._getClosureDiff();
+      this.closureDiff.oldClosureActualSpent = oldClosure.actualSpent;
+      this.closureDiff.newClosureActualSpent = newClosure.actualSpent;
+    }
 
     if (oldClosure.grantRefundAmount !== newClosure.grantRefundAmount) {
       this._getClosureDiff();
@@ -1011,6 +1016,18 @@ export class GrantCompareComponent implements OnInit {
       this._getClosureDiff();
       this.closureDiff.oldClosureActualRefunds = oldClosure.actualRefunds;
       this.closureDiff.newClosureActualRefunds = newClosure.actualRefunds;
+    }
+
+    if (!oldClosure.closureDocs) {
+      oldClosure.closureDocs = [];
+    }
+    if (!newClosure.closureDocs) {
+      newClosure.closureDocs = [];
+    }
+    if (JSON.stringify(oldClosure.closureDocs) !== JSON.stringify(newClosure.closureDocs)) {
+      this._getClosureDiff();
+      this.closureDiff.oldClosureDocs = oldClosure.closureDocs;
+      this.closureDiff.newClosureDocs = newClosure.closureDocs;
     }
 
 
@@ -1088,6 +1105,12 @@ export class GrantCompareComponent implements OnInit {
 
                     } else
                       if (oldAttr.type === attr.type && oldAttr.type === 'document') {
+                        if (!oldAttr.attachments) {
+                          oldAttr.attachments = [];
+                        }
+                        if (!attr.attachments) {
+                          attr.attachments = [];
+                        }
                         if (oldAttr.attachments && attr.attachments && oldAttr.attachments.length !== attr.attachments.length) {
                           this._getClosureDiffSections();
                           this.saveClosureDifferences(oldSection, oldAttr, section, attr);
@@ -1730,6 +1753,36 @@ export class GrantCompareComponent implements OnInit {
         '<td>' + this.getTheDifference((oldData[i] && oldData[i].note) ? String(oldData[i].note) : '', tabData[i].note ? String(tabData[i].note) : '').before + '</td></tr>';
 
     }
+    html += '</table>'
+    return html;
+  }
+
+  getClosureDocsDataNew(oldData, data) {
+    if (data.length === 0) {
+      return "No data available";
+    }
+    let html = '<table width="100%" border="0" class="bg-white">';
+    const tabData = data;
+    html += '<tr><td style="padding:0px;"><ul style="font-size:14px;">';
+    for (let i = 0; i < tabData.length; i++) {
+      html += '<li>' + this.getTheDifference((oldData && oldData[i] && oldData[i].name) ? oldData[i].name : '', tabData[i].name ? tabData[i].name : '').after + '</li>';
+    }
+    html += '</ul></td></tr>';
+    html += '</table>'
+    return html;
+  }
+
+  getClosureDocsDataOld(oldData, data) {
+    if (oldData.length === 0) {
+      return "No data available";
+    }
+    let html = '<table width="100%" border="0" class="bg-white">';
+    const tabData = oldData;
+    html += '<tr><td><ul style="font-size:14px;">';
+    for (let i = 0; i < tabData.length; i++) {
+      html += '<li>' + this.getTheDifference((oldData && oldData[i] && oldData[i].name) ? oldData[i].name : '', (data && data[i] && data[i].name) ? data[i].name : '').before + '</li>';
+    }
+    html += '</td></tr>';
     html += '</table>'
     return html;
   }

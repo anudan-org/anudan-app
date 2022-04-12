@@ -525,7 +525,7 @@ export class ClosureHeaderComponent implements OnInit {
     if (amount) {
       return inf.format(amount, 2);
     }
-    return "<div class='amountPlaceholder'>Enter Actual Spent</div>";
+    return inf.format(0, 2);
   }
 
   captureRefund() {
