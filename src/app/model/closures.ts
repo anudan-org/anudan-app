@@ -46,7 +46,9 @@ export class ClosureAssignment {
   assignmentId: number;
   assignmentUser: User;
   anchor: boolean;
-  constructor() { }
+  constructor() {
+    // do nothing ;
+  }
 }
 
 export class ClosureTemplate {
@@ -81,7 +83,9 @@ export class ClosureWorkflowAssignmentModel {
   closure: GrantClosure;
   canManage: boolean;
   grantTypes: GrantType[];
-  constructor() { }
+  constructor() {
+    //do nothing;
+  }
 }
 export class ClosureWorkflowAssignment {
   id: number;
@@ -92,7 +96,9 @@ export class ClosureWorkflowAssignment {
   customAssignments: string;
   assignmentUser: User;
   anchor: boolean;
-  constructor() { }
+  constructor() {
+    //do nothing;
+  }
 }
 
 export class ClosureDocInfo {
@@ -148,12 +154,16 @@ export class ClosureHistory {
 export class ClosureDiff {
   oldClosureReason: string;
   newClosureReason: string;
+  oldClosureActualSpent: number;
+  newClosureActualSpent: number;
   oldClosureGrantRefundAmount: number;
   newClosureGrantRefundAmount: number;
   oldClosureGrantRefundReason: string;
   newClosureGrantRefundReason: string;
   oldClosureActualRefunds: ActualRefund[];
   newClosureActualRefunds: ActualRefund[];
+  oldClosureDocs: ClosureDocument[];
+  newClosureDocs: ClosureDocument[];
   oldClosureDescription: string;
   newClosureDescription: string;
   sectionDiffs: SectionDiff[];
