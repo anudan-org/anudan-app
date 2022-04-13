@@ -27,7 +27,7 @@ export class AuthGuardService implements CanActivate {
       this.router.navigate(['/setnewpassword'], { queryParams: { email: params.email, key: params.key, org: params.org } });
       return false;
     } else {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/login']);
     }
   }
 

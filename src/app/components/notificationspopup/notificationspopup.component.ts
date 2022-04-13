@@ -1,8 +1,7 @@
-import { Component, Inject, OnInit, ViewChild, ElementRef, Renderer2, HostListener, AfterViewInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef, MatButtonModule } from '@angular/material';
-import { Grant, GrantHistory, Notifications } from '../../model/dahsboard';
-import { WorkflowTransition } from '../../model/workflow-transition';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Component, Inject, OnInit, ElementRef, Renderer2, AfterViewInit } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { Notifications } from '../../model/dahsboard';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { HumanizeDurationLanguage, HumanizeDuration } from 'humanize-duration-ts';
 import { Router } from '@angular/router';
 import { GrantDataService } from '../../grant.data.service';
@@ -42,21 +41,6 @@ export class NotificationspopupComponent implements OnInit, AfterViewInit {
 
 
   ngAfterViewInit() {
-    /* const parser = new DOMParser();
-    if (this.messages.length > 0) {
-      for (let msg of this.messages) {
-        const messageDom = parser.parseFromString(msg.message, "text/html");
-        const clickableLinks = messageDom.getElementsByClassName("go-to-grant-class");
-        if (clickableLinks.length > 0) {
-          for (let i = 0; i < clickableLinks.length; i++) {
-            clickableLinks[i].addEventListener('click', () => {
-              alert("hello");
-            })
-          }
-        }
-      }
-    } */
-
     const clickableGrantLinks = document.getElementsByClassName("go-to-grant-class");
     if (clickableGrantLinks.length > 0) {
       for (let i = 0; i < clickableGrantLinks.length; i++) {
@@ -98,9 +82,23 @@ export class NotificationspopupComponent implements OnInit, AfterViewInit {
         });
       }
     }
+
+    const clickableClosureLinks = document.getElementsByClassName("go-to-closure-class");
+    if (clickableClosureLinks.length > 0) {
+      for (let i = 0; i < clickableClosureLinks.length; i++) {
+        clickableClosureLinks[i].addEventListener('click', (e: MouseEvent) => {
+          const elem = e.target as HTMLElement;
+          const notificationId = elem.parentElement.parentElement.id;
+          const notif: Notifications = this.messages.filter(m => m.id === Number(notificationId))[0];
+          e.preventDefault();
+          this.manageClosure(notif);
+          return false;
+        });
+      }
+    }
   }
   ngOnInit() {
-
+    //do nothing
   }
 
   onNoClick(): void {
@@ -123,6 +121,11 @@ export class NotificationspopupComponent implements OnInit, AfterViewInit {
   manageReport(notification: Notifications) {
     this.dialogRef.close({ result: true, notificationFor: 'REPORT', data: notification });
   }
+
+  manageClosure(notification: Notifications) {
+    this.dialogRef.close({ result: true, notificationFor: 'CLOSURE', data: notification });
+  }
+
   manageDisbursement(notification: Notifications) {
     this.dialogRef.close({ result: true, notificationFor: 'DISBURSEMENT', data: notification });
   }

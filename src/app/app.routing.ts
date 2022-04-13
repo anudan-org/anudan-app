@@ -1,3 +1,4 @@
+import { LandingComponent } from './landing/landing.component';
 import { NocookieComponent } from './nocookie/nocookie.component';
 import { NgModule } from '@angular/core';
 import { CommonModule, } from '@angular/common';
@@ -15,6 +16,7 @@ import { AuthGuardService } from './auth-guard.service';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'landing', component: LandingComponent, canActivate: [AuthGuardService] },
   { path: 'home', component: HomeComponent },
   { path: 'registration', component: RegistrationComponent },
   { path: 'welcome', component: WelcomeComponent },
