@@ -2,31 +2,22 @@ import { ClosureDataService } from './../../closure.data.service';
 import {
   Component,
   OnInit,
-  ViewChild,
-  AfterViewInit,
-  HostListener,
-  ElementRef,
 } from "@angular/core";
 import {
   Location,
-  LocationStrategy,
-  PathLocationStrategy,
   PopStateEvent,
 } from "@angular/common";
 import "rxjs/add/operator/filter";
-import { NavbarComponent } from "../../components/navbar/navbar.component";
 import { WfassignmentComponent } from "../../components/wfassignment/wfassignment.component";
 import { GranthistoryComponent } from "../../components/granthistory/granthistory.component";
 import {
   Router,
   NavigationEnd,
   NavigationStart,
-  ActivatedRoute,
 } from "@angular/router";
 import { MatDialog } from "@angular/material";
 import { Subscription } from "rxjs/Subscription";
 import PerfectScrollbar from "perfect-scrollbar";
-import { CarouselComponent } from "angular-bootstrap-md";
 import { GrantDataService } from "../../grant.data.service";
 import { DataService } from "../../data.service";
 import { GrantUpdateService } from "../../grant.update.service";
@@ -46,7 +37,6 @@ import {
   HttpClient,
   HttpErrorResponse,
   HttpHeaders,
-  HttpResponse,
 } from "@angular/common/http";
 import { interval } from "rxjs";
 import { ToastrService, IndividualConfig } from "ngx-toastr";
@@ -103,7 +93,6 @@ export class AdminLayoutComponent implements OnInit {
     public appComponent: AppComponent,
     public location: Location,
     private router: Router,
-    private activatedRoute: ActivatedRoute,
     private dataService: DataService,
     private grantUpdateService: GrantUpdateService,
     private http: HttpClient,
@@ -329,19 +318,13 @@ export class AdminLayoutComponent implements OnInit {
           },
           (error) => {
             const errorMsg = error as HttpErrorResponse;
-            const x = {
-              enableHtml: true,
-              preventDuplicates: true,
-              positionClass: "toast-top-full-width",
-              progressBar: true,
-            } as Partial<IndividualConfig>;
+
             const y = {
               enableHtml: true,
               preventDuplicates: true,
               positionClass: "toast-top-right",
               progressBar: true,
             } as Partial<IndividualConfig>;
-            const errorconfig: Partial<IndividualConfig> = x;
             const config: Partial<IndividualConfig> = y;
             if (errorMsg.error && errorMsg.error.message === "Token Expired") {
               this.intervalSubscription.unsubscribe();
@@ -381,7 +364,7 @@ export class AdminLayoutComponent implements OnInit {
     }
   }
   isMac(): boolean {
-    let bool = false;
+    let bool: boolean;
     if (
       navigator.platform.toUpperCase().indexOf("MAC") >= 0 ||
       navigator.platform.toUpperCase().indexOf("IPAD") >= 0
@@ -426,7 +409,7 @@ export class AdminLayoutComponent implements OnInit {
   }
 
   showHistory(historyOf, what2Show) {
-    const dialogRef = this.dialog.open(GranthistoryComponent, {
+    this.dialog.open(GranthistoryComponent, {
       data: {
         type: historyOf,
         data: what2Show,
@@ -510,19 +493,13 @@ export class AdminLayoutComponent implements OnInit {
               },
               (error) => {
                 const errorMsg = error as HttpErrorResponse;
-                const x = {
-                  enableHtml: true,
-                  preventDuplicates: true,
-                  positionClass: "toast-top-full-width",
-                  progressBar: true,
-                } as Partial<IndividualConfig>;
+
                 const y = {
                   enableHtml: true,
                   preventDuplicates: true,
                   positionClass: "toast-top-right",
                   progressBar: true,
                 } as Partial<IndividualConfig>;
-                const errorconfig: Partial<IndividualConfig> = x;
                 const config: Partial<IndividualConfig> = y;
                 if (errorMsg.error.message === "Token Expired") {
                   alert("Your session has timed out. Please sign in again.");
@@ -604,19 +581,13 @@ export class AdminLayoutComponent implements OnInit {
               },
               (error) => {
                 const errorMsg = error as HttpErrorResponse;
-                const x = {
-                  enableHtml: true,
-                  preventDuplicates: true,
-                  positionClass: "toast-top-full-width",
-                  progressBar: true,
-                } as Partial<IndividualConfig>;
+
                 const y = {
                   enableHtml: true,
                   preventDuplicates: true,
                   positionClass: "toast-top-right",
                   progressBar: true,
                 } as Partial<IndividualConfig>;
-                const errorconfig: Partial<IndividualConfig> = x;
                 const config: Partial<IndividualConfig> = y;
                 if (errorMsg.error.message === "Token Expired") {
                   alert("Your session has timed out. Please sign in again.");
@@ -742,19 +713,13 @@ export class AdminLayoutComponent implements OnInit {
               },
               (error) => {
                 const errorMsg = error as HttpErrorResponse;
-                const x = {
-                  enableHtml: true,
-                  preventDuplicates: true,
-                  positionClass: "toast-top-full-width",
-                  progressBar: true,
-                } as Partial<IndividualConfig>;
+
                 const y = {
                   enableHtml: true,
                   preventDuplicates: true,
                   positionClass: "toast-top-right",
                   progressBar: true,
                 } as Partial<IndividualConfig>;
-                const errorconfig: Partial<IndividualConfig> = x;
                 const config: Partial<IndividualConfig> = y;
                 if (errorMsg.error.message === "Token Expired") {
                   alert("Your session has timed out. Please sign in again.");
@@ -1048,6 +1013,8 @@ export class AdminLayoutComponent implements OnInit {
           this.manageReport(result.data, result.data.reportId);
         } else if (result.notificationFor === "DISBURSEMENT") {
           this.manageDisbursement(result.data, result.data.disbursementId);
+        } else if (result.notificationFor === "CLOSURE") {
+          this.manageClosure(result.data, result.data.reportId);
         }
       }
     });
@@ -1128,7 +1095,7 @@ export class AdminLayoutComponent implements OnInit {
     } else if (type === "DISBURSEMENT") {
       this.showAllDisbursements(toSave, "db");
     } else if (type === "CLOSURE") {
-      this.showAllClosures(toSave, "db");
+      this.showAllGrants(toSave, "db");
     }
   }
 }

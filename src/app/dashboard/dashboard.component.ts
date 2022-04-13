@@ -1,20 +1,20 @@
+import { GrantClosure } from 'app/model/closures';
+import { ClosureDataService } from 'app/closure.data.service';
 import { ListDialogComponent } from './../components/list-dialog/list-dialog.component';
 import { MyCategory } from '../model/mydashboard';
-import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { User } from '../model/user';
-import { SerializationHelper, Tenant, Tenants } from '../model/dahsboard';
+import { Tenant, Tenants, Grant } from '../model/dahsboard';
 import { AppComponent } from '../app.component';
-import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { GrantDataService } from '../grant.data.service';
 import { SingleReportDataService } from '../single.report.data.service';
 import { DataService } from '../data.service';
-import { Grant } from '../model/dahsboard'
 import { Report } from '../model/report'
-import * as $ from 'jquery'
 import { ToastrService } from 'ngx-toastr';
 import { GrantComponent } from "../grant/grant.component";
-import { MatBottomSheet, MatDatepickerInputEvent, MatDialog, MatTabGroup } from '@angular/material';
+import { MatDialog, MatTabGroup } from '@angular/material';
 import { GrantTemplateDialogComponent } from '../components/grant-template-dialog/grant-template-dialog.component';
 import { WelcomePopupComponent } from '../components/welcome-popup/welcome-popup.component';
 import * as inf from 'indian-number-format';
@@ -73,7 +73,8 @@ export class DashboardComponent implements OnInit {
     private dataService: DataService,
     private dialog: MatDialog,
     private singleReportDataService: SingleReportDataService,
-    private disbursementService: DisbursementDataService) {
+    private disbursementService: DisbursementDataService,
+    private closureDataService: ClosureDataService) {
 
     this.route.queryParams.subscribe(params => {
       this.parameters = params;
@@ -143,27 +144,13 @@ export class DashboardComponent implements OnInit {
     this.http.get<number>(url, httpOptions).subscribe((count: number) => {
 
       this.grantActiveCount = count;
-    },
-      error1 => {
-        const errorMsg = error1 as HttpErrorResponse;
-        this.toastr.error(errorMsg.error.message, errorMsg.error.messageTitle, {
-          enableHtml: true,
-          positionClass: 'toast-top-center'
-        });
-      });
+    });
 
     url = '/api/users/' + userId + '/dashboard/closed';
     this.http.get<number>(url, httpOptions).subscribe((count: number) => {
 
       this.grantClosedCount = count;
-    },
-      error1 => {
-        const errorMsg = error1 as HttpErrorResponse;
-        this.toastr.error(errorMsg.error.message, errorMsg.error.messageTitle, {
-          enableHtml: true,
-          positionClass: 'toast-top-center'
-        });
-      });
+    });
   }
 
   manageGrant(grant: Grant) {
@@ -224,7 +211,6 @@ export class DashboardComponent implements OnInit {
           this.appComponent.action = 'preview';
           this.router.navigate(['grant/preview']);
         }
-        // this.router.navigate(['grants']);
       });
     } else if (type === 'report') {
       const reportCode = this.parameters.r;
@@ -256,7 +242,6 @@ export class DashboardComponent implements OnInit {
         } else {
           this.router.navigate(['report/report-preview']);
         }
-        // this.router.navigate(['grants']);
       });
     } else if (type === 'disbursement') {
       const disbursementCode = this.parameters.d;
@@ -289,7 +274,31 @@ export class DashboardComponent implements OnInit {
         } else {
           this.router.navigate(['disbursement/preview']);
         }
-        // this.router.navigate(['grants']);
+      });
+    } else if (type === 'closure') {
+      const closureCode = this.parameters.r;
+      const queryParams = new HttpParams().set('r', closureCode)
+      const httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+          'X-TENANT-CODE': localStorage.getItem('X-TENANT-CODE'),
+          'Authorization': localStorage.getItem('AUTH_TOKEN')
+        }),
+        params: queryParams
+      };
+      const url = '/api/user/' + this.appComponent.loggedInUser.id + '/closure/resolve';
+
+
+      this.http.get(url, httpOptions).subscribe((closure: GrantClosure) => {
+        this.appComponent.currentView = 'grant-closure';
+        this.closureDataService.changeMessage(closure, this.appComponent.loggedInUser.id);
+        if (closure.canManage) {
+          this.appComponent.action = 'grant-closure';
+          this.router.navigate(['grant-closure/header']);
+        } else {
+          this.appComponent.action = 'grant-closure';
+          this.router.navigate(['grant-closure/preview']);
+        }
       });
     } else {
       this.fetchDashboard(this.appComponent.loggedInUser.id);
@@ -322,12 +331,7 @@ export class DashboardComponent implements OnInit {
     let url = '/api/users/' + this.appComponent.loggedInUser.id + '/dashboard/summary';
 
     this.http.get(url, httpOptions).subscribe((data: any) => {
-      console.log(data);
-      this.totalGrantsIssued = data.summary.totalGrants;
-      this.totalGrantees = data.summary.grantees;
-      this.totalGrantAmount = '₹' + inf.format(Number(data.summary.totalGrantAmount), 2);
-      this.totalActiveUsers = data.summary.activeUsers;
-      this.portfolioData = data.filters;
+      this.updateTotals(data);
     });
   }
 
@@ -346,13 +350,17 @@ export class DashboardComponent implements OnInit {
     let url = '/api/users/' + this.appComponent.loggedInUser.id + '/dashboard/summary/grantee/' + this.appComponent.loggedInUser.organization.id;
 
     this.http.get(url, httpOptions).subscribe((data: any) => {
-      console.log(data);
-      this.totalGrantsIssued = data.summary.totalGrants;
-      this.totalGrantees = data.summary.grantees;
-      this.totalGrantAmount = '₹' + inf.format(Number(data.summary.totalGrantAmount), 2);
-      this.totalActiveUsers = data.summary.activeUsers;
-      this.portfolioData = data.filters;
+      this.updateTotals(data);
     });
+  }
+
+  private updateTotals(data: any) {
+    console.log(data);
+    this.totalGrantsIssued = data.summary.totalGrants;
+    this.totalGrantees = data.summary.grantees;
+    this.totalGrantAmount = '₹' + inf.format(Number(data.summary.totalGrantAmount), 2);
+    this.totalActiveUsers = data.summary.activeUsers;
+    this.portfolioData = data.filters;
   }
 
   getMyDashboardSummary() {
@@ -370,7 +378,6 @@ export class DashboardComponent implements OnInit {
 
     this.http.get(url, httpOptions).subscribe((data: any) => {
       this.myCategory = data;
-      //this.myCategory.summary.ActionsPending.DisbursementApprovals = '₹' + inf.format(Number(this.myCategory.summary.ActionsPending.DisbursementApprovals), 2);
       console.log(this.myCategory);
     });
   }
@@ -381,10 +388,8 @@ export class DashboardComponent implements OnInit {
 
   getName(): string {
     const name = this.appComponent.loggedInUser.firstName;
-    /* if (name.substr(name.length, 1) === 's') {
-      return name.trim() + '\' Dashboard';
-    } */
-    return name.trim()/*  + '\'s Dashboard' */;
+
+    return name.trim();
   }
 
   tabSelectionChange(ev) {

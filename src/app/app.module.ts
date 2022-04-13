@@ -46,6 +46,7 @@ import { ClosureSelectionComponent } from './components/closure-selection/closur
 import { ReturnsPopupComponent } from './returns-popup/returns-popup.component';
 import { RefundpopupComponent } from './refundpopup/refundpopup.component';
 import { ProjectFundSummaryComponent } from './project-fund-summary/project-fund-summary.component';
+import { LandingComponent } from './landing/landing.component';
 
 
 export class AnudanErrorHandler implements ErrorHandler {
@@ -100,6 +101,7 @@ export function provideConfig() {
     ReturnsPopupComponent,
     RefundpopupComponent,
     ProjectFundSummaryComponent,
+    LandingComponent,
   ],
   imports: [
     BrowserAnimationsModule,
