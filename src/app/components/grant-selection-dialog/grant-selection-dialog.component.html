@@ -1,71 +1,52 @@
 <div class="row">
   <div class="col-6">
     <h1 mat-dialog-title style="margin-bottom: 0px">Select a Grant</h1>
-<h4
-  mat-dialog-title
-  *ngIf="this.selectedGrant"
-  style="margin-top: 0; font-size: 14px; font-weight: normal;display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2em;"
->
-  {{ selectedGrant.name }}
-</h4>
-<h4
-  mat-dialog-title
-  *ngIf="!this.selectedGrant"
-  style="margin-top: 0; font-size: 16px; font-weight: normal; white-space: nowrap;overflow: hidden;text-overflow: ellipsis;"
->
-  No grant selected
-</h4>
+    <h4 mat-dialog-title *ngIf="this.selectedGrant"
+      style="margin-top: 0; font-size: 14px; font-weight: normal;display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.2em;">
+      {{ selectedGrant.name }}
+    </h4>
+    <h4 mat-dialog-title *ngIf="!this.selectedGrant"
+      style="margin-top: 0; font-size: 16px; font-weight: normal; white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+      No grant selected
+    </h4>
   </div>
   <div class="col-6" style="display: flex;align-items: center;">
-    <app-search-filter #appSearchFilter [searchContext]="'.search-context-grant-selection'" [scollableArea]="'.mat-dialog-content'" *ngIf="!searchClosed" [turnOffSearch]="searchClosed" [ready]="filterReady" (highlightDone)="resetFilterFlag($event)" (filterCriteria)="startFilter($event)" (close)="closeSearch($event)" style="transition: display 2s;"></app-search-filter>
+    <app-search-filter #appSearchFilter [searchContext]="'.search-context-grant-selection'"
+      [scollableArea]="'.mat-dialog-content'" *ngIf="!searchClosed" [turnOffSearch]="searchClosed" [ready]="filterReady"
+      (highlightDone)="resetFilterFlag($event)" (filterCriteria)="startFilter($event)" (close)="closeSearch($event)"
+      style="transition: display 2s;"></app-search-filter>
     <mat-icon (click)="openSearch()" style="position: absolute; right: 0; margin-right: 20px;">search</mat-icon>
   </div>
 </div>
 
 <div mat-dialog-content>
   <div>
-    <mat-card
-      *ngFor="let grant of filteredGrants"
-      value="{{ grant.id }}"
-      style="background: #e5e5e5; max-width: none"
-      class="mb-3"
-    >
-      <mat-checkbox
-        [checked]="grant.id === selected"
-        class="template-checkbox float-right"
+    <mat-card *ngFor="let grant of filteredGrants" value="{{ grant.id }}" style="background: #e5e5e5; max-width: none"
+      class="mb-3">
+      <mat-checkbox [checked]="grant.id === selected" class="template-checkbox float-right"
         (change)="setSelectedGrant(grant.id, $event)"
-        [disabled]="grant.hasOngoingDisbursement"
-      >
+        [disabled]="grant.hasOngoingDisbursement || grant.closureInProgress">
       </mat-checkbox>
-      <mat-card-title style="font-size: 14px" class="search-context-grant-selection"
-        >{{ (grant.referenceNo ? grant.referenceNo + " | " : "") + grant.name }}
+      <mat-card-title style="font-size: 14px" class="search-context-grant-selection">{{ (grant.referenceNo ?
+        grant.referenceNo + " | " : "") + grant.name }}
       </mat-card-title>
-      <p
-        style="
+      <p style="
           position: absolute;
           font-size: 12px;
           font-style: italic;
           bottom: 0 !important;
           right: 18px;
-        "
-        *ngIf="grant.hasOngoingDisbursement"
-        class="text-red mt-1 mb-0 text-right"
-      >
-        Disbursement Approval Request in progress
+        " class="text-red mt-1 mb-0 text-right">
+        {{grant.hasOngoingDisbursement?'Disbursement Approval Request in progress':grant.closureInProgress?'Closure
+        in-progress':''}}
       </p>
     </mat-card>
   </div>
 </div>
-<!--<mat-select [(value)]="selected">
-	<mat-option  matTooltip="{{template.description}}" matTooltipPosition="right" *ngFor="let template of templates" value="{{template.id}}">{{template.name}}</mat-option>
-</mat-select>-->
+
 <hr />
 <div mat-dialog-actions>
-  <button
-    [disabled]="selected === 0"
-    class="btn btn-sm btn-green-primary"
-    (click)="onYesClick()"
-  >
+  <button [disabled]="selected === 0" class="btn btn-sm btn-green-primary" (click)="onYesClick()">
     Select Grant
   </button>
   <button class="btn btn-sm btn-green" (click)="onNoClick()">Not Now</button>
