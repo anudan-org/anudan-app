@@ -1,7 +1,7 @@
 import { MessagingComponent } from './../../components/messaging/messaging.component';
 import { AdminService } from './../../admin.service';
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User, Role, UserRole } from '../../model/user'
 import { AppComponent } from '../../app.component'
 import { FieldDialogComponent } from '../../components/field-dialog/field-dialog.component';
@@ -10,8 +10,7 @@ import { Observable } from 'rxjs';
 import { FormControl } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { MatAutocompleteSelectedEvent, MatAutocomplete } from '@angular/material/autocomplete';
-import { MatChipInputEvent } from '@angular/material/chips';
+import { MatAutocomplete } from '@angular/material/autocomplete';
 
 @Component({
     selector: 'app-users',
@@ -61,16 +60,8 @@ export class UsersComponent implements OnInit {
     ngOnInit() {
         this.myControl = new FormControl();
         this.myNewControl = new FormControl();
-        //this.fetchOrgUsers();
-        this.fetchRolesForUserOrg();
-
-
     }
 
-    fetchOrgUsers() {
-
-
-    }
 
     createNewUser() {
 
@@ -92,7 +83,6 @@ export class UsersComponent implements OnInit {
                 'Authorization': localStorage.getItem('AUTH_TOKEN')
             })
         };
-        const user = this.appComponent.loggedInUser;
         const url = 'api/admin/user/' + this.appComponent.loggedInUser.id + '/user';
         this.http.post(url, newUser, httpOptions).subscribe((user: User) => {
             this.users.unshift(user);
@@ -102,16 +92,6 @@ export class UsersComponent implements OnInit {
             this.newRole = undefined;
         });
 
-        /*if(!this.users){
-            this.users = [];
-        }
-        const user = new User();
-        user.id = 0;
-        user.emailId=this.emailInput.nativeElement.value;
-
-        this.users.unshift(user);
-
-        this.focusField = '#user_'+user.id;*/
     }
 
 
@@ -119,7 +99,10 @@ export class UsersComponent implements OnInit {
     deleteUser(user) {
         const adminUsers = this.users.filter(u => (u.admin && !u.deleted));
         if (user.admin && adminUsers.length === 1) {
-            alert("At least one active administrator is required");
+            this.dialog.open(MessagingComponent, {
+                data: "At least one active administrator is required",
+                panelClass: "center-class"
+            })
             return;
         }
         const dialogRef = this.dialog.open(FieldDialogComponent, {
@@ -172,10 +155,6 @@ export class UsersComponent implements OnInit {
         }
     }
 
-    fetchRolesForUserOrg() {
-
-
-    }
 
     private _filter(value: any): Role[] {
         let filterValue;
@@ -185,10 +164,7 @@ export class UsersComponent implements OnInit {
             filterValue = value.name;
         }
 
-        const selectedRole = this.roles.filter(option => option.name.toLowerCase().includes(filterValue));
-
-
-        return selectedRole;
+        return this.roles.filter(option => option.name.toLowerCase().includes(filterValue));
     }
 
 

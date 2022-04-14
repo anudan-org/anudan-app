@@ -746,12 +746,16 @@ export class ClosureHeaderComponent implements OnInit {
         files.item(i).name.substring(0, files.item(i).name.lastIndexOf("."))
       );
       if (fileExistsCheck.status) {
-        alert(
-          "Document " +
-          files.item(i).name +
-          " is already attached under " +
-          fileExistsCheck.message
-        );
+        this.dialog.open(MessagingComponent, {
+          data: "Document " +
+            files.item(i).name +
+            " is already attached under " +
+            fileExistsCheck.message
+          ,
+          panelClass: 'center-class'
+        });
+
+
         event.target.value = "";
         return;
       }
