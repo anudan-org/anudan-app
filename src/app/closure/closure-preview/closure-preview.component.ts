@@ -1,3 +1,4 @@
+import { MessagingComponent } from './../../components/messaging/messaging.component';
 import { ReturnsPopupComponent } from './../../returns-popup/returns-popup.component';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DocManagementService } from './../../doc-management.service';
@@ -197,8 +198,16 @@ export class ClosurePreviewComponent implements OnInit {
 
           const config: Partial<IndividualConfig> = { 'enableHtml': true, 'preventDuplicates': true, 'positionClass': 'toast-top-right', 'progressBar': true } as Partial<IndividualConfig>;
           if (errorMsg.error.message === 'Token Expired') {
-            alert("Your session has timed out. Please sign in again.")
-            this.appComp.logout();
+            const dg = this.dialog.open(MessagingComponent, {
+              data: "Your session has timed out. Please sign in again.",
+              panelClass: "center-class"
+            })
+            dg.afterClosed().subscribe(() => {
+
+              this.appComp.logout();
+
+            });
+
           } else {
             this.toastr.error(errorMsg.error.message, "We encountered an error", config);
           }

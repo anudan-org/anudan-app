@@ -147,19 +147,20 @@
                               </div>
                               <ng-container *ngIf="currentClosure.grant.actualRefunds.length>0">
                                 <div class="row refunds-holder mx-3">
-                                  <div class="col-1 text-header py-1" style="border:1px solid #d4d4d4;">#</div>
-                                  <div class="col-3 text-center text-header py-1" style="border:1px solid #d4d4d4;">
+                                  <div class="col-1 text-header text-center py-1" style="border:0px solid #d4d4d4;">#
+                                  </div>
+                                  <div class="col-3 text-right text-header py-1" style="border:0px solid #d4d4d4;">
                                     Refund
                                     Date</div>
-                                  <div class="col-3 text-center text-header py-1" style="border:1px solid #d4d4d4;">
+                                  <div class="col-3 text-right text-header py-1" style="border:0px solid #d4d4d4;">
                                     Refund
                                     Amount</div>
-                                  <div class="col-5 text-center text-header py-1" style="border:1px solid #d4d4d4;">
+                                  <div class="col-5 text-left text-header py-1" style="border:0px solid #d4d4d4;">
                                     Refund
                                     Note</div>
                                   <ng-container *ngFor="let af of currentClosure.grant.actualRefunds;let i=index">
                                     <div class="col-1 py-1"
-                                      style="border:1px solid #d4d4d4;display:flex;align-items:center;justify-content:center;">
+                                      style="border:0px solid #d4d4d4;display:flex;align-items:center;justify-content:center;">
                                       {{i+1}}
                                       <mat-icon
                                         *ngIf="currentClosure.grant.actualRefunds.length > 1 && appComp.loggedInUser.organization.organizationType==='GRANTER'"
@@ -169,7 +170,7 @@
                                         delete_outline
                                       </mat-icon>
                                     </div>
-                                    <div class="col-3 py-1" style="border:1px solid #d4d4d4;">
+                                    <div class="col-3 py-1" style="border:0px solid #d4d4d4;">
                                       <mat-form-field>
                                         <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
                                           (click)='openARDate(af,$event)' [value]="getRedundDate(af.refundDate)"
@@ -213,7 +214,7 @@
                         ">calendar_today</mat-icon>
                                       </mat-form-field>
                                     </div>
-                                    <div class="col-3 py-1" style="border:1px solid #d4d4d4;">
+                                    <div class="col-3 py-1" style="border:0px solid #d4d4d4;">
                                       <mat-form-field>
                                         <p *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
                                           [id]="'afp_'+af.id" (click)="toggleARAmountInput($event)"
@@ -232,7 +233,7 @@
 
                                       </mat-form-field>
                                     </div>
-                                    <div class="col-5 py-1" style="border:1px solid #d4d4d4;">
+                                    <div class="col-5 py-1" style="border:0px solid #d4d4d4;">
                                       <mat-form-field>
                                         <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
                                           [(ngModel)]="af.note" class="anu-input" (blur)="updateRefundLineItem(af)"
@@ -245,12 +246,12 @@
                                     </div>
                                   </ng-container>
                                   <ng-container *ngIf="currentClosure.grant.actualRefunds.length>1">
-                                    <div class="col-1" style="border:1px solid #d4d4d4;">Total</div>
-                                    <div class="col-3" style="border:1px solid #d4d4d4;"></div>
-                                    <div class="col-3 text-right pr-4" style="border:1px solid #d4d4d4;">
+                                    <div class="col-1" style="border:0px solid #d4d4d4;"><strong>Totals</strong></div>
+                                    <div class="col-3" style="border:0px solid #d4d4d4;"></div>
+                                    <div class="col-3 text-right pr-4" style="border:0px solid #d4d4d4;">
                                       {{getActualRefundsTotal()}}
                                     </div>
-                                    <div class="col-5" style="border:1px solid #d4d4d4;"></div>
+                                    <div class="col-5" style="border:0px solid #d4d4d4;"></div>
                                   </ng-container>
                                 </div>
                               </ng-container>

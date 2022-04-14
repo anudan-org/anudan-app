@@ -827,7 +827,7 @@
                                 let j = index
                               ">
                                       <label class="text-right pr-3 my-0 w-100"
-                                        *ngIf="column.dataType === 'currency'"><strong class="pf">{{
+                                        *ngIf="column.dataType === 'currency'"><strong class="pf text-right">{{
                                           getTotals(
                                           j,
                                           getGrantDisbursementAttribute()
@@ -1811,22 +1811,24 @@
                         <table border="1" style="width:100%;border:1px solid #3f3f3f;">
                           <caption></caption>
                           <tr>
-                            <th id="">#</th>
-                            <th id="">Refund Date</th>
-                            <th id="">Refund Amount</th>
-                            <th id="">Note</th>
+                            <th class="text-center" id="" style="font-size:14px;">#</th>
+                            <th class="text-center" id="" style="font-size:14px;" id="">Refund Date</th>
+                            <th class="text-center" id="" style="font-size:14px;" id="">Refund Amount</th>
+                            <th class="text-center" id="" style="font-size:14px;" id="">Note</th>
                           </tr>
                           <tr *ngFor="let rf of currentClosure.grant.actualRefunds;let i=index">
-                            <td>{{i+1}}</td>
-                            <td>{{rf.refundDate | date : 'dd-MMM-yyyy'}}</td>
-                            <td class="text-right pr-4">₹ {{rf.amount?rf.amount:0}}</td>
-                            <td>{{rf.note}}</td>
+                            <td style="font-size:14px;">{{i+1}}</td>
+                            <td style="font-size:14px;">{{rf.refundDate | date : 'dd-MMM-yyyy'}}</td>
+                            <td class="text-right pr-4" style="font-size:14px;">₹ {{rf.amount?rf.amount:0}}</td>
+                            <td style="font-size:14px;">{{rf.note}}</td>
                           </tr>
-                          <tr *ngIf="currentClosure.grant.actualRefunds.length>1">
-                            <td>Totals:</td>
-                            <td></td>
-                            <td class="text-right px-4">{{getActualRefundsTotal()}}</td>
-                            <td></td>
+                          <tr *ngIf="currentClosure.grant.actualRefunds.length>1" style="background: #f4f4f4">
+                            <td style="font-size:14px;"><strong>Totals:</strong></td>
+                            <td style="font-size:14px;"></td>
+                            <td class="text-right px-4" style="font-size:14px;">
+                              <strong>{{getActualRefundsTotal()}}</strong>
+                            </td>
+                            <td style="font-size:14px;"></td>
                           </tr>
                         </table>
                       </div>
@@ -2196,10 +2198,10 @@
                                     font-size: 14px;
                                     font-family: Roboto, sans-serif;
                                   ">
-                                      <ng-container *ngIf="column.dataType === 'currency'">
+                                      <div *ngIf="column.dataType === 'currency'" class="text-right">
                                         {{
                                         getFormattedCurrency(column.value)
-                                        }}</ng-container>
+                                        }}</div>
                                     </td>
                                     <td *ngIf="
                                     j !== 1 &&
@@ -2253,8 +2255,8 @@
                                   let column of attribute.fieldTableValue[0]
                                     .columns;
                                   let j = index
-                                ">
-                                    <strong *ngIf="column.dataType === 'currency'">{{
+                                " class="text-right">
+                                    <strong class="text-right" *ngIf="column.dataType === 'currency'">{{
                                       getDisbursementTotals(
                                       j,
                                       attribute.fieldTableValue

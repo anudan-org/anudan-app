@@ -959,13 +959,19 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       event.option.value.name
     );
     if (fileExistsCheck.status) {
-      alert(
-        "Document " +
-        event.option.value.name +
-        " is already attached under " +
-        fileExistsCheck.message
-      );
-      return;
+      const dg = this.dialog.open(MessagingComponent, {
+        data:
+          "Document " +
+          event.option.value.name +
+          " is already attached under " +
+          fileExistsCheck.message
+        ,
+        panelClass: 'grant-notes-class'
+      })
+      dg.afterClosed().subscribe(result => {
+        return;
+      });
+
     }
     const httpOptions = {
       headers: new HttpHeaders({
@@ -1016,6 +1022,17 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
               }
             }
           }
+        }
+      }
+    }
+
+    if (this.currentClosure.closureDocuments && this.currentClosure.closureDocuments.length > 0) {
+      for (let doc of this.currentClosure.closureDocuments) {
+        if (doc.name.substr(0, doc.name.lastIndexOf(".")) === filename) {
+          return {
+            status: true,
+            message: "Closure Documents",
+          };
         }
       }
     }
@@ -1081,12 +1098,15 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
         files.item(i).name.substring(0, files.item(i).name.lastIndexOf("."))
       );
       if (fileExistsCheck.status) {
-        alert(
-          "Document " +
-          files.item(i).name +
-          " is already attached under " +
-          fileExistsCheck.message
-        );
+
+        this.dialog.open(MessagingComponent, {
+          data: "Document " +
+            files.item(i).name +
+            " is already attached under " +
+            fileExistsCheck.message
+          ,
+          panelClass: 'center-class'
+        });
         event.target.value = "";
         return;
       }
@@ -1145,14 +1165,18 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
         files.item(i).name.substring(0, files.item(i).name.lastIndexOf("."))
       );
       if (fileExistsCheck.status) {
-        alert(
-          "Document " +
-          files.item(i).name +
-          " is already attached under " +
-          fileExistsCheck.message
-        );
-        event.target.value = "";
-        return;
+
+        const dg = this.dialog.open(MessagingComponent, {
+          data: "Document " +
+            files.item(i).name +
+            " is already attached under " +
+            fileExistsCheck.message
+          ,
+          panelClass: 'grant-notes-class'
+        })
+        dg.afterClosed().subscribe(result => {
+          return;
+        });
       }
     }
 
