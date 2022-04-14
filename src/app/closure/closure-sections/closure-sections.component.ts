@@ -1028,7 +1028,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
 
     if (this.currentClosure.closureDocuments && this.currentClosure.closureDocuments.length > 0) {
       for (let doc of this.currentClosure.closureDocuments) {
-        if (doc.name.substr(0, doc.name.lastIndexOf(".")) === filename) {
+        if (doc.name.substring(0, doc.name.lastIndexOf(".")) === filename) {
           return {
             status: true,
             message: "Closure Documents",
