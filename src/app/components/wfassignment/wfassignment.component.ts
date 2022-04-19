@@ -65,7 +65,14 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     ngOnInit() {
         if (this.data.model.users) {
             this.data.model.users = this.data.model.users.filter(u => u.active);
-            this.data.model.users.sort(function (a, b) { return (a.firstName.toLowerCase() > b.firstName.toLowerCase()) ? 1 : ((b.firstName.toLowerCase() > a.firstName.toLowerCase()) ? -1 : 0); });
+            this.data.model.users.sort(function (a, b) {
+                if ((a.firstName.toLowerCase() > b.firstName.toLowerCase())) {
+                    return 1;
+                } else if (b.firstName.toLowerCase() > a.firstName.toLowerCase()) {
+                    return -1
+                }
+                return 0;
+            });
         }
         if (this.data.model.granteeUsers) {
             this.data.model.granteeUsers.sort(function (a, b) {
@@ -75,7 +82,12 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 if (!b.firstName) {
                     b.firstName = 'Un-registered';
                 }
-                return (a.firstName.toLowerCase() > b.firstName.toLowerCase()) ? 1 : ((b.firstName.toLowerCase() > a.firstName.toLowerCase()) ? -1 : 0);
+                if (a.firstName.toLowerCase() > b.firstName.toLowerCase()) {
+                    return 1;
+                } else if (b.firstName.toLowerCase() > a.firstName.toLowerCase()) {
+                    return -1;
+                }
+                return 0;
             });
         }
 
@@ -131,8 +143,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(nodeOwner, 'anu-wf-input');
 
                         this.renderer.setAttribute(nodeOwner, 'style', 'font-weight: 400;text-transform: initial;left: -95px;top: 23px;text-decoration: none;max-width: 125px;z-index: 1;background-color: rgba(200, 200, 200, 0.05) !important;border: none !important;');
-                        const currentUserAssignment = this.data.model.workflowAssignment.filter((assignment) => assignment.assignments === JSON.parse(localStorage.getItem('USER')).id && assignment.stateId === this.data.model.grant.grantStatus.id);
-                        const ownerUser = this.data.model.workflowAssignment.filter((assignment) => assignment.assignments === JSON.parse(localStorage.getItem('USER')).id && assignment.anchor);
+                        const currentUserAssignment = this.data.model.workflowAssignment.filter((assignment1) => assignment1.assignments === JSON.parse(localStorage.getItem('USER')).id && assignment1.stateId === this.data.model.grant.grantStatus.id);
+                        const ownerUser = this.data.model.workflowAssignment.filter((assignment2) => assignment2.assignments === JSON.parse(localStorage.getItem('USER')).id && assignment2.anchor);
 
                         const roles: UserRole[] = JSON.parse(localStorage.getItem('USER')).userRoles;
                         let isAdminRole: boolean = false;
@@ -156,7 +168,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(nodeOwner, 'ml-0');
                         this.renderer.addClass(nodeOwner, 'px-2');
                         this.renderer.addClass(nodeOwner, 'text-left');
-                        const assignment = this.data.model.workflowAssignment.filter((assignment) => assignment.stateId === transition.fromStateId);
+                        const assignment = this.data.model.workflowAssignment.filter((assignment2) => assignment2.stateId === transition.fromStateId);
                         if (assignment.length > 0) {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].assignmentUser ? String(assignment[0].assignmentUser.id) : String(0));
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + assignment[0].id + '_' + transition.fromStateId + '_' + this.data.model.grant.id);
@@ -175,24 +187,24 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.appendChild(nodeOwnerOptions, document.createTextNode('-- Assign Approver --'));
                         this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
                         for (let option of this.data.model.users) {
-                            const nodeOwnerOptions = this.renderer.createElement('option');
-                            this.renderer.setAttribute(nodeOwnerOptions, 'value', String(option.id));
+                            const nodeOwnerOptions1 = this.renderer.createElement('option');
+                            this.renderer.setAttribute(nodeOwnerOptions1, 'value', String(option.id));
 
 
                             if (assignment.length > 0 && (assignment[0].assignmentUser ? Number(assignment[0].assignmentUser.id) : 0) === Number(option.id)) {
-                                this.renderer.setAttribute(nodeOwnerOptions, 'selected', 'selected');
+                                this.renderer.setAttribute(nodeOwnerOptions1, 'selected', 'selected');
                             }
                             let username = option.firstName + ' ' + option.lastName + this.getRoles(option);
 
                             if (option.deleted) {
                                 username = '[Disabled] ' + username;
-                                this.renderer.setAttribute(nodeOwnerOptions, 'disabled', 'disabled');
+                                this.renderer.setAttribute(nodeOwnerOptions1, 'disabled', 'disabled');
                             } else {
-                                this.renderer.setStyle(nodeOwnerOptions, 'color', 'initial');
+                                this.renderer.setStyle(nodeOwnerOptions1, 'color', 'initial');
                             }
 
-                            this.renderer.appendChild(nodeOwnerOptions, document.createTextNode(username));
-                            this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
+                            this.renderer.appendChild(nodeOwnerOptions1, document.createTextNode(username));
+                            this.renderer.appendChild(nodeOwner, nodeOwnerOptions1);
 
                         }
 
@@ -299,11 +311,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
             },
                 error => {
-                    const errorMsg = error as HttpErrorResponse;
-                    this.toastr.error(errorMsg.error.message, errorMsg.error.messageTitle, {
-                        enableHtml: true
-                    });
-                    this.dialogRef.close(false);
+                    this.showError(error);
                 });
         } else if (this.data.model.type === 'report') {
 
@@ -361,9 +369,10 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.setAttribute(nodeOwner, 'style', 'font-weight: 400;text-transform: initial;left: -95px;top: 23px;text-decoration: none;max-width: 125px;z-index: 1;background-color: rgba(200, 200, 200, 0.05) !important;border: none !important;');
                         this.renderer.addClass(nodeOwner, 'anu-select');
                         this.renderer.addClass(nodeOwner, 'anu-wf-input');
-                        const currentUserAssignment = this.data.model.workflowAssignments.filter((assignment) => assignment.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment.stateId === this.data.model.report.status.id && JSON.parse(localStorage.getItem('USER')).organization.organizationType !== 'GRANTEE');
-                        const ownerUser = this.data.model.workflowAssignments.filter((assignment) => assignment.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment.anchor);
+                        const currentUserAssignment = this.data.model.workflowAssignments.filter((assignment1) => assignment1.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment1.stateId === this.data.model.report.status.id && JSON.parse(localStorage.getItem('USER')).organization.organizationType !== 'GRANTEE');
+                        const ownerUser = this.data.model.workflowAssignments.filter((assignment2) => assignment2.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment2.anchor);
                         if (currentUserAssignment.length > 0 || (ownerUser.length > 0)) {
+                            //Do nothing
                         } else {
                             this.canManage = false;
                             this.renderer.setAttribute(nodeOwner, 'disabled', 'disabled');
@@ -371,7 +380,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(nodeOwner, 'ml-0');
                         this.renderer.addClass(nodeOwner, 'px-2');
                         this.renderer.addClass(nodeOwner, 'text-left');
-                        const assignment = this.data.model.workflowAssignments.filter((assignment) => assignment.stateId === transition.fromStateId);
+                        const assignment = this.data.model.workflowAssignments.filter((assignment1) => assignment1.stateId === transition.fromStateId);
                         if (assignment.length > 0) {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].assignmentUser ? String(assignment[0].assignmentUser.id) : String(0));
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + assignment[0].id + '_' + transition.fromStateId + '_' + this.data.model.report.id);
@@ -390,23 +399,23 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             this.renderer.appendChild(nodeOwnerOptions, document.createTextNode('-- Assign Approver --'));
                             this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
                             for (let option of this.data.model.users) {
-                                const nodeOwnerOptions = this.renderer.createElement('option');
-                                this.renderer.setAttribute(nodeOwnerOptions, 'value', String(option.id));
+                                const nodeOwnerOptions1 = this.renderer.createElement('option');
+                                this.renderer.setAttribute(nodeOwnerOptions1, 'value', String(option.id));
 
 
                                 if (assignment.length > 0 && (assignment[0].assignmentUser ? Number(assignment[0].assignmentUser.id) : 0) === Number(option.id)) {
-                                    this.renderer.setAttribute(nodeOwnerOptions, 'selected', 'selected');
+                                    this.renderer.setAttribute(nodeOwnerOptions1, 'selected', 'selected');
                                 }
                                 let username = option.firstName + ' ' + option.lastName + this.getRoles(option);
 
                                 if (option.deleted) {
                                     username = '[Disabled] ' + username;
-                                    this.renderer.setAttribute(nodeOwnerOptions, 'disabled', 'disabled');
+                                    this.renderer.setAttribute(nodeOwnerOptions1, 'disabled', 'disabled');
                                 } else {
-                                    this.renderer.setStyle(nodeOwnerOptions, 'color', 'initial');
+                                    this.renderer.setStyle(nodeOwnerOptions1, 'color', 'initial');
                                 }
-                                this.renderer.appendChild(nodeOwnerOptions, document.createTextNode(username));
-                                this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
+                                this.renderer.appendChild(nodeOwnerOptions1, document.createTextNode(username));
+                                this.renderer.appendChild(nodeOwner, nodeOwnerOptions1);
 
                             }
                         } else {
@@ -422,35 +431,35 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                                     this.renderer.appendChild(nodeOwnerOptions, document.createTextNode('-- Assign Grantee/Partner User --'));
                                     this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
                                     for (let option of this.data.model.granteeUsers) {
-                                        const nodeOwnerOptions = this.renderer.createElement('option');
-                                        this.renderer.setAttribute(nodeOwnerOptions, 'value', String(option.id));
+                                        const nodeOwnerOptions2 = this.renderer.createElement('option');
+                                        this.renderer.setAttribute(nodeOwnerOptions2, 'value', String(option.id));
                                         if (assignment.length > 0 && (assignment[0].assignmentUser ? Number(assignment[0].assignmentUser.id) : 0) === Number(option.id)) {
-                                            this.renderer.setAttribute(nodeOwnerOptions, 'selected', 'selected');
+                                            this.renderer.setAttribute(nodeOwnerOptions2, 'selected', 'selected');
                                         }
                                         let username = (!option.active ? ('Unregistered: ' + option.emailId) : option.firstName + ' ' + option.lastName) + ' [' + option.organization.name + ']';
                                         if (option.deleted) {
                                             username = '[Disabled] ' + username;
-                                            this.renderer.setAttribute(nodeOwnerOptions, 'disabled', 'disabled');
+                                            this.renderer.setAttribute(nodeOwnerOptions2, 'disabled', 'disabled');
                                         }
-                                        this.renderer.appendChild(nodeOwnerOptions, document.createTextNode(username));
-                                        this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
+                                        this.renderer.appendChild(nodeOwnerOptions2, document.createTextNode(username));
+                                        this.renderer.appendChild(nodeOwner, nodeOwnerOptions2);
                                     }
                                 }
                             } else {
                                 if (this.data.model.granteeUsers) {
                                     for (let option of this.data.model.granteeUsers) {
-                                        const nodeOwnerOptions = this.renderer.createElement('option');
-                                        this.renderer.setAttribute(nodeOwnerOptions, 'value', String(option.id));
+                                        const nodeOwnerOptions3 = this.renderer.createElement('option');
+                                        this.renderer.setAttribute(nodeOwnerOptions3, 'value', String(option.id));
                                         if (assignment.length > 0 && (assignment[0].assignmentUser ? Number(assignment[0].assignmentUser.id) : 0) === Number(option.id)) {
-                                            this.renderer.setAttribute(nodeOwnerOptions, 'selected', 'selected');
+                                            this.renderer.setAttribute(nodeOwnerOptions3, 'selected', 'selected');
                                         }
                                         let username = (!option.active ? ('Unregistered: ' + option.emailId) : option.firstName + ' ' + option.lastName) + ' [' + option.organization.name + ']';
                                         if (option.deleted) {
                                             username = '[Disabled] ' + username;
-                                            this.renderer.setAttribute(nodeOwnerOptions, 'disabled', 'disabled');
+                                            this.renderer.setAttribute(nodeOwnerOptions3, 'disabled', 'disabled');
                                         }
-                                        this.renderer.appendChild(nodeOwnerOptions, document.createTextNode(username));
-                                        this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
+                                        this.renderer.appendChild(nodeOwnerOptions3, document.createTextNode(username));
+                                        this.renderer.appendChild(nodeOwner, nodeOwnerOptions3);
                                     }
                                 }
 
@@ -559,11 +568,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 this.updateReportUsers();
             },
                 error => {
-                    const errorMsg = error as HttpErrorResponse;
-                    this.toastr.error(errorMsg.error.message, errorMsg.error.messageTitle, {
-                        enableHtml: true
-                    });
-                    this.dialogRef.close(false);
+                    this.showError(error);
                 });
         } else if (this.data.model.type === 'grant-closure') {
             const gtIdx = this.data.model.grantTypes.findIndex(gt => gt.id === this.data.model.closure.grant.grantTypeId);
@@ -623,9 +628,10 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(nodeOwner, 'anu-select');
                         this.renderer.addClass(nodeOwner, 'anu-wf-input');
 
-                        const currentUserAssignment = this.data.model.workflowAssignments.filter((assignment) => assignment.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment.stateId === this.data.model.closure.status.id && JSON.parse(localStorage.getItem('USER')).organization.organizationType !== 'GRANTEE');
-                        const ownerUser = this.data.model.workflowAssignments.filter((assignment) => assignment.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment.anchor);
-                        if (currentUserAssignment.length > 0 || (ownerUser.length > 0)) {
+                        const currentUserAssignment = this.data.model.workflowAssignments.filter((assignment1) => assignment1.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment1.stateId === this.data.model.closure.status.id && JSON.parse(localStorage.getItem('USER')).organization.organizationType !== 'GRANTEE');
+                        const ownerUser = this.data.model.workflowAssignments.filter((assignment2) => assignment2.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment2.anchor);
+                        if (currentUserAssignment.length > 0 || (ownerUser.length > 0) || JSON.parse(localStorage.getItem('USER')).userRoles.filter(a => a.role.name === 'Admin').length > 0) {
+                            //Do nothing    
                         } else {
                             this.canManage = false;
                             this.renderer.setAttribute(nodeOwner, 'disabled', 'disabled');
@@ -633,7 +639,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(nodeOwner, 'ml-0');
                         this.renderer.addClass(nodeOwner, 'px-2');
                         this.renderer.addClass(nodeOwner, 'text-left');
-                        const assignment = this.data.model.workflowAssignments.filter((assignment) => assignment.stateId === transition.fromStateId);
+                        const assignment = this.data.model.workflowAssignments.filter((assignment3) => assignment3.stateId === transition.fromStateId);
                         if (assignment.length > 0) {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].assignmentUser ? String(assignment[0].assignmentUser.id) : String(0));
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + assignment[0].id + '_' + transition.fromStateId + '_' + this.data.model.closure.id);
@@ -652,21 +658,21 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             this.renderer.appendChild(nodeOwnerOptions, document.createTextNode('-- Assign Approver --'));
                             this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
                             for (let option of this.data.model.users) {
-                                const nodeOwnerOptions = this.renderer.createElement('option');
-                                this.renderer.setAttribute(nodeOwnerOptions, 'value', String(option.id));
+                                const nodeOwnerOptions1 = this.renderer.createElement('option');
+                                this.renderer.setAttribute(nodeOwnerOptions1, 'value', String(option.id));
 
 
                                 if (assignment.length > 0 && (assignment[0].assignmentUser ? Number(assignment[0].assignmentUser.id) : 0) === Number(option.id)) {
-                                    this.renderer.setAttribute(nodeOwnerOptions, 'selected', 'selected');
+                                    this.renderer.setAttribute(nodeOwnerOptions1, 'selected', 'selected');
                                 }
                                 let username = option.firstName + ' ' + option.lastName + this.getRoles(option);
 
                                 if (option.deleted) {
                                     username = '[Disabled] ' + username;
-                                    this.renderer.setAttribute(nodeOwnerOptions, 'disabled', 'disabled');
+                                    this.renderer.setAttribute(nodeOwnerOptions1, 'disabled', 'disabled');
                                 }
-                                this.renderer.appendChild(nodeOwnerOptions, document.createTextNode(username));
-                                this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
+                                this.renderer.appendChild(nodeOwnerOptions1, document.createTextNode(username));
+                                this.renderer.appendChild(nodeOwner, nodeOwnerOptions1);
 
                             }
                         } else {
@@ -682,35 +688,35 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                                     this.renderer.appendChild(nodeOwnerOptions, document.createTextNode('-- Assign Grantee/Partner User --'));
                                     this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
                                     for (let option of this.data.model.granteeUsers) {
-                                        const nodeOwnerOptions = this.renderer.createElement('option');
-                                        this.renderer.setAttribute(nodeOwnerOptions, 'value', String(option.id));
+                                        const nodeOwnerOptions2 = this.renderer.createElement('option');
+                                        this.renderer.setAttribute(nodeOwnerOptions2, 'value', String(option.id));
                                         if (assignment.length > 0 && (assignment[0].assignmentUser ? Number(assignment[0].assignmentUser.id) : 0) === Number(option.id)) {
-                                            this.renderer.setAttribute(nodeOwnerOptions, 'selected', 'selected');
+                                            this.renderer.setAttribute(nodeOwnerOptions2, 'selected', 'selected');
                                         }
                                         let username = (!option.active ? ('Unregistered: ' + option.emailId) : option.firstName + ' ' + option.lastName) + ' [' + option.organization.name + ']';
                                         if (option.deleted) {
                                             username = '[Disabled] ' + username;
-                                            this.renderer.setAttribute(nodeOwnerOptions, 'disabled', 'disabled');
+                                            this.renderer.setAttribute(nodeOwnerOptions2, 'disabled', 'disabled');
                                         }
-                                        this.renderer.appendChild(nodeOwnerOptions, document.createTextNode(username));
-                                        this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
+                                        this.renderer.appendChild(nodeOwnerOptions2, document.createTextNode(username));
+                                        this.renderer.appendChild(nodeOwner, nodeOwnerOptions2);
                                     }
                                 }
                             } else {
                                 if (this.data.model.granteeUsers) {
                                     for (let option of this.data.model.granteeUsers) {
-                                        const nodeOwnerOptions = this.renderer.createElement('option');
-                                        this.renderer.setAttribute(nodeOwnerOptions, 'value', String(option.id));
+                                        const nodeOwnerOptions3 = this.renderer.createElement('option');
+                                        this.renderer.setAttribute(nodeOwnerOptions3, 'value', String(option.id));
                                         if (assignment.length > 0 && (assignment[0].assignmentUser ? Number(assignment[0].assignmentUser.id) : 0) === Number(option.id)) {
-                                            this.renderer.setAttribute(nodeOwnerOptions, 'selected', 'selected');
+                                            this.renderer.setAttribute(nodeOwnerOptions3, 'selected', 'selected');
                                         }
                                         let username = (!option.active ? ('Unregistered: ' + option.emailId) : option.firstName + ' ' + option.lastName) + ' [' + option.organization.name + ']';
                                         if (option.deleted) {
                                             username = '[Disabled] ' + username;
-                                            this.renderer.setAttribute(nodeOwnerOptions, 'disabled', 'disabled');
+                                            this.renderer.setAttribute(nodeOwnerOptions3, 'disabled', 'disabled');
                                         }
-                                        this.renderer.appendChild(nodeOwnerOptions, document.createTextNode(username));
-                                        this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
+                                        this.renderer.appendChild(nodeOwnerOptions3, document.createTextNode(username));
+                                        this.renderer.appendChild(nodeOwner, nodeOwnerOptions3);
                                     }
                                 }
 
@@ -820,11 +826,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 this.updateClosureUsers();
             },
                 error => {
-                    const errorMsg = error as HttpErrorResponse;
-                    this.toastr.error(errorMsg.error.message, errorMsg.error.messageTitle, {
-                        enableHtml: true
-                    });
-                    this.dialogRef.close(false);
+                    this.showError(error);
                 });
         } else if (this.data.model.type === 'disbursement') {
             const gtIdx = this.data.model.grantTypes.findIndex(gt => gt.id === this.data.model.disbursement.grant.grantTypeId);
@@ -868,8 +870,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.setAttribute(nodeOwner, 'style', 'font-weight: 400;text-transform: initial;left: -95px;top: 23px;text-decoration: none;max-width: 125px;z-index: 1;background-color: rgba(200, 200, 200, 0.05) !important;border: none !important;');
                         this.renderer.addClass(nodeOwner, 'anu-select');
                         this.renderer.addClass(nodeOwner, "anu-wf-input");
-                        const currentUserAssignment = this.data.model.workflowAssignments.filter((assignment) => assignment.owner === JSON.parse(localStorage.getItem('USER')).id && assignment.stateId === this.data.model.disbursement.status.id);
-                        const ownerUser = this.data.model.workflowAssignments.filter((assignment) => assignment.owner === JSON.parse(localStorage.getItem('USER')).id && assignment.anchor);
+                        const currentUserAssignment = this.data.model.workflowAssignments.filter((assignment1) => assignment1.owner === JSON.parse(localStorage.getItem('USER')).id && assignment1.stateId === this.data.model.disbursement.status.id);
+                        const ownerUser = this.data.model.workflowAssignments.filter((assignment2) => assignment2.owner === JSON.parse(localStorage.getItem('USER')).id && assignment2.anchor);
 
                         const roles: UserRole[] = JSON.parse(localStorage.getItem('USER')).userRoles;
                         let isAdminRole: boolean = false;
@@ -878,9 +880,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         }
 
                         if (((currentUserAssignment.length > 0 || (ownerUser.length > 0)) && this.data.model.disbursement.status.internalStatus !== 'ACTIVE' && this.data.model.disbursement.status.internalStatus !== 'CLOSED') || isAdminRole) {
+                            //Do nothing
                         } else {
-
-
                             this.canManage = false;
                             this.renderer.setAttribute(nodeOwner, 'disabled', 'disabled');
 
@@ -893,7 +894,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(nodeOwner, 'ml-0');
                         this.renderer.addClass(nodeOwner, 'px-2');
                         this.renderer.addClass(nodeOwner, 'text-left');
-                        const assignment = this.data.model.workflowAssignments.filter((assignment) => assignment.stateId === transition.fromStateId);
+                        const assignment = this.data.model.workflowAssignments.filter((assignment1) => assignment1.stateId === transition.fromStateId);
                         if (assignment.length > 0) {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].owner);
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + assignment[0].id + '_' + transition.fromStateId + '_' + this.data.model.disbursement.id);
@@ -909,23 +910,23 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.appendChild(nodeOwnerOptions, document.createTextNode('-- Assign Approver --'));
                         this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
                         for (let option of this.data.model.users) {
-                            const nodeOwnerOptions = this.renderer.createElement('option');
-                            this.renderer.setAttribute(nodeOwnerOptions, 'value', String(option.id));
+                            const nodeOwnerOptions1 = this.renderer.createElement('option');
+                            this.renderer.setAttribute(nodeOwnerOptions1, 'value', String(option.id));
 
 
                             if (assignment.length > 0 && assignment[0].owner === Number(option.id)) {
-                                this.renderer.setAttribute(nodeOwnerOptions, 'selected', 'selected');
+                                this.renderer.setAttribute(nodeOwnerOptions1, 'selected', 'selected');
                             }
 
                             let username = option.firstName + ' ' + option.lastName + this.getRoles(option);
 
                             if (option.deleted) {
                                 username = '[Disabled] ' + username;
-                                this.renderer.setAttribute(nodeOwnerOptions, 'disabled', 'disabled');
+                                this.renderer.setAttribute(nodeOwnerOptions1, 'disabled', 'disabled');
                             }
 
-                            this.renderer.appendChild(nodeOwnerOptions, document.createTextNode(username));
-                            this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
+                            this.renderer.appendChild(nodeOwnerOptions1, document.createTextNode(username));
+                            this.renderer.appendChild(nodeOwner, nodeOwnerOptions1);
 
                         }
 
@@ -1033,6 +1034,14 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
         }
 
     }
+    private showError(error: any) {
+        const errorMsg = error as HttpErrorResponse;
+        this.toastr.error(errorMsg.error.message, errorMsg.error.messageTitle, {
+            enableHtml: true
+        });
+        this.dialogRef.close(false);
+    }
+
     handleSelection(event: any): boolean | void {
 
         const id = Number(event.currentTarget.id.split('_')[2]);
@@ -1128,7 +1137,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         a1 = ["Bottom", "Top"];
                     }
                     let tick = this.jsPlumbInstance.connect({
-                        connector: ["Flowchart", { cssClass: 'connectorLink' + transition.toStateId }],
+                        connector: ["Flowchart", { cssClass: 'connectorLink' + transition.fromStateId + '' + transition.toStateId }],
                         overlays: [
                             ["Arrow", { width: 8, length: 8, location: 1 }],
                             ['Label', { label: transition.action, location: 0.5, cssClass: 'connectorLabel' }]
@@ -1155,12 +1164,19 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 backFlows = this.data.model.closure.flowAuthorities.filter(a => a.forwardDirection === false);
             }
             if (backFlows && backFlows.length > 0) {
+                let index = 0;
                 for (let nack of backFlows) {
-                    $('.connectorLink' + nack.toStateId).children()[0].setAttribute('stroke-width', 3);
-                    $('.connectorLink' + nack.toStateId).children()[0].setAttribute('stroke', '#4dc251');
-                    $('.connectorLink' + nack.toStateId).children()[1].setAttribute('stroke', '#4dc251');
-                    $('.connectorLink' + nack.toStateId).children()[1].setAttribute('fill', '#4dc251');
-
+                    if (backFlows.length === 1) {
+                        const st = backFlows[index].fromStateId;
+                        const rt = backFlows[index].toStateId;
+                        this.drawArrows(st, rt);
+                        index++;
+                    } else {
+                        const st = backFlows[index + 1] ? backFlows[index + 1].fromStateId : '';
+                        const rt = nack.fromStateId;
+                        this.drawArrows(st, rt);
+                        index++;
+                    }
                 }
             }
         }, 200);
@@ -1169,6 +1185,13 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     }
 
 
+
+    private drawArrows(st: any, rt: any) {
+        $('.connectorLink' + st + '' + rt).children()[0].setAttribute('stroke-width', 3);
+        $('.connectorLink' + st + '' + rt).children()[0].setAttribute('stroke', '#4dc251');
+        $('.connectorLink' + st + '' + rt).children()[1].setAttribute('stroke', '#4dc251');
+        $('.connectorLink' + st + '' + rt).children()[1].setAttribute('fill', '#4dc251');
+    }
 
     onNoClick(): void {
         if (this.verifyChanges()) {
@@ -1212,15 +1235,15 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 const customAssignmentElem = $('#custom_assignment');
                 const assignMentResult = [];
                 for (let i = 0; i < assignmentElems.length; i++) {
-                    var assignmentTokens = $(assignmentElems[i]).attr('id').split('_');
+                    var assignmentTokens1 = $(assignmentElems[i]).attr('id').split('_');
                     let uid = $(assignmentElems[i]).val();
                     if (uid === null) {
                         uid = $(assignmentElems[i])[0].value;
                     }
-                    if (assignmentTokens.length === 4) {
-                        assignMentResult.push({ 'id': assignmentTokens[1], 'stateId': assignmentTokens[2], 'userId': uid, 'reportId': assignmentTokens[3], 'customAssignments': $(customAssignmentElem).val() });
+                    if (assignmentTokens1.length === 4) {
+                        assignMentResult.push({ 'id': assignmentTokens1[1], 'stateId': assignmentTokens1[2], 'userId': uid, 'reportId': assignmentTokens1[3], 'customAssignments': $(customAssignmentElem).val() });
                     } else {
-                        assignMentResult.push({ 'id': '', 'stateId': assignmentTokens[1], 'userId': uid, 'reportId': assignmentTokens[2], 'customAssignments': $(customAssignmentElem).val() });
+                        assignMentResult.push({ 'id': '', 'stateId': assignmentTokens1[1], 'userId': uid, 'reportId': assignmentTokens1[2], 'customAssignments': $(customAssignmentElem).val() });
                     }
                 }
                 this.dialogRef.close({ 'result': true, data: assignMentResult });
@@ -1241,15 +1264,15 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 const customAssignmentElem = $('#custom_assignment');
                 const assignMentResult = [];
                 for (let i = 0; i < assignmentElems.length; i++) {
-                    var assignmentTokens = $(assignmentElems[i]).attr('id').split('_');
+                    var assignmentTokens1 = $(assignmentElems[i]).attr('id').split('_');
                     let uid = $(assignmentElems[i]).val();
                     if (uid === null) {
                         uid = $(assignmentElems[i])[0].value;
                     }
-                    if (assignmentTokens.length === 4) {
-                        assignMentResult.push({ 'id': assignmentTokens[1], 'stateId': assignmentTokens[2], 'userId': uid, 'closureId': assignmentTokens[3], 'customAssignments': $(customAssignmentElem).val() });
+                    if (assignmentTokens1.length === 4) {
+                        assignMentResult.push({ 'id': assignmentTokens1[1], 'stateId': assignmentTokens1[2], 'userId': uid, 'closureId': assignmentTokens1[3], 'customAssignments': $(customAssignmentElem).val() });
                     } else {
-                        assignMentResult.push({ 'id': '', 'stateId': assignmentTokens[1], 'userId': uid, 'closureId': assignmentTokens[2], 'customAssignments': $(customAssignmentElem).val() });
+                        assignMentResult.push({ 'id': '', 'stateId': assignmentTokens1[1], 'userId': uid, 'closureId': assignmentTokens1[2], 'customAssignments': $(customAssignmentElem).val() });
                     }
                 }
                 this.dialogRef.close({ 'result': true, data: assignMentResult });
@@ -1259,15 +1282,15 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             const assignmentElems = $('[id^="assignment_"]');
             const assignMentResult = [];
             for (let i = 0; i < assignmentElems.length; i++) {
-                var assignmentTokens = $(assignmentElems[i]).attr('id').split('_');
+                var assignmentTokens1 = $(assignmentElems[i]).attr('id').split('_');
                 let uid = $(assignmentElems[i]).val();
                 if (uid === null) {
                     uid = $(assignmentElems[i])[0].value;
                 }
-                if (assignmentTokens.length === 4) {
-                    assignMentResult.push({ 'id': assignmentTokens[1], 'stateId': assignmentTokens[2], 'userId': uid, 'disbursementId': assignmentTokens[3] });
+                if (assignmentTokens1.length === 4) {
+                    assignMentResult.push({ 'id': assignmentTokens1[1], 'stateId': assignmentTokens1[2], 'userId': uid, 'disbursementId': assignmentTokens1[3] });
                 } else {
-                    assignMentResult.push({ 'id': '', 'stateId': assignmentTokens[1], 'userId': uid, 'disbursementId': assignmentTokens[2] });
+                    assignMentResult.push({ 'id': '', 'stateId': assignmentTokens1[1], 'userId': uid, 'disbursementId': assignmentTokens1[2] });
                 }
             }
             this.dialogRef.close({ 'result': true, data: assignMentResult });
@@ -1557,7 +1580,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     }
 
     showOwners(event, history, title) {
-        const dgReg = this.dialog.open(OwnersPopupComponent, {
+        this.dialog.open(OwnersPopupComponent, {
             data: { history: history, title: title },
             panelClass: 'center-class-long'
         });
