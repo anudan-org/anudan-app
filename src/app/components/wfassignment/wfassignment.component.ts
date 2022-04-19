@@ -1235,15 +1235,15 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 const customAssignmentElem = $('#custom_assignment');
                 const assignMentResult = [];
                 for (let i = 0; i < assignmentElems.length; i++) {
-                    var assignmentTokens1 = $(assignmentElems[i]).attr('id').split('_');
+                    var assTokens1 = $(assignmentElems[i]).attr('id').split('_');
                     let uid = $(assignmentElems[i]).val();
                     if (uid === null) {
                         uid = $(assignmentElems[i])[0].value;
                     }
-                    if (assignmentTokens1.length === 4) {
-                        assignMentResult.push({ 'id': assignmentTokens1[1], 'stateId': assignmentTokens1[2], 'userId': uid, 'reportId': assignmentTokens1[3], 'customAssignments': $(customAssignmentElem).val() });
+                    if (assTokens1.length === 4) {
+                        assignMentResult.push({ 'id': assTokens1[1], 'stateId': assTokens1[2], 'userId': uid, 'reportId': assTokens1[3], 'customAssignments': $(customAssignmentElem).val() });
                     } else {
-                        assignMentResult.push({ 'id': '', 'stateId': assignmentTokens1[1], 'userId': uid, 'reportId': assignmentTokens1[2], 'customAssignments': $(customAssignmentElem).val() });
+                        assignMentResult.push({ 'id': '', 'stateId': assTokens1[1], 'userId': uid, 'reportId': assTokens1[2], 'customAssignments': $(customAssignmentElem).val() });
                     }
                 }
                 this.dialogRef.close({ 'result': true, data: assignMentResult });
@@ -1264,15 +1264,15 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 const customAssignmentElem = $('#custom_assignment');
                 const assignMentResult = [];
                 for (let i = 0; i < assignmentElems.length; i++) {
-                    var assignmentTokens1 = $(assignmentElems[i]).attr('id').split('_');
+                    var assTokens1 = $(assignmentElems[i]).attr('id').split('_');
                     let uid = $(assignmentElems[i]).val();
                     if (uid === null) {
                         uid = $(assignmentElems[i])[0].value;
                     }
-                    if (assignmentTokens1.length === 4) {
-                        assignMentResult.push({ 'id': assignmentTokens1[1], 'stateId': assignmentTokens1[2], 'userId': uid, 'closureId': assignmentTokens1[3], 'customAssignments': $(customAssignmentElem).val() });
+                    if (assTokens1.length === 4) {
+                        assignMentResult.push({ 'id': assTokens1[1], 'stateId': assTokens1[2], 'userId': uid, 'closureId': assTokens1[3], 'customAssignments': $(customAssignmentElem).val() });
                     } else {
-                        assignMentResult.push({ 'id': '', 'stateId': assignmentTokens1[1], 'userId': uid, 'closureId': assignmentTokens1[2], 'customAssignments': $(customAssignmentElem).val() });
+                        assignMentResult.push({ 'id': '', 'stateId': assTokens1[1], 'userId': uid, 'closureId': assTokens1[2], 'customAssignments': $(customAssignmentElem).val() });
                     }
                 }
                 this.dialogRef.close({ 'result': true, data: assignMentResult });
@@ -1282,15 +1282,15 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             const assignmentElems = $('[id^="assignment_"]');
             const assignMentResult = [];
             for (let i = 0; i < assignmentElems.length; i++) {
-                var assignmentTokens1 = $(assignmentElems[i]).attr('id').split('_');
+                var assTokens2 = $(assignmentElems[i]).attr('id').split('_');
                 let uid = $(assignmentElems[i]).val();
                 if (uid === null) {
                     uid = $(assignmentElems[i])[0].value;
                 }
-                if (assignmentTokens1.length === 4) {
-                    assignMentResult.push({ 'id': assignmentTokens1[1], 'stateId': assignmentTokens1[2], 'userId': uid, 'disbursementId': assignmentTokens1[3] });
+                if (assTokens2.length === 4) {
+                    assignMentResult.push({ 'id': assTokens2[1], 'stateId': assTokens2[2], 'userId': uid, 'disbursementId': assTokens2[3] });
                 } else {
-                    assignMentResult.push({ 'id': '', 'stateId': assignmentTokens1[1], 'userId': uid, 'disbursementId': assignmentTokens1[2] });
+                    assignMentResult.push({ 'id': '', 'stateId': assTokens2[1], 'userId': uid, 'disbursementId': assTokens2[2] });
                 }
             }
             this.dialogRef.close({ 'result': true, data: assignMentResult });
