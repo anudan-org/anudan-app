@@ -420,6 +420,7 @@
 
                                 <div class="col-sm-12 col-lg-12 text-left"
                                   *ngIf="attribute.fieldType === 'disbursement'">
+
                                   <div id="tableArea" #plannedProjectFundsModal role="dialog"
                                     class="row modal mt-5 plannedProjectFundsModal"
                                     style="padding-left: 15px; padding-right: 15px;margin-top: 100px;z-index:0;">
@@ -428,6 +429,8 @@
                                       (click)="hidePlannedCommitmentDetails()">
                                       <mat-icon>close</mat-icon>
                                     </span>
+                                    <p class="text-header text-center">[{{currentClosure.grant.referenceNo}}]
+                                      {{currentClosure.grant.name}}</p>
                                     <p class="text-header">Planned Project Funds</p>
                                     <table id="tablePlaceholderX" style="width:100%;">
                                       <caption></caption>
