@@ -1163,19 +1163,27 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             } else if (this.data.model.type === 'grant-closure') {
                 backFlows = this.data.model.closure.flowAuthorities.filter(a => a.forwardDirection === false);
             }
+
+
             if (backFlows && backFlows.length > 0) {
+                backFlows.sort((a, b) => (a.id > b.id) ? -1 : 1);
                 let index = 0;
                 for (let nack of backFlows) {
-                    if (backFlows.length === 1) {
+                    if (index === 0) {
                         const st = backFlows[index].fromStateId;
                         const rt = backFlows[index].toStateId;
                         this.drawArrows(st, rt);
+                        if (backFlows.length > 1) {
+                            this.drawArrows(backFlows[index + 1].fromStateId, nack.fromStateId);
+                        }
                         index++;
                     } else {
-                        const st = backFlows[index + 1] ? backFlows[index + 1].fromStateId : '';
-                        const rt = nack.fromStateId;
-                        this.drawArrows(st, rt);
-                        index++;
+                        if (backFlows[index + 1]) {
+                            const st = backFlows[index + 1].fromStateId;
+                            const rt = nack.fromStateId;
+                            this.drawArrows(st, rt);
+                            index++;
+                        }
                     }
                 }
             }
