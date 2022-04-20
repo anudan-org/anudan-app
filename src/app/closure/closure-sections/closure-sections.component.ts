@@ -68,6 +68,10 @@ import { ClosureDataService } from 'app/closure.data.service';
       ::ng-deep .refunds-holder .mat-form-field-infix {
         border-top: 0 !important;
       }
+
+      ::ng-deep .refunds-holder .mat-form-field-label-wrapper{
+        top: -20px;
+      }
     `,
   ],
 })
