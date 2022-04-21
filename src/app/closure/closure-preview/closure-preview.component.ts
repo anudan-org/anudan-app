@@ -192,7 +192,7 @@ export class ClosurePreviewComponent implements OnInit {
           this.currentClosure = closure;
           const toState = this.currentClosure.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
           const toStateOwner = this.currentClosure.workflowAssignment.filter(a => a.stateId === toStateId)[0].assignmentUser;
-          this.submitClosure(toStateId, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>", true);
+          this.submitClosure(toStateId, "Progressing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>", true);
         }, error => {
           const errorMsg = error as HttpErrorResponse;
 
@@ -606,17 +606,24 @@ export class ClosurePreviewComponent implements OnInit {
   }
 
   getPlannedDiff(i) {
+    let p = 0;
+    let r = 0;
+
     const pf = $('.pf');
     if (!pf || pf.length === 0) {
-      return '';
+      return this.currencyService.getFormattedAmount(0);
     }
+    const pieces1 = $(pf[i]).html().replace('₹ ', '').split(",")
+    p = Number(pieces1.join(""));//.replaceAll(',', ''));
 
-    const pieces = $(pf[i]).html().replace('₹ ', '').split(",")
+    const rf = $('.rf');
+    if (!rf || rf.length === 0) {
+      return this.currencyService.getFormattedAmount(p);
+    }
+    const pieces2 = $(rf[i]).html().replace('₹ ', '').split(",")
+    r = Number(pieces2.join(""));//.replaceAll(',', ''));
 
-    const p = Number(pieces.join(""));//.replaceAll(',', ''));
-
-    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
-    return this.currencyService.getFormattedAmount(p - spent + this.getActualRefundsForGrant());
+    return this.currencyService.getFormattedAmount(p - r);
   }
 
 
