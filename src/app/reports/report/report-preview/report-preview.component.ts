@@ -259,7 +259,7 @@ export class ReportPreviewComponent implements OnInit {
 
                     const toState = this.currentReport.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
                     const toStateOwner = this.currentReport.workflowAssignments.filter(a => a.stateId === toStateId)[0].assignmentUser;
-                    this.submitReport(toStateId, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>", true);
+                    this.submitReport(toStateId, "Progressing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>", true);
                 }, error => {
                     const errorMsg = error as HttpErrorResponse;
                     const x = { 'enableHtml': true, 'preventDuplicates': true, 'positionClass': 'toast-top-full-width', 'progressBar': true } as Partial<IndividualConfig>;

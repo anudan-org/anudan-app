@@ -3,7 +3,8 @@
     <ng-container *ngFor="let section of currentReport.reportDetails.sections">
       <ng-container *ngIf="action === getCleanText(section)">
         <h4 class="col-11 text-left mt-3 mb-0 section-header">
-          <p class="text-header d-flex align-items-center mb-0">{{currentReport.name}} <span class="text-subheader"> |
+          <p class="text-header d-flex align-items-center mb-0">{{currentReport.name + ' '}} <span
+              class="text-subheader">&nbsp;|
               {{
               (currentReport.grant.referenceNo
               ? currentReport.grant.referenceNo + " | "

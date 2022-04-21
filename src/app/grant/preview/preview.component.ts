@@ -1221,7 +1221,7 @@ export class PreviewComponent implements OnInit {
                 const toState = this.currentGrant.flowAuthorities.filter(a => a.toStateId === toStateId)[0].toName;
                 const toStateOwner = this.currentGrant.workflowAssignments.filter(a => a.stateId === toStateId)[0].assignmentUser;
 
-                this.submitGrant(toStateId, "Progessing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>", true);
+                this.submitGrant(toStateId, "Progressing for " + toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>", true);
               },
               (error) => {
                 const errorMsg = error as HttpErrorResponse;

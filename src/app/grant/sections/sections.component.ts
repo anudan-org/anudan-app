@@ -92,6 +92,27 @@ import { DomSanitizer } from '@angular/platform-browser';
       ::ng-deep .cdk-overlay-pane {
         width: auto !important;
       }
+      ::ng-deep
+        #tablePlaceholder
+        .mat-form-field-appearance-legacy
+        .mat-form-field-infix {
+        padding: 0 !important;
+      }
+    
+      ::ng-deep
+        #tablePlaceholder
+        .mat-form-field-appearance-legacy
+        .mat-form-field-wrapper {
+        padding-bottom: 0 !important;
+      }
+    
+      ::ng-deep #tablePlaceholder .mat-form-field-infix {
+        border-top: 0 !important;
+      }
+
+      ::ng-deep #tablePlaceholder .mat-form-field-label-wrapper{
+        top: -20px;
+      }
     `,
   ],
 })
