@@ -157,7 +157,7 @@
               <div class="col-4 mb-2">
                 <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Closure Reason:</span>
                 <div class="ml-0 mb-3">
-                  <strong>{{ currentClosure.reason.reason }}</strong>
+                <strong *ngIf="currentClosure.reason">{{ currentClosure.reason.reason }}</strong>
                 </div>
               </div>
               <div class="col-12 mb-2">
