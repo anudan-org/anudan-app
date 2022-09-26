@@ -40,40 +40,38 @@ jobs:
 
   # this block of code will do static code analysis 
   # For more information see: https://github.com/sonarsource/sonarcloud-github-action
-
-  #Static-Code-Analysis-Sonarqube-Frontend:
-  #  runs-on: ubuntu-latest
-  #  if: github.ref == 'refs/heads/dev'
-  #  name: Analyse Static Code | Sonarqube 
-  #  steps:
-  #  - name: checkout anudap-app repo
-  #    uses: actions/checkout@v2  
-  #    with:
-  #      # Disabling shallow clone is recommended for improving relevancy of reporting
-  #      fetch-depth: 0
-  #      ref: dev
-  #  - name: SonarCloud Scan
-  #    uses: sonarsource/sonarcloud-github-action@master 
-  #    env:
-  #        GITHUB_TOKEN: ${{ secrets.MY_PAT }}
-  #        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
-  #    with:
-  #       args: >
-  #        -Dsonar.organization=anudan
-  #        -Dsonar.projectKey=anudan-app-dev
-  #        -Dsonar.projectName=anudan-app/dev
-  #        -Dsonar.projectVersion=1.0
-  #        -Dsonar.sources=src/app
-  #        -Dsonar.exclusions=src/app/**.spec.ts
-  #        -Dsonar.sourceEncoding=UTF-8  
-  #  - name: SonarQube Quality Gate check
-  #    uses: sonarsource/sonarqube-quality-gate-action@master
-  #    # Force to fail step after specific time
-  #    timeout-minutes: 5
-  #    env:
-  #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}                 
-
-  DEV-Frontend-Build:
+  Static-Code-Analysis-Sonarqube-Frontend:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
+    name: Analyse Static Code | Sonarqube 
+    steps:
+    - name: checkout anudap-app repo
+      uses: actions/checkout@v2  
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
+        ref: dev
+    - name: SonarCloud Scan
+      uses: sonarsource/sonarcloud-github-action@master 
+      env:
+          GITHUB_TOKEN: ${{ secrets.MY_PAT }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
+      with:
+         args: >
+          -Dsonar.organization=anudan
+          -Dsonar.projectKey=anudan-app-dev
+          -Dsonar.projectName=anudan-app/dev
+          -Dsonar.projectVersion=1.0
+          -Dsonar.sources=src/app
+          -Dsonar.exclusions=src/app/**.spec.ts
+          -Dsonar.sourceEncoding=UTF-8  
+    - name: SonarQube Quality Gate check
+      uses: sonarsource/sonarqube-quality-gate-action@master
+      # Force to fail step after specific time
+      timeout-minutes: 5
+      env:
+       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}                 
+  EV-Frontend-Build:
     runs-on: ubuntu-latest
     #needs: [unit-and-functional-testing-Frontend, Static-Code-Analysis-Sonarqube-Frontend]
     if: github.ref == 'refs/heads/dev' 
