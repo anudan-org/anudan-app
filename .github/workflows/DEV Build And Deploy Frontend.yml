@@ -79,7 +79,7 @@ jobs:
     if: github.ref == 'refs/heads/dev' 
     name: Build Frontend | Dev
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v2
       with:
         repository: anudan-org/anudan-app
         token: ${{ secrets.MY_PAT }}
@@ -87,7 +87,7 @@ jobs:
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@master
       with:
-        node-version: '12.x'
+        node-version: '14.x'
         cache: 'npm'
     - name: list ouput    
       run: |
