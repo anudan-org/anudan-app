@@ -93,7 +93,7 @@ jobs:
       run: |
        pwd
        ls -lrt  
-       npm install -g @angular/cli@7.x
+       npm install -g @angular/cli@12.x
        npm install --save-dev @angular-devkit/build-angular
        npm ci
        ng build --prod --no-aot --output-hashing=all --sourceMap=false --base-href=/ --extractLicenses=false --build-optimizer false
