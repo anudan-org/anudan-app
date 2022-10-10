@@ -147,9 +147,9 @@
                           style="background: rgb(255, 255, 255); border-left-color: rgb(255, 191, 0); border-left-width: 4px; box-shadow: rgb(215, 215, 215) 4px 4px 10px; cursor: pointer;">
                           <div class="row h-100">
                             <div class="col-4 px-0 my-3 d-flex flex-column justify-content-center align-items-start">
-                              <div class="text-center w-100"
+                                <div class="text-center w-100"
                                 style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                                {{getPlannedFunds(0)}}</div>
+                                {{grantAmount}}</div>
                               <div class="text-center w-100"
                                 style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                                 Grant Commitment</div>
@@ -205,7 +205,7 @@
                         </div>
                         <div class="col-4 unspent-class px-0">
                           <mat-form-field *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse">
-                            <input (blur)="showFormattedActualSpent($event)" #refundAmount [(ngModel)]="actualSpent"
+                            <input (blur)="showFormattedActualSpent($event);setUnspentAmount()" #refundAmount [(ngModel)]="actualSpent"
                               class="anu-input" [ngModelOptions]="{ standAlone: true }" matInput />
                             <p #grantRefundFormatted (click)="showActualSpentInput($event)"
                               class="anu-input w-100 text-right" style="position: absolute; top: 5px; cursor: text"
@@ -225,9 +225,9 @@
                             Record Spent (₹) - Till Date</div>
                         </div>
                         <div class="col-4">
-                          <div class="text-center w-100"
+                            <div class="text-center w-100"
                             style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                            {{getRecievedDiff(0)}}</div>
+                            {{unspentAmount}}</div> 
                           <div class="text-center w-100"
                             style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                             Unspent Amount</div>
@@ -299,7 +299,7 @@
 
                           <div class="row px-3">
                             <div class="col-3 px-0"
-                              *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) &&  (!checkIfGrantHasRefundAmount() )&& grantOwner()">
+                              *ngIf="grantAmount!==getReceivedFunds(0) &&  (!checkIfGrantHasRefundAmount() )&& grantOwner()">
                               <button class="btn btn-sm btn-green" (click)="initiateDisbursement()"
                                 [disabled]="currentClosure.grant.hasOngoingDisbursement ">{{currentClosure.grant.hasOngoingDisbursement?'Disbursement
                                 Request In-Progress':'Initiate Disbursement'}}</button>

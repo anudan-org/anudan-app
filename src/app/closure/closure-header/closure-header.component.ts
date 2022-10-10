@@ -88,6 +88,8 @@ export class ClosureHeaderComponent implements OnInit {
   closureWorkflowStatuses: WorkflowStatus[];
   tenantUsers: User[];
   actualSpent: number;
+  unspentAmount: string;
+  grantAmount: string;
 
 
   @ViewChild("createSectionModal") createSectionModal: ElementRef;
@@ -102,7 +104,7 @@ export class ClosureHeaderComponent implements OnInit {
   noSingleClosureDocAction: boolean = false;
   downloadAndDeleteClosureDocsAllowed: boolean = false;
   newField: any;
-
+ 
 
   constructor(public appComp: AppComponent,
     private adminComp: AdminLayoutComponent,
@@ -201,6 +203,9 @@ export class ClosureHeaderComponent implements OnInit {
     });
 
     this.getClosureReasons();
+    
+    this.setUnspentAmount();
+    this.setGrantAmount();
 
     this.appComp.createNewClosureSection.subscribe((val) => {
       if (val) {
@@ -218,8 +223,8 @@ export class ClosureHeaderComponent implements OnInit {
       if (this.appComp.loggedInUser.organization.organizationType === 'GRANTEE') {
         this.myControl.disable();
       }
-      console.log(this.currentClosure);
     });
+    
 
   }
 
@@ -450,9 +455,14 @@ export class ClosureHeaderComponent implements OnInit {
     return (funds && funds.length) > 0 ? funds[i].innerHTML : this.currencyService.getFormattedAmount(0);
   }
 
+  setGrantAmount(){
+    console.log(this.currentClosure.grant);
+  const _grantAmount = this.currentClosure.grant.amount ? this.currentClosure.grant.amount : 0;
+  this.grantAmount = this.currencyService.getFormattedAmount(_grantAmount);
+  }
   getPlannedFunds(i) {
     const funds = document.getElementsByClassName('pf');
-    return (funds && funds.length) > 0 ? funds[i].innerHTML : this.currencyService.getFormattedAmount(0);
+    return (funds && funds.length) > 0 ? funds[i].innerHTML : '';
   }
 
   getPlannedDiff(i) {
@@ -476,28 +486,13 @@ export class ClosureHeaderComponent implements OnInit {
     return this.currencyService.getFormattedAmount(p - r);
   }
 
-
-
-  getRecievedDiff(i) {
-    let p = 0;
-    let r = 0;
-
-    const pf = $('.pf');
-    if (pf && pf.length > 0) {
-      const pieces1 = $(pf[i]).html().replace('₹ ', '').split(",")
-      p = Number(pieces1.join(""));//.replaceAll(',', ''));
-    }
-
-
-    const rf = $('.rf');
-    if (rf && rf.length > 0) {
-      const pieces2 = $(rf[i]).html().replace('₹ ', '').split(",")
-      r = Number(pieces2.join(""));//.replaceAll(',', ''));
-    }
-
-    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
-    return this.currencyService.getFormattedAmount(r - spent - this.getActualRefundsForGrant());
+  setUnspentAmount() {
+   
+   const disbursement = this.currentClosure.grant.approvedDisbursementsTotal ? this.currentClosure.grant.approvedDisbursementsTotal : 0;
+   const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+   this.unspentAmount = this.currencyService.getFormattedAmount( disbursement- spent);
   }
+
 
   getActualRefundsForGrant() {
     let actualRfundsTotal = 0;
@@ -511,7 +506,7 @@ export class ClosureHeaderComponent implements OnInit {
 
 
   showFormattedActualSpent(evt: any) {
-    this.currentClosure.grant.actualSpent = this.actualSpent;
+   this.currentClosure.grant.actualSpent = this.actualSpent;
     evt.currentTarget.style.visibility = "hidden";
     this.grantRefundFormatted.nativeElement.style.visibility = "visible";
   }

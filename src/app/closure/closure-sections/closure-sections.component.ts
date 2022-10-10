@@ -110,6 +110,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   calcSet: any;
   pf: number;
   rf: number;
+  unspentAmount : string;
 
   constructor(public appComp: AppComponent,
     private closureService: ClosureDataService,
@@ -203,6 +204,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
         this.router.navigate(['dashboard']);
       }
     });
+    this.setUnspentAmount();
   }
 
   saveClosure() {
@@ -737,7 +739,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   }
 
 
-
+//rk not to use this
   getRecievedDiff(i) {
     const pf = $('.rf');
     if (!pf || pf.length === 0) {
@@ -1648,6 +1650,13 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       "dd-MMM-yyyy"
     );
   }
+ 
+
+  setUnspentAmount(){
+    const disbursement = this.currentClosure.grant.approvedDisbursementsTotal ? this.currentClosure.grant.approvedDisbursementsTotal : 0;
+    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+    this.unspentAmount = this.currencyService.getFormattedAmount(disbursement - spent);
+  }
 
   getActualRefundsForGrant() {
     let actualRfundsTotal = 0;
@@ -1760,41 +1769,6 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     const peices2 = $(pf[1]).html().replace('₹ ', '').split(',');
     const p2 = Number(peices2.join(""));
     return this.currencyService.getFormattedAmount(p1 - 0 - this.getActualRefundsForGrant() + p2);
-  }
-
-  getUnspentPlusRefundsReceivedTotal() {
-    if (this.calcSet) {
-      return this.calcSet;
-    }
-    let p = 0;
-    let r = 0;
-
-    if (this.pf === undefined) {
-      const pf = $('.pf');
-      if (pf && pf.length > 0) {
-        const pieces1 = $(pf[0]).html().replace('₹ ', '').split(",")
-        p = Number(pieces1.join(""));
-        this.pf = p;
-      } else {
-        this.pf = 0;
-      }
-    }
-
-
-    if (this.rf === undefined) {
-      const rf = $('.rf');
-      if (rf && rf.length > 0) {
-        const pieces2 = $(rf[0]).html().replace('₹ ', '').split(",")
-        r = Number(pieces2.join(""));
-        this.rf = r;
-      } else {
-        this.rf = 0;
-      }
-    }
-
-    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
-
-    this.calcSet = this.pf - this.rf - spent + this.getActualRefundsForGrant();
   }
 
   getActualRefundsTotal() {

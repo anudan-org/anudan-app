@@ -245,9 +245,9 @@
 
                   </div>
                   <div class="col-4">
-                    <div class="text-center w-100"
+                      <div class="text-center w-100"
                       style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                      {{getRecievedDiff(0)}}</div>
+                      {{unspentAmount}}</div>
                     <div class="text-center w-100"
                       style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                       Unspent Amount</div>
@@ -262,7 +262,7 @@
                   <div class="col-4" *ngIf="currentClosure.grant.refundAmount!==undefined">
                     <div class="text-center w-100"
                       style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                      {{getRefundAmount()}}</div>
+                      {{refundRequested}}</div>
                     <div class="text-center w-100"
                       style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                       Refund Requested</div>
@@ -270,7 +270,7 @@
                   <div class="col-4" *ngIf="currentClosure.grant.refundAmount!==undefined">
                     <div class="text-center w-100"
                       style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                      {{getRefundReceived()}}</div>
+                      {{refundReceived}}</div>
                     <div class="text-center w-100"
                       style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                       Refund Received</div>
@@ -278,7 +278,7 @@
                   <div class="col-4" *ngIf="currentClosure.grant.refundAmount!==undefined">
                     <div class="text-center w-100"
                       style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                      {{'₹ 50000'}}</div>
+                      {{pendingRefund}}</div>
                     <div class="text-center w-100"
                       style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                       Pending Amount</div>
@@ -473,8 +473,8 @@
                                   </div>
                                   <div class="col-3">
                                     <mat-form-field>
-                                      <input matInput disabled readonly placeholder="Unspent Amount"
-                                        [value]="getRecievedDiff(0)">
+                                        <input matInput disabled readonly placeholder="Unspent Amount"
+                                        [value]="unspentAmount">
                                     </mat-form-field>
                                   </div>
                                   <div class="col-3">

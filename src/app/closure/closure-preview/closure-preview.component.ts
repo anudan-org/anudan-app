@@ -55,6 +55,10 @@ export class ClosurePreviewComponent implements OnInit {
   tenantUsers: User[];
   logoUrl: string;
   actualSpent: number;
+  unspentAmount: string;
+  refundRequested : string;
+  refundReceived: string;
+  pendingRefund: string;
   @ViewChild("grantRefundFormatted") grantRefundFormatted: ElementRef;
   @ViewChild("refundAmount") refundAmount: ElementRef;
 
@@ -121,6 +125,9 @@ export class ClosurePreviewComponent implements OnInit {
 
   ngOnInit() {
     this.logoUrl = "/api/public/images/" + this.currentClosure.grant.grantorOrganization.code + "/logo";
+    this.setUnspentAmount();
+    this.getRefundAmount();
+    this.getRefundReceived();
   }
 
   submitClosure(toStateId: number, transitionTitle: string, direction: boolean) {
@@ -625,20 +632,13 @@ export class ClosurePreviewComponent implements OnInit {
 
     return this.currencyService.getFormattedAmount(p - r);
   }
-
-
-
-  getRecievedDiff(i) {
-    const pf = $('.rf');
-    if (!pf || pf.length === 0) {
-      return '';
-    }
-
-    const peices = $(pf[i]).html().replace('₹ ', '').split(',');
-    const p = Number(peices.join(""));
+  setUnspentAmount() {
+   
+    const disbursement = this.currentClosure.grant.approvedDisbursementsTotal ? this.currentClosure.grant.approvedDisbursementsTotal : 0;
     const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
-    return this.currencyService.getFormattedAmount(p - spent - this.getActualRefundsForGrant());
-  }
+    this.unspentAmount = this.currencyService.getFormattedAmount( disbursement- spent);
+   }
+
 
   getActualRefundsForGrant() {
     let actualRfundsTotal = 0;
@@ -665,21 +665,24 @@ export class ClosurePreviewComponent implements OnInit {
 
   getRefundAmount() {
     if (this.currentClosure.grant.refundAmount) {
-      return this.currencyService.getFormattedAmount(this.currentClosure.grant.refundAmount);
+      this.refundRequested= this.currencyService.getFormattedAmount(this.currentClosure.grant.refundAmount);
     } else {
-      return this.currencyService.getFormattedAmount(0);
+      this.refundRequested= this.currencyService.getFormattedAmount(0);
     }
   }
 
   getRefundReceived() {
+    let total = 0;
     if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {
-      let total = 0;
       for (let rf of this.currentClosure.grant.actualRefunds) {
         total += rf.amount ? rf.amount : 0;
       }
-      return this.currencyService.getFormattedAmount(total);
+      this.refundReceived = this.currencyService.getFormattedAmount(total);
+    } else {
+    this.refundReceived = this.currencyService.getFormattedAmount(0);
     }
-    return this.currencyService.getFormattedAmount(0);
+    this.pendingRefund = this.currencyService.getFormattedAmount(this.currentClosure.grant.refundAmount-total);
+
   }
 
   getGrantDisbursementAttribute(): Attribute {
