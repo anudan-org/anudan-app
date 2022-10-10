@@ -1770,6 +1770,42 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
     const p2 = Number(peices2.join(""));
     return this.currencyService.getFormattedAmount(p1 - 0 - this.getActualRefundsForGrant() + p2);
   }
+//rk this needs to be modified.. not removed.. used elsewhere.
+  getUnspentPlusRefundsReceivedTotal() {
+    
+    if (this.calcSet) {
+      return this.calcSet;
+    }
+    let p = 0;
+    let r = 0;
+
+    if (this.pf === undefined) {
+      const pf = $('.pf');
+      if (pf && pf.length > 0) {
+        const pieces1 = $(pf[0]).html().replace('₹ ', '').split(",")
+        p = Number(pieces1.join(""));
+        this.pf = p;
+      } else {
+        this.pf = 0;
+      }
+    }
+
+
+    if (this.rf === undefined) {
+      const rf = $('.rf');
+      if (rf && rf.length > 0) {
+        const pieces2 = $(rf[0]).html().replace('₹ ', '').split(",")
+        r = Number(pieces2.join(""));
+        this.rf = r;
+      } else {
+        this.rf = 0;
+      }
+    }
+
+    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+
+    this.calcSet = this.pf - this.rf - spent + this.getActualRefundsForGrant();
+  }
 
   getActualRefundsTotal() {
     let total = 0;
