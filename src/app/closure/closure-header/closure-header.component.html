@@ -298,14 +298,8 @@
                         <div class="col-12 px-0">
 
                           <div class="row px-3">
-                            <div class="col-3 px-0"
-                              *ngIf="grantAmount!==getReceivedFunds(0) &&  (!checkIfGrantHasRefundAmount() )&& grantOwner()">
-                              <button class="btn btn-sm btn-green" (click)="initiateDisbursement()"
-                                [disabled]="currentClosure.grant.hasOngoingDisbursement ">{{currentClosure.grant.hasOngoingDisbursement?'Disbursement
-                                Request In-Progress':'Initiate Disbursement'}}</button>
-                            </div>
-                            <div class="col-3 px-0"
-                              *ngIf="!currentClosure.grant.hasOngoingDisbursement && (!checkIfGrantHasRefundAmount()) && grantOwner() && isExternalGrant(currentClosure.grant)">
+                              <div class="col-3 px-0"
+                              *ngIf="(!checkIfGrantHasRefundAmount()) && grantOwner() && isExternalGrant(currentClosure.grant)">
                               <button class="btn btn-sm btn-green" (click)="captureRefund()">Initiate
                                 Refund</button>
                             </div>
