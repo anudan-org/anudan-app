@@ -323,7 +323,7 @@ export class PreviewComponent implements OnInit {
     this.adminService.getOrgTags(this.appComp.loggedInUser).then((tags: OrgTag[]) => {
       this.orgTags = tags;
     });
-  }
+    }
 
   getDocumentName(val: string): any[] {
     if (this.docsUpdated) {
@@ -729,7 +729,7 @@ export class PreviewComponent implements OnInit {
         data: {
           title: "Important!",
           content:
-            '<p class="x_MsoNormal">You are about to close an active Grant. This action will create a new &lsquo;Grant closure request&rsquo; with a separate closure workflow.</p> <p class="x_MsoNormal">The &lsquo;Grant closure request&rsquo; will be placed in a "Draft" stage with you as the owner of this state.&nbsp; You will need to add appropriate assignments to progress the Grant closure through the current organizational workflow.&nbsp;</p> <p class="x_MsoNormal">All reports and disbursements that were in progress when the grant closure request was initiated will be available until the grant closure workflow is completed. On completion of the grant closure workflow, the Grant will be marked as "Closed" and while you and others in your organization can view it, it will be unavailable for future disbursements or project progress reports against it.</p>',
+            '<p class="x_MsoNormal">You are about to close an active Grant. This action will create a new &lsquo;Grant closure request&rsquo; with a separate closure workflow.</p> <p class="x_MsoNormal">Your &lsquo;Grant closure request&lsquo; will be placed in a "Draft" stage with you as the owner of this state.  You will need to add appropriate assignments to progress the Grant closure through the current organizational workflow. Based on the workflow (if it involves an external project implementation partner), you can request a refund of unspent project funds and record actual refunds received against the refund request.&nbsp;</p> <p class="x_MsoNormal">All reports that were in progress when the grant closure request was initiated will be available until the grant closure workflow is completed. On completion of the grant closure workflow, the Grant will be marked as "Closed" and while you and others in your organization can view it, it will be unavailable for pending/unapproved project progress reports and/or to record actual refunds against it.</p>',
           grant: this.currentGrant,
           userId: this.appComp.loggedInUser.id
         },
