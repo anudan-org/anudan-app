@@ -1453,12 +1453,26 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   }
 
   saveSection() {
-    const sectionName = $("#sectionTitleInput");
+   const sectionName = $("#sectionTitleInput");
     if (sectionName.val().trim() === "") {
       this.toastr.warning("Section name cannot be left blank", "Warning");
       sectionName.focus();
       return;
     }
+
+    let repeatName = false;
+    for (let section of this.currentClosure.closureDetails.sections) {
+      if ( section.sectionName.replace(' ','').toLowerCase() === sectionName.val().trim().replace(' ','').toLowerCase()  ) {
+      repeatName=true;
+      break ;
+      }
+    }
+     if (repeatName) {
+      this.toastr.warning("Section name already exists, Please select a different name", "Warning");
+      sectionName.focus();
+      return;
+      }
+
     this.callCreateSectionAPI(sectionName.val(), false)
   }
 

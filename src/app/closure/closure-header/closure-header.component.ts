@@ -316,6 +316,20 @@ export class ClosureHeaderComponent implements OnInit {
       sectionName.focus();
       return;
     }
+    let repeatName = false;
+    for (let section of this.currentClosure.closureDetails.sections) {
+      if ( section.sectionName.replace(' ','').toLowerCase() === sectionName.val().trim().replace(' ','').toLowerCase()  ) {
+      repeatName=true;
+      break ;
+      }
+    }
+     if (repeatName) {
+      this.toastr.warning("Section name already exists, Please select a different name", "Warning");
+      sectionName.focus();
+      return;
+      }
+      
+     
 
     const createSectionModal = this.createSectionModal.nativeElement;
 
@@ -335,7 +349,8 @@ export class ClosureHeaderComponent implements OnInit {
       "/template/" +
       this.currentClosure.template.id +
       "/section/" +
-      sectionName.val();
+      sectionName.val() +
+      "/false";
 
     this.http
       .post<ClosureSectionInfo>(url, this.currentClosure, httpOptions)

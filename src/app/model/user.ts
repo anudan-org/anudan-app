@@ -35,4 +35,5 @@ export class User {
   editMode: boolean = false;
   admin:boolean;
   deleted: boolean;
+  active: boolean;
 }
