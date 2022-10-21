@@ -48,12 +48,17 @@ import { CustomDateAdapter } from 'app/model/dahsboard';
   ],
   styles: [
     `
-      ::ng-deep
+      ::ng-deep 
         .refunds-holder
         .mat-form-field-appearance-legacy
         .mat-form-field-infix {
         padding: 0 !important;
       }
+      
+      ::ng-deep .amountPlaceholder {
+        text-align: left !important;
+        color: #b1b0b0 !important;
+      }
     
       ::ng-deep
         .refunds-holder
@@ -90,6 +95,7 @@ export class ClosureHeaderComponent implements OnInit {
   actualSpent: number;
   unspentAmount: string;
   grantAmount: string;
+  spentAmount: string;
 
 
   @ViewChild("createSectionModal") createSectionModal: ElementRef;
@@ -204,8 +210,9 @@ export class ClosureHeaderComponent implements OnInit {
 
     this.getClosureReasons();
     
-    this.setUnspentAmount();
+    this.setSpendSumamry();
     this.setGrantAmount();
+
 
     this.appComp.createNewClosureSection.subscribe((val) => {
       if (val) {
@@ -486,10 +493,11 @@ export class ClosureHeaderComponent implements OnInit {
     return this.currencyService.getFormattedAmount(p - r);
   }
 
-  setUnspentAmount() {
+  setSpendSumamry() {
    
    const disbursement = this.currentClosure.grant.approvedDisbursementsTotal ? this.currentClosure.grant.approvedDisbursementsTotal : 0;
    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+   this.spentAmount= this.currencyService.getFormattedAmount( spent);
    this.unspentAmount = this.currencyService.getFormattedAmount( disbursement- spent);
   }
 
@@ -516,11 +524,14 @@ export class ClosureHeaderComponent implements OnInit {
     this.refundAmount.nativeElement.style.visibility = "visible";
   }
 
+ 
+  
+
   getFormattedRefundAmount(amount: number): string {
     if (amount) {
       return inf.format(amount, 2);
     }
-    return inf.format(0, 2);
+    return "<div class='amountPlaceholder'>Enter Spent Amount</div>";
   }
 
   captureRefund() {

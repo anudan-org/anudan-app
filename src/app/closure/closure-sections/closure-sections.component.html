@@ -101,11 +101,11 @@
               ">
                         <ng-container class="mb-2">
                           <div class="col-5">
-                            <mat-form-field style="max-width: 190px;">
+                            <mat-form-field  [floatLabel]="'always'" style="max-width: 190px;">
                               <mat-label>Requested Refund Amount (₹)</mat-label>
-                              <input matInput (blur)="showFormattedRefundAmount($event)" #refundAmount
+                              <input type="text" matInput (blur)="showFormattedRefundAmount($event)" #refundAmount
                                 [(ngModel)]="currentClosure.grant.refundAmount" class="anu-input"
-                                [ngModelOptions]="{ standAlone: true }" matInput />
+                                [ngModelOptions]="{ standAlone: true }" placeholder="Enter Refund Amount"  />
                               <p *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
                                 #grantRefundFormatted (click)="showRefundAmountInput($event)"
                                 class="anu-input w-100 text-right" style="position: absolute; top: 5px; cursor: text"
@@ -122,9 +122,9 @@
                         </ng-container>
                         <ng-container class="mb-2">
                           <div class="col-7">
-                            <mat-form-field *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'">
+                            <mat-form-field [floatLabel]="'always'" *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'">
                               <mat-label for="rn">Refund Request Note</mat-label>
-                              <input id="rn" matInput [(ngModel)]="currentClosure.grant.refundReason" class="anu-input"
+                              <input type="text" id="rn" matInput [(ngModel)]="currentClosure.grant.refundReason" class="anu-input"
                                 [ngModelOptions]="{ standAlone: true }" matInput placeholder="Enter Refund Note" />
 
                             </mat-form-field>
