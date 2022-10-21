@@ -584,18 +584,8 @@ export class ClosurePreviewComponent implements OnInit {
       toState = this.currentClosure.flowAuthorities.filter(a => a.fromStateId === toStateId)[0].fromName;
     }
     const toStateOwner = this.currentClosure.workflowAssignment.filter(a => a.stateId === toStateId)[0].assignmentUser;
-    
-    return toStateOwner ? (toState + "<span class='text-subheader'> [ " + toStateOwner.firstName + ' ' + toStateOwner.lastName + " ]</span>") : "";
-    
-    //let activeuser= toStateOwner.active;
-   // let username = (!activeuser ? ('Unregistered: ' + toStateOwner.emailId) : toStateOwner.firstName + ' ' + toStateOwner.lastName) ;
-    
-    //if ( activeuser) {
-   //   return toStateOwner ? (toState + "<span class='text-subheader'> [ " + username + " ]</span>") : "";
-  //  } else {
-  //    return toStateOwner ? (toState + "<span class='text-subheader-red' > [ " + username + " ]</span>") : "";
-  // }
-    
+        return toStateOwner ? (toState + "<span class='text-subheader'> [ " + toStateOwner.firstName + ' ' + toStateOwner.lastName + " ]</span>") : "";
+
     
   }
 
