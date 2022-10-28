@@ -96,6 +96,9 @@ export class ClosureHeaderComponent implements OnInit {
   unspentAmount: string;
   grantAmount: string;
   spentAmount: string;
+  interestEarned: number;
+  interestAmount: string;
+  disbursedPlusInterest: string;
 
 
   @ViewChild("createSectionModal") createSectionModal: ElementRef;
@@ -104,13 +107,15 @@ export class ClosureHeaderComponent implements OnInit {
   @ViewChild("plannedProjectFundsModal") plannedProjectFundsModal: ElementRef;
   @ViewChild("receivedProjectFundsModal") receivedProjectFundsModal: ElementRef;
   @ViewChild("popupcontainer") popupcontainer: ElementRef;
+  @ViewChild("grantInterestFormatted") grantInterestFormatted: ElementRef;
+  @ViewChild("intAmount") intAmount: ElementRef;
 
   plannedModal: any;
   receivedModal: any;
   noSingleClosureDocAction: boolean = false;
   downloadAndDeleteClosureDocsAllowed: boolean = false;
   newField: any;
- 
+
 
   constructor(public appComp: AppComponent,
     private adminComp: AdminLayoutComponent,
@@ -205,11 +210,12 @@ export class ClosureHeaderComponent implements OnInit {
         this.tenantUsers = config.tenantUsers;
         this.appComp.tenantUsers = config.tenantUsers;
         this.appComp.closureTransitions = config.reportTransitions;
+        this.interestEarned = this.currentClosure.grant.interestEarned;
       });
     });
 
     this.getClosureReasons();
-    
+
     this.setSpendSumamry();
     this.setGrantAmount();
 
@@ -231,7 +237,7 @@ export class ClosureHeaderComponent implements OnInit {
         this.myControl.disable();
       }
     });
-    
+
 
   }
 
@@ -318,18 +324,18 @@ export class ClosureHeaderComponent implements OnInit {
     }
     let repeatName = false;
     for (let section of this.currentClosure.closureDetails.sections) {
-      if ( section.sectionName.replace(' ','').toLowerCase() === sectionName.val().trim().replace(' ','').toLowerCase()  ) {
-      repeatName=true;
-      break ;
+      if (section.sectionName.replace(' ', '').toLowerCase() === sectionName.val().trim().replace(' ', '').toLowerCase()) {
+        repeatName = true;
+        break;
       }
     }
-     if (repeatName) {
+    if (repeatName) {
       this.toastr.warning("Section name already exists, Please select a different name", "Warning");
       sectionName.focus();
       return;
-      }
-      
-     
+    }
+
+
 
     const createSectionModal = this.createSectionModal.nativeElement;
 
@@ -477,10 +483,9 @@ export class ClosureHeaderComponent implements OnInit {
     return (funds && funds.length) > 0 ? funds[i].innerHTML : this.currencyService.getFormattedAmount(0);
   }
 
-  setGrantAmount(){
-    console.log(this.currentClosure.grant);
-  const _grantAmount = this.currentClosure.grant.amount ? this.currentClosure.grant.amount : 0;
-  this.grantAmount = this.currencyService.getFormattedAmount(_grantAmount);
+  setGrantAmount() {
+    const _grantAmount = this.currentClosure.grant.amount ? this.currentClosure.grant.amount : 0;
+    this.grantAmount = this.currencyService.getFormattedAmount(_grantAmount);
   }
   getPlannedFunds(i) {
     const funds = document.getElementsByClassName('pf');
@@ -509,11 +514,15 @@ export class ClosureHeaderComponent implements OnInit {
   }
 
   setSpendSumamry() {
-   
-   const disbursement = this.currentClosure.grant.approvedDisbursementsTotal ? this.currentClosure.grant.approvedDisbursementsTotal : 0;
-   const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
-   this.spentAmount= this.currencyService.getFormattedAmount( spent);
-   this.unspentAmount = this.currencyService.getFormattedAmount( disbursement- spent);
+
+    var disbursement: number = this.currentClosure.grant.approvedDisbursementsTotal ? this.currentClosure.grant.approvedDisbursementsTotal : 0;
+    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+    this.spentAmount = this.currencyService.getFormattedAmount(spent);
+
+    var interest: number = this.currentClosure.grant.interestEarned ? this.currentClosure.grant.interestEarned : 0;
+    this.interestAmount = this.currencyService.getFormattedAmount(interest);
+    this.disbursedPlusInterest = this.currencyService.getFormattedAmount(Number(disbursement) + Number(interest));
+    this.unspentAmount = this.currencyService.getFormattedAmount(Number(disbursement) + Number(interest) - spent);
   }
 
 
@@ -529,7 +538,7 @@ export class ClosureHeaderComponent implements OnInit {
 
 
   showFormattedActualSpent(evt: any) {
-   this.currentClosure.grant.actualSpent = this.actualSpent;
+    this.currentClosure.grant.actualSpent = this.actualSpent;
     evt.currentTarget.style.visibility = "hidden";
     this.grantRefundFormatted.nativeElement.style.visibility = "visible";
   }
@@ -539,14 +548,31 @@ export class ClosureHeaderComponent implements OnInit {
     this.refundAmount.nativeElement.style.visibility = "visible";
   }
 
- 
-  
+  showFormattedInterestEarned(evt: any) {
+    this.currentClosure.grant.interestEarned = this.interestEarned;
+    evt.currentTarget.style.visibility = "hidden";
+    this.grantInterestFormatted.nativeElement.style.visibility = "visible";
+  }
+
+  showInterestEarned(evt: any) {
+    evt.currentTarget.style.visibility = "hidden";
+    this.intAmount.nativeElement.style.visibility = "visible";
+  }
+
+
 
   getFormattedRefundAmount(amount: number): string {
     if (amount) {
       return inf.format(amount, 2);
     }
     return "<div class='amountPlaceholder'>Enter Spent Amount</div>";
+  }
+
+  getFormattedInterestEarned(amount: number): string {
+    if (amount) {
+      return inf.format(amount, 2);
+    }
+    return "<div class='amountPlaceholder'>Enter Interest Earned</div>";
   }
 
   captureRefund() {

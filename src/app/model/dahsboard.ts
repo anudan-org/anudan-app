@@ -305,6 +305,7 @@ export class Grant {
   ongoingDisbursementNote: string;
   actualRefunds: ActualRefund[];
   actualSpent: number;
+  interestEarned: number;
 }
 
 export class ActualRefund {

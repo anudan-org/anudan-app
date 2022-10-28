@@ -101,11 +101,11 @@
               ">
                         <ng-container class="mb-2">
                           <div class="col-5">
-                            <mat-form-field  [floatLabel]="'always'" style="max-width: 190px;">
-                              <mat-label>Requested Refund Amount (₹)</mat-label>
+                            <mat-form-field [floatLabel]="'always'" style="max-width: 190px;">
+                              <mat-label>Requested Amount (₹)</mat-label>
                               <input type="text" matInput (blur)="showFormattedRefundAmount($event)" #refundAmount
                                 [(ngModel)]="currentClosure.grant.refundAmount" class="anu-input"
-                                [ngModelOptions]="{ standAlone: true }" placeholder="Enter Refund Amount"  />
+                                [ngModelOptions]="{ standAlone: true }" placeholder="Enter Refund Amount" />
                               <p *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
                                 #grantRefundFormatted (click)="showRefundAmountInput($event)"
                                 class="anu-input w-100 text-right" style="position: absolute; top: 5px; cursor: text"
@@ -118,20 +118,21 @@
 
                             <span class="text-subheader" style="position: absolute; bottom: 0px; ">Unspent Amount:
                               {{unspentAmount}}</span>
-                             </div>
+                          </div>
                         </ng-container>
                         <ng-container class="mb-2">
                           <div class="col-7">
-                            <mat-form-field [floatLabel]="'always'" *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'">
-                              <mat-label for="rn">Refund Request Note</mat-label>
-                              <input type="text" id="rn" matInput [(ngModel)]="currentClosure.grant.refundReason" class="anu-input"
-                                [ngModelOptions]="{ standAlone: true }" matInput placeholder="Enter Refund Note" />
+                            <mat-form-field [floatLabel]="'always'"
+                              *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'">
+                              <mat-label for="rn">Note</mat-label>
+                              <input type="text" id="rn" matInput [(ngModel)]="currentClosure.grant.refundReason"
+                                class="anu-input" [ngModelOptions]="{ standAlone: true }" matInput
+                                placeholder="Enter Refund Note" />
 
                             </mat-form-field>
                             <label class="mat-form-field-label-wrapper"
                               style="font-weight: normal; font-family: Lato; color: rgba(0,0,0,0.5);"
-                              *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'">Refund
-                              Note</label>
+                              *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'">Note</label>
                             <p *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'" class="anu-input"
                               style="background: #e6e6e6 !important; position: absolute; top: 18px; width: 100%; left: 0;">
                               {{currentClosure.grant.refundReason}}
@@ -149,11 +150,11 @@
                                   <div class="col-1 text-header text-center py-1" style="border:0px solid #d4d4d4;">#
                                   </div>
                                   <div class="col-3 text-right text-header py-1" style="border:0px solid #d4d4d4;">
-                                    Refund Date</div>
+                                    Date</div>
                                   <div class="col-3 text-right text-header py-1" style="border:0px solid #d4d4d4;">
-                                    Refunded Amount</div>
+                                    Amount</div>
                                   <div class="col-5 text-left text-header py-1" style="border:0px solid #d4d4d4;">
-                                    Refund Note</div>
+                                    Note</div>
                                   <ng-container *ngFor="let af of currentClosure.grant.actualRefunds;let i=index">
                                     <div class="col-1 py-1"
                                       style="border:0px solid #d4d4d4;display:flex;align-items:center;justify-content:center;">

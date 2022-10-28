@@ -1669,7 +1669,8 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   setUnspentAmount(){
     const disbursement = this.currentClosure.grant.approvedDisbursementsTotal ? this.currentClosure.grant.approvedDisbursementsTotal : 0;
     const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
-    this.unspentAmount = this.currencyService.getFormattedAmount(disbursement - spent);
+    var interest: number = this.currentClosure.grant.interestEarned ? this.currentClosure.grant.interestEarned : 0;
+    this.unspentAmount = this.currencyService.getFormattedAmount(Number(disbursement) + Number(interest)- spent);
   }
 
   getActualRefundsForGrant() {
