@@ -131,7 +131,7 @@ export class ClosurePreviewComponent implements OnInit {
 
   ngOnInit() {
     this.logoUrl = "/api/public/images/" + this.currentClosure.grant.grantorOrganization.code + "/logo";
-    //this.setUnspentAmount();
+
     this.getRefundAmount();
     this.getRefundReceived();
     this.setSpendSumamry();
