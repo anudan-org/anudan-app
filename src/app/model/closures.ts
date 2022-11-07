@@ -156,6 +156,8 @@ export class ClosureDiff {
   newClosureReason: string;
   oldClosureActualSpent: number;
   newClosureActualSpent: number;
+  oldClosureinterestEarned: number;
+  newClosureinterestEarned: number;
   oldClosureGrantRefundAmount: number;
   newClosureGrantRefundAmount: number;
   oldClosureGrantRefundReason: string;

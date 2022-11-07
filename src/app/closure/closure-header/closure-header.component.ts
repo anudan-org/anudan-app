@@ -98,7 +98,7 @@ export class ClosureHeaderComponent implements OnInit {
   spentAmount: string;
   interestEarned: number;
   interestAmount: string;
-  disbursedPlusInterest: string;
+  disbursedAmount: string;
 
 
   @ViewChild("createSectionModal") createSectionModal: ElementRef;
@@ -521,7 +521,7 @@ export class ClosureHeaderComponent implements OnInit {
 
     var interest: number = this.currentClosure.grant.interestEarned ? this.currentClosure.grant.interestEarned : 0;
     this.interestAmount = this.currencyService.getFormattedAmount(interest);
-    this.disbursedPlusInterest = this.currencyService.getFormattedAmount(Number(disbursement) + Number(interest));
+    this.disbursedAmount = this.currencyService.getFormattedAmount(disbursement);
     this.unspentAmount = this.currencyService.getFormattedAmount(Number(disbursement) + Number(interest) - spent);
   }
 

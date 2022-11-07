@@ -983,7 +983,7 @@ export class GrantCompareComponent implements OnInit {
     const resultHeader = [];
     const resultSections = [];
 
-    if (oldClosure.reason.reason !== newClosure.reason.reason) {
+    if (oldClosure.reason && oldClosure.reason.reason !== newClosure.reason.reason) {
       this._getClosureDiff();
       resultHeader.push({ 'order': 1, 'category': 'CLosure Header', 'name': 'Closure Reason changed', 'change': [{ 'old': oldClosure.reason.reason, 'new': newClosure.reason.reason }] });
       this.closureDiff.oldClosureReason = oldClosure.reason.reason;
@@ -999,12 +999,18 @@ export class GrantCompareComponent implements OnInit {
       this.closureDiff.oldClosureActualSpent = oldClosure.actualSpent;
       this.closureDiff.newClosureActualSpent = newClosure.actualSpent;
     }
+    if (oldClosure.interestEarned !== newClosure.interestEarned) {
+      this._getClosureDiff();
+      this.closureDiff.oldClosureinterestEarned = oldClosure.interestEarned;
+      this.closureDiff.newClosureinterestEarned = newClosure.interestEarned;
+    }
 
     if (oldClosure.grantRefundAmount !== newClosure.grantRefundAmount) {
       this._getClosureDiff();
       this.closureDiff.oldClosureGrantRefundAmount = oldClosure.grantRefundAmount;
       this.closureDiff.newClosureGrantRefundAmount = newClosure.grantRefundAmount;
     }
+
 
     if (oldClosure.grantRefundReason !== newClosure.grantRefundReason) {
       this._getClosureDiff();

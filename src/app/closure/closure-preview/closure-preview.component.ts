@@ -63,7 +63,7 @@ export class ClosurePreviewComponent implements OnInit {
   spentAmount: string;
   interestEarned: number;
   interestAmount: string;
-  disbursedPlusInterest: string;
+  disbursedAmount: string;
 
   @ViewChild("grantRefundFormatted") grantRefundFormatted: ElementRef;
   @ViewChild("refundAmount") refundAmount: ElementRef;
@@ -146,7 +146,7 @@ export class ClosurePreviewComponent implements OnInit {
 
     var interest: number = this.currentClosure.grant.interestEarned ? this.currentClosure.grant.interestEarned : 0;
     this.interestAmount = this.currencyService.getFormattedAmount(interest);
-    this.disbursedPlusInterest = this.currencyService.getFormattedAmount(Number(disbursement) + Number(interest));
+    this.disbursedAmount = this.currencyService.getFormattedAmount(Number(disbursement));
     this.unspentAmount = this.currencyService.getFormattedAmount(Number(disbursement) + Number(interest) - spent);
   }
 
@@ -346,7 +346,10 @@ export class ClosurePreviewComponent implements OnInit {
 
     });
   }
-
+  checkIfGrantHasRefundAmount() {
+    const refundDetailsSection = this.currentClosure.closureDetails.sections.filter(a => a.sectionName === "Project Refund Details" && a.systemGenerated);
+    return refundDetailsSection.length > 0;
+  }
 
   showWFAssigments() {
     this.adminComp.showWorkflowAssigments();
@@ -711,7 +714,8 @@ export class ClosurePreviewComponent implements OnInit {
     } else {
       this.refundReceived = this.currencyService.getFormattedAmount(0);
     }
-    this.pendingRefund = this.currencyService.getFormattedAmount(this.currentClosure.grant.refundAmount - total);
+    let refund = this.currentClosure.grant.refundAmount ? this.currentClosure.grant.refundAmount : 0;
+    this.pendingRefund = this.currencyService.getFormattedAmount(refund - total);
 
   }
 

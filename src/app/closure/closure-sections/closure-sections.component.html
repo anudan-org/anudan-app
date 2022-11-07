@@ -139,9 +139,19 @@
                             </p>
                           </div>
                         </ng-container>
+                      </div>
+                    </ng-container>
+                  </div>
+                  <div>
+                    <ng-container>
+                      <div class="row mb-4 mt-2" style="
+                border: 1px solid #ececec;
+                border-radius: 4px;
+                padding: 20px;
+                background: #fcfcfc;
+              ">
                         <ng-container>
-                          <div class="col-12 pt-4">
-                            <div class="row">
+                          <div class="col-12">
                               <div class="col-12">
                                 <p class="text-header px-0">Actual Refunds</p>
                               </div>
@@ -258,12 +268,230 @@
                                     class="fas fa-plus-circle text-green mr-1"></em>Add a row</span>
                               </div>
                               <!-- PLACE WHERE WE HAD THE CLOSURE DOCS-->
-                            </div>
+                           
                           </div>
 
                         </ng-container>
                       </div>
                     </ng-container>
+                  </div>
+                  <div>
+                    <ng-container>
+                      <div class="row mb-4 mt-2" style="
+                border: 1px solid #ececec;
+                border-radius: 4px;
+                padding: 20px;
+                background: #fcfcfc;
+              ">
+                    <div class="col-12">
+                      <p class="text-header px-0">Project Refund Documents</p>
+                    </div>
+                    <div class="col-sm-12 col-lg-12 text-left">
+                      <div class="row mx-3">
+                        <div class="col-6">
+                          <button class="btn btn-sm btn-green w-100">
+                            <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                              business
+                            </mat-icon>
+                            Browse from library
+                          </button>
+                        </div>
+                        <div class="col-6 pl-0 pr-2">
+                          <label for="projectDocument" class="btn btn-sm btn-green w-100 ml-0">
+                            <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                              computer
+                            </mat-icon>
+                            Browse from system
+                          </label>
+                          <input id="projectDocument" type="file" style="height: 0; visibility: hidden;" multiple
+                            (change)="
+                            processSelectedClosureDocFiles($event)
+                              " [accept]="appComp.acceptedFileTypes" />
+                        </div>
+                      </div>
+                      <mat-nav-list>
+                        <ng-container *ngFor="let attachment of currentClosure.closureDocuments">
+                          <mat-list-item>
+                            <p [id] mat-line style="
+                                  border-bottom: 1px solid #d4d4d4;
+                                  padding-left: 0;font-size: 14px;
+                                ">
+                              {{ attachment.name }}
+                            </p>
+                            <input id='closure_attachment_{{attachment.id}}' mat-list-icon class="attachment-checkbox"
+                              type="checkbox" (change)="
+                                  handleClosureDocSelection(attachment.id)
+                                " style="width: 18px;" />
+                            <button [disabled]="noSingleClosureDocAction" class='single-doc'
+                              (click)="previewDocument('closure-document',attachment)">
+                              <mat-icon class="float-right"
+                                [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                remove_red_eye</mat-icon>
+                            </button>
+                            <button [disabled]="noSingleClosureDocAction" class='single-doc'>
+                              <mat-icon class=" float-right" (click)="downloadSingleClosureDoc(attachment.id)"
+                                [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                file_download</mat-icon>
+                            </button>
+                            <button [disabled]="noSingleClosureDocAction" class='single-doc'
+                              (click)="deleteSingleClosureDoc(attachment.id)">
+                              <mat-icon class="float-right"
+                                [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                delete_outlined</mat-icon>
+                            </button>
+                          </mat-list-item>
+                        </ng-container>
+                        <mat-list-item *ngIf="
+                             currentClosure.closureDocuments &&
+                             currentClosure.closureDocuments.length > 0
+                            ">
+                          <button id="downloadBtn" [disabled]="!downloadAndDeleteClosureDocsAllowed"
+                            class="btn btn-sm btn-blue" (click)="downloadClosureDocsSelection()">
+                            <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                              system_update_alt</mat-icon>
+                            Download Selected Documents
+                          </button>
+
+                          <button id="deleteBtn" class="btn btn-sm btn-blue ml-4"
+                            [disabled]="!downloadAndDeleteClosureDocsAllowed" (click)="deleteClosureDocsSelection()">
+                            <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                              delete_outlined
+                            </mat-icon>Delete
+                            Selected Documents
+                          </button>
+                        </mat-list-item>
+                      </mat-nav-list>
+                    </div>
+                      </div>
+                      </ng-container>
+                    <!-- <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
+                      <div *ngIf="action==='ProjectRefundDetails'">
+                        <div>
+                          <ng-container #sectionsContainer *ngFor="let attribute of section.attributes; let i = index">
+                            <div id="fieldBlock_{{ attribute.id }}" class="row mb-4 mt-2" style="
+                      border: 1px solid #ececec;
+                      border-radius: 4px;
+                      padding: 20px;
+                      background: #fcfcfc;
+                    ">
+                              <ng-container class="mb-2">
+                                <div class="col-sm-12 col-lg-12 text-left" *ngIf="attribute.fieldType === 'document'">
+                                  <div style="display: flex; align-items: baseline" class="attachments-wrapper">
+                                    <div class="col-8 pl-0 pr-1">
+                                      <form class="example-form">
+                                        <mat-form-field class="example-chip-list">
+                                          <mat-chip-list #chipList aria-label="Fruit selection">
+                                            <button class="btn btn-sm btn-blue w-100" [matAutocomplete]="auto">
+                                              <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                                                business</mat-icon>Browse from library
+                                            </button>
+                                            <input id="templateLib_{{ attribute.id }}" class="" style="
+                                      max-width: 0;
+                                      height: 0;
+                                      padding: 0 !important;
+                                      margin: 0;
+                                    " #fruitInput [formControl]="myControl" [matAutocomplete]="auto"
+                                              [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="
+                                      separatorKeysCodes
+                                    " />
+                                          </mat-chip-list>
+                                          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="
+                                    selected(attribute, $event)
+                                  ">
+                                            <ng-container *ngFor="
+                                      let doc of filteredOptions | async
+                                    ">
+                                              <mat-option [value]="doc" [disabled]="checkIfSelected(doc)">
+                                                {{ doc.name }}
+                                              </mat-option>
+                                            </ng-container>
+                                          </mat-autocomplete>
+                                        </mat-form-field>
+                                      </form>
+                                    </div>
+                                    <div class="col-4 pr-0">
+                                      <label for="attribute_fileupload_{{ attribute.id }}"
+                                        class="btn btn-sm btn-green w-100">
+                                        <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                                          computer
+                                        </mat-icon>Browse from system
+                                      </label>
+                                      <input id="attribute_fileupload_{{ attribute.id }}" type="file"
+                                        style="height: 0; visibility: hidden" multiple (change)="
+                                processSelectedFiles(
+                                  section,
+                                  attribute,
+                                  $event
+                                )
+                              " [accept]="appComp.acceptedFileTypes" />
+                                    </div>
+                                  </div>
+                                  <mat-nav-list>
+                                    <ng-container *ngFor="let attachment of attribute.attachments">
+                                      <mat-list-item>
+                                        <p id="fileAttachment_{{ attachment.id }}" mat-line style="
+                                  border-bottom: 1px solid #d4d4d4;
+                                  padding-left: 0;
+                                ">
+                                          {{ attachment.name + "." + attachment.type }}
+                                        </p>
+                                        <input id="attriute_{{ attribute.id }}_attachment_{{
+                                  attachment.id
+                                }}" mat-list-icon class="attachment-checkbox" type="checkbox" (change)="
+                                  handleSelection(attribute.id, attachment.id)
+                                " />
+                                        <button [disabled]="noSingleDocAction" class='single-doc'
+                                          (click)="previewDocument('closure',attachment)">
+                                          <mat-icon class="float-right"
+                                            [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                            remove_red_eye</mat-icon>
+                                        </button>
+                                        <button [disabled]="noSingleDocAction" class='single-doc'>
+                                          <mat-icon class=" float-right" (click)="downloadSingleDoc(attachment.id)"
+                                            [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                            file_download</mat-icon>
+                                        </button>
+                                        <button [disabled]="noSingleDocAction" class='single-doc'
+                                          (click)="deleteSingleDoc(attribute.id,attachment.id)">
+                                          <mat-icon class="float-right"
+                                            [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                            delete_outlined</mat-icon>
+                                        </button>
+                                      </mat-list-item>
+                                    </ng-container>
+                                    <mat-list-item *ngIf="
+                              attribute.attachments &&
+                              attribute.attachments.length > 0
+                            ">
+                                      <button id="attachments_download_{{ attribute.id }}" class="btn btn-sm btn-blue"
+                                        [disabled]="!downloadAndDeleteAllowed" (click)="downloadSelection(attribute.id)">
+                                        <mat-icon style="
+                                  cursor: pointer;
+                                  top: 5px;
+                                  font-size: 13px;
+                                  margin-right: 3px;
+                                ">
+                                          system_update_alt
+                                        </mat-icon>
+                                        Download Selected Documents
+                                      </button>
+    
+                                      <button id="attachments_delete_{{ attribute.id }}" class="btn btn-sm btn-blue ml-4"
+                                        [disabled]="!downloadAndDeleteAllowed" (click)="deleteSelection(attribute.id)">
+                                        <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                                          _outlined
+                                        </mat-icon>Delete Selected Documents
+                                      </button>
+                                    </mat-list-item>
+                                  </mat-nav-list>
+                                </div>
+                              </ng-container>
+                              
+                            </div>
+                          </ng-container>
+                        </div>
+                      </div>
+                    </ng-container> -->
                   </div>
                 </ng-container>
                 <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
