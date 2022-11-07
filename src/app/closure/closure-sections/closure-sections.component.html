@@ -152,43 +152,43 @@
               ">
                         <ng-container>
                           <div class="col-12">
-                              <div class="col-12">
-                                <p class="text-header px-0">Actual Refunds</p>
-                              </div>
-                              <ng-container *ngIf="currentClosure.grant.actualRefunds.length>0">
-                                <div class="row refunds-holder mx-3">
-                                  <div class="col-1 text-header text-center py-1" style="border:0px solid #d4d4d4;">#
+                            <div class="col-12">
+                              <p class="text-header px-0">Actual Refunds</p>
+                            </div>
+                            <ng-container *ngIf="currentClosure.grant.actualRefunds.length>0">
+                              <div class="row refunds-holder mx-3">
+                                <div class="col-1 text-header text-center py-1" style="border:0px solid #d4d4d4;">#
+                                </div>
+                                <div class="col-3 text-right text-header py-1" style="border:0px solid #d4d4d4;">
+                                  Date</div>
+                                <div class="col-3 text-right text-header py-1" style="border:0px solid #d4d4d4;">
+                                  Amount</div>
+                                <div class="col-5 text-left text-header py-1" style="border:0px solid #d4d4d4;">
+                                  Note</div>
+                                <ng-container *ngFor="let af of currentClosure.grant.actualRefunds;let i=index">
+                                  <div class="col-1 py-1"
+                                    style="border:0px solid #d4d4d4;display:flex;align-items:center;justify-content:center;">
+                                    {{i+1}}
+                                    <mat-icon
+                                      *ngIf="currentClosure.grant.actualRefunds.length > 1 && appComp.loggedInUser.organization.organizationType==='GRANTER'"
+                                      (click)="deleteActualRefundRow(af, i)" aria-hidden="false"
+                                      style="font-size: 12px; top: 38%; position: absolute; right: 9px; z-index: 1; cursor: pointer; width: auto; height: auto;"
+                                      aria-label="Example home icon" inline="false" title="Delete this row">
+                                      delete_outline
+                                    </mat-icon>
                                   </div>
-                                  <div class="col-3 text-right text-header py-1" style="border:0px solid #d4d4d4;">
-                                    Date</div>
-                                  <div class="col-3 text-right text-header py-1" style="border:0px solid #d4d4d4;">
-                                    Amount</div>
-                                  <div class="col-5 text-left text-header py-1" style="border:0px solid #d4d4d4;">
-                                    Note</div>
-                                  <ng-container *ngFor="let af of currentClosure.grant.actualRefunds;let i=index">
-                                    <div class="col-1 py-1"
-                                      style="border:0px solid #d4d4d4;display:flex;align-items:center;justify-content:center;">
-                                      {{i+1}}
-                                      <mat-icon
-                                        *ngIf="currentClosure.grant.actualRefunds.length > 1 && appComp.loggedInUser.organization.organizationType==='GRANTER'"
-                                        (click)="deleteActualRefundRow(af, i)" aria-hidden="false"
-                                        style="font-size: 12px; top: 38%; position: absolute; right: 9px; z-index: 1; cursor: pointer; width: auto; height: auto;"
-                                        aria-label="Example home icon" inline="false" title="Delete this row">
-                                        delete_outline
-                                      </mat-icon>
-                                    </div>
-                                    <div class="col-3 py-1" style="border:0px solid #d4d4d4;">
-                                      <mat-form-field>
-                                        <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
-                                          (click)='openARDate(af,$event)' [value]="getRedundDate(af.refundDate)"
-                                          class="anu-input text-center" [ngModel]="af.refundDate | date: 'dd-MMM-yyyy'"
-                                          [ngModelOptions]="{ standAlone: true }" matInput placeholder="" readonly />
-                                        <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'"
-                                          [value]="getRedundDate(af.refundDate)" class="anu-input text-center"
-                                          [ngModel]="af.refundDate | date: 'dd-MMM-yyyy'"
-                                          [ngModelOptions]="{ standAlone: true }" matInput placeholder="" readonly
-                                          style="background:#e6e6e6 !important;" />
-                                        <mat-icon *ngIf="
+                                  <div class="col-3 py-1" style="border:0px solid #d4d4d4;">
+                                    <mat-form-field>
+                                      <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
+                                        (click)='openARDate(af,$event)' [value]="getRedundDate(af.refundDate)"
+                                        class="anu-input text-center" [ngModel]="af.refundDate | date: 'dd-MMM-yyyy'"
+                                        [ngModelOptions]="{ standAlone: true }" matInput placeholder="" readonly />
+                                      <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'"
+                                        [value]="getRedundDate(af.refundDate)" class="anu-input text-center"
+                                        [ngModel]="af.refundDate | date: 'dd-MMM-yyyy'"
+                                        [ngModelOptions]="{ standAlone: true }" matInput placeholder="" readonly
+                                        style="background:#e6e6e6 !important;" />
+                                      <mat-icon *ngIf="
                                         af.refundDate !== undefined &&
                                         af.refundDate !== null && appComp.loggedInUser.organization.organizationType==='GRANTER'
                         " (click)="clearRowDate(af,i)" style="
@@ -199,7 +199,7 @@
                           cursor: pointer;
                           color: #7f7f7f;
                         ">clear</mat-icon>
-                                        <mat-icon (click)="openARDate(af,$event)" [ngStyle]="
+                                      <mat-icon (click)="openARDate(af,$event)" [ngStyle]="
                                         af.refundDate !== undefined &&
                                         af.refundDate !== null && appComp.loggedInUser.organization.organizationType==='GRANTER'
                             ? {
@@ -219,56 +219,55 @@
                                 cursor: 'pointer'
                               }
                         ">calendar_today</mat-icon>
-                                      </mat-form-field>
-                                    </div>
-                                    <div class="col-3 py-1" style="border:0px solid #d4d4d4;">
-                                      <mat-form-field>
-                                        <p *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
-                                          [id]="'afp_'+af.id" (click)="toggleARAmountInput($event)"
-                                          class="anu-input text-right"
-                                          style="position: absolute; height: 100%; width: 100%; margin: 0; visibility: visible;">
-                                          {{getFormattedARAmount(af.amount)}}</p>
-                                        <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
-                                          style="visibility: hidden;" [id]="'afinput_'+af.id" type="number"
-                                          (blur)="toggleARInput($event,af)" [(ngModel)]="af.amount" class="anu-input"
-                                          [ngModelOptions]="{ standAlone: true }" matInput placeholder="" />
-                                        <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'"
-                                          disabled [id]="'afinput_'+af.id" type="text"
-                                          [value]="currencyService.getFormattedAmount(af.amount)"
-                                          class="anu-input text-right" style="background:#e6e6e6 !important;"
-                                          [ngModelOptions]="{ standAlone: true }" matInput placeholder="" />
+                                    </mat-form-field>
+                                  </div>
+                                  <div class="col-3 py-1" style="border:0px solid #d4d4d4;">
+                                    <mat-form-field>
+                                      <p *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
+                                        [id]="'afp_'+af.id" (click)="toggleARAmountInput($event)"
+                                        class="anu-input text-right"
+                                        style="position: absolute; height: 100%; width: 100%; margin: 0; visibility: visible;">
+                                        {{getFormattedARAmount(af.amount)}}</p>
+                                      <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
+                                        style="visibility: hidden;" [id]="'afinput_'+af.id" type="number"
+                                        (blur)="toggleARInput($event,af)" [(ngModel)]="af.amount" class="anu-input"
+                                        [ngModelOptions]="{ standAlone: true }" matInput placeholder="" />
+                                      <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'"
+                                        disabled [id]="'afinput_'+af.id" type="text"
+                                        [value]="currencyService.getFormattedAmount(af.amount)"
+                                        class="anu-input text-right" style="background:#e6e6e6 !important;"
+                                        [ngModelOptions]="{ standAlone: true }" matInput placeholder="" />
 
-                                      </mat-form-field>
-                                    </div>
-                                    <div class="col-5 py-1" style="border:0px solid #d4d4d4;">
-                                      <mat-form-field>
-                                        <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
-                                          [(ngModel)]="af.note" class="anu-input" (blur)="updateRefundLineItem(af)"
-                                          [ngModelOptions]="{ standAlone: true }" matInput placeholder="" />
-                                        <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'"
-                                          disabled [(ngModel)]="af.note" class="anu-input"
-                                          (blur)="updateRefundLineItem(af)" [ngModelOptions]="{ standAlone: true }"
-                                          matInput placeholder="" style="background:#e6e6e6 !important;" />
-                                      </mat-form-field>
-                                    </div>
-                                  </ng-container>
-                                  <ng-container *ngIf="currentClosure.grant.actualRefunds.length>1">
-                                    <div class="col-1" style="border:0px solid #d4d4d4;"><strong>Totals</strong></div>
-                                    <div class="col-3" style="border:0px solid #d4d4d4;"></div>
-                                    <div class="col-3 text-right pr-4" style="border:0px solid #d4d4d4;">
-                                      {{getActualRefundsTotal()}}
-                                    </div>
-                                    <div class="col-5" style="border:0px solid #d4d4d4;"></div>
-                                  </ng-container>
-                                </div>
-                              </ng-container>
-                              <div *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
-                                class="col-12">
-                                <span (click)="addActualRefunds()" style="cursor: pointer"><em
-                                    class="fas fa-plus-circle text-green mr-1"></em>Add a row</span>
+                                    </mat-form-field>
+                                  </div>
+                                  <div class="col-5 py-1" style="border:0px solid #d4d4d4;">
+                                    <mat-form-field>
+                                      <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
+                                        [(ngModel)]="af.note" class="anu-input" (blur)="updateRefundLineItem(af)"
+                                        [ngModelOptions]="{ standAlone: true }" matInput placeholder="" />
+                                      <input *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'"
+                                        disabled [(ngModel)]="af.note" class="anu-input"
+                                        (blur)="updateRefundLineItem(af)" [ngModelOptions]="{ standAlone: true }"
+                                        matInput placeholder="" style="background:#e6e6e6 !important;" />
+                                    </mat-form-field>
+                                  </div>
+                                </ng-container>
+                                <ng-container *ngIf="currentClosure.grant.actualRefunds.length>1">
+                                  <div class="col-1" style="border:0px solid #d4d4d4;"><strong>Totals</strong></div>
+                                  <div class="col-3" style="border:0px solid #d4d4d4;"></div>
+                                  <div class="col-3 text-right pr-4" style="border:0px solid #d4d4d4;">
+                                    {{getActualRefundsTotal()}}
+                                  </div>
+                                  <div class="col-5" style="border:0px solid #d4d4d4;"></div>
+                                </ng-container>
                               </div>
-                              <!-- PLACE WHERE WE HAD THE CLOSURE DOCS-->
-                           
+                            </ng-container>
+                            <div *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'" class="col-12">
+                              <span (click)="addActualRefunds()" style="cursor: pointer"><em
+                                  class="fas fa-plus-circle text-green mr-1"></em>Add a row</span>
+                            </div>
+                            <!-- PLACE WHERE WE HAD THE CLOSURE DOCS-->
+
                           </div>
 
                         </ng-container>
@@ -283,215 +282,89 @@
                 padding: 20px;
                 background: #fcfcfc;
               ">
-                    <div class="col-12">
-                      <p class="text-header px-0">Project Refund Documents</p>
-                    </div>
-                    <div class="col-sm-12 col-lg-12 text-left">
-                      <div class="row mx-3">
-                        <div class="col-6">
-                          <button class="btn btn-sm btn-green w-100">
-                            <mat-icon style='display:flex;align-items:center;justify-content: center;'>
-                              business
-                            </mat-icon>
-                            Browse from library
-                          </button>
+                        <div class="col-12">
+                          <p class="text-header px-0">Project Refund Documents</p>
                         </div>
-                        <div class="col-6 pl-0 pr-2">
-                          <label for="projectDocument" class="btn btn-sm btn-green w-100 ml-0">
-                            <mat-icon style='display:flex;align-items:center;justify-content: center;'>
-                              computer
-                            </mat-icon>
-                            Browse from system
-                          </label>
-                          <input id="projectDocument" type="file" style="height: 0; visibility: hidden;" multiple
-                            (change)="
+                        <div class="col-sm-12 col-lg-12 text-left">
+                          <div class="row mx-3">
+                            <div class="col-6">
+                              <button class="btn btn-sm btn-green w-100">
+                                <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                                  business
+                                </mat-icon>
+                                Browse from library
+                              </button>
+                            </div>
+                            <div class="col-6 pl-0 pr-2">
+                              <label for="projectDocument" class="btn btn-sm btn-green w-100 ml-0">
+                                <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                                  computer
+                                </mat-icon>
+                                Browse from system
+                              </label>
+                              <input id="projectDocument" type="file" style="height: 0; visibility: hidden;" multiple
+                                (change)="
                             processSelectedClosureDocFiles($event)
                               " [accept]="appComp.acceptedFileTypes" />
-                        </div>
-                      </div>
-                      <mat-nav-list>
-                        <ng-container *ngFor="let attachment of currentClosure.closureDocuments">
-                          <mat-list-item>
-                            <p [id] mat-line style="
+                            </div>
+                          </div>
+                          <mat-nav-list>
+                            <ng-container *ngFor="let attachment of currentClosure.closureDocuments">
+                              <mat-list-item>
+                                <p [id] mat-line style="
                                   border-bottom: 1px solid #d4d4d4;
                                   padding-left: 0;font-size: 14px;
                                 ">
-                              {{ attachment.name }}
-                            </p>
-                            <input id='closure_attachment_{{attachment.id}}' mat-list-icon class="attachment-checkbox"
-                              type="checkbox" (change)="
+                                  {{ attachment.name }}
+                                </p>
+                                <input id='closure_attachment_{{attachment.id}}' mat-list-icon
+                                  class="attachment-checkbox" type="checkbox" (change)="
                                   handleClosureDocSelection(attachment.id)
                                 " style="width: 18px;" />
-                            <button [disabled]="noSingleClosureDocAction" class='single-doc'
-                              (click)="previewDocument('closure-document',attachment)">
-                              <mat-icon class="float-right"
-                                [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
-                                remove_red_eye</mat-icon>
-                            </button>
-                            <button [disabled]="noSingleClosureDocAction" class='single-doc'>
-                              <mat-icon class=" float-right" (click)="downloadSingleClosureDoc(attachment.id)"
-                                [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
-                                file_download</mat-icon>
-                            </button>
-                            <button [disabled]="noSingleClosureDocAction" class='single-doc'
-                              (click)="deleteSingleClosureDoc(attachment.id)">
-                              <mat-icon class="float-right"
-                                [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
-                                delete_outlined</mat-icon>
-                            </button>
-                          </mat-list-item>
-                        </ng-container>
-                        <mat-list-item *ngIf="
+                                <button [disabled]="noSingleClosureDocAction" class='single-doc'
+                                  (click)="previewDocument('closure-document',attachment)">
+                                  <mat-icon class="float-right"
+                                    [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                    remove_red_eye</mat-icon>
+                                </button>
+                                <button [disabled]="noSingleClosureDocAction" class='single-doc'>
+                                  <mat-icon class=" float-right" (click)="downloadSingleClosureDoc(attachment.id)"
+                                    [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                    file_download</mat-icon>
+                                </button>
+                                <button [disabled]="noSingleClosureDocAction" class='single-doc'
+                                  (click)="deleteSingleClosureDoc(attachment.id)">
+                                  <mat-icon class="float-right"
+                                    [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
+                                    delete_outlined</mat-icon>
+                                </button>
+                              </mat-list-item>
+                            </ng-container>
+                            <mat-list-item *ngIf="
                              currentClosure.closureDocuments &&
                              currentClosure.closureDocuments.length > 0
                             ">
-                          <button id="downloadBtn" [disabled]="!downloadAndDeleteClosureDocsAllowed"
-                            class="btn btn-sm btn-blue" (click)="downloadClosureDocsSelection()">
-                            <mat-icon style='display:flex;align-items:center;justify-content: center;'>
-                              system_update_alt</mat-icon>
-                            Download Selected Documents
-                          </button>
+                              <button id="downloadBtn" [disabled]="!downloadAndDeleteClosureDocsAllowed"
+                                class="btn btn-sm btn-blue" (click)="downloadClosureDocsSelection()">
+                                <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                                  system_update_alt</mat-icon>
+                                Download Selected Documents
+                              </button>
 
-                          <button id="deleteBtn" class="btn btn-sm btn-blue ml-4"
-                            [disabled]="!downloadAndDeleteClosureDocsAllowed" (click)="deleteClosureDocsSelection()">
-                            <mat-icon style='display:flex;align-items:center;justify-content: center;'>
-                              delete_outlined
-                            </mat-icon>Delete
-                            Selected Documents
-                          </button>
-                        </mat-list-item>
-                      </mat-nav-list>
-                    </div>
-                      </div>
-                      </ng-container>
-                    <!-- <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
-                      <div *ngIf="action==='ProjectRefundDetails'">
-                        <div>
-                          <ng-container #sectionsContainer *ngFor="let attribute of section.attributes; let i = index">
-                            <div id="fieldBlock_{{ attribute.id }}" class="row mb-4 mt-2" style="
-                      border: 1px solid #ececec;
-                      border-radius: 4px;
-                      padding: 20px;
-                      background: #fcfcfc;
-                    ">
-                              <ng-container class="mb-2">
-                                <div class="col-sm-12 col-lg-12 text-left" *ngIf="attribute.fieldType === 'document'">
-                                  <div style="display: flex; align-items: baseline" class="attachments-wrapper">
-                                    <div class="col-8 pl-0 pr-1">
-                                      <form class="example-form">
-                                        <mat-form-field class="example-chip-list">
-                                          <mat-chip-list #chipList aria-label="Fruit selection">
-                                            <button class="btn btn-sm btn-blue w-100" [matAutocomplete]="auto">
-                                              <mat-icon style='display:flex;align-items:center;justify-content: center;'>
-                                                business</mat-icon>Browse from library
-                                            </button>
-                                            <input id="templateLib_{{ attribute.id }}" class="" style="
-                                      max-width: 0;
-                                      height: 0;
-                                      padding: 0 !important;
-                                      margin: 0;
-                                    " #fruitInput [formControl]="myControl" [matAutocomplete]="auto"
-                                              [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="
-                                      separatorKeysCodes
-                                    " />
-                                          </mat-chip-list>
-                                          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="
-                                    selected(attribute, $event)
-                                  ">
-                                            <ng-container *ngFor="
-                                      let doc of filteredOptions | async
-                                    ">
-                                              <mat-option [value]="doc" [disabled]="checkIfSelected(doc)">
-                                                {{ doc.name }}
-                                              </mat-option>
-                                            </ng-container>
-                                          </mat-autocomplete>
-                                        </mat-form-field>
-                                      </form>
-                                    </div>
-                                    <div class="col-4 pr-0">
-                                      <label for="attribute_fileupload_{{ attribute.id }}"
-                                        class="btn btn-sm btn-green w-100">
-                                        <mat-icon style='display:flex;align-items:center;justify-content: center;'>
-                                          computer
-                                        </mat-icon>Browse from system
-                                      </label>
-                                      <input id="attribute_fileupload_{{ attribute.id }}" type="file"
-                                        style="height: 0; visibility: hidden" multiple (change)="
-                                processSelectedFiles(
-                                  section,
-                                  attribute,
-                                  $event
-                                )
-                              " [accept]="appComp.acceptedFileTypes" />
-                                    </div>
-                                  </div>
-                                  <mat-nav-list>
-                                    <ng-container *ngFor="let attachment of attribute.attachments">
-                                      <mat-list-item>
-                                        <p id="fileAttachment_{{ attachment.id }}" mat-line style="
-                                  border-bottom: 1px solid #d4d4d4;
-                                  padding-left: 0;
-                                ">
-                                          {{ attachment.name + "." + attachment.type }}
-                                        </p>
-                                        <input id="attriute_{{ attribute.id }}_attachment_{{
-                                  attachment.id
-                                }}" mat-list-icon class="attachment-checkbox" type="checkbox" (change)="
-                                  handleSelection(attribute.id, attachment.id)
-                                " />
-                                        <button [disabled]="noSingleDocAction" class='single-doc'
-                                          (click)="previewDocument('closure',attachment)">
-                                          <mat-icon class="float-right"
-                                            [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
-                                            remove_red_eye</mat-icon>
-                                        </button>
-                                        <button [disabled]="noSingleDocAction" class='single-doc'>
-                                          <mat-icon class=" float-right" (click)="downloadSingleDoc(attachment.id)"
-                                            [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
-                                            file_download</mat-icon>
-                                        </button>
-                                        <button [disabled]="noSingleDocAction" class='single-doc'
-                                          (click)="deleteSingleDoc(attribute.id,attachment.id)">
-                                          <mat-icon class="float-right"
-                                            [ngClass]="noSingleDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
-                                            delete_outlined</mat-icon>
-                                        </button>
-                                      </mat-list-item>
-                                    </ng-container>
-                                    <mat-list-item *ngIf="
-                              attribute.attachments &&
-                              attribute.attachments.length > 0
-                            ">
-                                      <button id="attachments_download_{{ attribute.id }}" class="btn btn-sm btn-blue"
-                                        [disabled]="!downloadAndDeleteAllowed" (click)="downloadSelection(attribute.id)">
-                                        <mat-icon style="
-                                  cursor: pointer;
-                                  top: 5px;
-                                  font-size: 13px;
-                                  margin-right: 3px;
-                                ">
-                                          system_update_alt
-                                        </mat-icon>
-                                        Download Selected Documents
-                                      </button>
-    
-                                      <button id="attachments_delete_{{ attribute.id }}" class="btn btn-sm btn-blue ml-4"
-                                        [disabled]="!downloadAndDeleteAllowed" (click)="deleteSelection(attribute.id)">
-                                        <mat-icon style='display:flex;align-items:center;justify-content: center;'>
-                                          _outlined
-                                        </mat-icon>Delete Selected Documents
-                                      </button>
-                                    </mat-list-item>
-                                  </mat-nav-list>
-                                </div>
-                              </ng-container>
-                              
-                            </div>
-                          </ng-container>
+                              <button id="deleteBtn" class="btn btn-sm btn-blue ml-4"
+                                [disabled]="!downloadAndDeleteClosureDocsAllowed"
+                                (click)="deleteClosureDocsSelection()">
+                                <mat-icon style='display:flex;align-items:center;justify-content: center;'>
+                                  delete_outlined
+                                </mat-icon>Delete
+                                Selected Documents
+                              </button>
+                            </mat-list-item>
+                          </mat-nav-list>
                         </div>
                       </div>
-                    </ng-container> -->
+                    </ng-container>
+
                   </div>
                 </ng-container>
                 <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
