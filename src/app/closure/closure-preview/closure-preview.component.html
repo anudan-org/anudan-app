@@ -248,7 +248,7 @@
                       style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                       Received</div>
                   </div>
-                  <div class="col-4 unspent-class px-0">
+                  <div class="col-4 unspent-class px-0" *ngIf="isExternalGrant(currentClosure.grant)">
                     <div class="text-center w-100"
                       style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
                       {{interestAmount}}</div>
@@ -259,19 +259,31 @@
                   <div class="col-4 unspent-class px-0">
                     <div class="text-center w-100"
                       style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                      {{getFormattedRefundAmount(currentClosure.grant.actualSpent)}}</div>
+                      {{getFormattedRefundAmount(currentClosure.actualSpent)}}</div>
                     <div class="text-center w-100"
                       style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                       Actual Spent</div>
 
                   </div>
+
+                  <div class="col-4" *ngIf="!checkIfGrantHasRefundAmount() && !isExternalGrant(currentClosure.grant)">
+                    <div class="text-center w-100"
+                      style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                      {{unspentAmount}}
+                    </div>
+                    <div class="text-center w-100"
+                      style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                      Unspent Amount
+                    </div>
+                  </div>
+
                   <div class="col-12">
                     <br />
                   </div>
 
-                  <div class="col-12 px-0">
+                  <div class="col-12 px-0" *ngIf="isExternalGrant(currentClosure.grant)">
                     <div class="row mx-0">
-                      <div class="col-4" *ngIf="!checkIfGrantHasRefundAmount()">
+                      <div class="col-4" *ngIf="!checkIfGrantHasRefundAmount() ">
                         <div class="text-center w-100"
                           style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
                           {{unspentAmount}}
@@ -291,12 +303,13 @@
                         </div>
                       </div>
                     </div>
+                    <div class="col-12">
+                      <hr />
+                    </div>
                   </div>
 
 
-                  <div class="col-12">
-                    <hr />
-                  </div>
+
                   <div class="col-12 px-0" *ngIf="checkIfGrantHasRefundAmount()">
                     <p style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Refund Summary</p>
                   </div>
@@ -442,7 +455,7 @@
                                   </div>
                                   <div class="col-3">
                                     <button class="btn btn-sm btn-green"
-                                      *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) &&  (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null )"
+                                      *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) &&  (currentClosure.refundAmount===undefined || currentClosure.refundAmount===null )"
                                       [disabled]="currentClosure.grant.hasOngoingDisbursement ">{{currentClosure.grant.hasOngoingDisbursement?'Disbursement
                                       Request In-Progress':'Initiate Disbursement'}}</button>
                                   </div>
@@ -474,13 +487,13 @@
                                 !currentClosure.forGranteeUse
                               ">
                                       <input (blur)="showFormattedActualSpent($event)" #refundAmount
-                                        [(ngModel)]="currentClosure.grant.actualSpent" class="anu-input"
+                                        [(ngModel)]="currentClosure.actualSpent" class="anu-input"
                                         [ngModelOptions]="{ standAlone: true }" matInput
                                         placeholder="Record Spent (₹) - Till Date" />
                                       <p #grantRefundFormatted (click)="showActualSpentInput($event)"
                                         class="anu-input w-100 text-right"
                                         style="position: absolute; top: 5px; cursor: text"
-                                        [innerHtml]="getFormattedRefundAmount(currentClosure.grant.actualSpent)">
+                                        [innerHtml]="getFormattedRefundAmount(currentClosure.actualSpent)">
                                       </p>
                                     </mat-form-field>
                                   </div>
@@ -492,7 +505,7 @@
                                   </div>
                                   <div class="col-3">
                                     <button
-                                      *ngIf="!currentClosure.grant.hasOngoingDisbursement && (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null)"
+                                      *ngIf="!currentClosure.grant.hasOngoingDisbursement && (currentClosure.refundAmount===undefined || currentClosure.refundAmount===null)"
                                       class="btn btn-sm btn-green" (click)="captureRefund()">Initiate
                                       Refund</button>
                                   </div>
@@ -1801,7 +1814,7 @@
                         font-size: 15px;
                         font-family: Roboto, sans-serif;
                       ">{{ 'Refund Amount (₹)' }}</span>
-                        <pre>{{getFormattedRefundAmount(currentClosure.grant.refundAmount)}}</pre>
+                        <pre>{{getFormattedRefundAmount(currentClosure.refundAmount)}}</pre>
                       </div>
                       <div class="col-sm-12 col-lg-6 text-left mb-3 text-justify">
                         <span style="
@@ -1809,7 +1822,7 @@
                         font-size: 15px;
                         font-family: Roboto, sans-serif;
                       ">{{ 'Refund Reason' }}</span>
-                        <pre>{{currentClosure.grant.refundReason}}</pre>
+                        <pre>{{currentClosure.refundReason}}</pre>
                       </div>
                       <div *ngIf="currentClosure.grant.actualRefunds && currentClosure.grant.actualRefunds.length>0"
                         class="col-sm-12 col-lg-12 text-left mb-3 text-justify">

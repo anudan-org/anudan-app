@@ -298,14 +298,11 @@ export class Grant {
   closureInProgress: boolean;
   hashClosure: boolean;
   closureId: number;
-  refundAmount: number;
-  refundReason: string;
   ongoingDisbursementAmount: number;
   actualOngoingDisbursementRecorded: number;
   ongoingDisbursementNote: string;
   actualRefunds: ActualRefund[];
-  actualSpent: number;
-  interestEarned: number;
+
 }
 
 export class ActualRefund {

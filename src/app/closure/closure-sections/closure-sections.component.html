@@ -26,7 +26,7 @@
               align-items: center;
               justify-content: flex-end;
             ">
-          <a *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse"
+          <a *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse && !section.systemGenerated"
             (click)="addNewFieldToSection(section.id, section.sectionName)" class="btn btn-sm btn-green">Add a Field<em
               class="fa fa-plus-square ml-2"></em></a>
         </div>
@@ -39,8 +39,8 @@
       <mat-menu #menu="matMenu">
         <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
           <ng-container *ngIf="action === getCleanText(section)">
-            <button *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse" mat-menu-item
-              (click)="editSection(section)">
+            <button *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse && !section.systemGenerated"
+              mat-menu-item (click)="editSection(section)">
               Edit Section name
             </button>
             <button *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse" mat-menu-item (click)="
@@ -103,17 +103,18 @@
                           <div class="col-5">
                             <mat-form-field [floatLabel]="'always'" style="max-width: 190px;">
                               <mat-label>Requested Amount (₹)</mat-label>
+
                               <input type="text" matInput (blur)="showFormattedRefundAmount($event)" #refundAmount
-                                [(ngModel)]="currentClosure.grant.refundAmount" class="anu-input"
+                                [(ngModel)]="currentClosure.refundAmount" class="anu-input"
                                 [ngModelOptions]="{ standAlone: true }" placeholder="Enter Refund Amount" />
                               <p *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'"
                                 #grantRefundFormatted (click)="showRefundAmountInput($event)"
                                 class="anu-input w-100 text-right" style="position: absolute; top: 5px; cursor: text"
-                                [innerHtml]="getFormattedRefundAmount(currentClosure.grant.refundAmount)"></p>
+                                [innerHtml]="getFormattedRefundAmount(currentClosure.refundAmount)"></p>
                               <p *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'"
                                 #grantRefundFormatted class="anu-input w-100 text-right"
                                 style="position: absolute; top: 5px; background:#e6e6e6 !important;"
-                                [innerHtml]="getFormattedRefundAmount(currentClosure.grant.refundAmount)"></p>
+                                [innerHtml]="getFormattedRefundAmount(currentClosure.refundAmount)"></p>
                             </mat-form-field>
 
                             <span class="text-subheader" style="position: absolute; bottom: 0px; ">Unspent Amount:
@@ -125,7 +126,7 @@
                             <mat-form-field [floatLabel]="'always'"
                               *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'">
                               <mat-label for="rn">Note</mat-label>
-                              <input type="text" id="rn" matInput [(ngModel)]="currentClosure.grant.refundReason"
+                              <input type="text" id="rn" matInput [(ngModel)]="currentClosure.refundReason"
                                 class="anu-input" [ngModelOptions]="{ standAlone: true }" matInput
                                 placeholder="Enter Refund Note" />
 
@@ -135,7 +136,7 @@
                               *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'">Note</label>
                             <p *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'" class="anu-input"
                               style="background: #e6e6e6 !important; position: absolute; top: 18px; width: 100%; left: 0;">
-                              {{currentClosure.grant.refundReason}}
+                              {{currentClosure.refundReason}}
                             </p>
                           </div>
                         </ng-container>
@@ -274,98 +275,7 @@
                       </div>
                     </ng-container>
                   </div>
-                  <div>
-                    <ng-container>
-                      <div class="row mb-4 mt-2" style="
-                border: 1px solid #ececec;
-                border-radius: 4px;
-                padding: 20px;
-                background: #fcfcfc;
-              ">
-                        <div class="col-12">
-                          <p class="text-header px-0">Project Refund Documents</p>
-                        </div>
-                        <div class="col-sm-12 col-lg-12 text-left">
-                          <div class="row mx-3">
-                            <div class="col-6">
-                              <button class="btn btn-sm btn-green w-100">
-                                <mat-icon style='display:flex;align-items:center;justify-content: center;'>
-                                  business
-                                </mat-icon>
-                                Browse from library
-                              </button>
-                            </div>
-                            <div class="col-6 pl-0 pr-2">
-                              <label for="projectDocument" class="btn btn-sm btn-green w-100 ml-0">
-                                <mat-icon style='display:flex;align-items:center;justify-content: center;'>
-                                  computer
-                                </mat-icon>
-                                Browse from system
-                              </label>
-                              <input id="projectDocument" type="file" style="height: 0; visibility: hidden;" multiple
-                                (change)="
-                            processSelectedClosureDocFiles($event)
-                              " [accept]="appComp.acceptedFileTypes" />
-                            </div>
-                          </div>
-                          <mat-nav-list>
-                            <ng-container *ngFor="let attachment of currentClosure.closureDocuments">
-                              <mat-list-item>
-                                <p [id] mat-line style="
-                                  border-bottom: 1px solid #d4d4d4;
-                                  padding-left: 0;font-size: 14px;
-                                ">
-                                  {{ attachment.name }}
-                                </p>
-                                <input id='closure_attachment_{{attachment.id}}' mat-list-icon
-                                  class="attachment-checkbox" type="checkbox" (change)="
-                                  handleClosureDocSelection(attachment.id)
-                                " style="width: 18px;" />
-                                <button [disabled]="noSingleClosureDocAction" class='single-doc'
-                                  (click)="previewDocument('closure-document',attachment)">
-                                  <mat-icon class="float-right"
-                                    [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
-                                    remove_red_eye</mat-icon>
-                                </button>
-                                <button [disabled]="noSingleClosureDocAction" class='single-doc'>
-                                  <mat-icon class=" float-right" (click)="downloadSingleClosureDoc(attachment.id)"
-                                    [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
-                                    file_download</mat-icon>
-                                </button>
-                                <button [disabled]="noSingleClosureDocAction" class='single-doc'
-                                  (click)="deleteSingleClosureDoc(attachment.id)">
-                                  <mat-icon class="float-right"
-                                    [ngClass]="noSingleClosureDocAction?'singledoc-ico-disabled':'singledoc-ico-enabled'">
-                                    delete_outlined</mat-icon>
-                                </button>
-                              </mat-list-item>
-                            </ng-container>
-                            <mat-list-item *ngIf="
-                             currentClosure.closureDocuments &&
-                             currentClosure.closureDocuments.length > 0
-                            ">
-                              <button id="downloadBtn" [disabled]="!downloadAndDeleteClosureDocsAllowed"
-                                class="btn btn-sm btn-blue" (click)="downloadClosureDocsSelection()">
-                                <mat-icon style='display:flex;align-items:center;justify-content: center;'>
-                                  system_update_alt</mat-icon>
-                                Download Selected Documents
-                              </button>
 
-                              <button id="deleteBtn" class="btn btn-sm btn-blue ml-4"
-                                [disabled]="!downloadAndDeleteClosureDocsAllowed"
-                                (click)="deleteClosureDocsSelection()">
-                                <mat-icon style='display:flex;align-items:center;justify-content: center;'>
-                                  delete_outlined
-                                </mat-icon>Delete
-                                Selected Documents
-                              </button>
-                            </mat-list-item>
-                          </mat-nav-list>
-                        </div>
-                      </div>
-                    </ng-container>
-
-                  </div>
                 </ng-container>
                 <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
                   <div *ngIf="action === getCleanText(section)">
@@ -400,7 +310,7 @@
                             <div class="col-sm-4 col-lg-8" *ngIf="attribute.fieldType === 'document'">
                               <mat-form-field *ngIf="
                         currentClosure.canManage &&
-                        !currentClosure.forGranteeUse
+                        !currentClosure.forGranteeUse && !section.systemGenerated
                       ">
 
                                 <input id="field_{{ attribute.id }}" [(ngModel)]="attribute.fieldName" class="anu-input"
@@ -409,12 +319,12 @@
                               <label *ngIf="
                         (currentClosure.canManage &&
                           currentClosure.forGranteeUse) ||
-                        !currentClosure.canManage
+                        !currentClosure.canManage || section.systemGenerated
                       ">Title:</label>
                               <p class="anu-input" *ngIf="
                         (currentClosure.canManage &&
                           currentClosure.forGranteeUse) ||
-                        !currentClosure.canManage
+                        !currentClosure.canManage || section.systemGenerated
                       " style="background: #f0f1f0 !important">
                                 {{ attribute.fieldName }}
                               </p>
@@ -487,9 +397,9 @@
                             <div class="col-sm-4 col-lg-4 text-left" *ngIf="
                       currentClosure.canManage &&
                       !currentClosure.forGranteeUse &&
-                      attribute.canEdit
+                      attribute.canEdit 
                     ">
-                              <mat-form-field *ngIf="attribute.fieldType!=='disbursement'">
+                              <mat-form-field *ngIf="attribute.fieldType!=='disbursement'  ">
                                 <mat-label>Type</mat-label>
                                 <mat-select [disabled]="attribute.fieldType==='disbursement'" (selectionChange)="
                 handleTypeChange($event, attribute, section)
@@ -505,12 +415,12 @@
                               <label *ngIf="
                         (currentClosure.canManage &&
                           currentClosure.forGranteeUse) ||
-                        !currentClosure.canManage
+                        !currentClosure.canManage 
                       ">Type:</label>
                               <p class="anu-input" *ngIf="
                         (currentClosure.canManage &&
                           currentClosure.forGranteeUse) ||
-                        !currentClosure.canManage
+                        !currentClosure.canManage 
                       " style="background: #f0f1f0 !important">
                                 {{ getFieldTypeDisplayValue(attribute.fieldType) }}
                               </p>

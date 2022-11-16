@@ -23,6 +23,10 @@ export class GrantClosure {
   ownerName: string;
   disabledByAmendment: boolean;
   closureDocuments: ClosureDocument[];
+  refundAmount: number;
+  refundReason: string;
+  actualSpent: number;
+  interestEarned: number;
 }
 
 export class ClosureDocument {
@@ -115,6 +119,10 @@ export class ClosureSnapshot {
   description: string;
   statusId: number;
   closureDetails: ClosureDetails;
+  refundAmount: number;
+  refundReason: string;
+  actualSpent: number;
+  interestEarned: number;
 }
 
 export class ClosureNote {

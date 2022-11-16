@@ -102,8 +102,8 @@ export class ClosureHeaderComponent implements OnInit {
 
 
   @ViewChild("createSectionModal") createSectionModal: ElementRef;
-  @ViewChild("grantRefundFormatted") grantRefundFormatted: ElementRef;
-  @ViewChild("refundAmount") refundAmount: ElementRef;
+  @ViewChild("grantActualSpentFormatted") grantActualSpentFormatted: ElementRef;
+  @ViewChild("spentAmt") spentAmt: ElementRef;
   @ViewChild("plannedProjectFundsModal") plannedProjectFundsModal: ElementRef;
   @ViewChild("receivedProjectFundsModal") receivedProjectFundsModal: ElementRef;
   @ViewChild("popupcontainer") popupcontainer: ElementRef;
@@ -210,7 +210,7 @@ export class ClosureHeaderComponent implements OnInit {
         this.tenantUsers = config.tenantUsers;
         this.appComp.tenantUsers = config.tenantUsers;
         this.appComp.closureTransitions = config.reportTransitions;
-        this.interestEarned = this.currentClosure.grant.interestEarned;
+        this.interestEarned = this.currentClosure.interestEarned;
       });
     });
 
@@ -231,7 +231,7 @@ export class ClosureHeaderComponent implements OnInit {
 
     this.closureService.currentMessage.subscribe((closure) => {
       this.currentClosure = closure;
-      this.actualSpent = this.currentClosure.grant.actualSpent;
+      this.actualSpent = this.currentClosure.actualSpent;
       this.myControl = new FormControl(this.currentClosure.reason);
       if (this.appComp.loggedInUser.organization.organizationType === 'GRANTEE') {
         this.myControl.disable();
@@ -516,15 +516,14 @@ export class ClosureHeaderComponent implements OnInit {
   setSpendSumamry() {
 
     var disbursement: number = this.currentClosure.grant.approvedDisbursementsTotal ? this.currentClosure.grant.approvedDisbursementsTotal : 0;
-    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+    const spent = this.currentClosure.actualSpent ? this.currentClosure.actualSpent : 0;
     this.spentAmount = this.currencyService.getFormattedAmount(spent);
 
-    var interest: number = this.currentClosure.grant.interestEarned ? this.currentClosure.grant.interestEarned : 0;
+    var interest: number = this.currentClosure.interestEarned ? this.currentClosure.interestEarned : 0;
     this.interestAmount = this.currencyService.getFormattedAmount(interest);
     this.disbursedAmount = this.currencyService.getFormattedAmount(disbursement);
     this.unspentAmount = this.currencyService.getFormattedAmount(Number(disbursement) + Number(interest) - spent);
   }
-
 
   getActualRefundsForGrant() {
     let actualRfundsTotal = 0;
@@ -538,18 +537,18 @@ export class ClosureHeaderComponent implements OnInit {
 
 
   showFormattedActualSpent(evt: any) {
-    this.currentClosure.grant.actualSpent = this.actualSpent;
+    this.currentClosure.actualSpent = this.actualSpent;
     evt.currentTarget.style.visibility = "hidden";
-    this.grantRefundFormatted.nativeElement.style.visibility = "visible";
+    this.grantActualSpentFormatted.nativeElement.style.visibility = "visible";
   }
 
   showActualSpentInput(evt: any) {
     evt.currentTarget.style.visibility = "hidden";
-    this.refundAmount.nativeElement.style.visibility = "visible";
+    this.spentAmt.nativeElement.style.visibility = "visible";
   }
 
   showFormattedInterestEarned(evt: any) {
-    this.currentClosure.grant.interestEarned = this.interestEarned;
+    this.currentClosure.interestEarned = this.interestEarned;
     evt.currentTarget.style.visibility = "hidden";
     this.grantInterestFormatted.nativeElement.style.visibility = "visible";
   }
@@ -561,16 +560,16 @@ export class ClosureHeaderComponent implements OnInit {
 
 
 
-  getFormattedRefundAmount(amount: number): string {
+  getFormattedActualSpent(amount: number): string {
     if (amount) {
-      return inf.format(amount, 2);
+      return this.currencyService.getFormattedAmount(amount);
     }
     return "<div class='amountPlaceholder'>Enter Spent Amount</div>";
   }
 
   getFormattedInterestEarned(amount: number): string {
     if (amount) {
-      return inf.format(amount, 2);
+      return this.currencyService.getFormattedAmount(amount);
     }
     return "<div class='amountPlaceholder'>Enter Interest Earned</div>";
   }
@@ -650,8 +649,8 @@ export class ClosureHeaderComponent implements OnInit {
   }
 
   getRefundAmount() {
-    if (this.currentClosure.grant.refundAmount) {
-      return this.currencyService.getFormattedAmount(this.currentClosure.grant.refundAmount);
+    if (this.currentClosure.refundAmount) {
+      return this.currencyService.getFormattedAmount(this.currentClosure.refundAmount);
     } else {
       return this.currencyService.getFormattedAmount(0);
     }
@@ -1036,8 +1035,8 @@ export class ClosureHeaderComponent implements OnInit {
   getPendingAmount() {
     let p = 0;
     let r = 0;
-    if (this.currentClosure.grant.refundAmount) {
-      p = this.currentClosure.grant.refundAmount;
+    if (this.currentClosure.refundAmount) {
+      p = this.currentClosure.refundAmount;
     }
 
     if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {

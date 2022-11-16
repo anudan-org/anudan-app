@@ -86,7 +86,7 @@ export class ClosurePreviewComponent implements OnInit {
     this.closureService.currentMessage.subscribe((closure) => {
       this.currentClosure = closure;
 
-      console.log(this.currentClosure);
+
     });
 
     const httpOptions = {
@@ -141,10 +141,10 @@ export class ClosurePreviewComponent implements OnInit {
   setSpendSumamry() {
 
     var disbursement: number = this.currentClosure.grant.approvedDisbursementsTotal ? this.currentClosure.grant.approvedDisbursementsTotal : 0;
-    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+    const spent = this.currentClosure.actualSpent ? this.currentClosure.actualSpent : 0;
     this.spentAmount = this.currencyService.getFormattedAmount(spent);
 
-    var interest: number = this.currentClosure.grant.interestEarned ? this.currentClosure.grant.interestEarned : 0;
+    var interest: number = this.currentClosure.interestEarned ? this.currentClosure.interestEarned : 0;
     this.interestAmount = this.currencyService.getFormattedAmount(interest);
     this.disbursedAmount = this.currencyService.getFormattedAmount(Number(disbursement));
     this.unspentAmount = this.currencyService.getFormattedAmount(Number(disbursement) + Number(interest) - spent);
@@ -623,7 +623,7 @@ export class ClosurePreviewComponent implements OnInit {
 
   getFormattedRefundAmount(amount: number): string {
     if (amount) {
-      return inf.format(amount, 2);
+      return this.currencyService.getFormattedAmount(amount);
     }
     return inf.format(0, 2);
   }
@@ -668,7 +668,7 @@ export class ClosurePreviewComponent implements OnInit {
   setUnspentAmount() {
 
     const disbursement = this.currentClosure.grant.approvedDisbursementsTotal ? this.currentClosure.grant.approvedDisbursementsTotal : 0;
-    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
+    const spent = this.currentClosure.actualSpent ? this.currentClosure.actualSpent : 0;
     this.unspentAmount = this.currencyService.getFormattedAmount(disbursement - spent);
   }
 
@@ -685,7 +685,7 @@ export class ClosurePreviewComponent implements OnInit {
 
 
   showFormattedActualSpent(evt: any) {
-    this.currentClosure.grant.actualSpent = this.actualSpent;
+    this.currentClosure.actualSpent = this.actualSpent;
     evt.currentTarget.style.visibility = "hidden";
     this.grantRefundFormatted.nativeElement.style.visibility = "visible";
   }
@@ -697,8 +697,8 @@ export class ClosurePreviewComponent implements OnInit {
 
 
   getRefundAmount() {
-    if (this.currentClosure.grant.refundAmount) {
-      this.refundRequested = this.currencyService.getFormattedAmount(this.currentClosure.grant.refundAmount);
+    if (this.currentClosure.refundAmount) {
+      this.refundRequested = this.currencyService.getFormattedAmount(this.currentClosure.refundAmount);
     } else {
       this.refundRequested = this.currencyService.getFormattedAmount(0);
     }
@@ -714,7 +714,7 @@ export class ClosurePreviewComponent implements OnInit {
     } else {
       this.refundReceived = this.currencyService.getFormattedAmount(0);
     }
-    let refund = this.currentClosure.grant.refundAmount ? this.currentClosure.grant.refundAmount : 0;
+    let refund = this.currentClosure.refundAmount ? this.currentClosure.refundAmount : 0;
     this.pendingRefund = this.currencyService.getFormattedAmount(refund - total);
 
   }
