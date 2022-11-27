@@ -20,7 +20,7 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'registration', component: RegistrationComponent },
   { path: 'welcome', component: WelcomeComponent },
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'passwordreset', component: PasswordResetComponent },
   { path: 'setnewpassword', component: ChangePasswordComponent },
   { path: 'nocookie', component: NocookieComponent },
