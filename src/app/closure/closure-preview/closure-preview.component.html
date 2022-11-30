@@ -232,58 +232,44 @@
 
 
 
-
-                  <div class="col-12">
-                    <hr />
-                  </div>
-                  <div class="col-12 px-0">
-                    <p style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Project Fund at Closure
-                    </p>
-                  </div>
-                  <div class="col-4">
-                    <div class="text-center w-100"
-                      style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                      {{disbursedAmount}}</div>
-                    <div class="text-center w-100"
-                      style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                      Received</div>
-                  </div>
-                  <div class="col-4 unspent-class px-0" *ngIf="isExternalGrant(currentClosure.grant)">
-                    <div class="text-center w-100"
-                      style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                      {{interestAmount}}</div>
-                    <div class="text-center w-100"
-                      style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                      Interest Earned on Received Amount</div>
-                  </div>
-                  <div class="col-4 unspent-class px-0">
-                    <div class="text-center w-100"
-                      style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                      {{getFormattedRefundAmount(currentClosure.actualSpent)}}</div>
-                    <div class="text-center w-100"
-                      style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                      Actual Spent</div>
-
-                  </div>
-
-                  <div class="col-4" *ngIf="!checkIfGrantHasRefundAmount() && !isExternalGrant(currentClosure.grant)">
-                    <div class="text-center w-100"
-                      style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                      {{unspentAmount}}
+                  <div class="col-12 px-0" *ngIf="currentClosure.grant.approvedDisbursementsTotal != 0">
+                    <div class="col-12">
+                      <hr />
                     </div>
-                    <div class="text-center w-100"
-                      style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                      Unspent Amount
+                    <div class="col-12 px-0">
+                      <p style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Project Fund at
+                        Closure
+                      </p>
                     </div>
-                  </div>
+                    <div class="row h-100">
+                      <div class="col-4">
+                        <div class="text-center w-100"
+                          style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                          {{disbursedAmount}}</div>
+                        <div class="text-center w-100"
+                          style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                          Received</div>
+                      </div>
+                      <div class="col-4 unspent-class px-0" *ngIf="isExternalGrant(currentClosure.grant)">
+                        <div class="text-center w-100"
+                          style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                          {{interestAmount}}</div>
+                        <div class="text-center w-100"
+                          style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                          Interest Earned on Received Amount</div>
+                      </div>
+                      <div class="col-4 unspent-class px-0">
+                        <div class="text-center w-100"
+                          style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                          {{getFormattedRefundAmount(currentClosure.actualSpent)}}</div>
+                        <div class="text-center w-100"
+                          style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                          Actual Spent</div>
 
-                  <div class="col-12">
-                    <br />
-                  </div>
+                      </div>
 
-                  <div class="col-12 px-0" *ngIf="isExternalGrant(currentClosure.grant)">
-                    <div class="row mx-0">
-                      <div class="col-4" *ngIf="!checkIfGrantHasRefundAmount() ">
+                      <div class="col-4"
+                        *ngIf="!checkIfGrantHasRefundAmount() && !isExternalGrant(currentClosure.grant)">
                         <div class="text-center w-100"
                           style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
                           {{unspentAmount}}
@@ -294,20 +280,38 @@
                         </div>
                       </div>
 
+                      <div class="col-12">
+                        <br />
+                      </div>
 
-                      <div class="col-4 mx-0" *ngIf="!checkIfGrantHasRefundAmount()">
-                        <div>&nbsp;</div>
-                        <div class="text-left w-100 "
-                          style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 14px; margin-left:55px; font-family:Lato, sans-serif;">
-                          No refund requested.
+                      <div class="col-12 px-0" *ngIf="isExternalGrant(currentClosure.grant)">
+                        <div class="row mx-0">
+                          <div class="col-4" *ngIf="!checkIfGrantHasRefundAmount() ">
+                            <div class="text-center w-100"
+                              style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                              {{unspentAmount}}
+                            </div>
+                            <div class="text-center w-100"
+                              style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                              Unspent Amount
+                            </div>
+                          </div>
+
+
+                          <div class="col-4 mx-0" *ngIf="!checkIfGrantHasRefundAmount()">
+                            <div>&nbsp;</div>
+                            <div class="text-left w-100 "
+                              style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 14px; margin-left:55px; font-family:Lato, sans-serif;">
+                              No refund requested.
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <hr />
                         </div>
                       </div>
                     </div>
-                    <div class="col-12">
-                      <hr />
-                    </div>
                   </div>
-
 
 
                   <div class="col-12 px-0" *ngIf="checkIfGrantHasRefundAmount()">

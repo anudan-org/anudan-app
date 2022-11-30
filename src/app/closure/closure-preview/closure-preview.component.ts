@@ -637,7 +637,7 @@ export class ClosurePreviewComponent implements OnInit {
 
   getReceivedFunds(i) {
     const funds = document.getElementsByClassName('rf');
-    return (funds && funds.length) > 0 ? funds[i].innerHTML : '';
+    return (funds && funds.length) > 0 ? funds[i].innerHTML : 0;
   }
 
   getPlannedFunds(i) {
