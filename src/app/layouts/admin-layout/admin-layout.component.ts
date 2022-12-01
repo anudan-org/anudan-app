@@ -123,7 +123,8 @@ export class AdminLayoutComponent implements OnInit {
       (disbursement) => (this.currentDisbursement = disbursement)
     );
 
-    const isWindows = navigator.platform.indexOf("Win") > -1 ? true : false;
+    let platform = navigator.userAgentData.platform;
+    const isWindows = platform.indexOf("Win") > -1 ? true : false;
 
     if (
       isWindows &&
@@ -365,9 +366,10 @@ export class AdminLayoutComponent implements OnInit {
   }
   isMac(): boolean {
     let bool: boolean;
+    let platform = navigator.userAgentData.platform;
     if (
-      navigator.platform.toUpperCase().indexOf("MAC") >= 0 ||
-      navigator.platform.toUpperCase().indexOf("IPAD") >= 0
+      platform.toUpperCase().indexOf("MAC") >= 0 ||
+      platform.toUpperCase().indexOf("IPAD") >= 0
     ) {
       bool = true;
     }
