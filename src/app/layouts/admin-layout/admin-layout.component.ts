@@ -125,6 +125,9 @@ export class AdminLayoutComponent implements OnInit {
     let platform = navigator.userAgent;
     const isWindows = platform.toUpperCase().indexOf("WIN") > -1 ? true : false;
 
+    let platform = navigator.userAgentData.platform;
+    const isWindows = platform.indexOf("Win") > -1 ? true : false;
+
     if (
       isWindows &&
       !document
@@ -365,7 +368,7 @@ export class AdminLayoutComponent implements OnInit {
   }
   isMac(): boolean {
     let bool: boolean;
-    let platform = navigator.userAgent;
+    let platform = navigator.userAgentData.platform;
     if (
       platform.toUpperCase().indexOf("MAC") >= 0 ||
       platform.toUpperCase().indexOf("IPAD") >= 0
