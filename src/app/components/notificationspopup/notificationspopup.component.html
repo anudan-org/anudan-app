@@ -8,7 +8,8 @@
         <mat-panel-title style="display: flex; align-items: flex-start; flex-direction: column;">
           <p class="my-0 mr-2 text-green" *ngIf="!notification.read"
             style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width: 620px;">
-            <strong>{{notification.title}}</strong></p>
+            <strong>{{notification.title}}</strong>
+          </p>
           <p class="my-0 mr-2" *ngIf="notification.read"
             style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width: 620px;">{{notification.title}}
           </p>
@@ -23,6 +24,8 @@
         (click)="manageReport(notification)">Go to report</button>
       <button class="btn btn-sm btn-green" *ngIf="notification.notificationFor==='DISBURSEMENT'"
         (click)="manageDisbursement(notification)">Go to Approval Note</button>
+      <button class="btn btn-sm btn-green" *ngIf="notification.notificationFor==='CLOSURE'"
+        (click)="manageClosure(notification)">Go to Closure</button>
     </mat-expansion-panel>
   </mat-accordion>
 </div>

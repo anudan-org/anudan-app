@@ -314,7 +314,7 @@ export class AppComponent implements AfterViewChecked {
     if (navToLogin) {
       this.router.navigate(['login']);
     } else {
-      this.router.navigate(['home']);
+      this.router.navigate(['login']);
     }
 
   }

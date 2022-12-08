@@ -304,27 +304,28 @@
                       currentClosure.forGranteeUse
                     ">
 
-                              <label>Title:</label>
+                              <mat-label>Title:</mat-label>
                               <p>{{ attribute.fieldName }}</p>
                             </div>
                             <div class="col-sm-4 col-lg-8" *ngIf="attribute.fieldType === 'document'">
                               <mat-form-field *ngIf="
                         currentClosure.canManage &&
-                        !currentClosure.forGranteeUse && !section.systemGenerated
+                        !currentClosure.forGranteeUse 
                       ">
 
                                 <input id="field_{{ attribute.id }}" [(ngModel)]="attribute.fieldName" class="anu-input"
-                                  [ngModelOptions]="{ standAlone: true }" matInput placeholder="Title" />
+                                  [ngModelOptions]="{ standAlone: true }" matInput placeholder="Title"
+                                  [readonly]="section.systemGenerated" />
                               </mat-form-field>
-                              <label *ngIf="
+                              <mat-label *ngIf="
                         (currentClosure.canManage &&
                           currentClosure.forGranteeUse) ||
-                        !currentClosure.canManage || section.systemGenerated
-                      ">Title:</label>
+                        !currentClosure.canManage 
+                      ">Title:</mat-label>
                               <p class="anu-input" *ngIf="
                         (currentClosure.canManage &&
                           currentClosure.forGranteeUse) ||
-                        !currentClosure.canManage || section.systemGenerated
+                        !currentClosure.canManage 
                       " style="background: #f0f1f0 !important">
                                 {{ attribute.fieldName }}
                               </p>
@@ -343,11 +344,11 @@
                                 <input id="field_{{ attribute.id }}" [(ngModel)]="attribute.fieldName" class="anu-input"
                                   [ngModelOptions]="{ standAlone: true }" matInput placeholder="Title" />
                               </mat-form-field>
-                              <label *ngIf="
+                              <mat-label *ngIf="
                         (currentClosure.canManage &&
                           currentClosure.forGranteeUse) ||
                         !currentClosure.canManage
-                      ">Title:</label>
+                      ">Title:</mat-label>
                               <p class="anu-input" *ngIf="
                         (currentClosure.canManage &&
                           currentClosure.forGranteeUse) ||
@@ -401,7 +402,8 @@
                     ">
                               <mat-form-field *ngIf="attribute.fieldType!=='disbursement'  ">
                                 <mat-label>Type</mat-label>
-                                <mat-select [disabled]="attribute.fieldType==='disbursement'" (selectionChange)="
+                                <mat-select [disabled]="attribute.fieldType==='document' && section.systemGenerated"
+                                  (selectionChange)="
                 handleTypeChange($event, attribute, section)
               " [ngModel]="attribute.fieldType" class="anu-input" [ngModelOptions]="{ standAlone: true }">
                                   <mat-option value="multiline">Descriptive</mat-option>
@@ -412,15 +414,15 @@
                                     Disbursement</mat-option>
                                 </mat-select>
                               </mat-form-field>
-                              <label *ngIf="
-                        (currentClosure.canManage &&
+                              <mat-label *ngIf="attribute.fieldType!=='disbursement' && 
+                        ((currentClosure.canManage &&
                           currentClosure.forGranteeUse) ||
-                        !currentClosure.canManage 
-                      ">Type:</label>
-                              <p class="anu-input" *ngIf="
-                        (currentClosure.canManage &&
+                        !currentClosure.canManage )
+                      ">Type:</mat-label>
+                              <p class="anu-input" *ngIf="attribute.fieldType!=='disbursement' &&
+                        ((currentClosure.canManage &&
                           currentClosure.forGranteeUse) ||
-                        !currentClosure.canManage 
+                        !currentClosure.canManage )
                       " style="background: #f0f1f0 !important">
                                 {{ getFieldTypeDisplayValue(attribute.fieldType) }}
                               </p>
@@ -432,15 +434,15 @@
                       !attribute.canEdit
                     ">
                               <mat-form-field>
-                                <input matInput placeholder="Type:" disabled readonly class="anu-input"
+                                <input matInput placeholder="Type:" disabled readonly" class="anu-input"
                                   style="background: #f0f1f0 !important" [value]="
                           getFieldTypeDisplayValue(attribute.fieldType)
                         " />
                               </mat-form-field>
                             </div>
-                            <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                      currentClosure.canManage &&
-                      currentClosure.forGranteeUse
+                            <div class="col-sm-4 col-lg-4 text-left" *ngIf="(attribute.fieldType!=='disbursement') &&
+                      (currentClosure.canManage &&
+                      currentClosure.forGranteeUse)
                     ">
                               <mat-form-field>
                                 <input matInput placeholder="Type:" disabled readonly class="anu-input"
