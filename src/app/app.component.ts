@@ -303,19 +303,13 @@ export class AppComponent implements AfterViewChecked {
     if (this.confgSubscription) {
       this.confgSubscription.unsubscribe();
     }
-    let navToLogin = false;
-    if (this.loggedInUser.organization.organizationType === 'GRANTER') {
-      navToLogin = true;
-    }
+
     this.loggedInUser = null;
     this.currentView = 'grants';
     this.loggedIn = false;
 
-    if (navToLogin) {
-      this.router.navigate(['login']);
-    } else {
-      this.router.navigate(['login']);
-    }
+
+    this.router.navigate(['login']);
 
   }
 
