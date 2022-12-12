@@ -523,6 +523,11 @@ font-white {
   font-size: 12px;
   font-weight: normal;
 }
+.text-subheader-red {
+  color: rgb(244, 67, 54);
+  font-size: 12px;
+  font-weight: normal;
+}
 
 
 .state-node {

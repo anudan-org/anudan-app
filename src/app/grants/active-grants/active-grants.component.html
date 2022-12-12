@@ -129,8 +129,8 @@
                     <div class="text-center text-subheader pl-3 mt-2 search-context">{{grant.ownerName}}</div>
                   </div>
                   <div class="col-9">
-                    <strong *ngIf="grant.closureInProgress"
-                      class="text-subheader text-grey d-flex align-items-center mt-1">
+                    <strong *ngIf="grant.closureInProgress" class="text-subheader d-flex align-items-center mt-1"
+                      style="color: #ffbf00;">
                       <mat-icon [inline]="true" class="material-icons-outlined text-grey mr-1">
                         info_outline
                       </mat-icon>{{'Closure in-progress'}}

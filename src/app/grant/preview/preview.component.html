@@ -16,7 +16,7 @@
               {{ flow.action }}
             </button>
             <button *ngIf="currentGrant.grantStatus.internalStatus==='ACTIVE' && grantOwner()" [disabled]="
-                wfDisabled || currentGrant.closureInProgress
+                wfDisabled || currentGrant.closureInProgress || currentGrant.hasOngoingDisbursement || (currentGrant.amendGrantId > 0)
               " mat-stroked-button
               (click)="submitGrant(flow.toStateId,'Progressing for ' + getStateNameAndOwner(flow.toStateId,true),true)"
               id="{{ flow.action }}" [class]="
@@ -24,8 +24,17 @@
                   ? 'mr-1 btn btn-sm btn-green-primary'
                   : 'mr-1 btn btn-sm btn-green'
               ">
-              <span *ngIf="!currentGrant.closureInProgress && grantOwner()">Initiate Closure</span>
+              <span
+                *ngIf="!currentGrant.closureInProgress && !currentGrant.hasOngoingDisbursement && !(currentGrant.amendGrantId > 0) && grantOwner()">Initiate
+                Closure</span>
               <span *ngIf="currentGrant.closureInProgress">Closure In-Progress</span>
+              <span *ngIf="currentGrant.hasOngoingDisbursement && !(currentGrant.amendGrantId > 0)">Disbursement
+                In-Progress</span>
+              <span *ngIf="currentGrant.amendGrantId > 0 && !currentGrant.hasOngoingDisbursement">Amendment
+                In-Progress</span>
+              <span *ngIf="currentGrant.amendGrantId > 0 && currentGrant.hasOngoingDisbursement">Disbursement
+                In-Progress and Amendment In-Progress</span>
+
             </button>
           </div>
           <div *ngIf="hasMultipleBackwardFlow()">

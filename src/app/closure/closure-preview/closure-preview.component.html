@@ -157,7 +157,7 @@
               <div class="col-4 mb-2">
                 <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Closure Reason:</span>
                 <div class="ml-0 mb-3">
-                  <strong>{{ currentClosure.reason.reason }}</strong>
+                  <strong *ngIf="currentClosure.reason">{{ currentClosure.reason.reason }}</strong>
                 </div>
               </div>
               <div class="col-12 mb-2">
@@ -229,91 +229,121 @@
                     </div>
                   </div>
 
-                  <div class="col-12">
-                    <hr />
-                  </div>
-                  <div class="col-12 px-0">
-                    <p style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Record of Spends</p>
-                  </div>
-                  <div class="col-4 unspent-class px-0">
-                    <div class="text-center w-100"
-                      style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                      {{getFormattedRefundAmount(currentClosure.grant.actualSpent)}}</div>
-                    <div class="text-center w-100"
-                      style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                      Actual Spent</div>
 
-                  </div>
-                  <div class="col-4">
-                    <div class="text-center w-100"
-                      style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                      {{getRecievedDiff(0)}}</div>
-                    <div class="text-center w-100"
-                      style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                      Unspent Amount</div>
+
+
+                  <div class="col-12 px-0" *ngIf="currentClosure.grant.approvedDisbursementsTotal != 0">
+                    <div class="col-12">
+                      <hr />
+                    </div>
+                    <div class="col-12 px-0">
+                      <p style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Project Fund at
+                        Closure
+                      </p>
+                    </div>
+                    <div class="row h-100">
+                      <div class="col-4">
+                        <div class="text-center w-100"
+                          style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                          {{disbursedAmount}}</div>
+                        <div class="text-center w-100"
+                          style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                          Received</div>
+                      </div>
+                      <div class="col-4 unspent-class px-0" *ngIf="isExternalGrant(currentClosure.grant)">
+                        <div class="text-center w-100"
+                          style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                          {{interestAmount}}</div>
+                        <div class="text-center w-100"
+                          style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                          Interest Earned on Received Amount</div>
+                      </div>
+                      <div class="col-4 unspent-class px-0">
+                        <div class="text-center w-100"
+                          style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                          {{getFormattedRefundAmount(currentClosure.actualSpent)}}</div>
+                        <div class="text-center w-100"
+                          style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                          Actual Spent</div>
+
+                      </div>
+
+                      <div class="col-4"
+                        *ngIf="!checkIfGrantHasRefundAmount() && !isExternalGrant(currentClosure.grant)">
+                        <div class="text-center w-100"
+                          style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                          {{unspentAmount}}
+                        </div>
+                        <div class="text-center w-100"
+                          style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                          Unspent Amount
+                        </div>
+                      </div>
+
+                      <div class="col-12">
+                        <br />
+                      </div>
+
+                      <div class="col-12 px-0" *ngIf="isExternalGrant(currentClosure.grant)">
+                        <div class="row mx-0">
+                          <div class="col-4" *ngIf="!checkIfGrantHasRefundAmount() ">
+                            <div class="text-center w-100"
+                              style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                              {{unspentAmount}}
+                            </div>
+                            <div class="text-center w-100"
+                              style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                              Unspent Amount
+                            </div>
+                          </div>
+
+
+                          <div class="col-4 mx-0" *ngIf="!checkIfGrantHasRefundAmount()">
+                            <div>&nbsp;</div>
+                            <div class="text-left w-100 "
+                              style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 14px; margin-left:55px; font-family:Lato, sans-serif;">
+                              No refund requested.
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-12">
+                          <hr />
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div class="col-12">
-                    <hr />
+
+                  <div class="col-12 px-0" *ngIf="checkIfGrantHasRefundAmount()">
+                    <p style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Refund Summary</p>
                   </div>
-                  <div class="col-12 px-0" *ngIf="currentClosure.grant.refundAmount!==undefined">
-                    <p style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Refund Request</p>
-                  </div>
-                  <div class="col-4" *ngIf="currentClosure.grant.refundAmount!==undefined">
+                  <div class="col-4" *ngIf="checkIfGrantHasRefundAmount()">
                     <div class="text-center w-100"
                       style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                      {{getRefundAmount()}}</div>
+                      {{refundRequested}}</div>
                     <div class="text-center w-100"
                       style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                       Refund Requested</div>
                   </div>
-                  <div class="col-4" *ngIf="currentClosure.grant.refundAmount!==undefined">
+                  <div class="col-4" *ngIf="checkIfGrantHasRefundAmount()">
                     <div class="text-center w-100"
                       style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                      {{getRefundReceived()}}</div>
+                      {{refundReceived}}</div>
                     <div class="text-center w-100"
                       style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                       Refund Received</div>
                   </div>
-                  <div class="col-4" *ngIf="currentClosure.grant.refundAmount!==undefined">
+                  <div class="col-4" *ngIf="checkIfGrantHasRefundAmount()">
                     <div class="text-center w-100"
                       style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                      {{'₹ 50000'}}</div>
+                      {{pendingRefund}}</div>
                     <div class="text-center w-100"
                       style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                       Pending Amount</div>
                   </div>
-                  <div class="col-12 px-0" *ngIf="currentClosure.grant.hasOngoingDisbursement">
-                    <p style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">On-going Disbursement
-                    </p>
-                  </div>
 
-                  <div class="row px-3" *ngIf="currentClosure.grant.hasOngoingDisbursement">
-                    <div class="col-4">
-                      <div class="text-center w-100"
-                        style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                        {{getFormattedCurrency(currentClosure.grant.ongoingDisbursementAmount)}}</div>
-                      <div class="text-center w-100"
-                        style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                        Requested Disbursement Amount</div>
-                    </div>
-                    <div class="col-4">
-                      <div class="text-center w-100"
-                        style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                        {{getFormattedCurrency(currentClosure.grant.actualOngoingDisbursementRecorded)}}</div>
-                      <div class="text-center w-100"
-                        style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                        Recorded Actual Disbursement</div>
-                    </div>
-                    <div class="col-4">
-                      <div class="text-center w-100"
-                        style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                        {{currentClosure.grant.ongoingDisbursementNote}}</div>
-                    </div>
-                    <div class="col-12 px-0">
-                      <hr>
-                    </div>
-                  </div>
+
+
                 </div>
 
               </div>
@@ -429,7 +459,7 @@
                                   </div>
                                   <div class="col-3">
                                     <button class="btn btn-sm btn-green"
-                                      *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) &&  (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null )"
+                                      *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) &&  (currentClosure.refundAmount===undefined || currentClosure.refundAmount===null )"
                                       [disabled]="currentClosure.grant.hasOngoingDisbursement ">{{currentClosure.grant.hasOngoingDisbursement?'Disbursement
                                       Request In-Progress':'Initiate Disbursement'}}</button>
                                   </div>
@@ -461,25 +491,25 @@
                                 !currentClosure.forGranteeUse
                               ">
                                       <input (blur)="showFormattedActualSpent($event)" #refundAmount
-                                        [(ngModel)]="currentClosure.grant.actualSpent" class="anu-input"
+                                        [(ngModel)]="currentClosure.actualSpent" class="anu-input"
                                         [ngModelOptions]="{ standAlone: true }" matInput
                                         placeholder="Record Spent (₹) - Till Date" />
                                       <p #grantRefundFormatted (click)="showActualSpentInput($event)"
                                         class="anu-input w-100 text-right"
                                         style="position: absolute; top: 5px; cursor: text"
-                                        [innerHtml]="getFormattedRefundAmount(currentClosure.grant.actualSpent)">
+                                        [innerHtml]="getFormattedRefundAmount(currentClosure.actualSpent)">
                                       </p>
                                     </mat-form-field>
                                   </div>
                                   <div class="col-3">
                                     <mat-form-field>
                                       <input matInput disabled readonly placeholder="Unspent Amount"
-                                        [value]="getRecievedDiff(0)">
+                                        [value]="unspentAmount">
                                     </mat-form-field>
                                   </div>
                                   <div class="col-3">
                                     <button
-                                      *ngIf="!currentClosure.grant.hasOngoingDisbursement && (currentClosure.grant.refundAmount===undefined || currentClosure.grant.refundAmount===null)"
+                                      *ngIf="!currentClosure.grant.hasOngoingDisbursement && (currentClosure.refundAmount===undefined || currentClosure.refundAmount===null)"
                                       class="btn btn-sm btn-green" (click)="captureRefund()">Initiate
                                       Refund</button>
                                   </div>
@@ -1788,7 +1818,7 @@
                         font-size: 15px;
                         font-family: Roboto, sans-serif;
                       ">{{ 'Refund Amount (₹)' }}</span>
-                        <pre>{{getFormattedRefundAmount(currentClosure.grant.refundAmount)}}</pre>
+                        <pre>{{getFormattedRefundAmount(currentClosure.refundAmount)}}</pre>
                       </div>
                       <div class="col-sm-12 col-lg-6 text-left mb-3 text-justify">
                         <span style="
@@ -1796,7 +1826,7 @@
                         font-size: 15px;
                         font-family: Roboto, sans-serif;
                       ">{{ 'Refund Reason' }}</span>
-                        <pre>{{currentClosure.grant.refundReason}}</pre>
+                        <pre>{{currentClosure.refundReason}}</pre>
                       </div>
                       <div *ngIf="currentClosure.grant.actualRefunds && currentClosure.grant.actualRefunds.length>0"
                         class="col-sm-12 col-lg-12 text-left mb-3 text-justify">

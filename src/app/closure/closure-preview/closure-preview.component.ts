@@ -55,6 +55,16 @@ export class ClosurePreviewComponent implements OnInit {
   tenantUsers: User[];
   logoUrl: string;
   actualSpent: number;
+  unspentAmount: string;
+  refundRequested: string;
+  refundReceived: string;
+  pendingRefund: string;
+  grantAmount: string;
+  spentAmount: string;
+  interestEarned: number;
+  interestAmount: string;
+  disbursedAmount: string;
+
   @ViewChild("grantRefundFormatted") grantRefundFormatted: ElementRef;
   @ViewChild("refundAmount") refundAmount: ElementRef;
 
@@ -76,7 +86,7 @@ export class ClosurePreviewComponent implements OnInit {
     this.closureService.currentMessage.subscribe((closure) => {
       this.currentClosure = closure;
 
-      console.log(this.currentClosure);
+
     });
 
     const httpOptions = {
@@ -121,6 +131,23 @@ export class ClosurePreviewComponent implements OnInit {
 
   ngOnInit() {
     this.logoUrl = "/api/public/images/" + this.currentClosure.grant.grantorOrganization.code + "/logo";
+
+    this.getRefundAmount();
+    this.getRefundReceived();
+    this.setSpendSumamry();
+  }
+
+
+  setSpendSumamry() {
+
+    var disbursement: number = this.currentClosure.grant.approvedDisbursementsTotal ? this.currentClosure.grant.approvedDisbursementsTotal : 0;
+    const spent = this.currentClosure.actualSpent ? this.currentClosure.actualSpent : 0;
+    this.spentAmount = this.currencyService.getFormattedAmount(spent);
+
+    var interest: number = this.currentClosure.interestEarned ? this.currentClosure.interestEarned : 0;
+    this.interestAmount = this.currencyService.getFormattedAmount(interest);
+    this.disbursedAmount = this.currencyService.getFormattedAmount(Number(disbursement));
+    this.unspentAmount = this.currencyService.getFormattedAmount(Number(disbursement) + Number(interest) - spent);
   }
 
   submitClosure(toStateId: number, transitionTitle: string, direction: boolean) {
@@ -319,7 +346,10 @@ export class ClosurePreviewComponent implements OnInit {
 
     });
   }
-
+  checkIfGrantHasRefundAmount() {
+    const refundDetailsSection = this.currentClosure.closureDetails.sections.filter(a => a.sectionName === "Project Refund Details" && a.systemGenerated);
+    return refundDetailsSection.length > 0;
+  }
 
   showWFAssigments() {
     this.adminComp.showWorkflowAssigments();
@@ -578,12 +608,22 @@ export class ClosurePreviewComponent implements OnInit {
     }
     const toStateOwner = this.currentClosure.workflowAssignment.filter(a => a.stateId === toStateId)[0].assignmentUser;
 
-    return toStateOwner ? (toState + "<span class='text-subheader'> [" + toStateOwner.firstName + " " + toStateOwner.lastName + "]</span>") : "";
+    if (toStateOwner) {
+      let activeuser = toStateOwner.active;
+      let username = (!activeuser ? ('Unregistered: ' + toStateOwner.emailId) : toStateOwner.firstName + ' ' + toStateOwner.lastName);
+
+      if (activeuser) {
+        return toStateOwner ? (toState + "<span class='text-subheader'> [ " + username + " ]</span>") : "";
+      } else {
+        return toStateOwner ? (toState + "<span class='text-subheader-red' > [ " + username + " ]</span>") : "";
+      }
+    }
+
   }
 
   getFormattedRefundAmount(amount: number): string {
     if (amount) {
-      return inf.format(amount, 2);
+      return this.currencyService.getFormattedAmount(amount);
     }
     return inf.format(0, 2);
   }
@@ -597,7 +637,7 @@ export class ClosurePreviewComponent implements OnInit {
 
   getReceivedFunds(i) {
     const funds = document.getElementsByClassName('rf');
-    return (funds && funds.length) > 0 ? funds[i].innerHTML : '';
+    return (funds && funds.length) > 0 ? funds[i].innerHTML : 0;
   }
 
   getPlannedFunds(i) {
@@ -625,20 +665,13 @@ export class ClosurePreviewComponent implements OnInit {
 
     return this.currencyService.getFormattedAmount(p - r);
   }
+  setUnspentAmount() {
 
-
-
-  getRecievedDiff(i) {
-    const pf = $('.rf');
-    if (!pf || pf.length === 0) {
-      return '';
-    }
-
-    const peices = $(pf[i]).html().replace('₹ ', '').split(',');
-    const p = Number(peices.join(""));
-    const spent = this.currentClosure.grant.actualSpent ? this.currentClosure.grant.actualSpent : 0;
-    return this.currencyService.getFormattedAmount(p - spent - this.getActualRefundsForGrant());
+    const disbursement = this.currentClosure.grant.approvedDisbursementsTotal ? this.currentClosure.grant.approvedDisbursementsTotal : 0;
+    const spent = this.currentClosure.actualSpent ? this.currentClosure.actualSpent : 0;
+    this.unspentAmount = this.currencyService.getFormattedAmount(disbursement - spent);
   }
+
 
   getActualRefundsForGrant() {
     let actualRfundsTotal = 0;
@@ -652,7 +685,7 @@ export class ClosurePreviewComponent implements OnInit {
 
 
   showFormattedActualSpent(evt: any) {
-    this.currentClosure.grant.actualSpent = this.actualSpent;
+    this.currentClosure.actualSpent = this.actualSpent;
     evt.currentTarget.style.visibility = "hidden";
     this.grantRefundFormatted.nativeElement.style.visibility = "visible";
   }
@@ -664,22 +697,26 @@ export class ClosurePreviewComponent implements OnInit {
 
 
   getRefundAmount() {
-    if (this.currentClosure.grant.refundAmount) {
-      return this.currencyService.getFormattedAmount(this.currentClosure.grant.refundAmount);
+    if (this.currentClosure.refundAmount) {
+      this.refundRequested = this.currencyService.getFormattedAmount(this.currentClosure.refundAmount);
     } else {
-      return this.currencyService.getFormattedAmount(0);
+      this.refundRequested = this.currencyService.getFormattedAmount(0);
     }
   }
 
   getRefundReceived() {
+    let total = 0;
     if (this.currentClosure.grant.actualRefunds && this.currentClosure.grant.actualRefunds.length > 0) {
-      let total = 0;
       for (let rf of this.currentClosure.grant.actualRefunds) {
         total += rf.amount ? rf.amount : 0;
       }
-      return this.currencyService.getFormattedAmount(total);
+      this.refundReceived = this.currencyService.getFormattedAmount(total);
+    } else {
+      this.refundReceived = this.currencyService.getFormattedAmount(0);
     }
-    return this.currencyService.getFormattedAmount(0);
+    let refund = this.currentClosure.refundAmount ? this.currentClosure.refundAmount : 0;
+    this.pendingRefund = this.currencyService.getFormattedAmount(refund - total);
+
   }
 
   getGrantDisbursementAttribute(): Attribute {

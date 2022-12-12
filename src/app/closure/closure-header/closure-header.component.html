@@ -124,12 +124,11 @@
                     </mat-autocomplete>
                   </div>
                   <div class="col-12">
-                    <mat-form-field [floatLabel]="'always'" *ngIf="
-                    currentClosure.canManage
-                  ">
+                    <mat-form-field [floatLabel]="'always'" *ngIf="currentClosure.canManage">
                       <mat-label>Description:</mat-label>
                       <textarea [disabled]="currentClosure.forGranteeUse" id="closureDesc" matInput
-                        [(ngModel)]="currentClosure.description" class="anu-input"></textarea>
+                        [(ngModel)]="currentClosure.description" class="anu-input"
+                        placeholder="Enter Closure Description"></textarea>
                     </mat-form-field>
 
                   </div>
@@ -149,7 +148,7 @@
                             <div class="col-4 px-0 my-3 d-flex flex-column justify-content-center align-items-start">
                               <div class="text-center w-100"
                                 style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                                {{getPlannedFunds(0)}}</div>
+                                {{grantAmount}}</div>
                               <div class="text-center w-100"
                                 style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
                                 Grant Commitment</div>
@@ -196,49 +195,136 @@
                             </div>
                           </div>
                         </div>
+                        <div class="col-12 px-0" *ngIf="currentClosure.grant.approvedDisbursementsTotal != 0">
+                          <div class="col-12">
+                            <hr />
+                          </div>
+                          <div class="col-12 px-0">
+                            <p class="text-header">Project Fund at Closure</p>
+                          </div>
 
-                        <div class="col-12">
-                          <hr />
-                        </div>
-                        <div class="col-12 px-0">
-                          <p class="text-header">Record of Spends</p>
-                        </div>
-                        <div class="col-4 unspent-class px-0">
-                          <mat-form-field *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse">
-                            <input (blur)="showFormattedActualSpent($event)" #refundAmount [(ngModel)]="actualSpent"
-                              class="anu-input" [ngModelOptions]="{ standAlone: true }" matInput />
-                            <p #grantRefundFormatted (click)="showActualSpentInput($event)"
-                              class="anu-input w-100 text-right" style="position: absolute; top: 5px; cursor: text"
-                              [innerHtml]="getFormattedRefundAmount(actualSpent)"></p>
-                          </mat-form-field>
 
-                          <div *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse"
-                            class="text-center w-100"
-                            style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                            Record Spent (₹) - Till Date</div>
 
-                          <div *ngIf="currentClosure.forGranteeUse" class="text-center w-100"
-                            style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                            {{getFormattedRefundAmount(currentClosure.grant.actualSpent)}}</div>
-                          <div *ngIf="currentClosure.forGranteeUse" class="text-center w-100"
-                            style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                            Record Spent (₹) - Till Date</div>
-                        </div>
-                        <div class="col-4">
-                          <div class="text-center w-100"
-                            style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                            {{getRecievedDiff(0)}}</div>
-                          <div class="text-center w-100"
-                            style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                            Unspent Amount</div>
-                        </div>
+                          <div class="col-12">
+                            <br />
+                          </div>
 
-                        <div class="col-12">
-                          <hr />
+                          <div class="row mx-0">
+                            <div class="col-4">
+
+                              <div class="text-center w-100"
+                                style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                                {{disbursedAmount}}
+                              </div>
+                              <div class="text-center w-100"
+                                style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                                Received
+                              </div>
+
+                            </div>
+                            <div class="col-4 unspent-class px-4" *ngIf="isExternalGrant(currentClosure.grant)">
+                              <div>
+                                <mat-form-field *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse">
+                                  <input (blur)=" showFormattedInterestEarned($event);setSpendSumamry();" #intAmount
+                                    [(ngModel)]="interestEarned" class="anu-input"
+                                    [ngModelOptions]="{ standAlone: true }"
+                                    placeholder="Interest Earned on Received Amount" autocomplete="false" matInput />
+                                  <p #grantInterestFormatted (click)="showInterestEarned($event)"
+                                    class="anu-input w-100 text-right"
+                                    style="position: absolute; top: 5px; cursor: text"
+                                    [innerHtml]="getFormattedInterestEarned(interestEarned)"></p>
+                                </mat-form-field>
+
+                                <mat-form-field *ngIf="!currentClosure.canManage || currentClosure.forGranteeUse"
+                                  [floatLabel]="'always'">
+                                  <input (blur)="showFormattedInterestEarned($event);setSpendSumamry();" #intAmount
+                                    [(ngModel)]="interestEarned" class="anu-input"
+                                    [ngModelOptions]="{ standAlone: true }" placeholder="Enter Interest Earned"
+                                    autocomplete="false" matInput readonly />
+                                  <p #grantInterestFormatted (click)="showInterestEarned($event)"
+                                    class="anu-input w-100 text-left" style="position: absolute; top: 5px; cursor: text"
+                                    [innerHtml]="getFormattedInterestEarned(interestEarned)" aria-readonly=""></p>
+                                </mat-form-field>
+                              </div>
+                            </div>
+                            <div class="col-4 unspent-class px-4">
+                              <mat-form-field *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse">
+                                <input (blur)="showFormattedActualSpent($event);setSpendSumamry()" #spentAmt
+                                  [(ngModel)]="actualSpent" class="anu-input" [ngModelOptions]="{ standAlone: true }"
+                                  placeholder="Spent (₹)- till Date" autocomplete="false" matInput />
+                                <p #grantActualSpentFormatted (click)="showActualSpentInput($event)"
+                                  class="anu-input w-100 text-right" style="position: absolute; top: 5px; cursor: text"
+                                  [innerHtml]="getFormattedActualSpent(actualSpent)"></p>
+                              </mat-form-field>
+
+                              <mat-form-field *ngIf="!currentClosure.canManage || currentClosure.forGranteeUse"
+                                [floatLabel]="'always'">
+                                <mat-label>Record Spent (₹)- till Date</mat-label>
+                                <input (blur)="showFormattedActualSpent($event);setSpendSumamry()" #spentAmt
+                                  [(ngModel)]="actualSpent" class="anu-input" [ngModelOptions]="{ standAlone: true }"
+                                  placeholder="Enter Record Spent - till Date" autocomplete="false" matInput readonly />
+                                <p #grantActualSpentFormatted (click)="showActualSpentInput($event)"
+                                  class="anu-input w-100 text-left" style="position: absolute; top: 5px; cursor: text"
+                                  [innerHtml]="getFormattedActualSpent(actualSpent)" aria-readonly=""></p>
+                              </mat-form-field>
+                            </div>
+
+                            <div class="col-4"
+                              *ngIf="!checkIfGrantHasRefundAmount() && !isExternalGrant(currentClosure.grant)">
+                              <div class="text-center w-100"
+                                style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                                {{unspentAmount}}
+                              </div>
+                              <div class="text-center w-100"
+                                style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                                Unspent Amount
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-12">
+                            <hr />
+                          </div>
+
+
+                          <div class="col-12 px-0">
+                            <div class="row mx-0">
+                              <div class="col-4"
+                                *ngIf="!checkIfGrantHasRefundAmount() && isExternalGrant(currentClosure.grant) ">
+                                <div class="text-center w-100"
+                                  style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
+                                  {{unspentAmount}}
+                                </div>
+                                <div class="text-center w-100"
+                                  style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
+                                  Unspent Amount
+                                </div>
+                              </div>
+
+
+                              <div class="col-4 mx-0"
+                                *ngIf="(!checkIfGrantHasRefundAmount()) && currentClosure.status.internalStatus != 'DRAFT'  && isExternalGrant(currentClosure.grant) ">
+                                <div>&nbsp;</div>
+                                <div class="text-left w-100 "
+                                  style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 14px;font-family:Lato, sans-serif;">
+                                  No refund requested.
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row mx-0">
+                              <div class="col-4 "
+                                *ngIf="(!checkIfGrantHasRefundAmount()) && grantOwner() && isExternalGrant(currentClosure.grant)">
+                                <button class="btn btn-sm btn-green" style="margin-left:60px"
+                                  (click)="captureRefund()">Initiate Refund</button>
+                              </div>
+                            </div>
+
+                          </div>
+
                         </div>
                         <div class="col-12 px-0"
-                          *ngIf="(checkIfGrantHasRefundAmount() && isExternalGrant(currentClosure.grant)) || (currentClosure.grant.hasOngoingDisbursement)">
-                          <p class="text-header">Closure Actions (Disbursements/Refunds)</p>
+                          *ngIf="(checkIfGrantHasRefundAmount() && isExternalGrant(currentClosure.grant))">
+                          <p class="text-header">Refund Summary</p>
                         </div>
                         <div class="col-4"
                           *ngIf="checkIfGrantHasRefundAmount()&& isExternalGrant(currentClosure.grant)">
@@ -268,50 +354,9 @@
                             Pending Amount</div>
                         </div>
 
-                        <div class="row px-5" *ngIf="currentClosure.grant.hasOngoingDisbursement">
-                          <div class="col-4">
-                            <div class="text-center w-100"
-                              style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                              {{getFormattedCurrency(currentClosure.grant.ongoingDisbursementAmount)}}</div>
-                            <div class="text-center w-100"
-                              style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                              Requested Disbursement Amount</div>
-                          </div>
-                          <div class="col-4">
-                            <div class="text-center w-100"
-                              style="font-weight: 800;font-size: 20px;color: #0E100E;font-family:Archivo, sans-serif;">
-                              {{getFormattedCurrency(currentClosure.grant.actualOngoingDisbursementRecorded)}}</div>
-                            <div class="text-center w-100"
-                              style="font-weight: 400;color: rgba(14, 16, 14, 0.68);font-size: 12px;font-family:Lato, sans-serif;">
-                              Recorded Actual Disbursement</div>
-                          </div>
-                          <div class="col-4">
-                            <div class="w-100" style="color: #0E100E;font-family:Archivo, sans-serif;">
-                              {{currentClosure.grant.ongoingDisbursementNote}}</div>
 
-                          </div>
-                          <div class="col-12 px-0">
-                            <hr>
-                          </div>
-                        </div>
 
-                        <div class="col-12 px-0">
 
-                          <div class="row px-3">
-                            <div class="col-3 px-0"
-                              *ngIf="getPlannedFunds(0)!==getReceivedFunds(0) &&  (!checkIfGrantHasRefundAmount() )&& grantOwner()">
-                              <button class="btn btn-sm btn-green" (click)="initiateDisbursement()"
-                                [disabled]="currentClosure.grant.hasOngoingDisbursement ">{{currentClosure.grant.hasOngoingDisbursement?'Disbursement
-                                Request In-Progress':'Initiate Disbursement'}}</button>
-                            </div>
-                            <div class="col-3 px-0"
-                              *ngIf="!currentClosure.grant.hasOngoingDisbursement && (!checkIfGrantHasRefundAmount()) && grantOwner() && isExternalGrant(currentClosure.grant)">
-                              <button class="btn btn-sm btn-green" (click)="captureRefund()">Initiate
-                                Refund</button>
-                            </div>
-                          </div>
-
-                        </div>
 
                       </div>
 
