@@ -47,7 +47,7 @@ import { ReturnsPopupComponent } from './returns-popup/returns-popup.component';
 import { RefundpopupComponent } from './refundpopup/refundpopup.component';
 import { ProjectFundSummaryComponent } from './project-fund-summary/project-fund-summary.component';
 import { LandingComponent } from './landing/landing.component';
-
+import { AutosizeModule } from 'ngx-autosize';
 
 export class AnudanErrorHandler implements ErrorHandler {
   constructor() {
@@ -119,6 +119,7 @@ export function provideConfig() {
     HttpClientModule,
     RecaptchaModule,
     MatMenuModule,
+    AutosizeModule,
     MDBBootstrapModule.forRoot(),
     ExportAsModule,
     AgmCoreModule.forRoot({

@@ -2,17 +2,19 @@
 
   <div class="col-12 bg-white" style="position:sticky;top:0;z-index:1040;">
     <span class="badge badge-success pull-right">{{currentGrant.grantStatus.displayName}}</span>
-    <hr/>
+    <hr />
     <div class="row">
       <h4 class="col-7 text-left pl-5 ml-3 my-3">Reporting & KPIs</h4>
       <div class="col-2 text-right">
-        <a mat-stroked-button *ngIf="currentGrant.actionAuthorities.permissions.includes('MANAGE') && currentGrant.submissions.length>0"
-                #addKpiButton (click)="addNewKpi()" >
+        <a mat-stroked-button
+          *ngIf="currentGrant.actionAuthorities.permissions.includes('MANAGE') && currentGrant.submissions.length>0"
+          #addKpiButton (click)="addNewKpi()">
           <mat-icon>add_box</mat-icon>Add New KPI
         </a>
       </div>
       <div *ngIf="canManage" class="col-2 text-right">
-        <mat-select placeholder="Actions" (selectionChange)="performAction($event)" class="anu-input" style="height:36px;">
+        <mat-select placeholder="Actions" (selectionChange)="performAction($event)" class="anu-input"
+          style="height:36px;">
           <mat-option value="1">Add Single Submission Period</mat-option>
           <mat-option value="2">Add Quarterly Submissions</mat-option>
           <mat-option value="3">Clear All Submissions</mat-option>
@@ -24,18 +26,16 @@
     <div #container class="container text-left mt-2 px-5 py-2" (scroll)="rememberScrollPosition($event)">
       <div *ngIf="!canManage">
 
-        <div class="row flex-row flex-nowrap" style="overflow-x: auto"
-             (scroll)="postionFirstColumn($event)">
-          <ng-container
-                  *ngFor="let dummy of ' '.repeat(currentGrant.submissions.length + 1 ).split(''), let x = index">
+        <div class="row flex-row flex-nowrap" style="overflow-x: auto" (scroll)="postionFirstColumn($event)">
+          <ng-container *ngFor="let dummy of ' '.repeat(currentGrant.submissions.length + 1 ).split(''), let x = index">
 
 
             <ng-container *ngIf="x!==0">
               <div class="col-3 p-0" [style.border-top]="'0.5px solid #d4d4d4'"
-                   [style.border-right]="'0.5px solid #d4d4d4'"
-                   [style.box-shadow]="currentGrant.submissions[x-1].flowAuthorities?'box-shadow:1px 1px 12px #d4d4d4':''">
+                [style.border-right]="'0.5px solid #d4d4d4'"
+                [style.box-shadow]="currentGrant.submissions[x-1].flowAuthorities?'box-shadow:1px 1px 12px #d4d4d4':''">
                 <div
-                        [ngClass]="['col-12','py-2', 'mb-4','text-center', currentGrant.submissions[x - 1].flowAuthorities || currentGrant.submissions[x - 1].openForReporting? 'bg-primary text-white' : 'bg-light']">
+                  [ngClass]="['col-12','py-2', 'mb-4','text-center', currentGrant.submissions[x - 1].flowAuthorities || currentGrant.submissions[x - 1].openForReporting? 'bg-primary text-white' : 'bg-light']">
                   <strong class="font-weight-bold">{{currentGrant.submissions[x - 1].title}}</strong>
                   <p>{{currentGrant.submissions[x-1].submitBy | date:'dd-MMM-yyyy'}}</p>
                   <span class="badge badge-black">
@@ -43,17 +43,14 @@
                   </span>
 
                 </div>
-                <ng-container
-                        *ngFor="let kpiData of currentGrant.submissions[x - 1].quantitiaveKpisubmissions">
+                <ng-container *ngFor="let kpiData of currentGrant.submissions[x - 1].quantitiaveKpisubmissions">
                   <div class="py-3" [attr.data-id]="kpiData.grantKpi.id"
-                       style="display: flex;align-items: center;justify-content: center; border-bottom: .5px solid #d4d4d4;">
+                    style="display: flex;align-items: center;justify-content: center; border-bottom: .5px solid #d4d4d4;">
                     <ng-container *ngIf="kpiData.toReport">
                       <ng-container *ngIf="currentGrant.submissions[x -1].flowAuthorities">
                         <mat-form-field>
-                          <input matInput [(ngModel)]="kpiData.actuals"
-                                 placeholder="{{kpiData.goal}}"
-                                 [ngModelOptions]="{standAlone:true}"
-                                 (ngModelChange)="checkGrant()" type="number">
+                          <input matInput [(ngModel)]="kpiData.actuals" placeholder="{{kpiData.goal}}"
+                            [ngModelOptions]="{standAlone:true}" (ngModelChange)="checkGrant()" type="number">
                         </mat-form-field>
                       </ng-container>
                       <ng-container *ngIf="!currentGrant.submissions[x -1].flowAuthorities">
@@ -61,15 +58,15 @@
                       </ng-container>
                       <div style="position: absolute;right: 40px;">
                         <mat-icon inline="true"
-                                  (click)="openBottomSheetForSubmittionAttachments(kpiData.id,kpiData.grantKpi.kpiType,kpiData.grantKpi.title,kpiData.submissionDocs,currentGrant.submissions[x - 1].openForReporting)"
-                                  [color]="kpiData.submissionDocs.length>0?'accent':'text-gray'">
+                          (click)="openBottomSheetForSubmittionAttachments(kpiData.id,kpiData.grantKpi.kpiType,kpiData.grantKpi.title,kpiData.submissionDocs,currentGrant.submissions[x - 1].openForReporting)"
+                          [color]="kpiData.submissionDocs.length>0?'accent':'text-gray'">
                           attachment
                         </mat-icon>
                       </div>
                       <div style="position: absolute;right: 10px;">
                         <mat-icon inline="true"
-                                  (click)="openBottomSheetForSubmittionNotes(kpiData.id,kpiData.grantKpi.kpiType,kpiData.grantKpi.title,kpiData.notesHistory,currentGrant.submissions[x - 1].openForReporting)"
-                                  [color]="kpiData.notesHistory && kpiData.notesHistory.length>0?'accent':'text-gray'">
+                          (click)="openBottomSheetForSubmittionNotes(kpiData.id,kpiData.grantKpi.kpiType,kpiData.grantKpi.title,kpiData.notesHistory,currentGrant.submissions[x - 1].openForReporting)"
+                          [color]="kpiData.notesHistory && kpiData.notesHistory.length>0?'accent':'text-gray'">
                           chat
                         </mat-icon>
                       </div>
@@ -79,17 +76,15 @@
                     </ng-container>
                   </div>
                 </ng-container>
-                <ng-container
-                        *ngFor="let kpiData of currentGrant.submissions[x - 1].qualitativeKpiSubmissions">
+                <ng-container *ngFor="let kpiData of currentGrant.submissions[x - 1].qualitativeKpiSubmissions">
                   <div class="py-3" [attr.data-id]="kpiData.grantKpi.id"
-                       style="display: flex;align-items: center;justify-content: center; border-bottom: .5px solid #d4d4d4;">
+                    style="display: flex;align-items: center;justify-content: center; border-bottom: .5px solid #d4d4d4;">
                     <ng-container *ngIf="kpiData.toReport">
                       <ng-container *ngIf="currentGrant.submissions[x -1].flowAuthorities">
                         <mat-form-field>
-                  <textarea matInput
-                            [(ngModel)]="kpiData.actuals" [ngModelOptions]="{standAlone:true}"
-                            (ngModelChange)="checkGrant()" placeholder="Your response"
-                  ></textarea>
+                          <textarea matTextareaAutosize matInput [(ngModel)]="kpiData.actuals"
+                            [ngModelOptions]="{standAlone:true}" (ngModelChange)="checkGrant()"
+                            placeholder="Your response"></textarea>
                         </mat-form-field>
                       </ng-container>
                       <ng-container *ngIf="!currentGrant.submissions[x -1].flowAuthorities">
@@ -97,15 +92,15 @@
                       </ng-container>
                       <div style="position: absolute;right: 40px;">
                         <mat-icon inline="true"
-                                  (click)="openBottomSheetForSubmittionAttachments(kpiData.id,kpiData.grantKpi.kpiType,kpiData.grantKpi.title,kpiData.submissionDocs,currentGrant.submissions[x - 1].openForReporting)"
-                                  [color]="kpiData.submissionDocs.length>0?'accent':'text-gray'">
+                          (click)="openBottomSheetForSubmittionAttachments(kpiData.id,kpiData.grantKpi.kpiType,kpiData.grantKpi.title,kpiData.submissionDocs,currentGrant.submissions[x - 1].openForReporting)"
+                          [color]="kpiData.submissionDocs.length>0?'accent':'text-gray'">
                           attachment
                         </mat-icon>
                       </div>
                       <div style="position: absolute;right: 10px;">
                         <mat-icon inline="true"
-                                  (click)="openBottomSheetForSubmittionNotes(kpiData.id,kpiData.grantKpi.kpiType,kpiData.grantKpi.title,kpiData.notesHistory,currentGrant.submissions[x - 1].openForReporting)"
-                                  [color]="kpiData.notesHistory && kpiData.notesHistory.length>0?'accent':'text-gray'">
+                          (click)="openBottomSheetForSubmittionNotes(kpiData.id,kpiData.grantKpi.kpiType,kpiData.grantKpi.title,kpiData.notesHistory,currentGrant.submissions[x - 1].openForReporting)"
+                          [color]="kpiData.notesHistory && kpiData.notesHistory.length>0?'accent':'text-gray'">
                           chat
                         </mat-icon>
                       </div>
@@ -115,10 +110,9 @@
                     </ng-container>
                   </div>
                 </ng-container>
-                <ng-container
-                        *ngFor="let kpiData of currentGrant.submissions[x - 1].documentKpiSubmissions">
+                <ng-container *ngFor="let kpiData of currentGrant.submissions[x - 1].documentKpiSubmissions">
                   <div class="py-3" [attr.data-id]="kpiData.grantKpi.id"
-                       style="display: flex;align-items: center;justify-content: center; border-bottom: .5px solid #d4d4d4;">
+                    style="display: flex;align-items: center;justify-content: center; border-bottom: .5px solid #d4d4d4;">
                     <ng-container *ngIf="kpiData.toReport">
                       <ng-container *ngIf="currentGrant.submissions[x -1].flowAuthorities">
                         <button mat-raised-button color="accent">Attachments</button>
@@ -128,8 +122,8 @@
                       </ng-container>
                       <div style="position: absolute;right: 10px;">
                         <mat-icon inline="true"
-                                  (click)="openBottomSheetForSubmittionNotes(kpiData.id,kpiData.grantKpi.kpiType,kpiData.grantKpi.title,kpiData.notesHistory,currentGrant.submissions[x - 1].openForReporting)"
-                                  [color]="kpiData.notesHistory && kpiData.notesHistory.length>0?'accent':'text-gray'">
+                          (click)="openBottomSheetForSubmittionNotes(kpiData.id,kpiData.grantKpi.kpiType,kpiData.grantKpi.title,kpiData.notesHistory,currentGrant.submissions[x - 1].openForReporting)"
+                          [color]="kpiData.notesHistory && kpiData.notesHistory.length>0?'accent':'text-gray'">
                           chat
                         </mat-icon>
                       </div>
@@ -143,37 +137,31 @@
             </ng-container>
 
             <ng-container *ngIf="x===0">
-              <div class="col-6 first-column bg-white"
-                   style="border: 0.5px solid #d4d4d4; z-index: 100;">
+              <div class="col-6 first-column bg-white" style="border: 0.5px solid #d4d4d4; z-index: 100;">
                 <div class="affix">
                   <div class="row affix">
                     <div class="col-12 mb-4 py-2">&nbsp;
                       <p>&nbsp;</p>
                       <span>&nbsp;</span>
                     </div>
-                    <ng-container
-                            *ngFor="let kpiData of currentGrant.submissions[x].quantitiaveKpisubmissions">
+                    <ng-container *ngFor="let kpiData of currentGrant.submissions[x].quantitiaveKpisubmissions">
                       <div class="col-12 py-3" id="kpi_title_{{kpiData.grantKpi.id}}"
-                           style="border-bottom: .5px solid #d4d4d4;">
+                        style="border-bottom: .5px solid #d4d4d4;">
                         <div class="row">
                           <div class="col-sm-1" style="display:flex;align-items: center;">
-                            <mat-icon class="text-primary"
-                                      *ngIf="kpiData.grantKpi.kpiReportingType==='ACTIVITY'">
+                            <mat-icon class="text-primary" *ngIf="kpiData.grantKpi.kpiReportingType==='ACTIVITY'">
                               local_activity
                             </mat-icon>
-                            <mat-icon color="accent"
-                                      *ngIf="kpiData.grantKpi.kpiReportingType==='FINANCIAL'">
+                            <mat-icon color="accent" *ngIf="kpiData.grantKpi.kpiReportingType==='FINANCIAL'">
                               money
                             </mat-icon>
                           </div>
                           <div class="col-sm-11">
                             <p class="p-1">{{kpiData.grantKpi.title}}</p>
-                            <button mat-stroked-button class="my-2"
-                                    *ngIf="kpiData.grantKpi.templates.length > 0"
-                                    matBadge="{{kpiData.grantKpi.templates.length}}"
-                                    matBadgeOverlap="true" matBadgePosition="above after"
-                                    matBadgeColor="accent"
-                                    (click)="openBottomSheet(kpiData.grantKpi.id, kpiData.grantKpi.title, kpiData.grantKpi.templates, canManage)">
+                            <button mat-stroked-button class="my-2" *ngIf="kpiData.grantKpi.templates.length > 0"
+                              matBadge="{{kpiData.grantKpi.templates.length}}" matBadgeOverlap="true"
+                              matBadgePosition="above after" matBadgeColor="accent"
+                              (click)="openBottomSheet(kpiData.grantKpi.id, kpiData.grantKpi.title, kpiData.grantKpi.templates, canManage)">
                               View templates
                             </button>
                           </div>
@@ -181,25 +169,21 @@
                       </div>
                     </ng-container>
 
-                    <ng-container
-                            *ngFor="let kpiData of currentGrant.submissions[x].qualitativeKpiSubmissions">
+                    <ng-container *ngFor="let kpiData of currentGrant.submissions[x].qualitativeKpiSubmissions">
                       <div class="col-12 py-3" id="kpi_title_{{kpiData.grantKpi.id}}"
-                           style="border-bottom: .5px solid #d4d4d4;">
+                        style="border-bottom: .5px solid #d4d4d4;">
                         <div class="row">
                           <div class="col-sm-1">
-                            <mat-icon class="text-info"
-                                      *ngIf="kpiData.grantKpi.kpiType==='QUALITATIVE'">
+                            <mat-icon class="text-info" *ngIf="kpiData.grantKpi.kpiType==='QUALITATIVE'">
                               assignment
                             </mat-icon>
                           </div>
                           <div class="col-sm-11">
                             <p>{{kpiData.grantKpi.title}}</p>
-                            <button mat-stroked-button class="my-2"
-                                    *ngIf="kpiData.grantKpi.templates.length > 0"
-                                    matBadge="{{kpiData.grantKpi.templates.length}}"
-                                    matBadgeOverlap="true" matBadgePosition="above after"
-                                    matBadgeColor="accent"
-                                    (click)="openBottomSheet(kpiData.grantKpi.id, kpiData.grantKpi.title, kpiData.grantKpi.templates, canManage)">
+                            <button mat-stroked-button class="my-2" *ngIf="kpiData.grantKpi.templates.length > 0"
+                              matBadge="{{kpiData.grantKpi.templates.length}}" matBadgeOverlap="true"
+                              matBadgePosition="above after" matBadgeColor="accent"
+                              (click)="openBottomSheet(kpiData.grantKpi.id, kpiData.grantKpi.title, kpiData.grantKpi.templates, canManage)">
                               View templates
                             </button>
                           </div>
@@ -207,25 +191,21 @@
                       </div>
                     </ng-container>
 
-                    <ng-container
-                            *ngFor="let kpiData of currentGrant.submissions[x].documentKpiSubmissions">
+                    <ng-container *ngFor="let kpiData of currentGrant.submissions[x].documentKpiSubmissions">
                       <div class="col-12 py-3" id="kpi_title_{{kpiData.grantKpi.id}}"
-                           style="border-bottom: .5px solid #d4d4d4;">
+                        style="border-bottom: .5px solid #d4d4d4;">
                         <div class="row">
                           <div class="col-sm-1">
-                            <mat-icon class="text-warning"
-                                      *ngIf="kpiData.grantKpi.kpiType==='DOCUMENT'">
+                            <mat-icon class="text-warning" *ngIf="kpiData.grantKpi.kpiType==='DOCUMENT'">
                               insert_drive_file
                             </mat-icon>
                           </div>
                           <div class="col-sm-11">
                             <p>{{kpiData.grantKpi.title}}</p>
-                            <button mat-stroked-button class="my-2"
-                                    *ngIf="kpiData.grantKpi.templates.length > 0"
-                                    matBadge="{{kpiData.grantKpi.templates.length}}"
-                                    matBadgeOverlap="true" matBadgePosition="above after"
-                                    matBadgeColor="accent"
-                                    (click)="openBottomSheet(kpiData.grantKpi.id, kpiData.grantKpi.title, kpiData.grantKpi.templates, canManage)">
+                            <button mat-stroked-button class="my-2" *ngIf="kpiData.grantKpi.templates.length > 0"
+                              matBadge="{{kpiData.grantKpi.templates.length}}" matBadgeOverlap="true"
+                              matBadgePosition="above after" matBadgeColor="accent"
+                              (click)="openBottomSheet(kpiData.grantKpi.id, kpiData.grantKpi.title, kpiData.grantKpi.templates, canManage)">
                               View templates
                             </button>
                           </div>
@@ -247,28 +227,28 @@
 
         <mat-divider></mat-divider>
         <div class="row pt-3 submissions-block"
-             style="background-color:#f9f9f9;position: sticky;top: 130px;overflow-x: auto;z-index: 3;"
-             (scroll)="scrollHeaderContent($event)">
+          style="background-color:#f9f9f9;position: sticky;top: 130px;overflow-x: auto;z-index: 3;"
+          (scroll)="scrollHeaderContent($event)">
           <div class="col-sm-12 col-lg-5"
-               style="display: flex; align-items: center; justify-content: center;background-color:#f9f9f9; position: sticky;left: 0;z-index: 3; border-right: 0.5px solid #d4d4d4;">
+            style="display: flex; align-items: center; justify-content: center;background-color:#f9f9f9; position: sticky;left: 0;z-index: 3; border-right: 0.5px solid #d4d4d4;">
             <div class="row">
               <div class="col-sm-12 text-center">
                 <h3>KPIs</h3>
               </div>
               <div class="col-sm-12 text-center">
                 <p>
-                        <span class="mr-2"><mat-icon inline class="text-primary">
-                            local_activity
-                        </mat-icon>Activity</span>
+                  <span class="mr-2"><mat-icon inline class="text-primary">
+                      local_activity
+                    </mat-icon>Activity</span>
                   <span class="mr-2"><mat-icon inline color="accent">
-                            money
-                        </mat-icon>Financial</span>
+                      money
+                    </mat-icon>Financial</span>
                   <span class="mr-2"><mat-icon inline class="text-info">
-                            assignment
-                        </mat-icon>Subjective</span>
+                      assignment
+                    </mat-icon>Subjective</span>
                   <span class="mr-2"><mat-icon inline class="text-warning">
-                            insert_drive_file
-                        </mat-icon>Document</span>
+                      insert_drive_file
+                    </mat-icon>Document</span>
                 </p>
               </div>
             </div>
@@ -277,32 +257,25 @@
             <div class="container-fluid">
               <div class="row flex-row flex-nowrap">
                 <ng-container *ngFor="let submission of currentGrant.submissions">
-                  <div class="col-sm-4 col-lg-6"
-                       style="background-color:#f9f9f9; border-right: 0.5px solid #d4d4d4;">
+                  <div class="col-sm-4 col-lg-6" style="background-color:#f9f9f9; border-right: 0.5px solid #d4d4d4;">
                     <div class="row">
                       <div class="col-sm-12 text-center">
                         <mat-form-field *ngIf="submission.id>0" class="text-center">
                           <input matInput class="text-center" [(ngModel)]="submission.title" class="anu-input"
-                                 [ngModelOptions]="{standAlone:true}"
-                                 (ngModelChange)="checkGrant()"
-                                 placeholder="Submission Title" required>
+                            [ngModelOptions]="{standAlone:true}" (ngModelChange)="checkGrant()"
+                            placeholder="Submission Title" required>
                         </mat-form-field>
-                        <mat-form-field *ngIf="submission.id<0" matBadge="N"
-                                        matBadgePosition="above after" matBadgeColor="accent"
-                                        class="text-center">
+                        <mat-form-field *ngIf="submission.id<0" matBadge="N" matBadgePosition="above after"
+                          matBadgeColor="accent" class="text-center">
                           <input matInput class="text-center" [(ngModel)]="submission.title" class="anu-input"
-                                 [ngModelOptions]="{standAlone:true}"
-                                 (ngModelChange)="checkGrant()"
-                                 placeholder="Submission Title" required>
+                            [ngModelOptions]="{standAlone:true}" (ngModelChange)="checkGrant()"
+                            placeholder="Submission Title" required>
                         </mat-form-field>
                         <mat-form-field class="text-center">
                           <input matInput [matDatepicker]="pickerSubmitBy" class="anu-input"
-                                 [ngModel]="submission.submitBy | date:'yyyy-MM-dd'"
-                                 [ngModelOptions]="{standAlone:true}"
-                                 (dateChange)="setSubmissionDate(submission, $event)"
-                                 placeholder="Submit by Date">
-                          <mat-datepicker-toggle matPrefix
-                                                 [for]="pickerSubmitBy"></mat-datepicker-toggle>
+                            [ngModel]="submission.submitBy | date:'yyyy-MM-dd'" [ngModelOptions]="{standAlone:true}"
+                            (dateChange)="setSubmissionDate(submission, $event)" placeholder="Submit by Date">
+                          <mat-datepicker-toggle matPrefix [for]="pickerSubmitBy"></mat-datepicker-toggle>
                           <mat-datepicker #pickerSubmitBy></mat-datepicker>
                         </mat-form-field>
                       </div>
@@ -315,10 +288,9 @@
         </div>
         <ng-container *ngIf="currentGrant.kpis.length==0">No KPIs set for this grant</ng-container>
         <ng-container *ngFor="let kpi of currentGrant.kpis">
-          <div class="row border-bottom kpi-block" style="overflow-x: auto;"
-               (scroll)="scrollChildContent($event)">
+          <div class="row border-bottom kpi-block" style="overflow-x: auto;" (scroll)="scrollChildContent($event)">
             <div class="col-sm-12 col-lg-5 pt-2 bg-white"
-                 style="z-index: 1;position:sticky;left: 0;border-right: 0.5px solid #d4d4d4;border-left: 4px solid #d4d4d4;">
+              style="z-index: 1;position:sticky;left: 0;border-right: 0.5px solid #d4d4d4;border-left: 4px solid #d4d4d4;">
               <div class="row">
                 <div class="col-sm-1" style="display:flex;align-items: center;">
                   <mat-icon class="text-primary" *ngIf="kpi.kpiReportingType==='ACTIVITY'">
@@ -335,24 +307,21 @@
                   </mat-icon>
                 </div>
                 <div class="col-sm-11">
-                  <mat-icon style="text-align: right;"
-                            (click)="confirm(null,null,[],kpi.id,'kpi','KPI')"
-                            aria-hidden="false"
-                            aria-label="Example home icon" inline="true">
+                  <mat-icon style="text-align: right;" (click)="confirm(null,null,[],kpi.id,'kpi','KPI')"
+                    aria-hidden="false" aria-label="Example home icon" inline="true">
                     delete_outline
                   </mat-icon>
                   <mat-form-field>
                     <input matInput [(ngModel)]="kpi.title" ngModelOptions="{standAlone:true}" class="anu-input"
-                           (ngModelChange)="checkGrant()" required placeholder="KPI Title">
+                      (ngModelChange)="checkGrant()" required placeholder="KPI Title">
                   </mat-form-field>
                   <button mat-stroked-button class="my-2" *ngIf="kpi.templates.length === 0"
-                          (click)="openBottomSheet(kpi.id, kpi.title, kpi.templates,true)">
+                    (click)="openBottomSheet(kpi.id, kpi.title, kpi.templates,true)">
                     Attach template
                   </button>
                   <button mat-stroked-button class="my-2" *ngIf="kpi.templates.length > 0"
-                          matBadge="{{kpi.templates.length}}"
-                          matBadgeOverlap="true" matBadgePosition="above after" matBadgeColor="accent"
-                          (click)="openBottomSheet(kpi.id, kpi.title, kpi.templates,true)">
+                    matBadge="{{kpi.templates.length}}" matBadgeOverlap="true" matBadgePosition="above after"
+                    matBadgeColor="accent" (click)="openBottomSheet(kpi.id, kpi.title, kpi.templates,true)">
                     Attach template
                   </button>
                 </div>
@@ -366,24 +335,17 @@
                       <ng-container *ngFor="let kpiData of submission.quantitiaveKpisubmissions">
                         <ng-container *ngIf="kpi.id === kpiData.grantKpi.id">
 
-                          <div class="col-sm-4 col-lg-6"
-                               style="height: 100%;border-right: 0.5px solid #d4d4d4;">
+                          <div class="col-sm-4 col-lg-6" style="height: 100%;border-right: 0.5px solid #d4d4d4;">
                             <div class="row h-100">
-                              <div class="col-sm-3"
-                                   style="display: flex;align-items: center;">
-                                <mat-checkbox color="primary"
-                                              [(ngModel)]="kpiData.toReport"
-                                              [ngModelOptions]="{standAlone:true}"
-                                              (ngModelChange)="checkGrant()"></mat-checkbox>
+                              <div class="col-sm-3" style="display: flex;align-items: center;">
+                                <mat-checkbox color="primary" [(ngModel)]="kpiData.toReport"
+                                  [ngModelOptions]="{standAlone:true}" (ngModelChange)="checkGrant()"></mat-checkbox>
                               </div>
-                              <div class="col-sm-9"
-                                   style="display:flex;align-items:center">
+                              <div class="col-sm-9" style="display:flex;align-items:center">
                                 <mat-form-field>
-                                  <input matInput type="number" class="anu-input"
-                                         [(ngModel)]="kpiData.goal"
-                                         [ngModelOptions]="{standAlone:true}"
-                                         (ngModelChange)="checkGrant()"
-                                         placeholder="Goal">
+                                  <input matInput type="number" class="anu-input" [(ngModel)]="kpiData.goal"
+                                    [ngModelOptions]="{standAlone:true}" (ngModelChange)="checkGrant()"
+                                    placeholder="Goal">
                                 </mat-form-field>
                               </div>
                             </div>
@@ -394,15 +356,11 @@
                     <ng-container *ngIf="kpi.kpiType === 'QUALITATIVE'">
                       <ng-container *ngFor="let kpiData of submission.qualitativeKpiSubmissions">
                         <ng-container *ngIf="kpi.id === kpiData.grantKpi.id">
-                          <div class="col-sm-4 col-lg-6"
-                               style="border-right: 0.5px solid #d4d4d4;">
+                          <div class="col-sm-4 col-lg-6" style="border-right: 0.5px solid #d4d4d4;">
                             <div class="row h-100">
-                              <div class="col-sm-6"
-                                   style="display: flex;align-items: center;">
-                                <mat-checkbox color="primary"
-                                              [(ngModel)]="kpiData.toReport"
-                                              [ngModelOptions]="{standAlone:true}"
-                                              (ngModelChange)="checkGrant()"></mat-checkbox>
+                              <div class="col-sm-6" style="display: flex;align-items: center;">
+                                <mat-checkbox color="primary" [(ngModel)]="kpiData.toReport"
+                                  [ngModelOptions]="{standAlone:true}" (ngModelChange)="checkGrant()"></mat-checkbox>
 
                               </div>
                               <div class="col-sm-6">
@@ -415,15 +373,11 @@
                     <ng-container *ngIf="kpi.kpiType === 'DOCUMENT'">
                       <ng-container *ngFor="let kpiData of submission.documentKpiSubmissions">
                         <ng-container *ngIf="kpi.id === kpiData.grantKpi.id">
-                          <div class="col-sm-4 col-lg-6"
-                               style="border-right: 0.5px solid #d4d4d4;">
+                          <div class="col-sm-4 col-lg-6" style="border-right: 0.5px solid #d4d4d4;">
                             <div class="row h-100">
-                              <div class="col-sm-6"
-                                   style="display: flex;align-items: center;">
-                                <mat-checkbox color="primary"
-                                              [(ngModel)]="kpiData.toReport"
-                                              [ngModelOptions]="{standAlone:true}"
-                                              (ngModelChange)="checkGrant()"></mat-checkbox>
+                              <div class="col-sm-6" style="display: flex;align-items: center;">
+                                <mat-checkbox color="primary" [(ngModel)]="kpiData.toReport"
+                                  [ngModelOptions]="{standAlone:true}" (ngModelChange)="checkGrant()"></mat-checkbox>
                               </div>
                               <div class="col-sm-6">
                               </div>
@@ -530,7 +484,7 @@
 </div>
 
 <div #editFieldModal class="modal fade" id="editFieldModal" tabindex="-1" role="dialog"
-     aria-labelledby="exampleModalLabel" aria-hidden="true">
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
   <input type="text" id="editFieldIdHolder">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -544,8 +498,7 @@
         <input id="editFieldInput" class="form-control" value="">
       </div>
       <div class="">
-        <button type="button" class="btn btn-primary pull-right"
-                (click)="saveField()">Okay
+        <button type="button" class="btn btn-primary pull-right" (click)="saveField()">Okay
         </button>
         <button type="button" class="btn btn-link pull-right" data-dismiss="modal">Close</button>
 
@@ -555,7 +508,7 @@
 </div>
 
 <div #createFieldModal class="modal fade" id="createFieldModal" tabindex="-1" role="dialog"
-     aria-labelledby="exampleModalLabel" aria-hidden="true">
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
   <input type="text" id="sectionIdHolder">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -577,8 +530,7 @@
         </select>
       </div>
       <div class="">
-        <button type="button" class="btn btn-primary pull-right"
-                (click)="addField()">Okay
+        <button type="button" class="btn btn-primary pull-right" (click)="addField()">Okay
         </button>
         <button type="button" class="btn btn-link pull-right" data-dismiss="modal">Close</button>
 
@@ -588,7 +540,7 @@
 </div>
 
 <div #createSectionModal class="modal fade" id="createSectionModal" tabindex="-1" role="dialog"
-     aria-labelledby="exampleModalLabel" aria-hidden="true">
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -604,11 +556,9 @@
         </div>
       </div>
       <div class="">
-        <button type="button" class="btn btn-primary pull-right"
-                (click)="saveSection()">Done
+        <button type="button" class="btn btn-primary pull-right" (click)="saveSection()">Done
         </button>
-        <button type="button" class="btn btn-warning pull-right"
-                (click)="saveSectionAndAddNew()">Save & Add New Section
+        <button type="button" class="btn btn-warning pull-right" (click)="saveSectionAndAddNew()">Save & Add New Section
         </button>
         <button type="button" class="btn btn-link pull-right" data-dismiss="modal">Close</button>
 
@@ -618,9 +568,8 @@
 </div>
 
 
-<div #createKpiModal id="createKpiModal" class="modal fade" tabindex="-1"
-     role="dialog"
-     aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div #createKpiModal id="createKpiModal" class="modal fade" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -634,13 +583,13 @@
           <div class="col-sm-12">
             <mat-form-field>
               <input matInput id="kpiDescription" #kpiDescriptionElem class="form-control"
-                     placeholder="KPI description">
+                placeholder="KPI description">
             </mat-form-field>
           </div>
           <div class="col-sm-12 text-left">
             <div id="reporting-data">Select what you want to be reported for this KPI</div>
             <mat-radio-group class="reporting-data-radio-group" aria-labelledby="reporting-data"
-                             (change)="setKpiTypeSection($event)">
+              (change)="setKpiTypeSection($event)">
               <mat-radio-button checked class="reporting-data-radio-button" value="Quantitative">Numbers
                 and Metrics
               </mat-radio-button>
@@ -654,7 +603,7 @@
           <div class="col-sm-12 text-left" *ngIf="currentKPIType==='Quantitative'">
             <div id="kpi-type">Select the type KPI type</div>
             <mat-radio-group class="reporting-data-radio-group" aria-labelledby="kpi-type"
-                             (change)="setKpiReportingTypeSection($event)">
+              (change)="setKpiReportingTypeSection($event)">
               <mat-radio-button class="reporting-data-radio-button" checked value="activity">Project Activities
               </mat-radio-button>
               <mat-radio-button class="reporting-data-radio-button" value="financial">Financial Activities
@@ -664,8 +613,7 @@
         </div>
       </div>
       <div class="">
-        <button type="button" class="btn btn-primary pull-right"
-                (click)="saveKpi()">Done
+        <button type="button" class="btn btn-primary pull-right" (click)="saveKpi()">Done
         </button>
         <!--<button type="button" class="btn btn-warning pull-right"
                 (click)="saveKpiAndAddNew()">Save & Add New KPI
@@ -678,9 +626,8 @@
 </div>
 
 
-<div #selectScheduleModal id="selectScheduleModal" class="modal fade" tabindex="-1"
-     role="dialog"
-     aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div #selectScheduleModal id="selectScheduleModal" class="modal fade" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -698,8 +645,7 @@
         </mat-select>
       </div>
       <div class="">
-        <button type="button" class="btn btn-primary pull-right"
-                (click)="saveKpi()">Done
+        <button type="button" class="btn btn-primary pull-right" (click)="saveKpi()">Done
         </button>
         <!--<button type="button" class="btn btn-warning pull-right"
                 (click)="saveKpiAndAddNew()">Save & Add New KPI
@@ -710,6 +656,3 @@
     </div>
   </div>
 </div>
-
-
-

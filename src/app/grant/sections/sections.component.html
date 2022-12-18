@@ -552,8 +552,9 @@
                               </mat-form-field>
                             </div>
                             <div class="col-sm-12 col-lg-12 text-left" *ngIf="attribute.fieldType === 'multiline'">
-                              <textarea [(ngModel)]="attribute.fieldValue" class="anu-input h-100 w-100"
-                                [ngModelOptions]="{ standAlone: true }" (ngModelChange)="checkGrant()"></textarea>
+                              <textarea [(ngModel)]="attribute.fieldValue" matTextareaAutosize matInput
+                                class="anu-input  w-100" [ngModelOptions]="{ standAlone: true }"
+                                (ngModelChange)="checkGrant()"></textarea>
                             </div>
                             <div class="col-sm-12 col-lg-12 text-left" *ngIf="attribute.fieldType === 'document'">
                               <div style="display: flex; align-items: baseline" class="attachments-wrapper">

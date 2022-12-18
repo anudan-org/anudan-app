@@ -1455,7 +1455,7 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
   saveSection() {
     const sectionName = $("#sectionTitleInput");
     if (sectionName.val().trim() === "") {
-      this.toastr.warning("Section name cannot be left blank", "Warning");
+      this.toastr.error("Section name cannot be left blank", "Warning");
       sectionName.focus();
       return;
     }
@@ -1468,12 +1468,15 @@ export class ClosureSectionsComponent implements OnInit, AfterViewInit {
       }
     }
     if (repeatName) {
-      this.toastr.warning("Section name already exists, Please select a different name", "Warning");
+      this.toastr.error("Section name already exists, Please select a different name", "Warning");
       sectionName.focus();
       return;
     }
+    const createSectionModal = this.createSectionModal.nativeElement;
 
     this.callCreateSectionAPI(sectionName.val(), false)
+    sectionName.val("");
+    $(createSectionModal).modal("hide");
   }
 
   callCreateSectionAPI(nameOfSection, isRefund) {

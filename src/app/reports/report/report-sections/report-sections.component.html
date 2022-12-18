@@ -458,9 +458,8 @@
                                           position: relative;
                                           text-align: center;
                                         ">Row Description</label>
-                                          <textarea matInput [(ngModel)]="row.name" class="anu-input"
-                                            style="height: 80px !important"
-                                            [ngModelOptions]="{ standAlone: true }"></textarea>
+                                          <textarea matTextareaAutosize matInput [(ngModel)]="row.name"
+                                            class="anu-input" [ngModelOptions]="{ standAlone: true }"></textarea>
                                         </mat-form-field>
                                         <p class="anu-input-plain" *ngIf="
                                         (currentReport.canManage &&
@@ -1461,8 +1460,8 @@
                               </mat-form-field>
                             </div>
                             <div class="col-sm-12 col-lg-12 text-left" *ngIf="attribute.fieldType === 'multiline'">
-                              <textarea [(ngModel)]="attribute.fieldValue" class="anu-input h-100 w-100"
-                                [ngModelOptions]="{ standAlone: true }"></textarea>
+                              <textarea matTextareaAutosize matInput [(ngModel)]="attribute.fieldValue"
+                                class="anu-input w-100" [ngModelOptions]="{ standAlone: true }"></textarea>
                             </div>
                             <div class="col-sm-12 col-lg-12 text-left" *ngIf="attribute.fieldType === 'document'">
                               <div style="display: flex; align-items: baseline" class="attachments-wrapper">

@@ -37,23 +37,31 @@
 <div class="main-content no-top-margin5" style="margin-top: 40px;">
     <div class="container-fluid">
 
-        <mat-tab-group (selectedTabChange)="tabSelectionChange($event)" #DashboardTabGroup *ngIf="this.appComponent.loggedInUser.organization.type==='GRANTER'" class="mt-4">
+        <mat-tab-group (selectedTabChange)="tabSelectionChange($event)" #DashboardTabGroup
+            *ngIf="this.appComponent.loggedInUser.organization.type==='GRANTER'" class="mt-4">
             <mat-tab label="{{this.appComponent.loggedInUser.organization.name}}">
                 <div class="anu-container text-left pt-3 mx-0 px-4">
                     <div class="row mx-0">
-                        <div class="col-4"><app-summary [border]="'#4dc252'" [borderWidth]="'4px'" [heading]="totalGrantsIssued" caption="Grants Issued"></app-summary></div>
-                        <div class="col-4"><app-summary [border]="'#4dc252'" [borderWidth]="'4px'" [heading]="totalGrantees" caption="Grantees"></app-summary></div>
-                        <div class="col-4"><app-summary [border]="'#4dc252'" [borderWidth]="'4px'" [heading]="totalGrantAmount" caption="Total Grant Amount"></app-summary></div>
+                        <div class="col-4"><app-summary [border]="'#4dc252'" [borderWidth]="'4px'"
+                                [heading]="totalGrantsIssued" caption="Grants Issued"></app-summary></div>
+                        <div class="col-4"><app-summary [border]="'#4dc252'" [borderWidth]="'4px'"
+                                [heading]="totalGrantees" caption="Grantees"></app-summary></div>
+                        <div class="col-4"><app-summary [border]="'#4dc252'" [borderWidth]="'4px'"
+                                [heading]="totalGrantAmount" caption="Total Grant Amount"></app-summary></div>
                     </div>
                     <div class="row mx-0">
-                        <div class="col-4"><app-summary [borderWidth]="'4px'" heading="-" caption="RFPs" disabled="true"></app-summary></div>
-                        <div class="col-4"><app-summary [borderWidth]="'4px'" heading="-" caption="Applications" disabled="true"></app-summary></div>
-                        <div class="col-4"><app-summary [border]="'#4dc252'" [borderWidth]="'4px'" [heading]="totalActiveUsers" caption="Active Users"></app-summary></div>
+                        <div class="col-4"><app-summary [borderWidth]="'4px'" heading="-" caption="RFPs"
+                                disabled="true"></app-summary></div>
+                        <div class="col-4"><app-summary [borderWidth]="'4px'" heading="-" caption="Applications"
+                                disabled="true"></app-summary></div>
+                        <div class="col-4"><app-summary [border]="'#4dc252'" [borderWidth]="'4px'"
+                                [heading]="totalActiveUsers" caption="Active Users"></app-summary></div>
                     </div>
                     <hr>
                     <div *ngIf="portfolioData && portfolioData.length>0" class="row mx-0 mt-4">
                         <div class="col-12 px-2">
-                            <app-portfolio-summary [data]="portfolioData" [display]="false" name="Grant Portfolio"></app-portfolio-summary>
+                            <app-portfolio-summary [data]="portfolioData" [display]="false"
+                                name="Grant Portfolio"></app-portfolio-summary>
                         </div>
 
                     </div>
@@ -65,40 +73,127 @@
                 <div class="anu-container text-left mx-0 px-4 pb-4">
                     <div class="row">
                         <div class="col-12 mt-4">
-                            <h5 *ngIf="myCategory.summary.ActionsPending.Grants>0 || myCategory.summary.ActionsPending.Reports>0 || myCategory.summary.ActionsPending.DisbursementApprovals>0" class="text-green mb-0" style="font-weight: 500;">Actions Pending</h5>
-                            <h5 *ngIf="myCategory.summary.ActionsPending.Grants===0 && myCategory.summary.ActionsPending.Reports===0 && myCategory.summary.ActionsPending.DisbursementApprovals===0" class="text-green mb-0" style="font-weight: 500;">No Actions Pending</h5>
+                            <h5 *ngIf="myCategory.summary.ActionsPending.Grants>0 || myCategory.summary.ActionsPending.Closures>0 || myCategory.summary.ActionsPending.Reports>0 || myCategory.summary.ActionsPending.DisbursementApprovals>0"
+                                class="text-green mb-0" style="font-weight: 500;">Actions Pending</h5>
+                            <h5 *ngIf="myCategory.summary.ActionsPending.Grants===0 && myCategory.summary.ActionsPending.Closures===0 && myCategory.summary.ActionsPending.Reports===0 && myCategory.summary.ActionsPending.DisbursementApprovals===0"
+                                class="text-green mb-0" style="font-weight: 500;">No Actions Pending</h5>
                         </div>
-                        <div class="col-4"><app-summary *ngIf="myCategory.summary.ActionsPending.Grants>0 || myCategory.summary.ActionsPending.Reports>0 || myCategory.summary.ActionsPending.DisbursementApprovals>0" [border]="'#ffbf00'" [clickable]="myCategory.summary.ActionsPending.Grants>0" [shadow]="myCategory.summary.ActionsPending.Grants>0?'4px 4px 10px #d7d7d7':'none'" [borderWidth]="'4px'" [heading]="myCategory.summary.ActionsPending.Grants" caption="Grants" (click)="showpendingGrants()"></app-summary></div>
-                        <div class="col-4"><app-summary *ngIf="myCategory.summary.ActionsPending.Grants>0 || myCategory.summary.ActionsPending.Reports>0 || myCategory.summary.ActionsPending.DisbursementApprovals>0" [border]="'#ffbf00'" [clickable]="myCategory.summary.ActionsPending.Reports>0" [shadow]="myCategory.summary.ActionsPending.Reports>0?'4px 4px 10px #d7d7d7':'none'" [borderWidth]="'4px'" [heading]="myCategory.summary.ActionsPending.Reports" caption="Progress Reports" (click)="showpendingReports()"></app-summary></div>
-                        <div class="col-4"><app-summary *ngIf="myCategory.summary.ActionsPending.Grants>0 || myCategory.summary.ActionsPending.Reports>0 || myCategory.summary.ActionsPending.DisbursementApprovals>0" [border]="'#ffbf00'" [clickable]="myCategory.summary.ActionsPending.DisbursementApprovals>0" [shadow]="myCategory.summary.ActionsPending.DisbursementApprovals>0?'4px 4px 10px #d7d7d7':'none'" [borderWidth]="'4px'" [heading]="myCategory.summary.ActionsPending.DisbursementApprovals" caption="Disbursement Requests" (click)="showpendingDisbursements()"></app-summary></div>
+                        <div class="col-4"><app-summary
+                                *ngIf="myCategory.summary.ActionsPending.Grants>0 || myCategory.summary.ActionsPending.Closures>0 || myCategory.summary.ActionsPending.Reports>0 || myCategory.summary.ActionsPending.DisbursementApprovals>0"
+                                [border]="'#ffbf00'" [clickable]="myCategory.summary.ActionsPending.Grants>0"
+                                [shadow]="myCategory.summary.ActionsPending.Grants>0?'4px 4px 10px #d7d7d7':'none'"
+                                [borderWidth]="'4px'" [heading]="myCategory.summary.ActionsPending.Grants"
+                                caption="Grants" (click)="showpendingGrants()"></app-summary></div>
+                        <div class="col-4"><app-summary
+                                *ngIf="myCategory.summary.ActionsPending.Grants>0 || myCategory.summary.ActionsPending.Closures>0  || myCategory.summary.ActionsPending.Reports>0 || myCategory.summary.ActionsPending.DisbursementApprovals>0"
+                                [border]="'#ffbf00'" [clickable]="myCategory.summary.ActionsPending.Reports>0"
+                                [shadow]="myCategory.summary.ActionsPending.Reports>0?'4px 4px 10px #d7d7d7':'none'"
+                                [borderWidth]="'4px'" [heading]="myCategory.summary.ActionsPending.Reports"
+                                caption="Progress Reports" (click)="showpendingReports()"></app-summary></div>
+                        <div class="col-4"><app-summary
+                                *ngIf="myCategory.summary.ActionsPending.Grants>0 || myCategory.summary.ActionsPending.Closures>0  || myCategory.summary.ActionsPending.Reports>0 || myCategory.summary.ActionsPending.DisbursementApprovals>0"
+                                [border]="'#ffbf00'"
+                                [clickable]="myCategory.summary.ActionsPending.DisbursementApprovals>0"
+                                [shadow]="myCategory.summary.ActionsPending.DisbursementApprovals>0?'4px 4px 10px #d7d7d7':'none'"
+                                [borderWidth]="'4px'"
+                                [heading]="myCategory.summary.ActionsPending.DisbursementApprovals"
+                                caption="Disbursement Requests" (click)="showpendingDisbursements()"></app-summary>
+                        </div>
+                        <div class="col-4"><app-summary *ngIf="myCategory.summary.ActionsPending.Closures>0  "
+                                [border]="'#ffbf00'" [clickable]="myCategory.summary.ActionsPending.Closures>0"
+                                [shadow]="myCategory.summary.ActionsPending.Closures>0?'4px 4px 10px #d7d7d7':'none'"
+                                [borderWidth]="'4px'" [heading]="myCategory.summary.ActionsPending.Closures"
+                                caption="Grant Closures" (click)="showpendingClosures()"></app-summary>
+                        </div>
                     </div>
-                    <div class="row" *ngIf="myCategory.summary.UpcomingGrants.DraftGrants>0 || myCategory.summary.UpcomingGrants.Grantsinmyworkflow>0 || myCategory.summary.UpcomingGrants.GrantAmount>0 || myCategory.summary.UpcomingReports.DraftReports>0 || myCategory.summary.UpcomingReports.Reportsinmyworkflow>0 || myCategory.summary.UpcomingReports.ReportAmount>0 || myCategory.summary.upcomingDisbursements.DraftDisbursements>0 || myCategory.summary.upcomingDisbursements.Disbursementsinmyworkflow>0 || myCategory.summary.upcomingDisbursements.DisbursementAmount>0">
+                    <div class="row"
+                        *ngIf="myCategory.summary.UpcomingGrants.DraftGrants>0 || myCategory.summary.UpcomingGrants.Grantsinmyworkflow>0 || myCategory.summary.UpcomingGrants.GrantAmount>0 || myCategory.summary.UpcomingReports.DraftReports>0 || myCategory.summary.UpcomingReports.Reportsinmyworkflow>0 || myCategory.summary.UpcomingReports.ReportAmount>0 || myCategory.summary.upcomingDisbursements.DraftDisbursements>0 || myCategory.summary.upcomingDisbursements.Disbursementsinmyworkflow>0 || myCategory.summary.upcomingDisbursements.DisbursementAmount>0">
                         <h5 class="col-12 mt-4 text-green mb-0" style="font-weight: 500;">Upcoming</h5>
-                        <div class="p-3 mx-3 mb-2 mt-1 px-4" style="border: 1px solid rgba(14, 16, 14, 0.12); border-radius: 4px; background: #fefefe;">
-                            <div *ngIf="myCategory.summary.UpcomingGrants.DraftGrants>0 || myCategory.summary.UpcomingGrants.Grantsinmyworkflow>0 || myCategory.summary.UpcomingGrants.GrantAmount>0" class="row">
-                                <div class="col-12 mt-1"><h5 class="text-green mb-0" style="font-weight: 400;">Grants</h5></div>
-                                <div class="col-4"><app-summary [border]="'#ffbf00'" [clickable]="myCategory.summary.UpcomingGrants.DraftGrants>0" [shadow]="myCategory.summary.UpcomingGrants.DraftGrants>0?'4px 4px 10px #d7d7d7':'none'" [borderWidth]="'4px'" [heading]="myCategory.summary.UpcomingGrants.DraftGrants" caption="Drafts" (click)="showupcomingGrants()"></app-summary></div>
-                                <div class="col-4"><app-summary [border]="'#9d9d9d'" [borderWidth]="'4px'" [heading]="myCategory.summary.UpcomingGrants.Grantsinmyworkflow" caption="In-Progress"></app-summary></div>
-                                <div class="col-4"><app-summary [border]="'#9d9d9d'" [borderWidth]="'4px'" [color]="'#f4f4f4'" [heading]="getFormattedGrantAmount(myCategory.summary.UpcomingGrants.GrantAmount)" caption="Commitment Amount"></app-summary></div>
+                        <div class="p-3 mx-3 mb-2 mt-1 px-4"
+                            style="border: 1px solid rgba(14, 16, 14, 0.12); border-radius: 4px; background: #fefefe;">
+                            <div *ngIf="myCategory.summary.UpcomingGrants.DraftGrants>0 || myCategory.summary.UpcomingGrants.Grantsinmyworkflow>0 || myCategory.summary.UpcomingGrants.GrantAmount>0"
+                                class="row">
+                                <div class="col-12 mt-1">
+                                    <h5 class="text-green mb-0" style="font-weight: 400;">Grants</h5>
+                                </div>
+                                <div class="col-4"><app-summary [border]="'#ffbf00'"
+                                        [clickable]="myCategory.summary.UpcomingGrants.DraftGrants>0"
+                                        [shadow]="myCategory.summary.UpcomingGrants.DraftGrants>0?'4px 4px 10px #d7d7d7':'none'"
+                                        [borderWidth]="'4px'" [heading]="myCategory.summary.UpcomingGrants.DraftGrants"
+                                        caption="Drafts" (click)="showupcomingGrants()"></app-summary></div>
+                                <div class="col-4"><app-summary [border]="'#9d9d9d'" [borderWidth]="'4px'"
+                                        [heading]="myCategory.summary.UpcomingGrants.Grantsinmyworkflow"
+                                        caption="In-Progress"></app-summary></div>
+                                <div class="col-4"><app-summary [border]="'#9d9d9d'" [borderWidth]="'4px'"
+                                        [color]="'#f4f4f4'"
+                                        [heading]="getFormattedGrantAmount(myCategory.summary.UpcomingGrants.GrantAmount)"
+                                        caption="Commitment Amount"></app-summary></div>
                             </div>
-                            <div *ngIf="myCategory.summary.UpcomingReports.DraftReports>0 || myCategory.summary.UpcomingReports.Reportsinmyworkflow>0 || myCategory.summary.UpcomingReports.ReportAmount>0" class="row">
-                                <div class="col-12 mt-4"><h5 class="text-green mb-0" style="font-weight: 400;">Progress Reports</h5></div>
-                                <div class="col-4"><app-summary [border]="'#ffbf00'" [clickable]="myCategory.summary.UpcomingReports.DraftReports>0" [shadow]="myCategory.summary.UpcomingReports.DraftReports>0?'4px 4px 10px #d7d7d7':'none'" [borderWidth]="'4px'" [heading]="myCategory.summary.UpcomingReports.DraftReports" caption="Drafts" (click)="showupcomingReports()"></app-summary></div>
-                                <div class="col-4"><app-summary [border]="'#9d9d9d'" [borderWidth]="'4px'" [heading]="myCategory.summary.UpcomingReports.Reportsinmyworkflow" caption="In-Progress"></app-summary></div>
-                                <div class="col-4"><app-summary [border]="'#9d9d9d'" [borderWidth]="'4px'" [color]="'#f4f4f4'" [heading]="getFormattedGrantAmount(myCategory.summary.UpcomingReports.ReportAmount)" caption="Pending Amount"></app-summary></div>
+                            <div *ngIf="myCategory.summary.UpcomingClosures.DraftClosures>0 || myCategory.summary.UpcomingClosures.Closuresinmyworkflow>0 || myCategory.summary.UpcomingClosures.ActualSpent>0"
+                                class="row">
+                                <div class="col-12 mt-4">
+                                    <h5 class="text-green mb-0" style="font-weight: 400;">Grant Closures</h5>
+                                </div>
+                                <div class="col-4"><app-summary [border]="'#ffbf00'"
+                                        [clickable]="myCategory.summary.UpcomingClosures.DraftClosures>0"
+                                        [shadow]="myCategory.summary.UpcomingClosures.DraftClosures>0?'4px 4px 10px #d7d7d7':'none'"
+                                        [borderWidth]="'4px'"
+                                        [heading]="myCategory.summary.UpcomingClosures.DraftClosures" caption="Drafts"
+                                        (click)="showupcomingClosures()"></app-summary></div>
+                                <div class="col-4"><app-summary [border]="'#9d9d9d'" [borderWidth]="'4px'"
+                                        [heading]="myCategory.summary.UpcomingClosures.Closuresinmyworkflow"
+                                        caption="In-Progress"></app-summary></div>
+                                <div class="col-4"><app-summary [border]="'#9d9d9d'" [borderWidth]="'4px'"
+                                        [color]="'#f4f4f4'"
+                                        [heading]="getFormattedGrantAmount(myCategory.summary.UpcomingClosures.ActualSpent)"
+                                        caption="Actual Spent Amount"></app-summary></div>
                             </div>
-                            <div *ngIf="myCategory.summary.upcomingDisbursements.DraftDisbursements>0 || myCategory.summary.upcomingDisbursements.Disbursementsinmyworkflow>0 || myCategory.summary.upcomingDisbursements.DisbursementAmount>0" class="row">
-                                <div class="col-12 mt-4"><h5 class="text-green mb-0" style="font-weight: 400;">Disbursement Requests</h5></div>
-                                <div class="col-4"><app-summary [border]="'#ffbf00'" [clickable]="myCategory.summary.upcomingDisbursements.DraftDisbursements>0" [shadow]="myCategory.summary.upcomingDisbursements.DraftDisbursements>0?'4px 4px 10px #d7d7d7':'none'" [borderWidth]="'4px'" [heading]="myCategory.summary.upcomingDisbursements.DraftDisbursements" caption="Drafts" (click)="showupcomingDisbursements()"></app-summary></div>
-                                <div class="col-4"><app-summary [border]="'#9d9d9d'" [borderWidth]="'4px'" [heading]="myCategory.summary.upcomingDisbursements.Disbursementsinmyworkflow" caption="In-Progress"></app-summary></div>
-                                <div class="col-4"><app-summary [border]="'#9d9d9d'" [borderWidth]="'4px'" [color]="'#f4f4f4'" [heading]="getFormattedGrantAmount(myCategory.summary.upcomingDisbursements.DisbursementAmount)" caption="Request Amount"></app-summary></div>
+                            <div *ngIf="myCategory.summary.UpcomingReports.DraftReports>0 || myCategory.summary.UpcomingReports.Reportsinmyworkflow>0 || myCategory.summary.UpcomingReports.ReportAmount>0"
+                                class="row">
+                                <div class="col-12 mt-4">
+                                    <h5 class="text-green mb-0" style="font-weight: 400;">Progress Reports</h5>
+                                </div>
+                                <div class="col-4"><app-summary [border]="'#ffbf00'"
+                                        [clickable]="myCategory.summary.UpcomingReports.DraftReports>0"
+                                        [shadow]="myCategory.summary.UpcomingReports.DraftReports>0?'4px 4px 10px #d7d7d7':'none'"
+                                        [borderWidth]="'4px'"
+                                        [heading]="myCategory.summary.UpcomingReports.DraftReports" caption="Drafts"
+                                        (click)="showupcomingReports()"></app-summary></div>
+                                <div class="col-4"><app-summary [border]="'#9d9d9d'" [borderWidth]="'4px'"
+                                        [heading]="myCategory.summary.UpcomingReports.Reportsinmyworkflow"
+                                        caption="In-Progress"></app-summary></div>
+                                <div class="col-4"><app-summary [border]="'#9d9d9d'" [borderWidth]="'4px'"
+                                        [color]="'#f4f4f4'"
+                                        [heading]="getFormattedGrantAmount(myCategory.summary.UpcomingReports.ReportAmount)"
+                                        caption="Pending Amount"></app-summary></div>
+                            </div>
+                            <div *ngIf="myCategory.summary.upcomingDisbursements.DraftDisbursements>0 || myCategory.summary.upcomingDisbursements.Disbursementsinmyworkflow>0 || myCategory.summary.upcomingDisbursements.DisbursementAmount>0"
+                                class="row">
+                                <div class="col-12 mt-4">
+                                    <h5 class="text-green mb-0" style="font-weight: 400;">Disbursement Requests</h5>
+                                </div>
+                                <div class="col-4"><app-summary [border]="'#ffbf00'"
+                                        [clickable]="myCategory.summary.upcomingDisbursements.DraftDisbursements>0"
+                                        [shadow]="myCategory.summary.upcomingDisbursements.DraftDisbursements>0?'4px 4px 10px #d7d7d7':'none'"
+                                        [borderWidth]="'4px'"
+                                        [heading]="myCategory.summary.upcomingDisbursements.DraftDisbursements"
+                                        caption="Drafts" (click)="showupcomingDisbursements()"></app-summary></div>
+                                <div class="col-4"><app-summary [border]="'#9d9d9d'" [borderWidth]="'4px'"
+                                        [heading]="myCategory.summary.upcomingDisbursements.Disbursementsinmyworkflow"
+                                        caption="In-Progress"></app-summary></div>
+                                <div class="col-4"><app-summary [border]="'#9d9d9d'" [borderWidth]="'4px'"
+                                        [color]="'#f4f4f4'"
+                                        [heading]="getFormattedGrantAmount(myCategory.summary.upcomingDisbursements.DisbursementAmount)"
+                                        caption="Request Amount"></app-summary></div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div *ngIf="myCategory.filters && myCategory.filters.length>0 && (myCategory.filters[0].totalGrants>0 || myCategory.filters[1].totalGrants>0)" class="row mt-4">
+
+                    <div *ngIf="myCategory.filters && myCategory.filters.length>0 && (myCategory.filters[0].totalGrants>0 || myCategory.filters[1].totalGrants>0)"
+                        class="row mt-4">
                         <div class="col-12 px-3">
-                            <app-myportfolio-summary [data]="myCategory.filters" [display]="false" name="My Grant Portfolio"></app-myportfolio-summary>
+                            <app-myportfolio-summary [data]="myCategory.filters" [display]="false"
+                                name="My Grant Portfolio"></app-myportfolio-summary>
                         </div>
 
                     </div>
@@ -107,20 +202,24 @@
 
             </mat-tab>
         </mat-tab-group>
-        <mat-tab-group (selectedTabChange)="tabSelectionChange($event)" #DashboardTabGroup *ngIf="this.appComponent.loggedInUser.organization.type==='GRANTEE'" class="mt-4">
+        <mat-tab-group (selectedTabChange)="tabSelectionChange($event)" #DashboardTabGroup
+            *ngIf="this.appComponent.loggedInUser.organization.type==='GRANTEE'" class="mt-4">
             <mat-tab label="{{this.appComponent.loggedInUser.organization.name}}">
                 <div class="anu-container text-left pt-3 mx-0 px-4">
-    
+
                     <div *ngIf="portfolioData && portfolioData.length>0" class="row mx-0 mt-4">
                         <div class="col-12 px-2">
-                            <app-granteeportfolio-summary [data]="portfolioData" [display]="false" name="Grants Awarded"></app-granteeportfolio-summary>
+                            <app-granteeportfolio-summary [data]="portfolioData" [display]="false"
+                                name="Grants Awarded"></app-granteeportfolio-summary>
                         </div>
 
                     </div>
                     <hr>
                     <div class="row mx-0">
-                        <div class="col-4"><app-summary [borderWidth]="'4px'" heading="-" caption="RFPs" disabled="true"></app-summary></div>
-                        <div class="col-4"><app-summary [borderWidth]="'4px'" heading="-" caption="Applications" disabled="true"></app-summary></div>
+                        <div class="col-4"><app-summary [borderWidth]="'4px'" heading="-" caption="RFPs"
+                                disabled="true"></app-summary></div>
+                        <div class="col-4"><app-summary [borderWidth]="'4px'" heading="-" caption="Applications"
+                                disabled="true"></app-summary></div>
                     </div>
 
                 </div>
@@ -128,4 +227,4 @@
             </mat-tab>
         </mat-tab-group>
     </div>
-    </div>
+</div>

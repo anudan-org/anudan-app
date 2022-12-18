@@ -32,7 +32,8 @@
         <mat-list style="background:#fff;">
             <mat-list-item id="role_{{role.id}}" *ngFor="let role of roles"
                 style="min-height:48px;height:auto;padding:8px;">
-                <h6 *ngIf="!role.editMode" class="mb-2" matLine style="text-transform:none !important;"><strong>{{role.name}}
+                <h6 *ngIf="!role.editMode" class="mb-2" matLine style="text-transform:none !important;">
+                    <strong>{{role.name}}
                     </strong><small>({{role.linkedUsers}} users)</small></h6>
                 <mat-form-field *ngIf="role.editMode" matLine>
                     <input matInput [(ngModel)]="role.name" class="anu-input" placeholder="Edit role name">
@@ -42,16 +43,17 @@
                 <p matLine><small *ngIf="!role.editMode"
                         style="font-size:14px;white-space: normal;">{{role.description}}</small></p>
                 <!-- <img alt="img"*ngIf="!role.editMode" class="ml-5" src="./assets/img/edit.svg" (click)="editRole(role,$event)" style="cursor: pointer;"> -->
-                
+
                 <button mat-icon-button *ngIf="!role.editMode">
-                    <mat-icon *ngIf="!role.editMode" style="font-size: 20px;color:#9f9f9f;" (click)="editRole(role,$event)">create</mat-icon>
+                    <mat-icon *ngIf="!role.editMode" style="font-size: 20px;color:#9f9f9f;"
+                        (click)="editRole(role,$event)">create</mat-icon>
                 </button>
                 <button mat-icon-button *ngIf="!role.editMode" [disabled]="role.hasUsers"
                     [ngStyle]="role.hasUsers?{'cursor': 'pointer','color':'#dee2e6'}:{'cursor': 'pointer','color':'#9f9f9f'}">
                     <mat-icon (click)="deleteRole(role)">delete_outline</mat-icon>
                 </button>
                 <mat-form-field *ngIf="role.editMode" matLine>
-                    <textarea matInput placeholder="Edit role description" class="anu-input"
+                    <textarea matInput matTextareaAutosize placeholder="Edit role description" class="anu-input"
                         [(ngModel)]="role.description"></textarea>
                 </mat-form-field>
                 <div matLine *ngIf="role.editMode" style="display: flex;align-items: center;justify-content: flex-end;">

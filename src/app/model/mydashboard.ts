@@ -1,14 +1,22 @@
 
 export class ActionsPending {
   Grants: number = 0;
+  Closures: number = 0;
   Reports: number = 0;
   DisbursementApprovals: number = 0;
 }
+
 
 export class UpcomingGrants {
   DraftGrants: number = 0;
   Grantsinmyworkflow: number = 0;
   GrantAmount: number = 0;
+}
+
+export class UpcomingClosures {
+  DraftClosures: number = 0;
+  Closuresinmyworkflow: number = 0;
+  ActualSpentAmount: number = 0;
 }
 
 export class UpcomingReports {
@@ -26,6 +34,7 @@ export class UpcomingDisbursements {
 export class Summary {
   ActionsPending: ActionsPending = new ActionsPending();
   UpcomingGrants: UpcomingGrants = new UpcomingGrants();
+  UpcomingClosures: UpcomingClosures = new UpcomingClosures();
   UpcomingReports: UpcomingReports = new UpcomingReports();
   upcomingDisbursements: UpcomingDisbursements = new UpcomingDisbursements();
 }
