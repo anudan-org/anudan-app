@@ -318,7 +318,18 @@ select {
 
 textarea[matTextareaAutosize].mat-input-element {
   overflow: hidden;
-  // resize: auto;
+  border: 1px solid #d4d4d4 !important;
+  border-radius: 4px !important;
+  line-height: 165% !important;
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  background: #fff !important;
+  min-height: 41px;
+  background-image: none !important;
+}
+
+textarea[matTextareaAutosize]:focus {
+  border: 1px solid #39743c !important;
 }
 
 .form-group input[type=file] {

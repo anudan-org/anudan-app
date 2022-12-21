@@ -1,5 +1,5 @@
 import { TemplateLibrary, AttachmentDownloadRequest, Organization, OrgTag } from './model/dahsboard';
-import { User, Role } from './model/user';
+import { User, Role, ClosureReasonsOrg } from './model/user';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Injectable } from "@angular/core";
 
@@ -23,6 +23,21 @@ export class AdminService {
     const url = 'api/admin/user/' + user.id + '/role';
     return this.http.get(url, httpOptions).toPromise().then<Role[]>().catch(err => {
       return Promise.reject('Error retreiving roles');
+    });
+  }
+
+  public getclosurereason(user: User): Promise<ClosureReasonsOrg[]> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'X-TENANT-CODE': localStorage.getItem('X-TENANT-CODE'),
+        'Authorization': localStorage.getItem('AUTH_TOKEN')
+      })
+    };
+    const url = 'api/admin/user/' + user.id + '/closureReasons';
+    // const url =      "/api/user/" + user.id + "/closure/reasons";
+    return this.http.get(url, httpOptions).toPromise().then<ClosureReasonsOrg[]>().catch(err => {
+      return Promise.reject('Error retreiving reasons');
     });
   }
 

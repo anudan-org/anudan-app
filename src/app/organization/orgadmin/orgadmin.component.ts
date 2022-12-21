@@ -1,7 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { OrgTag, TemplateLibrary } from './../../model/dahsboard';
 import { AdminService } from './../../admin.service';
-import { Role, User } from './../../model/user';
+import { Role, User, ClosureReason } from './../../model/user';
 import { Component, OnInit } from '@angular/core';
 import { AppComponent } from '../../app.component';
 import { MatTabChangeEvent } from '@angular/material';
@@ -30,6 +30,7 @@ export class OrgadminComponent implements OnInit {
     users: User[];
     docs: TemplateLibrary[];
     tags: OrgTag[];
+    reasons: ClosureReason[];
     selectedMenu: BehaviorSubject<any> = new BehaviorSubject({ item: "config", title: "Application Settings" });
 
     constructor(
@@ -59,6 +60,11 @@ export class OrgadminComponent implements OnInit {
             } else if (val.item === 'tags') {
                 this.adminService.getOrgTags(this.appComp.loggedInUser).then((data: OrgTag[]) => {
                     this.tags = data;
+                });
+            } else if (val.item === 'closure-reasons') {
+                this.adminService.getclosurereason(this.appComp.loggedInUser).then((data: ClosureReason[]) => {
+                    this.reasons = data;
+                    console.log(this.reasons);
                 });
             }
         });
@@ -93,6 +99,10 @@ export class OrgadminComponent implements OnInit {
         } else if (ev.tab.textLabel === 'Tags') {
             this.adminService.getOrgTags(this.appComp.loggedInUser).then((data: OrgTag[]) => {
                 this.tags = data;
+            });
+        } else if (ev.tab.textLabel === 'closure-reasons') {
+            this.adminService.getclosurereason(this.appComp.loggedInUser).then((data: ClosureReason[]) => {
+                this.reasons = data;
             });
         }
     }

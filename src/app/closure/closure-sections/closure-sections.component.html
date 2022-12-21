@@ -569,7 +569,7 @@
                                     text-align: center;
                                   ">Row Description</label>
                                           <textarea matTextareaAutosize matInput [(ngModel)]="row.name"
-                                            class="anu-input" [ngModelOptions]="{ standAlone: true }"></textarea>
+                                            [ngModelOptions]="{ standAlone: true }"></textarea>
                                         </mat-form-field>
                                         <p class="anu-input-plain" *ngIf="
                                   (currentClosure.canManage &&
@@ -1576,8 +1576,8 @@
                               </mat-form-field>
                             </div>
                             <div class="col-sm-12 col-lg-12 text-left" *ngIf="attribute.fieldType === 'multiline'">
-                              <textarea matTextareaAutosize matInput [(ngModel)]="attribute.fieldValue"
-                                class="anu-input  w-100" [ngModelOptions]="{ standAlone: true }"></textarea>
+                              <textarea matTextareaAutosize matInput [(ngModel)]="attribute.fieldValue" class="  w-100"
+                                [ngModelOptions]="{ standAlone: true }"></textarea>
                             </div>
                             <div class="col-sm-12 col-lg-12 text-left" *ngIf="attribute.fieldType === 'document'">
                               <div style="display: flex; align-items: baseline" class="attachments-wrapper">

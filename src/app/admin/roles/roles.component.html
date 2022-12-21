@@ -34,7 +34,8 @@
                 style="min-height:48px;height:auto;padding:8px;">
                 <h6 *ngIf="!role.editMode" class="mb-2" matLine style="text-transform:none !important;">
                     <strong>{{role.name}}
-                    </strong><small>({{role.linkedUsers}} users)</small></h6>
+                    </strong><small>({{role.linkedUsers}} users)</small>
+                </h6>
                 <mat-form-field *ngIf="role.editMode" matLine>
                     <input matInput [(ngModel)]="role.name" class="anu-input" placeholder="Edit role name">
                 </mat-form-field>
@@ -53,7 +54,7 @@
                     <mat-icon (click)="deleteRole(role)">delete_outline</mat-icon>
                 </button>
                 <mat-form-field *ngIf="role.editMode" matLine>
-                    <textarea matInput matTextareaAutosize placeholder="Edit role description" class="anu-input"
+                    <textarea matInput matTextareaAutosize placeholder="Edit role description"
                         [(ngModel)]="role.description"></textarea>
                 </mat-form-field>
                 <div matLine *ngIf="role.editMode" style="display: flex;align-items: center;justify-content: flex-end;">
