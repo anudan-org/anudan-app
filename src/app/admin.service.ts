@@ -35,7 +35,6 @@ export class AdminService {
       })
     };
     const url = 'api/admin/user/' + user.id + '/closureReasons';
-    // const url =      "/api/user/" + user.id + "/closure/reasons";
     return this.http.get(url, httpOptions).toPromise().then<ClosureReasonsOrg[]>().catch(err => {
       return Promise.reject('Error retreiving reasons');
     });

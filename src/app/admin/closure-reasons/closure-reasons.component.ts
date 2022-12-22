@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef, Input } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ClosureReason } from '../../model/user'
 import { AppComponent } from '../../app.component';
-import { AppSetting, ReportDueConfiguration } from '../../model/setting';
+import { AppSetting } from '../../model/setting';
 import { MatDialog } from '@angular/material';
 import { FieldDialogComponent } from 'app/components/field-dialog/field-dialog.component';
-import { ToastrService, IndividualConfig } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-closure-reasons',
@@ -32,7 +32,7 @@ export class ClosureReasonsComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-
+    console.log("ngOnit");
   }
 
   canCreateRole() {
@@ -76,8 +76,8 @@ export class ClosureReasonsComponent implements OnInit {
       return;
     }
     let repeatName = false;
-    for (let reason of this.reasons) {
-      if (reason.reason.replace(' ', '').toLowerCase() === reasonName.val().trim().replace(' ', '').toLowerCase()) {
+    for (let reasonRecord of this.reasons) {
+      if (reasonRecord.reason.replace(' ', '').toLowerCase() === reasonName.val().trim().replace(' ', '').toLowerCase()) {
         repeatName = true;
         break;
       }
@@ -159,19 +159,17 @@ export class ClosureReasonsComponent implements OnInit {
 
     if (reasonName.trim() === "") {
       this.toastr.error("Closure Reason cannot be left blank", "Warning");
-      // reasonName.focus();
       return;
     }
     let repeatName = false;
-    for (let reason of this.reasons) {
-      if (reason.reason.replace(' ', '').toLowerCase() === reasonName.trim().replace(' ', '').toLowerCase() && id != reason.id) {
+    for (let reasonRecord of this.reasons) {
+      if (reasonRecord.reason.replace(' ', '').toLowerCase() === reasonName.trim().replace(' ', '').toLowerCase() && id != reasonRecord.id) {
         repeatName = true;
         break;
       }
     }
     if (repeatName) {
       this.toastr.error("Closure Reason already exists, Please select a different Reason", "Warning");
-      //reasonName.focus();
       return;
     }
 
