@@ -863,9 +863,16 @@ button {
 }
 
 kendo-pdf-export {
-  font-family: "Roboto", "Arial", sans-serif;
+  font-family: "DejaVu Sans", "Arial", sans-serif;
   font-size: 14px;
 }
+
+@font-face {
+  font-family: "DejaVu Sans";
+  src: url("../frontend/fonts/DejaVuSans.ttf") format("truetype");
+}
+
+
 
 .content {
   width: 800px;

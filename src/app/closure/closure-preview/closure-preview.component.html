@@ -360,16 +360,7 @@
                   background: #fcfcfc;
                 ">
                         <ng-container class="mb-2">
-                          <div class="col-sm-4 col-lg-8" *ngIf="
-                      attribute.fieldType === 'multiline' &&
-                      currentClosure.canManage &&
-                      !currentClosure.forGranteeUse
-                    ">
-                            <mat-form-field>
-                              <input id="field_{{ attribute.id }}" [(ngModel)]="attribute.fieldName" class="anu-input"
-                                [ngModelOptions]="{ standAlone: true }" matInput placeholder="Title" />
-                            </mat-form-field>
-                          </div>
+
                           <div class="col-sm-4 col-lg-8" *ngIf="
                       attribute.fieldType === 'multiline' &&
                       currentClosure.canManage &&
@@ -380,14 +371,7 @@
                             <p>{{ attribute.fieldName }}</p>
                           </div>
                           <div class="col-sm-4 col-lg-8" *ngIf="attribute.fieldType === 'document'">
-                            <mat-form-field *ngIf="
-                        currentClosure.canManage &&
-                        !currentClosure.forGranteeUse
-                      ">
 
-                              <input id="field_{{ attribute.id }}" [(ngModel)]="attribute.fieldName" class="anu-input"
-                                [ngModelOptions]="{ standAlone: true }" matInput placeholder="Title" />
-                            </mat-form-field>
                             <label *ngIf="
                         (currentClosure.canManage &&
                           currentClosure.forGranteeUse) ||
@@ -401,20 +385,9 @@
                               {{ attribute.fieldName }}
                             </p>
                           </div>
-                          <div class="col-sm-4 col-lg-8" *ngIf="attribute.fieldType === 'text'">
-                            <mat-form-field>
-                              <input id="field_{{ attribute.id }}" [(ngModel)]="attribute.fieldName" class="anu-input"
-                                [ngModelOptions]="{ standAlone: true }" matInput placeholder="Title" />
-                            </mat-form-field>
-                          </div>
+
                           <div class="col-sm-8 col-lg-8" *ngIf="attribute.fieldType === 'table'">
-                            <mat-form-field *ngIf="
-                        currentClosure.canManage &&
-                        !currentClosure.forGranteeUse
-                      ">
-                              <input id="field_{{ attribute.id }}" [(ngModel)]="attribute.fieldName" class="anu-input"
-                                [ngModelOptions]="{ standAlone: true }" matInput placeholder="Title" />
-                            </mat-form-field>
+
                             <label *ngIf="
                         (currentClosure.canManage &&
                           currentClosure.forGranteeUse) ||
@@ -1409,7 +1382,7 @@
                                           </td>
                                         </ng-container>
                                       </tr>
-                                      <!--When row belongs to a different report-->
+
                                       <tr *ngIf="row.reportId !== currentClosure.id">
                                         <td [ngStyle]="
                                   row.enteredByGrantee
@@ -1626,118 +1599,9 @@
                               </div>
                             </div>
 
-
                           </div>
 
-                          <div class="col-sm-4 col-lg-8 text-left" *ngIf="
-                      attribute.fieldType === 'kpi' &&
-                      currentClosure.canManage &&
-                      !currentClosure.forGranteeUse
-                    ">
-                            <mat-form-field>
-                              <input matInput disabled placeholder="Grant Level Target:"
-                                style="background: #f0f1f0 !important" class="anu-input" [value]="
-                          attribute.grantLevelTarget &&
-                          attribute.grantLevelTarget !== null
-                            ? attribute.grantLevelTarget
-                            : 'N/A'
-                        " />
-                            </mat-form-field>
-                          </div>
-                          <div class="col-sm-4 col-lg-8 text-left" *ngIf="
-                      attribute.fieldType === 'kpi' &&
-                      currentClosure.canManage &&
-                      currentClosure.forGranteeUse
-                    ">
-                            <mat-form-field>
-                              <input matInput disabled placeholder="Grant Level Target:"
-                                style="background: #f0f1f0 !important" class="anu-input" [value]="
-                          attribute.grantLevelTarget &&
-                          attribute.grantLevelTarget !== null
-                            ? attribute.grantLevelTarget
-                            : 'N/A'
-                        " />
-                            </mat-form-field>
-                          </div>
-                          <div class="col-sm-4 col-lg-4 text-left" *ngIf="attribute.fieldType === 'kpi'">
-                            <mat-form-field>
-                              <input class="anu-input" matInput placeholder="Frequency:"
-                                style="background: #f0f1f0 !important" [value]="
-                          attribute.frequency === 'Half-yearly'
-                            ? 'Half-Yearly'
-                            : attribute.frequency === 'adhoc'
-                            ? 'N/A'
-                            : (attribute.frequency | titlecase)
-                        " readonly disabled />
-                            </mat-form-field>
-                          </div>
 
-                          <div class="col-sm-4 col-lg-4 text-left" *ngIf="attribute.fieldType === 'kpi'">
-                            <mat-form-field>
-                              <mat-label>Grant Level
-                                Achieved<sup>&nbsp;(1)</sup>:</mat-label>
-                              <input matInput style="background: #f0f1f0 !important" [value]="
-                          attribute.cumulativeActuals
-                            ? attribute.cumulativeActuals
-                            : 'N/A'
-                        " readonly disabled class="anu-input" />
-                            </mat-form-field>
-                          </div>
-                          <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                      attribute.fieldType === 'kpi' &&
-                      appComp.loggedInUser.organization
-                        .organizationType === 'GRANTER' &&
-                      currentClosure.canManage &&
-                      !currentClosure.forGranteeUse
-                    ">
-                            <mat-form-field>
-                              <input matInput [(ngModel)]="attribute.target" class="anu-input" type="number"
-                                [ngModelOptions]="{ standAlone: true }" placeholder="Report Level Target:" />
-                            </mat-form-field>
-                          </div>
-                          <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                      attribute.fieldType === 'kpi' &&
-                      appComp.loggedInUser.organization
-                        .organizationType === 'GRANTEE' &&
-                      currentClosure.canManage &&
-                      currentClosure.forGranteeUse
-                    ">
-                            <mat-form-field>
-                              <input matInput placeholder="Report Level Target:" style="background: #f0f1f0 !important"
-                                [value]="
-                          attribute.target ? attribute.target : null
-                        " readonly disabled class="anu-input" />
-                            </mat-form-field>
-                          </div>
-                          <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                      attribute.fieldType === 'kpi' &&
-                      
-                      currentClosure.canManage &&
-                      ((!currentClosure.forGranteeUse && isExternalGrant(currentClosure.grant)))
-                    ">
-                            <mat-form-field>
-                              <input matInput placeholder="Report Level Accomplishment:" [value]="
-                          attribute.actualTarget
-                            ? attribute.actualTarget
-                            : 'To be filled by implementing organization'
-                        " readonly disabled style="background: #f0f1f0 !important" class="anu-input" />
-                            </mat-form-field>
-                          </div>
-                          <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                      attribute.fieldType === 'kpi' &&
-                      
-                      currentClosure.canManage &&
-                      ((currentClosure.forGranteeUse && isExternalGrant(currentClosure.grant)) || (!currentClosure.forGranteeUse && !isExternalGrant(currentClosure.grant)))
-                    ">
-                            <mat-form-field>
-                              <input matInput [(ngModel)]="attribute.actualTarget" class="anu-input" type="number"
-                                [ngModelOptions]="{ standAlone: true }" placeholder="Report Level Accomplishment:" />
-                            </mat-form-field>
-                          </div>
-                          <div class="col-sm-12 col-lg-12 text-left" *ngIf="attribute.fieldType === 'multiline'">
-                            <textarea matTextareaAutosize matInput [(ngModel)]="attribute.fieldValue" class="w-100"
-                              [ngModelOptions]="{ standAlone: true }"></textarea>
-                          </div>
 
                         </ng-container>
                         <div class="col-12" *ngIf="
@@ -1815,11 +1679,10 @@
                         <span style="
                         color: #929292;
                         font-size: 15px;
-                        font-family: Roboto, sans-serif;
-                      ">{{ 'Refund Amount (₹)' }}</span>
+                        font-family: 'DejaVu Sans', Roboto, sans-serif; ">{{ 'Refund Amount (₹)' }}</span>
                         <pre>{{getFormattedRefundAmount(currentClosure.refundAmount)}}</pre>
                       </div>
-                      <div class="col-sm-12 col-lg-6 text-left mb-3 text-justify">
+                      <div class=" col-sm-12 col-lg-6 text-left mb-3 text-justify">
                         <span style="
                         color: #929292;
                         font-size: 15px;
@@ -2222,7 +2085,7 @@
                                     min-width: 150px;
                                     padding: 5px;
                                     font-size: 14px;
-                                    font-family: Roboto, sans-serif;
+                                    font-family: 'DejaVu Sans', Roboto, sans-serif;
                                   ">
                                       <div *ngIf="column.dataType === 'currency'" class="text-right">
                                         {{
@@ -2276,7 +2139,7 @@
                                   <td style="
                                   padding: 5px;
                                   font-size: 14px;
-                                  font-family: Roboto, sans-serif;
+                                  font-family: 'DejaVu Sans' ,Roboto, sans-serif;
                                 " *ngFor="
                                   let column of attribute.fieldTableValue[0]
                                     .columns;
