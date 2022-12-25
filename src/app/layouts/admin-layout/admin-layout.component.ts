@@ -952,11 +952,11 @@ export class AdminLayoutComponent implements OnInit {
         closure.status.internalStatus === "DRAFT" ||
         closure.status.internalStatus === "ACTIVE"
       ) {
-        this.appComponent.subMenu = { name: "In-Progress Closures", action: "urc" };
+        this.appComponent.subMenu = { name: "Active Grants", action: "ag" };
       } else if (closure.status.internalStatus === "REVIEW") {
-        this.appComponent.subMenu = { name: "In-Progress Closures", action: "src" };
+        this.appComponent.subMenu = { name: "Active Grants", action: "ag" };
       } else if (closure.status.internalStatus === "CLOSED") {
-        this.appComponent.subMenu = { name: "Closed Requests", action: "arc" };
+        this.appComponent.subMenu = { name: "Closed Grants", action: "cg" };
       }
       if (
         closure.workflowAssignment.filter(
@@ -1015,7 +1015,7 @@ export class AdminLayoutComponent implements OnInit {
         } else if (result.notificationFor === "DISBURSEMENT") {
           this.manageDisbursement(result.data, result.data.disbursementId);
         } else if (result.notificationFor === "CLOSURE") {
-          this.manageClosure(result.data, result.data.reportId);
+          this.manageClosure(result.data, result.data.closureId);
         }
       }
     });
