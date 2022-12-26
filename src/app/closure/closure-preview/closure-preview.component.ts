@@ -131,13 +131,16 @@ export class ClosurePreviewComponent implements OnInit {
 
   ngOnInit() {
     this.logoUrl = "/api/public/images/" + this.currentClosure.grant.grantorOrganization.code + "/logo";
-
+    this.setGrantAmount();
     this.getRefundAmount();
     this.getRefundReceived();
     this.setSpendSumamry();
   }
 
-
+  setGrantAmount() {
+    const grantAmount = this.currentClosure.grant.amount ? this.currentClosure.grant.amount : 0;
+    this.grantAmount = this.currencyService.getFormattedAmount(grantAmount);
+  }
   setSpendSumamry() {
 
     var disbursement: number = this.currentClosure.grant.approvedDisbursementsTotal ? this.currentClosure.grant.approvedDisbursementsTotal : 0;

@@ -7,7 +7,7 @@ import { TitleCasePipe } from "@angular/common";
   providedIn: "root",
 })
 export class CurrencyService {
-  constructor() {}
+  constructor() { }
 
   getFormattedAmount(amount: number): string {
     if (

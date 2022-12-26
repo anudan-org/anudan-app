@@ -378,7 +378,7 @@ export class DashboardComponent implements OnInit {
 
     this.http.get(url, httpOptions).subscribe((data: any) => {
       this.myCategory = data;
-      console.log(this.myCategory);
+
     });
   }
 
@@ -413,6 +413,31 @@ export class DashboardComponent implements OnInit {
       .subscribe((results) => {
         const dg = this.dialog.open(ListDialogComponent, {
           data: { _for: 'grant', grants: results, appComp: this.appComponent, title: 'Actions Pending | Grants' },
+          panelClass: "addnl-report-class"
+        });
+
+        dg.afterClosed().subscribe(() => {
+          this.getMyDashboardSummary();
+        });
+      });
+  }
+
+  showpendingClosures() {
+    if (this.myCategory.summary.ActionsPending.Closures === 0) {
+      return;
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+    this.http.get<GrantClosure[]>('/api/users/' + this.appComponent.loggedInUser.id + '/dashboard/mysummary/pendingclosures', httpOptions)
+      .subscribe((results) => {
+        const dg = this.dialog.open(ListDialogComponent, {
+          data: { _for: 'closure', closures: results, appComp: this.appComponent, title: 'Actions Pending | Closures' },
           panelClass: "addnl-report-class"
         });
 
@@ -497,6 +522,32 @@ export class DashboardComponent implements OnInit {
       .subscribe((results) => {
         const dg = this.dialog.open(ListDialogComponent, {
           data: { _for: 'grant', grants: results, appComp: this.appComponent, title: 'Upcoming | Grants | Drafts' },
+          panelClass: "addnl-report-class"
+        });
+        dg.afterClosed().subscribe(() => {
+          this.getMyDashboardSummary();
+        });
+      });
+  }
+
+  showupcomingClosures() {
+
+    if (this.myCategory.summary.UpcomingClosures.DraftClosures === 0) {
+      return;
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
+    this.http.get<GrantClosure[]>('/api/users/' + this.appComponent.loggedInUser.id + '/dashboard/mysummary/upcomingdraftclosures', httpOptions)
+      .subscribe((results) => {
+        const dg = this.dialog.open(ListDialogComponent, {
+          data: { _for: 'closure', closures: results, appComp: this.appComponent, title: 'Upcoming | Closures | Drafts' },
           panelClass: "addnl-report-class"
         });
         dg.afterClosed().subscribe(() => {

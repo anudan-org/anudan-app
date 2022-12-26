@@ -284,7 +284,8 @@
                 </div>
                 <div class="col-5">
                   <mat-form-field>
-                    <textarea matInput disabled readonly style="resize: none" placeholder="Amount (In Words):">{{
+                    <textarea matTextareaAutosize matInput disabled readonly style="resize: none"
+                      placeholder="Amount (In Words):">{{
                     currencyService.getAmountInWords(
                       currentDisbursement.requestedAmount
                     )

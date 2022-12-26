@@ -3,6 +3,7 @@ import { Disbursement } from 'app/model/disbursement';
 import { SingleReportDataService } from './../../single.report.data.service';
 import { Router } from '@angular/router';
 import { DataService } from './../../data.service';
+import { ClosureDataService } from 'app/closure.data.service';
 import { SearchFilterComponent } from 'app/layouts/admin-layout/search-filter/search-filter.component';
 import { GrantDataService } from './../../grant.data.service';
 import { UiUtilService } from '../../ui-util.service';
@@ -14,6 +15,8 @@ import { Component, Inject, OnInit, ViewChild, ElementRef } from '@angular/core'
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef, MatButtonModule } from '@angular/material';
 import { Report, AdditionReportsModel } from '../../model/report';
 import { Grant } from '../../model/dahsboard';
+import { GrantClosure } from 'app/model/closures';
+
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { CurrencyService } from 'app/currency-service';
 import { MatDialog } from '@angular/material';
@@ -55,12 +58,14 @@ export class ListDialogComponent implements OnInit {
   disbursements: any;
   reports: any;
   grants: any;
+  closures: any;
   title; any;
   searchClosed = true;
   filterReady = false;
   filterCriteria: any;
   @ViewChild("appSearchFilter1") appSearchFilter1: SearchFilterComponent;
   filteredGrants: any;
+  filteredClosures: any;
   deleteDisbursementEvent: boolean = false;
 
   otherReportsClicked: boolean = false;
@@ -68,6 +73,8 @@ export class ListDialogComponent implements OnInit {
   filteredReports: any;
   filteredDisbursements: any;
   deleteGrantEvent: boolean = false;
+  deleteClosureClicked: boolean = false;
+
   subtitle: any;
 
   constructor(private dialog: MatDialog,
@@ -81,8 +88,8 @@ export class ListDialogComponent implements OnInit {
     public dataService: DataService,
     public router: Router,
     private singleReportService: SingleReportDataService,
-    private disbursementDataService: DisbursementDataService
-
+    private disbursementDataService: DisbursementDataService,
+    public closureService: ClosureDataService
   ) {
 
     this.appComp = listMetaData.appComp;
@@ -97,7 +104,11 @@ export class ListDialogComponent implements OnInit {
         }
       } */
       this.filteredGrants = this.grants;
-    } else if (listMetaData._for === 'report') {
+    } else if (listMetaData._for === 'closure') {
+      this.closures = listMetaData.closures;
+      this.filteredClosures = this.closures;
+    }
+    else if (listMetaData._for === 'report') {
       this.reports = listMetaData.reports;
       this.filteredReports = this.reports;
     } else if (listMetaData._for === 'disbursement') {
@@ -177,6 +188,15 @@ export class ListDialogComponent implements OnInit {
           (g.name && g.name.trim() !== '' && g.name.toLowerCase().includes(val)) ||
           //(g.organization && g.organization.name && g.organization.name.toLowerCase().includes(val)) ||
           (g.referenceNo && g.referenceNo.toLowerCase().includes(val)) ||
+          (g.ownerName && g.ownerName.toLowerCase().includes(val))
+        )
+      });
+    } else if (this._for === 'closure') {
+      this.filteredClosures = this.closures.filter(g => {
+        this.filterReady = true;
+        return (
+          (g.grant.name && g.grant.name.trim() !== '' && g.grant.name.toLowerCase().includes(val)) ||
+          (g.grant.referenceNo && g.grant.referenceNo.toLowerCase().includes(val)) ||
           (g.ownerName && g.ownerName.toLowerCase().includes(val))
         )
       });
@@ -263,6 +283,81 @@ export class ListDialogComponent implements OnInit {
       }
     });
 
+  }
+
+
+  manageClosure(closure: GrantClosure) {
+    if (this.deleteClosureClicked) {
+      return;
+    }
+    this.appComp.subMenu = { name: "Active Grants", action: "ag" };
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'X-TENANT-CODE': localStorage.getItem('X-TENANT-CODE'),
+        'Authorization': localStorage.getItem('AUTH_TOKEN')
+      })
+    };
+
+    const user = JSON.parse(localStorage.getItem('USER'));
+    let url = '/api/user/' + user.id + '/closure/' + closure.id;
+    this.http.get<GrantClosure>(url, httpOptions).subscribe((closure1: GrantClosure) => {
+      this.appComp.currentView = 'grant-closure';
+      this.closureService.changeMessage(closure1, this.appComp.loggedInUser.id);
+      this.dialogRef.close();
+      if (closure1.canManage && closure1.status.internalStatus != 'CLOSED') {
+        this.appComp.action = 'grant-closure';
+        this.router.navigate(['grant-closure/header']);
+      } else {
+        this.appComp.action = 'grant-closure';
+        this.router.navigate(['grant-closure/preview']);
+      }
+    });
+  }
+
+  getGrantsUnderClosure() {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
+    this.appComp.loggedIn = true;
+
+    const url = "/api/user/" + this.appComp.loggedInUser.id + "/closure/";
+    this.http.get<GrantClosure[]>(url, httpOptions).subscribe((closures: GrantClosure[]) => {
+      this.closures = closures;
+      this.filteredClosures = closures;
+    });
+  }
+
+  deleteClosure(closure: GrantClosure) {
+    this.deleteClosureClicked = true;
+    const dialogRef = this.dialog.open(FieldDialogComponent, {
+      data: { title: 'Are you sure you want to delete this closure request?', btnMain: "Delete Closure Request", btnSecondary: "Not Now" },
+      panelClass: 'center-class'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.closureService.deleteClosure(closure)
+          .then(() => {
+            const index = this.closures.findIndex(r => r.id === closure.id);
+            if (index >= 0) {
+              this.closures.splice(index, 1);
+            }
+            this.filteredClosures = this.closures;
+            if (this.closures && this.closures.length === 0) {
+              this.onNoClick();
+            }
+          })
+      } else {
+        
+        dialogRef.close();
+      }
+    });
   }
 
   manageReport(report: Report) {

@@ -1,12 +1,15 @@
 <div class="row px-4 pt-3 bg-white">
     <div class="col-9 px-4">
-        <button class="btn btn-sm bg-green" [disabled]="checkIfChanged()" style="position: absolute;right:0;" (click)="updateOrg()">Update</button>
+        <button class="btn btn-sm bg-green" [disabled]="checkIfChanged()" style="position: absolute;right:0;"
+            (click)="updateOrg()">Update</button>
 
-                    <h5 class="text-left mb-1"><span class="text-green" style="font-weight:bold;">About
-                            {{org.name}}</span>
-                    </h5>
-                    <p class="text-left text-subheader" *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'">Updates to this screen is visible to all grant seeking organizations within Anudan.</p>
-                    <p class="text-left text-subheader" *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'">Updates to this screen is visible to all grant giving organizations within Anudan.</p>
+        <h5 class="text-left mb-1"><span class="text-green" style="font-weight:bold;">About
+                {{org.name}}</span>
+        </h5>
+        <p class="text-left text-subheader" *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTER'">
+            Updates to this screen is visible to all grant seeking organizations within Anudan.</p>
+        <p class="text-left text-subheader" *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'">
+            Updates to this screen is visible to all grant giving organizations within Anudan.</p>
     </div>
 </div>
 <div class="main-content no-top-margin6">
@@ -14,17 +17,18 @@
         <div class="row mt-4">
             <div class="col-12">
                 <div class="col-12">
-                    
+
                     <div class="text-left py-3" style="border-radius: 4px;">
-                        
+
                         <div class="row">
                             <div class="col-5">
                                 <ng-container>
-                                <label class="profile-pic-class" for="profilePic" style="cursor: pointer;">
-                                    <img alt="img"(click)="loadImage()" class="img-fluid mb-4 profile-pic-area" [src]="appComp.logo">
-                                </label>
-                                <input id="profilePic" type="file" accept=".png,.jpg,.jpeg" (change)="processProfilePic($event)"
-                                    style="visibility: hidden;">
+                                    <label class="profile-pic-class" for="profilePic" style="cursor: pointer;">
+                                        <img alt="img" (click)="loadImage()" class="img-fluid mb-4 profile-pic-area"
+                                            [src]="appComp.logo">
+                                    </label>
+                                    <input id="profilePic" type="file" accept=".png,.jpg,.jpeg"
+                                        (change)="processProfilePic($event)" style="visibility: hidden;">
                                 </ng-container>
                             </div>
                             <div class="col-7">
@@ -34,7 +38,7 @@
                                 </mat-form-field>
                                 <mat-form-field>
                                     <mat-label>Organization Description:</mat-label>
-                                    <textarea matInput class="anu-input" [(ngModel)]='org.description'></textarea>
+                                    <textarea matTextareaAutosize matInput [(ngModel)]='org.description'></textarea>
                                 </mat-form-field>
                                 <mat-form-field>
                                     <mat-label>Website:</mat-label>
@@ -43,12 +47,20 @@
 
                                 <div class="social-box">
                                     <div style="display: flex;align-items: center;justify-content: center;">
-                                        <em [ngClass]="org.twitter?'fa fa-twitter mr-4 text-green anu-social':'fa fa-twitter anu-social mr-4 text-grey'" [ngStyle]="twitter?{'border-bottom':'2px solid rgb(203 203 203)'}:{}" (click)="showTwitter()"></em>
-                                        <em [ngClass]="org.facebook?'fa fa-facebook mr-4 text-green anu-social':'fa fa-facebook anu-social mr-4 text-grey'" [ngStyle]="facebook?{'border-bottom':'2px solid rgb(203 203 203)'}:{}" (click)="showFacebook()"></em>
-                                        <em [ngClass]="org.linkedin?'fa fa-linkedin mr-4 text-green anu-social':'fa fa-linkedin anu-social mr-4 text-grey'" [ngStyle]="linkedin?{'border-bottom':'2px solid rgb(203 203 203)'}:{}" (click)="showLinkedin()"></em>
-                                        <em [ngClass]="org.instagram?'fa fa-instagram mr-4 text-green anu-social':'fa fa-instagram anu-social mr-4 text-grey'" [ngStyle]="instagram?{'border-bottom':'2px solid rgb(203 203 203)'}:{}" (click)="showInstagram()"></em>
+                                        <em [ngClass]="org.twitter?'fa fa-twitter mr-4 text-green anu-social':'fa fa-twitter anu-social mr-4 text-grey'"
+                                            [ngStyle]="twitter?{'border-bottom':'2px solid rgb(203 203 203)'}:{}"
+                                            (click)="showTwitter()"></em>
+                                        <em [ngClass]="org.facebook?'fa fa-facebook mr-4 text-green anu-social':'fa fa-facebook anu-social mr-4 text-grey'"
+                                            [ngStyle]="facebook?{'border-bottom':'2px solid rgb(203 203 203)'}:{}"
+                                            (click)="showFacebook()"></em>
+                                        <em [ngClass]="org.linkedin?'fa fa-linkedin mr-4 text-green anu-social':'fa fa-linkedin anu-social mr-4 text-grey'"
+                                            [ngStyle]="linkedin?{'border-bottom':'2px solid rgb(203 203 203)'}:{}"
+                                            (click)="showLinkedin()"></em>
+                                        <em [ngClass]="org.instagram?'fa fa-instagram mr-4 text-green anu-social':'fa fa-instagram anu-social mr-4 text-grey'"
+                                            [ngStyle]="instagram?{'border-bottom':'2px solid rgb(203 203 203)'}:{}"
+                                            (click)="showInstagram()"></em>
                                     </div>
-                                    
+
                                     <div class='row' *ngIf="twitter || facebook || linkedin || instagram">
                                         <div class="col-12" *ngIf="twitter">
                                             <mat-form-field>
@@ -59,32 +71,35 @@
                                         <div class="col-12" *ngIf="facebook">
                                             <mat-form-field>
                                                 <span matPrefix class="social-prefix text-subheader">https://</span>
-                                                <input #facebookEl matInput class="anu-input" [(ngModel)]="org.facebook">
+                                                <input #facebookEl matInput class="anu-input"
+                                                    [(ngModel)]="org.facebook">
                                             </mat-form-field>
                                         </div>
                                         <div class="col-12" *ngIf="linkedin">
                                             <mat-form-field>
                                                 <span matPrefix class="social-prefix text-subheader">https://</span>
-                                                <input #linkedinEl matInput class="anu-input" [(ngModel)]="org.linkedin">
+                                                <input #linkedinEl matInput class="anu-input"
+                                                    [(ngModel)]="org.linkedin">
                                             </mat-form-field>
                                         </div>
                                         <div class="col-12" *ngIf="instagram">
                                             <mat-form-field>
                                                 <span matPrefix class="social-prefix text-subheader">https://</span>
-                                                <input #instagramEl matInput class="anu-input" [(ngModel)]="org.instagram">
+                                                <input #instagramEl matInput class="anu-input"
+                                                    [(ngModel)]="org.instagram">
                                             </mat-form-field>
                                         </div>
                                     </div>
-                                    
-                                    
+
+
                                 </div>
                             </div>
                         </div>
-                       
-                        
+
+
                     </div>
                 </div>
-                
+
                 <!-- <div *ngIf="org.organizationType==='GRANTEE'"
                     class="col-lg-12 col-md-12 col-sm-12">
                     <p class="text-left"><span class="text-header">About

@@ -1,4 +1,4 @@
-import {Organization} from './dahsboard';
+import { Organization } from './dahsboard';
 
 export class Role {
   id: number;
@@ -8,6 +8,20 @@ export class Role {
   editMode: boolean = false;
   hasUsers: boolean = false;
   linkedUsers: number;
+}
+
+export class ClosureReason {
+  id: number;
+  reason: string;
+  editMode: boolean = false;
+}
+
+export class ClosureReasonsOrg {
+  id: number;
+  reason: string;
+  editMode: boolean = false;
+  reasonUsed: boolean = false;
+  usagecount: number;
 }
 
 export class UserRole {
@@ -33,7 +47,7 @@ export class User {
   recaptchaToken: string;
   userProfile: string;
   editMode: boolean = false;
-  admin:boolean;
+  admin: boolean;
   deleted: boolean;
   active: boolean;
 }

@@ -32,7 +32,7 @@
   <ng-container>
 
     <mat-form-field *ngIf="validationResult.canMove">
-      <textarea *ngIf="validationResult.canMove" class="anu-input" matInput #inputMessage></textarea>
+      <textarea *ngIf="validationResult.canMove" matTextareaAutosize matInput #inputMessage></textarea>
     </mat-form-field>
     <mat-expansion-panel style="background: #f8f8f8;" [expanded]="false" class="mb-3 grants-expansion-panel"
       *ngIf="current && original"

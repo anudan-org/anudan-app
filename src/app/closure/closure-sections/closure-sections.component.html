@@ -434,7 +434,7 @@
                       !attribute.canEdit
                     ">
                               <mat-form-field>
-                                <input matInput placeholder="Type:" disabled readonly" class="anu-input"
+                                <input matInput placeholder="Type:" disabled readonly class="anu-input"
                                   style="background: #f0f1f0 !important" [value]="
                           getFieldTypeDisplayValue(attribute.fieldType)
                         " />
@@ -568,8 +568,7 @@
                                     position: relative;
                                     text-align: center;
                                   ">Row Description</label>
-                                          <textarea matInput [(ngModel)]="row.name" class="anu-input"
-                                            style="height: 80px !important"
+                                          <textarea matTextareaAutosize matInput [(ngModel)]="row.name"
                                             [ngModelOptions]="{ standAlone: true }"></textarea>
                                         </mat-form-field>
                                         <p class="anu-input-plain" *ngIf="
@@ -1577,7 +1576,7 @@
                               </mat-form-field>
                             </div>
                             <div class="col-sm-12 col-lg-12 text-left" *ngIf="attribute.fieldType === 'multiline'">
-                              <textarea [(ngModel)]="attribute.fieldValue" class="anu-input h-100 w-100"
+                              <textarea matTextareaAutosize matInput [(ngModel)]="attribute.fieldValue" class="  w-100"
                                 [ngModelOptions]="{ standAlone: true }"></textarea>
                             </div>
                             <div class="col-sm-12 col-lg-12 text-left" *ngIf="attribute.fieldType === 'document'">

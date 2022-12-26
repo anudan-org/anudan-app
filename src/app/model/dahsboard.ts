@@ -472,6 +472,7 @@ export class Notifications {
   reportId: number;
   notificationFor;
   disbursementId: number;
+  closureId: number;
 }
 
 export class ColumnData {

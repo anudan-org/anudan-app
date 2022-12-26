@@ -1,0 +1,54 @@
+<div class="row mt-0 mx-0 py-4">
+
+    <div class="col-9">
+        <h5 style="font-weight:bold;" class="text-green">Add Closure Reason</h5>
+    </div>
+    <div class="col-12">
+        <div class="row" style="background:#f6f6f6;">
+            <div class="col-10 pt-3">
+                <mat-form-field>
+                    <input class="anu-input" id="reasonName" [(ngModel)]="reasonName" matInput type="text"
+                        placeholder="Enter a closure reason...">
+                </mat-form-field>
+            </div>
+            <div class="col-2 text-right d-flex align-items-center mt-3">
+                <button class="btn btn-sm btn-green float-right" [disabled]="canCreateRole()"
+                    (click)="saveReason()">Save
+                    Reason</button>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-12 mt-3">
+        <h5 style="font-weight:bold;" class="text-green">Manage Closure Reasons</h5>
+    </div>
+    <div class="main-content col-12 no-top-margin4">
+        <mat-list style="background:#fff;">
+            <mat-list-item id="closure_{{reasons.id}}" *ngFor="let closure of reasons"
+                style="min-height:48px;height:auto;padding:8px;">
+                <h6 *ngIf="!closure.editMode" class="mb-2" matLine style="text-transform:none !important;">
+                    <strong>{{closure.reason}}</strong>
+                    <small>({{closure.usagecount}} Closures)</small>
+                </h6>
+                <mat-form-field *ngIf="closure.editMode" matLine>
+                    <input matInput [(ngModel)]="closure.reason" class="anu-input" placeholder="Edit closure reason">
+                </mat-form-field>
+
+
+
+                <button mat-icon-button *ngIf="!closure.editMode">
+                    <mat-icon *ngIf="!closure.editMode" style="font-size: 20px;color:#9f9f9f;"
+                        (click)="editReason(closure,$event)">create</mat-icon>
+                </button>
+                <button mat-icon-button [disabled]="!closure.usagecount==0">
+                    <mat-icon (click)="deleteReason(closure)">delete_outline</mat-icon>
+                </button>
+                <div matLine *ngIf="closure.editMode"
+                    style="display: flex;align-items: center;justify-content: flex-end;">
+                    <button class="btn btn-sm btn-link" (click)="cancelEdit(closure)">Cancel</button>
+                    <button class="btn btn-sm bg-green" (click)="updateReason(closure)">Save</button>
+                </div>
+            </mat-list-item>
+        </mat-list>
+    </div>
+</div>
