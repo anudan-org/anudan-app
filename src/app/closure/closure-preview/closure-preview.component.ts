@@ -625,10 +625,13 @@ export class ClosurePreviewComponent implements OnInit {
   }
 
   getFormattedRefundAmount(amount: number): string {
+
     if (amount) {
       return this.currencyService.getFormattedAmount(amount);
+    } else {
+      return this.currencyService.getFormattedAmount(0);
     }
-    return inf.format(0, 2);
+
   }
 
   downloadSingleClosureDoc(attachmentId: number) {
@@ -640,7 +643,7 @@ export class ClosurePreviewComponent implements OnInit {
 
   getReceivedFunds(i) {
     const funds = document.getElementsByClassName('rf');
-    return (funds && funds.length) > 0 ? funds[i].innerHTML : 0;
+    return (funds && funds.length) > 0 ? funds[i].innerHTML : this.currencyService.getFormattedAmount(0);
   }
 
   getPlannedFunds(i) {

@@ -952,11 +952,11 @@ export class AdminLayoutComponent implements OnInit {
         closure.status.internalStatus === "DRAFT" ||
         closure.status.internalStatus === "ACTIVE"
       ) {
-        this.appComponent.subMenu = { name: "Active Grants", action: "ag" };
+        this.appComponent.subMenu = { name: "In-Progress Closures", action: "urc" };
       } else if (closure.status.internalStatus === "REVIEW") {
-        this.appComponent.subMenu = { name: "Active Grants", action: "ag" };
+        this.appComponent.subMenu = { name: "In-Progress Closures", action: "src" };
       } else if (closure.status.internalStatus === "CLOSED") {
-        this.appComponent.subMenu = { name: "Closed Grants", action: "cg" };
+        this.appComponent.subMenu = { name: "Closed Requests", action: "arc" };
       }
       if (
         closure.workflowAssignment.filter(
