@@ -96,7 +96,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             isAdminRole = true;
         }
         const loggedInUser: User = JSON.parse(localStorage.getItem('USER'));
-
+        
         if (this.data.model.type === 'grant') {
             const gtIdx = this.data.model.grantTypes.findIndex(gt => gt.id === this.data.model.grant.grantTypeId);
             this.grantType = (!gtIdx || gtIdx === -1) ? "External Workflow" : this.data.model.grantTypes[gtIdx].name;
@@ -112,9 +112,9 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
             this.http.get<WorkflowTransition[]>(url, httpOptions).subscribe((transitions: WorkflowTransition[]) => {
                 this.transitions = transitions;
-                this.data.model.workflowAssignments=this.data.model.workflowAssignment
+          
                 let counter = 0;
-
+                const internalStatus = this.data.model.grant.grantStatus.internalStatus;
                 for (let transition of transitions) {
                     const nodeId = 'state_' + transition.fromStateId;
                     if (this.elemRef.nativeElement.querySelector('#' + nodeId) === null) {
@@ -174,13 +174,11 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         if (assignment.length > 0) {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].assignmentUser ? String(assignment[0].assignmentUser.id) : String(0));
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + assignment[0].id + '_' + transition.fromStateId + '_' + this.data.model.grant.id);
-                            if (assignment[0].assignments === 0) {
-                                this.renderer.setStyle(nodeOwner, 'color', '#ffbf00');
-                            }
-                           this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers());
+                          
+                           this.renderer.listen(nodeOwner, 'change', (event) => this.setWorkflowAssignmentUsers(internalStatus));
                         } else {
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + transition.fromStateId + '_' + this.data.model.grant.id);
-                           this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers())
+                           this.renderer.listen(nodeOwner, 'change', (event) => this.setWorkflowAssignmentUsers(internalStatus))
                         }
                         const nodeOwnerOptions = this.renderer.createElement('option');
                         this.renderer.setAttribute(nodeOwnerOptions, 'value', '0');
@@ -307,14 +305,14 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     this.onYesClick();
                 });
 
-                this.updateGrantAndDisbursementUsers();
+                this.setWorkflowAssignmentUsers(internalStatus);
 
             },
                 error => {
                     this.showError(error);
                 });
         } else if (this.data.model.type === 'report') {
-
+            const internalStatus = this.data.model.report.status.internalStatus;
             const gtIdx = this.data.model.grantTypes.findIndex(gt => gt.id === this.data.model.report.grant.grantTypeId);
             this.grantType = (!gtIdx || gtIdx === -1) ? "External Workflow" : this.data.model.grantTypes[gtIdx].name;
             this.title = `<p class="mb-0 text-subheader">Report Workflow | ` + this.grantType + `<p class="mb-0 lh-12"><span class='text-header'>` + this.data.model.report.name + `</span></p><p class="mb-1 lh-20"><span class="text-subheader">` + ((this.data.model.report.grant.grantStatus.internalStatus === 'ACTIVE' || this.data.model.report.grant.grantStatus.internalStatus === 'CLOSED') ? `<span>[` + this.data.model.report.grant.referenceNo + `] </span>` : ``) + this.data.model.report.grant.name + `</span></p>`;
@@ -384,13 +382,11 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         if (assignment.length > 0) {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].assignmentUser ? String(assignment[0].assignmentUser.id) : String(0));
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + assignment[0].id + '_' + transition.fromStateId + '_' + this.data.model.report.id);
-                            this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers());
-                            if (assignment[0].assignment === 0) {
-                                this.renderer.setStyle(nodeOwner, 'color', '#ffbf00');
-                            }
+                            this.renderer.listen(nodeOwner, 'change', (event) => this.setWorkflowAssignmentUsers(internalStatus));
+                           
                         } else {
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + transition.fromStateId + '_' + this.data.model.report.id);
-                            this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers());
+                            this.renderer.listen(nodeOwner, 'change', (event) => this.setWorkflowAssignmentUsers(internalStatus));
                         }
                         const nodeOwnerOptions = this.renderer.createElement('option');
                         this.renderer.setAttribute(nodeOwnerOptions, 'value', '0');
@@ -567,12 +563,13 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 $('.owner-class').on('change', function () {
                     this.onYesClick();
                 });
-               this.updateGrantAndDisbursementUsers();
+               this.setWorkflowAssignmentUsers(internalStatus);
             },
                 error => {
                     this.showError(error);
                 });
         } else if (this.data.model.type === 'grant-closure') {
+            const internalStatus= this.data.model.closure.status.internalStatus
             const gtIdx = this.data.model.grantTypes.findIndex(gt => gt.id === this.data.model.closure.grant.grantTypeId);
             this.grantType = (!gtIdx || gtIdx === -1) ? "External Workflow" : this.data.model.grantTypes[gtIdx].name;
             this.title = `<p class="mb-0  text-subheader">Grant Closure Workflow | ` + this.grantType + `<p class='text-header'>` + ((this.data.model.closure.grant.grantStatus.internalStatus === 'ACTIVE' || this.data.model.closure.grant.grantStatus.internalStatus === 'CLOSED') ? `<span class="text-subheader">[` + this.data.model.closure.grant.referenceNo + `] </span>` : ``) + this.data.model.closure.grant.name + `</p>`;
@@ -645,13 +642,11 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         if (assignment.length > 0) {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].assignmentUser ? String(assignment[0].assignmentUser.id) : String(0));
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + assignment[0].id + '_' + transition.fromStateId + '_' + this.data.model.closure.id);
-                            this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers());
-                            if (assignment[0].assignment === 0) {
-                                this.renderer.setStyle(nodeOwner, 'color', '#ffbf00');
-                            }
+                            this.renderer.listen(nodeOwner, 'change', (event) => this.setWorkflowAssignmentUsers(internalStatus));
+                           
                         } else {
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + transition.fromStateId + '_' + this.data.model.closure.id);
-                            this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers());
+                            this.renderer.listen(nodeOwner, 'change', (event) => this.setWorkflowAssignmentUsers(internalStatus));
                         }
                     
 
@@ -830,12 +825,13 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 $('.owner-class').on('change', function () {
                     this.onYesClick();
                 });
-              this.updateGrantAndDisbursementUsers();
+              this.setWorkflowAssignmentUsers(internalStatus);
             },
                 error => {
                     this.showError(error);
                 });
         } else if (this.data.model.type === 'disbursement') {
+            const internalStatus = this.data.model.disbursement.status.internalStatus;
             const gtIdx = this.data.model.grantTypes.findIndex(gt => gt.id === this.data.model.disbursement.grant.grantTypeId);
             this.grantType = this.data.model.grantTypes[gtIdx].name;
             this.title = `<p class="mb-0 text-subheader">Disbursement Approval Workflow | ` + this.grantType + `</p><p class="mb-1 lh-20"><span class="text-header">` + ((this.data.model.disbursement.grant.grantStatus.internalStatus === 'ACTIVE' || this.data.model.disbursement.grant.grantStatus.internalStatus === 'CLOSED') ? `<span class="text-subheader">[` + this.data.model.disbursement.grant.referenceNo + `] </span>` : ``) + this.data.model.disbursement.grant.name + `</span></p>`;
@@ -901,11 +897,11 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].owner);
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + assignment[0].id + '_' + transition.fromStateId + '_' + this.data.model.disbursement.id);
                             this.renderer.setAttribute(nodeOwner, 'data-counter', String(counter++));
-                            this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers());
+                            this.renderer.listen(nodeOwner, 'change', (event) => this.setWorkflowAssignmentUsers(internalStatus));
                         } else {
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + transition.fromStateId + '_' + this.data.model.disbursement.id);
                             this.renderer.setAttribute(nodeOwner, 'data-counter', String(counter++));
-                            this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers());
+                            this.renderer.listen(nodeOwner, 'change', (event) => this.setWorkflowAssignmentUsers(internalStatus));
                         }
 
                         const nodeOwnerOptions = this.renderer.createElement('option');
@@ -1031,7 +1027,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                     this.onYesClick();
                 });
 
-                this.updateGrantAndDisbursementUsers();
+                this.setWorkflowAssignmentUsers(internalStatus);
             });
 
 
@@ -1092,11 +1088,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
         }
 
 
-        if (event.target.value === "0") {
-           // event.target.style.color = '#ffbf00'
-        } else {
-            event.target.style.color = 'initial'
-        }
+       
 
 
         if (this.data.model.type === 'grant' && this.data.model.grant.grantStatus.internalStatus === 'ACTIVE') {
@@ -1407,7 +1399,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
 
 
-    updateGrantAndDisbursementUsers() {
+    setWorkflowAssignmentUsers(internalStatus: any) {
         const assignmentElems = $('[id^="assignment_"]');
         for (let i = 0; i < assignmentElems.length; i++) {
             const prev = assignmentElems[i - 1] ? assignmentElems[i - 1].value : "-1";
@@ -1434,75 +1426,19 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 } 
             }    
             }
-
-        }
-    }
-
-    updateReportUsers() {
-
-        const assignmentElems = $('[id^="assignment_"]');
-        for (let i = 2; i < assignmentElems.length; i++) {
-
-            const prev = assignmentElems[i - 1] ? assignmentElems[i - 1].value : "-1";
-            const next = assignmentElems[i + 1] ? assignmentElems[i + 1].value : "-1";
-
-            const arr = [];
-            arr.push(prev);
-            arr.push(next);
-
-            for (let child of assignmentElems[i].children) {
-
-                const usr = this.data.model.users.filter(u => u.id === Number(child.value));
-                if (usr.length > 0 && usr[0].deleted && child.value === assignmentElems[i].value) {
-                    assignmentElems[i].style.textDecoration = 'line-through';
-                } else if (usr.length > 0 && !usr[0].deleted && child.value === assignmentElems[i].value) {
-                    assignmentElems[i].style.textDecoration = 'none';
-                }
-
-                if (arr.includes(child.value)) {
-                    child.setAttribute('disabled', 'disabled');
-                } else {
-                    if (usr.length > 0 && !usr[0].deleted) {
-                        child.removeAttribute('disabled');
-                    }
-                }
+           
+            if (internalStatus != 'DRAFT')
+            { 
+                assignmentElems[i].children[0].setAttribute('style', 'none');
+                assignmentElems[i].children[0].setAttribute('disabled', 'disabled');
             }
 
         }
     }
 
-    updateClosureUsers() {
+    
 
-        const assignmentElems = $('[id^="assignment_"]');
-        for (let i = 2; i < assignmentElems.length; i++) {
 
-            const prev = assignmentElems[i - 1] ? assignmentElems[i - 1].value : "-1";
-            const next = assignmentElems[i + 1] ? assignmentElems[i + 1].value : "-1";
-
-            const arr = [];
-            arr.push(prev);
-            arr.push(next);
-
-            for (let child of assignmentElems[i].children) {
-
-                const usr = this.data.model.users.filter(u => u.id === Number(child.value));
-                if (usr.length > 0 && usr[0].deleted && child.value === assignmentElems[i].value) {
-                    assignmentElems[i].style.textDecoration = 'line-through';
-                } else if (usr.length > 0 && !usr[0].deleted && child.value === assignmentElems[i].value) {
-                    assignmentElems[i].style.textDecoration = 'none';
-                }
-
-                if (arr.includes(child.value)) {
-                    child.setAttribute('disabled', 'disabled');
-                } else {
-                    if (usr.length > 0 && !usr[0].deleted) {
-                        child.removeAttribute('disabled');
-                    }
-                }
-            }
-
-        }
-    }
 
     checkGranteeAssignment(): boolean {
         if (this.data.model.type === 'report') {
