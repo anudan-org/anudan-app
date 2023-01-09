@@ -506,7 +506,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(node, 'my-5');
                         this.renderer.appendChild(this.flowContainer.nativeElement, node);
                         this.rePositionNode(transition);
-                       this.disableNeighbours(nodeOwner)
+                     
                     }
 
                 }
@@ -880,11 +880,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         const currentUserAssignment = this.data.model.workflowAssignments.filter((assignment1) => assignment1.owner === JSON.parse(localStorage.getItem('USER')).id && assignment1.stateId === this.data.model.disbursement.status.id);
                         const ownerUser = this.data.model.workflowAssignments.filter((assignment2) => assignment2.owner === JSON.parse(localStorage.getItem('USER')).id && assignment2.anchor);
 
-                        const roles: UserRole[] = JSON.parse(localStorage.getItem('USER')).userRoles;
-                        let isAdminRole: boolean = false;
-                        if (roles.filter(a => a.role.name === 'Admin')) {
-                            isAdminRole = true;
-                        }
                         if (((currentUserAssignment.length > 0 || (ownerUser.length > 0) || isAdminRole) && this.data.model.disbursement.status.internalStatus !== 'CLOSED' ) && loggedInUser.organization.organizationType !== 'GRANTEE') {
                       
                             //Do nothing
@@ -971,7 +966,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(node, 'my-5');
                         this.renderer.appendChild(this.flowContainer.nativeElement, node);
 
-                        this.disableNeighbours(nodeOwner);
+                       
                     }
 
                 }
@@ -1112,115 +1107,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             } else {
                 this.activeStateOwnerChanged = false;
             }
-        }
-    }
-
-    onOwnerSelection(event: any, docId: any): boolean | void {
-        
-        const id = Number(event.currentTarget.id.split('_')[2]);
-        const val = Number(event.currentTarget.value);
-        let transitions = this.transitions.filter(a => a.fromStateId === id);
-        let select2Process = []
-        for (let t of transitions) {
-            const assignments = this.data.model.workflowAssignments.filter(a => a.stateId === t.toStateId);
-            for (let a of assignments) {
-                select2Process.push('assignment_' + a.id + '_' + a.stateId + '_' + docId);
-            }
-        }
-
-        transitions = this.transitions.filter(a => a.toStateId === id);
-        for (let t of transitions) {
-            const assignments = this.data.model.workflowAssignments.filter(a => a.stateId === t.fromStateId);
-            for (let a of assignments) {
-                select2Process.push('assignment_' + a.id + '_' + a.stateId + '_' + docId);
-            }
-        }
-
-      
-        if (select2Process && select2Process.length > 0) {
-            for (let i = 0; i < select2Process.length; i++) {
-                const node2Process = $('#' + select2Process[i]);
-                for (let j = 0; j < $(node2Process).children().length; j++) {
-                    const usr = this.data.model.users.filter(u => u.id === Number($(node2Process).children()[j].value));
-                    if (usr.length > 0 && usr[0].deleted && Number($(node2Process).children()[j].value) === val) {
-                        $(node2Process).css('text-decoration', 'line-through');
-                    } else if (usr.length > 0 && !usr[0].deleted && Number($(node2Process).children()[j].value) === val) {
-                        $(node2Process).css('text-decoration', 'none');
-                    }
-
-                    if (val === Number($(node2Process).children()[j].value)) {
-                        $(node2Process).children()[j].setAttribute('disabled', 'disabled');
-                    } else {
-
-                        if (usr.length > 0 && !usr[0].deleted) {
-                            $(node2Process).children()[j].removeAttribute('disabled');
-                        }
-                    }
-                }
-            }
-        }
-
-
-        if (event.target.value === "0") {
-            event.target.style.color = '#ffbf00'
-        } else {
-            event.target.style.color = 'initial'
-        }
-
-
-        if (this.data.model.type === 'grant' && this.data.model.grant.grantStatus.internalStatus === 'ACTIVE') {
-            const val1 = event.currentTarget.value;
-            const orgAss = this.data.model.workflowAssignment.filter(a => a.stateId === this.data.model.grant.grantStatus.id)[0];
-            if (orgAss.assignments !== Number(val1)) {
-                this.activeStateOwnerChanged = true;
-            } else {
-                this.activeStateOwnerChanged = false;
-            }
-        }
-    }
-
-   
-
-    disableNeighbours(nodeOwner:any) {
-        
-        const nodeId = nodeOwner.id;
-        const id = Number(nodeId.split('_')[2])
-        const val = nodeOwner[nodeOwner.options.selectedIndex].value
-        let transitions = this.transitions.filter(a => a.fromStateId === id);
-        let neighbourList = []
-        let prevAssignee 
-        let nextAssignee 
-        for (let t of transitions) {
-               const assignments = this.data.model.workflowAssignments.filter(a => a.stateId === t.toStateId);
-            for (let a of assignments) {
-               nextAssignee=a.assignmentId;
-               neighbourList.push(nextAssignee);
-            }
-        }
-
-        transitions = this.transitions.filter(a => a.toStateId === id);
-        for (let t of transitions) {
-            const assignments = this.data.model.workflowAssignments.filter(a => a.stateId === t.fromStateId);
-            for (let a of assignments) {
-                prevAssignee=a.assignmentId
-                neighbourList.push(prevAssignee);
-            }
-        }
-        
-        const currentNode ='#' + nodeId ;
-        
-        if (neighbourList.length > 0) {
-        for (let j = 0; j < $(currentNode).children().length; j++) {
-            const usr = this.data.model.users.filter(u => u.id === Number($(currentNode).children()[j].value));
-            
-            if (usr.length > 0 ) {
-                for (let k = 0; k < neighbourList.length; k++) {  
-                    if (usr[0].id==neighbourList[k]) {
-                        $(currentNode).children()[j].setAttribute('disabled', 'disabled');
-                    } 
-                }
-            }
-        }
         }
     }
 
