@@ -90,6 +90,12 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 return 0;
             });
         }
+        const roles: UserRole[] = JSON.parse(localStorage.getItem('USER')).userRoles;
+        let isAdminRole: boolean = false;
+        if (roles.filter(a => a.role.name === 'Admin').length > 0) {
+            isAdminRole = true;
+        }
+        const loggedInUser: User = JSON.parse(localStorage.getItem('USER'));
 
         if (this.data.model.type === 'grant') {
             const gtIdx = this.data.model.grantTypes.findIndex(gt => gt.id === this.data.model.grant.grantTypeId);
@@ -106,8 +112,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
             this.http.get<WorkflowTransition[]>(url, httpOptions).subscribe((transitions: WorkflowTransition[]) => {
                 this.transitions = transitions;
-
-                let counter = 1;
+                this.data.model.workflowAssignments=this.data.model.workflowAssignment
+                let counter = 0;
 
                 for (let transition of transitions) {
                     const nodeId = 'state_' + transition.fromStateId;
@@ -146,13 +152,9 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         const currentUserAssignment = this.data.model.workflowAssignment.filter((assignment1) => assignment1.assignments === JSON.parse(localStorage.getItem('USER')).id && assignment1.stateId === this.data.model.grant.grantStatus.id);
                         const ownerUser = this.data.model.workflowAssignment.filter((assignment2) => assignment2.assignments === JSON.parse(localStorage.getItem('USER')).id && assignment2.anchor);
 
-                        const roles: UserRole[] = JSON.parse(localStorage.getItem('USER')).userRoles;
-                        let isAdminRole: boolean = false;
-                        if (roles.filter(a => a.role.name === 'Admin').length > 0) {
-                            isAdminRole = true;
-                        }
+                      
 
-                        const loggedInUser: User = JSON.parse(localStorage.getItem('USER'));
+                        
                         if (((currentUserAssignment.length > 0 || (ownerUser.length > 0) || isAdminRole) && this.data.model.grant.grantStatus.internalStatus !== 'ACTIVE' && this.data.model.grant.grantStatus.internalStatus !== 'CLOSED') && loggedInUser.organization.organizationType !== 'GRANTEE') {
                             //Do nothing
                         } else {
@@ -164,7 +166,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                                 this.renderer.removeAttribute(nodeOwner, 'disabled');
                             }
                         }
-
+                        
                         this.renderer.addClass(nodeOwner, 'ml-0');
                         this.renderer.addClass(nodeOwner, 'px-2');
                         this.renderer.addClass(nodeOwner, 'text-left');
@@ -172,15 +174,13 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         if (assignment.length > 0) {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].assignmentUser ? String(assignment[0].assignmentUser.id) : String(0));
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + assignment[0].id + '_' + transition.fromStateId + '_' + this.data.model.grant.id);
-                            this.renderer.setAttribute(nodeOwner, 'data-counter', String(counter++));
                             if (assignment[0].assignments === 0) {
                                 this.renderer.setStyle(nodeOwner, 'color', '#ffbf00');
                             }
-                            this.renderer.listen(nodeOwner, 'change', (event) => this.handleSelection(event));
+                           this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers());
                         } else {
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + transition.fromStateId + '_' + this.data.model.grant.id);
-                            this.renderer.setAttribute(nodeOwner, 'data-counter', String(counter++));
-                            this.renderer.listen(nodeOwner, 'change', (event) => this.handleSelection(event));
+                           this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers())
                         }
                         const nodeOwnerOptions = this.renderer.createElement('option');
                         this.renderer.setAttribute(nodeOwnerOptions, 'value', '0');
@@ -242,7 +242,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(node, 'my-5');
                         this.renderer.appendChild(this.flowContainer.nativeElement, node);
                     }
-
+                    
 
                 }
                 for (let transition of transitions) {
@@ -329,7 +329,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
             this.http.get<WorkflowTransition[]>(url, httpOptions).subscribe((transitions: WorkflowTransition[]) => {
                 this.transitions = transitions;
-
                 for (let transition of transitions) {
                     const nodeId = 'state_' + transition.fromStateId;
                     if (this.elemRef.nativeElement.querySelector('#' + nodeId) === null) {
@@ -361,6 +360,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             this.renderer.addClass(node, 'node-highight');
                             this.renderer.appendChild(stateNode, indicator);
                         }
+                     
 
                         const ownerNode = this.renderer.createElement('div');
                         this.renderer.addClass(ownerNode, 'mt-2');
@@ -371,7 +371,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         this.renderer.addClass(nodeOwner, 'anu-wf-input');
                         const currentUserAssignment = this.data.model.workflowAssignments.filter((assignment1) => assignment1.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment1.stateId === this.data.model.report.status.id && JSON.parse(localStorage.getItem('USER')).organization.organizationType !== 'GRANTEE');
                         const ownerUser = this.data.model.workflowAssignments.filter((assignment2) => assignment2.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment2.anchor);
-                        if (currentUserAssignment.length > 0 || (ownerUser.length > 0)) {
+                        if (((currentUserAssignment.length > 0 || (ownerUser.length > 0) || isAdminRole) && this.data.model.report.status.internalStatus !== 'CLOSED' ) && loggedInUser.organization.organizationType !== 'GRANTEE') {
                             //Do nothing
                         } else {
                             this.canManage = false;
@@ -384,13 +384,13 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         if (assignment.length > 0) {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].assignmentUser ? String(assignment[0].assignmentUser.id) : String(0));
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + assignment[0].id + '_' + transition.fromStateId + '_' + this.data.model.report.id);
-                            this.renderer.listen(nodeOwner, 'change', (event) => this.handleSelection(event));
+                            this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers());
                             if (assignment[0].assignment === 0) {
                                 this.renderer.setStyle(nodeOwner, 'color', '#ffbf00');
                             }
                         } else {
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + transition.fromStateId + '_' + this.data.model.report.id);
-                            this.renderer.listen(nodeOwner, 'change', (event) => this.handleSelection(event));
+                            this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers());
                         }
                         const nodeOwnerOptions = this.renderer.createElement('option');
                         this.renderer.setAttribute(nodeOwnerOptions, 'value', '0');
@@ -505,6 +505,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                         this.renderer.addClass(node, 'my-5');
                         this.renderer.appendChild(this.flowContainer.nativeElement, node);
+                        this.rePositionNode(transition);
+                       this.disableNeighbours(nodeOwner)
                     }
 
                 }
@@ -565,7 +567,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 $('.owner-class').on('change', function () {
                     this.onYesClick();
                 });
-                this.updateReportUsers();
+               this.updateGrantAndDisbursementUsers();
             },
                 error => {
                     this.showError(error);
@@ -630,7 +632,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                         const currentUserAssignment = this.data.model.workflowAssignments.filter((assignment1) => assignment1.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment1.stateId === this.data.model.closure.status.id && JSON.parse(localStorage.getItem('USER')).organization.organizationType !== 'GRANTEE');
                         const ownerUser = this.data.model.workflowAssignments.filter((assignment2) => assignment2.assignmentId === JSON.parse(localStorage.getItem('USER')).id && assignment2.anchor);
-                        if (currentUserAssignment.length > 0 || (ownerUser.length > 0) || JSON.parse(localStorage.getItem('USER')).userRoles.filter(a => a.role.name === 'Admin').length > 0) {
+                        if (((currentUserAssignment.length > 0 || (ownerUser.length > 0) || isAdminRole) && this.data.model.closure.status.internalStatus !== 'CLOSED' ) && loggedInUser.organization.organizationType !== 'GRANTEE') {
                             //Do nothing    
                         } else {
                             this.canManage = false;
@@ -643,17 +645,19 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         if (assignment.length > 0) {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].assignmentUser ? String(assignment[0].assignmentUser.id) : String(0));
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + assignment[0].id + '_' + transition.fromStateId + '_' + this.data.model.closure.id);
-                            this.renderer.listen(nodeOwner, 'change', (event) => this.handleSelection(event));
+                            this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers());
                             if (assignment[0].assignment === 0) {
                                 this.renderer.setStyle(nodeOwner, 'color', '#ffbf00');
                             }
                         } else {
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + transition.fromStateId + '_' + this.data.model.closure.id);
-                            this.renderer.listen(nodeOwner, 'change', (event) => this.handleSelection(event));
+                            this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers());
                         }
+                    
+
                         const nodeOwnerOptions = this.renderer.createElement('option');
                         this.renderer.setAttribute(nodeOwnerOptions, 'value', '0');
-
+                      
                         if (this.data.model.workflowStatuses.filter((status) => status.id === transition.fromStateId)[0].internalStatus !== 'ACTIVE') {
                             this.renderer.appendChild(nodeOwnerOptions, document.createTextNode('-- Assign Approver --'));
                             this.renderer.appendChild(nodeOwner, nodeOwnerOptions);
@@ -673,7 +677,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                                 }
                                 this.renderer.appendChild(nodeOwnerOptions1, document.createTextNode(username));
                                 this.renderer.appendChild(nodeOwner, nodeOwnerOptions1);
-
+                                
                             }
                         } else {
                             if (this.canManage) {
@@ -702,6 +706,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                                         this.renderer.appendChild(nodeOwner, nodeOwnerOptions2);
                                     }
                                 }
+                               
                             } else {
                                 if (this.data.model.granteeUsers) {
                                     for (let option of this.data.model.granteeUsers) {
@@ -722,6 +727,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                             }
                         }
+                       
 
                         this.renderer.appendChild(ownerNode, nodeOwner);
                         this.renderer.appendChild(stateNode, ownerNode);
@@ -764,6 +770,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
 
                 }
+
                 for (let transition of transitions) {
                     const nodeId = 'state_' + transition.toStateId;
                     if (this.elemRef.nativeElement.querySelector('#' + nodeId) === null) {
@@ -823,7 +830,7 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                 $('.owner-class').on('change', function () {
                     this.onYesClick();
                 });
-                this.updateClosureUsers();
+              this.updateGrantAndDisbursementUsers();
             },
                 error => {
                     this.showError(error);
@@ -878,8 +885,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                         if (roles.filter(a => a.role.name === 'Admin')) {
                             isAdminRole = true;
                         }
-
-                        if (((currentUserAssignment.length > 0 || (ownerUser.length > 0)) && this.data.model.disbursement.status.internalStatus !== 'ACTIVE' && this.data.model.disbursement.status.internalStatus !== 'CLOSED') || isAdminRole) {
+                        if (((currentUserAssignment.length > 0 || (ownerUser.length > 0) || isAdminRole) && this.data.model.disbursement.status.internalStatus !== 'CLOSED' ) && loggedInUser.organization.organizationType !== 'GRANTEE') {
+                      
                             //Do nothing
                         } else {
                             this.canManage = false;
@@ -899,12 +906,13 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             this.renderer.setAttribute(nodeOwner, 'value', assignment[0].owner);
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + assignment[0].id + '_' + transition.fromStateId + '_' + this.data.model.disbursement.id);
                             this.renderer.setAttribute(nodeOwner, 'data-counter', String(counter++));
-                            this.renderer.listen(nodeOwner, 'change', (event) => this.handleSelection(event));
+                            this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers());
                         } else {
                             this.renderer.setAttribute(nodeOwner, 'id', 'assignment_' + transition.fromStateId + '_' + this.data.model.disbursement.id);
                             this.renderer.setAttribute(nodeOwner, 'data-counter', String(counter++));
-                            this.renderer.listen(nodeOwner, 'change', (event) => this.handleSelection(event));
+                            this.renderer.listen(nodeOwner, 'change', (event) => this.updateGrantAndDisbursementUsers());
                         }
+
                         const nodeOwnerOptions = this.renderer.createElement('option');
                         this.renderer.setAttribute(nodeOwnerOptions, 'value', '0');
                         this.renderer.appendChild(nodeOwnerOptions, document.createTextNode('-- Assign Approver --'));
@@ -962,6 +970,8 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
                         this.renderer.addClass(node, 'my-5');
                         this.renderer.appendChild(this.flowContainer.nativeElement, node);
+
+                        this.disableNeighbours(nodeOwner);
                     }
 
                 }
@@ -1043,7 +1053,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     }
 
     handleSelection(event: any): boolean | void {
-
         const id = Number(event.currentTarget.id.split('_')[2]);
         const val = Number(event.currentTarget.value);
         let transitions = this.transitions.filter(a => a.fromStateId === id);
@@ -1089,6 +1098,70 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
 
 
         if (event.target.value === "0") {
+           // event.target.style.color = '#ffbf00'
+        } else {
+            event.target.style.color = 'initial'
+        }
+
+
+        if (this.data.model.type === 'grant' && this.data.model.grant.grantStatus.internalStatus === 'ACTIVE') {
+            const val1 = event.currentTarget.value;
+            const orgAss = this.data.model.workflowAssignment.filter(a => a.stateId === this.data.model.grant.grantStatus.id)[0];
+            if (orgAss.assignments !== Number(val1)) {
+                this.activeStateOwnerChanged = true;
+            } else {
+                this.activeStateOwnerChanged = false;
+            }
+        }
+    }
+
+    onOwnerSelection(event: any, docId: any): boolean | void {
+        
+        const id = Number(event.currentTarget.id.split('_')[2]);
+        const val = Number(event.currentTarget.value);
+        let transitions = this.transitions.filter(a => a.fromStateId === id);
+        let select2Process = []
+        for (let t of transitions) {
+            const assignments = this.data.model.workflowAssignments.filter(a => a.stateId === t.toStateId);
+            for (let a of assignments) {
+                select2Process.push('assignment_' + a.id + '_' + a.stateId + '_' + docId);
+            }
+        }
+
+        transitions = this.transitions.filter(a => a.toStateId === id);
+        for (let t of transitions) {
+            const assignments = this.data.model.workflowAssignments.filter(a => a.stateId === t.fromStateId);
+            for (let a of assignments) {
+                select2Process.push('assignment_' + a.id + '_' + a.stateId + '_' + docId);
+            }
+        }
+
+      
+        if (select2Process && select2Process.length > 0) {
+            for (let i = 0; i < select2Process.length; i++) {
+                const node2Process = $('#' + select2Process[i]);
+                for (let j = 0; j < $(node2Process).children().length; j++) {
+                    const usr = this.data.model.users.filter(u => u.id === Number($(node2Process).children()[j].value));
+                    if (usr.length > 0 && usr[0].deleted && Number($(node2Process).children()[j].value) === val) {
+                        $(node2Process).css('text-decoration', 'line-through');
+                    } else if (usr.length > 0 && !usr[0].deleted && Number($(node2Process).children()[j].value) === val) {
+                        $(node2Process).css('text-decoration', 'none');
+                    }
+
+                    if (val === Number($(node2Process).children()[j].value)) {
+                        $(node2Process).children()[j].setAttribute('disabled', 'disabled');
+                    } else {
+
+                        if (usr.length > 0 && !usr[0].deleted) {
+                            $(node2Process).children()[j].removeAttribute('disabled');
+                        }
+                    }
+                }
+            }
+        }
+
+
+        if (event.target.value === "0") {
             event.target.style.color = '#ffbf00'
         } else {
             event.target.style.color = 'initial'
@@ -1103,6 +1176,51 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             } else {
                 this.activeStateOwnerChanged = false;
             }
+        }
+    }
+
+   
+
+    disableNeighbours(nodeOwner:any) {
+        
+        const nodeId = nodeOwner.id;
+        const id = Number(nodeId.split('_')[2])
+        const val = nodeOwner[nodeOwner.options.selectedIndex].value
+        let transitions = this.transitions.filter(a => a.fromStateId === id);
+        let neighbourList = []
+        let prevAssignee 
+        let nextAssignee 
+        for (let t of transitions) {
+               const assignments = this.data.model.workflowAssignments.filter(a => a.stateId === t.toStateId);
+            for (let a of assignments) {
+               nextAssignee=a.assignmentId;
+               neighbourList.push(nextAssignee);
+            }
+        }
+
+        transitions = this.transitions.filter(a => a.toStateId === id);
+        for (let t of transitions) {
+            const assignments = this.data.model.workflowAssignments.filter(a => a.stateId === t.fromStateId);
+            for (let a of assignments) {
+                prevAssignee=a.assignmentId
+                neighbourList.push(prevAssignee);
+            }
+        }
+        
+        const currentNode ='#' + nodeId ;
+        
+        if (neighbourList.length > 0) {
+        for (let j = 0; j < $(currentNode).children().length; j++) {
+            const usr = this.data.model.users.filter(u => u.id === Number($(currentNode).children()[j].value));
+            
+            if (usr.length > 0 ) {
+                for (let k = 0; k < neighbourList.length; k++) {  
+                    if (usr[0].id==neighbourList[k]) {
+                        $(currentNode).children()[j].setAttribute('disabled', 'disabled');
+                    } 
+                }
+            }
+        }
         }
     }
 
@@ -1406,30 +1524,29 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     updateGrantAndDisbursementUsers() {
         const assignmentElems = $('[id^="assignment_"]');
         for (let i = 0; i < assignmentElems.length; i++) {
-
             const prev = assignmentElems[i - 1] ? assignmentElems[i - 1].value : "-1";
             const next = assignmentElems[i + 1] ? assignmentElems[i + 1].value : "-1";
-
             const arr = [];
-            arr.push(prev);
-            arr.push(next);
-
+            if (prev !=-1) {
+                arr.push(prev);
+            }
+            if (next !=-1) {
+                arr.push(next);
+            }
+          
+            if ( arr.length > 0 ) {
             for (let child of assignmentElems[i].children) {
-                const usr = this.data.model.users.filter(u => u.id === Number(child.value));
-                if (usr.length > 0 && usr[0].deleted && child.value === assignmentElems[i].value) {
-                    assignmentElems[i].style.textDecoration = 'line-through';
-                } else if (usr.length > 0 && !usr[0].deleted && child.value === assignmentElems[i].value) {
-                    assignmentElems[i].style.textDecoration = 'none';
-                }
-
-                if (arr.includes(child.value)) {
+                 const usr = this.data.model.users.filter(u => u.id === Number(child.value));
+                if (usr.length > 0 ) {
+                     if (!usr[0].deleted && !arr.includes(child.value)) {
+                    child.removeAttribute('disabled');
+                    child.setAttribute('color','initial');
+                    } else {                
+                    child.setAttribute('style', 'none');
                     child.setAttribute('disabled', 'disabled');
-                } else {
-
-                    if (usr.length > 0 && !usr[0].deleted) {
-                        child.removeAttribute('disabled');
-                    }
-                }
+                    } 
+                } 
+            }    
             }
 
         }

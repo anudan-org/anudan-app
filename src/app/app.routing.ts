@@ -17,10 +17,10 @@ import { AuthGuardService } from './auth-guard.service';
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'landing', component: LandingComponent, canActivate: [AuthGuardService] },
-  { path: 'home', component: HomeComponent },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuardService] },
   { path: 'registration', component: RegistrationComponent },
   { path: 'welcome', component: WelcomeComponent },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'passwordreset', component: PasswordResetComponent },
   { path: 'setnewpassword', component: ChangePasswordComponent },
   { path: 'nocookie', component: NocookieComponent },
