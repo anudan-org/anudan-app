@@ -883,10 +883,6 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
                             this.canManage = false;
                             this.renderer.setAttribute(nodeOwner, 'disabled', 'disabled');
 
-                            if ((currentUserAssignment.length > 0 || isAdminRole) && this.data.model.disbursement.status.internalStatus === 'ACTIVE' && transition.internalStatus == 'ACTIVE') {
-                                this.canManage = true;
-                                this.renderer.removeAttribute(nodeOwner, 'disabled');
-                            }
                         }
 
                         this.renderer.addClass(nodeOwner, 'ml-0');
@@ -1402,31 +1398,22 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
     setWorkflowAssignmentUsers(internalStatus: any) {
         const assignmentElems = $('[id^="assignment_"]');
         for (let i = 0; i < assignmentElems.length; i++) {
+
             const prev = assignmentElems[i - 1] ? assignmentElems[i - 1].value : "-1";
             const next = assignmentElems[i + 1] ? assignmentElems[i + 1].value : "-1";
-            const arr = [];
+            const affectedUsers = [];
             if (prev !=-1) {
-                arr.push(prev);
+                affectedUsers.push(prev);
             }
             if (next !=-1) {
-                arr.push(next);
+                affectedUsers.push(next);
             }
           
-            if ( arr.length > 0 ) {
-            for (let child of assignmentElems[i].children) {
-                 const usr = this.data.model.users.filter(u => u.id === Number(child.value));
-                if (usr.length > 0 ) {
-                     if (!usr[0].deleted && !arr.includes(child.value)) {
-                    child.removeAttribute('disabled');
-                    child.setAttribute('color','initial');
-                    } else {                
-                    child.setAttribute('style', 'none');
-                    child.setAttribute('disabled', 'disabled');
-                    } 
-                } 
-            }    
+            if ( affectedUsers.length > 0 ) {
+            this.setWorkflowAffectedUsers(assignmentElems[i], affectedUsers, internalStatus);
+            
             }
-           
+            
             if (internalStatus != 'DRAFT')
             { 
                 assignmentElems[i].children[0].setAttribute('style', 'none');
@@ -1434,6 +1421,23 @@ export class WfassignmentComponent implements OnInit, AfterViewInit {
             }
 
         }
+    }
+    
+    setWorkflowAffectedUsers(assignmentElement : any, affectedUsers, internalStatus){
+        for (let child of assignmentElement.children) {
+            const usr = this.data.model.users.filter(u => u.id === Number(child.value));
+           if (usr.length > 0 ) {
+                if (!usr[0].deleted && !affectedUsers.includes(child.value)) {
+               child.removeAttribute('disabled');
+               child.setAttribute('color','initial');
+               } else {                
+               child.setAttribute('style', 'none');
+               child.setAttribute('disabled', 'disabled');
+               } 
+           } 
+       } 
+      
+      
     }
 
     
