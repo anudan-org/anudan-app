@@ -290,7 +290,7 @@ export class ListDialogComponent implements OnInit {
     if (this.deleteClosureClicked) {
       return;
     }
-    this.appComp.subMenu = { name: "Active Grants", action: "ag" };
+    this.appComp.subMenu = { name: "In-Progress Closures", action: "urc" };
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -354,7 +354,7 @@ export class ListDialogComponent implements OnInit {
             }
           })
       } else {
-        
+
         dialogRef.close();
       }
     });
