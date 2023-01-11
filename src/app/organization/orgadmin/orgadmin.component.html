@@ -16,12 +16,12 @@
             <mat-icon class="ml-1">library_books</mat-icon>Library
           </button>
           <button mat-menu-item
-            *ngIf="selectedMenu.getValue().item!=='closure-reasons' && !appComp.loggedInUser.organization.organizationType!=='GRANTEE'"
+            *ngIf="selectedMenu.getValue().item!=='closure-reasons' && appComp.loggedInUser.organization.organizationType!=='GRANTEE'"
             (click)="switchMenu('closure-reasons','Closure Reasons')">
             <mat-icon class="ml-1">do_not_disturb</mat-icon>Closure Reasons
           </button>
           <button mat-menu-item
-            *ngIf="selectedMenu.getValue().item!=='tags' && !appComp.loggedInUser.organization.organizationType!=='GRANTEE'"
+            *ngIf="selectedMenu.getValue().item!=='tags' && appComp.loggedInUser.organization.organizationType!=='GRANTEE'"
             (click)="switchMenu('tags','Tags')">
             <mat-icon class="ml-1">bookmark</mat-icon>Grant Tags
           </button>

@@ -207,6 +207,20 @@ export class SidebarComponent implements OnInit {
       }
       this.singleReportDataService.changeMessage(this.currentReport);
     }
+    if (this.appComponent.currentView === 'grant-closure' && this.currentClosure) {
+      moveItemInArray(this.closureSectionMenuItems, event.previousIndex, event.currentIndex);
+
+      event.item.element.nativeElement.classList.remove('section-dragging');
+
+      for (let i = 0; i < this.closureSectionMenuItems.length; i++) {
+        for (let section of this.currentClosure.closureDetails.sections) {
+          if (section.sectionName === this.closureSectionMenuItems[i].title.replace("<sup>*</sup>", "")) {
+            section.order = i + 1;
+          }
+        }
+      }
+      this.closureService.changeMessage(this.currentClosure, this.appComponent.loggedInUser.id);
+    }
 
 
   }

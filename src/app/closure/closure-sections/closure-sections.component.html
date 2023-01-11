@@ -3,11 +3,10 @@
     <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
       <ng-container *ngIf="action === getCleanText(section)">
         <h4 class="col-11 text-left mt-3 mb-0 section-header">
-          <p class="text-header d-flex align-items-center mb-0">Grant Closure <span class="text-subheader"> |
-              {{
-              (currentClosure.grant.referenceNo
-              ? currentClosure.grant.referenceNo + " | "
-              : "") + currentClosure.grant.name}}</span>
+          <p class="text-header d-flex align-items-center mb-0">Final Grant Closure Report &nbsp;
+            <span class="text-subheader">
+              {{(currentClosure.grant.referenceNo ? currentClosure.grant.referenceNo + " | ": "") +
+              currentClosure.grant.name}}</span>
           </p>
           <p *ngIf="(currentClosure.grant.grantStatus.internalStatus === 'DRAFT' ||
           currentClosure.grant.grantStatus.internalStatus === 'REVIEW') &&
@@ -28,6 +27,9 @@
             ">
           <a *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse && !section.systemGenerated"
             (click)="addNewFieldToSection(section.id, section.sectionName)" class="btn btn-sm btn-green">Add a Field<em
+              class="fa fa-plus-square ml-2"></em></a>
+          <a *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse && section.sectionName==='Project Indicators'"
+            (click)="addNewFieldToSection(section.id, section.sectionName)" class="btn btn-sm btn-green">Add a KPI<em
               class="fa fa-plus-square ml-2"></em></a>
         </div>
       </ng-container>
@@ -281,29 +283,18 @@
                   <div *ngIf="action === getCleanText(section)">
                     <div>
                       <ng-container #sectionsContainer *ngFor="let attribute of section.attributes; let i = index">
-                        <div id="fieldBlock_{{ attribute.id }}" class="row mb-4 mt-2" style="
-                  border: 1px solid #ececec;
-                  border-radius: 4px;
-                  padding: 20px;
-                  background: #fcfcfc;
-                ">
+                        <div id="fieldBlock_{{ attribute.id }}" class="row mb-4 mt-2"
+                          style="border: 1px solid #ececec;border-radius: 4px;padding: 20px;background: #fcfcfc;">
                           <ng-container class="mb-2">
-                            <div class="col-sm-4 col-lg-8" *ngIf="
-                      attribute.fieldType === 'multiline' &&
-                      currentClosure.canManage &&
-                      !currentClosure.forGranteeUse
-                    ">
+                            <div class="col-sm-4 col-lg-8"
+                              *ngIf="attribute.fieldType === 'multiline' && currentClosure.canManage && !currentClosure.forGranteeUse">
                               <mat-form-field>
                                 <input id="field_{{ attribute.id }}" [(ngModel)]="attribute.fieldName" class="anu-input"
                                   [ngModelOptions]="{ standAlone: true }" matInput placeholder="Title" />
                               </mat-form-field>
                             </div>
-                            <div class="col-sm-4 col-lg-8" *ngIf="
-                      attribute.fieldType === 'multiline' &&
-                      currentClosure.canManage &&
-                      currentClosure.forGranteeUse
-                    ">
-
+                            <div class="col-sm-4 col-lg-8"
+                              *ngIf="attribute.fieldType === 'multiline' && currentClosure.canManage && currentClosure.forGranteeUse">
                               <mat-label>Title:</mat-label>
                               <p>{{ attribute.fieldName }}</p>
                             </div>
@@ -395,16 +386,13 @@
                                   style="background: #f0f1f0 !important" matInput placeholder="Title" />
                               </mat-form-field>
                             </div>
-                            <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                      currentClosure.canManage &&
-                      !currentClosure.forGranteeUse &&
-                      attribute.canEdit 
-                    ">
+                            <div class="col-sm-4 col-lg-4 text-left"
+                              *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse && attribute.canEdit ">
                               <mat-form-field *ngIf="attribute.fieldType!=='disbursement'  ">
                                 <mat-label>Type</mat-label>
-                                <mat-select [disabled]="attribute.fieldType==='document' && section.systemGenerated"
-                                  (selectionChange)="
-                handleTypeChange($event, attribute, section)
+                                <mat-select
+                                  [disabled]="( attribute.fieldType==='document' || attribute.fieldType==='kpi' ) && section.systemGenerated"
+                                  (selectionChange)="handleTypeChange($event, attribute, section)
               " [ngModel]="attribute.fieldType" class="anu-input" [ngModelOptions]="{ standAlone: true }">
                                   <mat-option value="multiline">Descriptive</mat-option>
                                   <mat-option value="kpi">Measurement/KPI</mat-option>
@@ -1524,25 +1512,16 @@
                         " readonly disabled class="anu-input" />
                               </mat-form-field>
                             </div>
-                            <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                      attribute.fieldType === 'kpi' &&
-                      appComp.loggedInUser.organization
-                        .organizationType === 'GRANTER' &&
-                      currentClosure.canManage &&
-                      !currentClosure.forGranteeUse
-                    ">
+                            <div class="col-sm-4 col-lg-4 text-left" *ngIf="attribute.fieldType === 'kpi' && appComp.loggedInUser.organization.organizationType === 'GRANTER' &&
+                      currentClosure.canManage && !currentClosure.forGranteeUse">
                               <mat-form-field>
                                 <input matInput [(ngModel)]="attribute.target" class="anu-input" type="number"
                                   [ngModelOptions]="{ standAlone: true }" placeholder="Report Level Target:" />
                               </mat-form-field>
                             </div>
                             <div class="col-sm-4 col-lg-4 text-left" *ngIf="
-                      attribute.fieldType === 'kpi' &&
-                      appComp.loggedInUser.organization
-                        .organizationType === 'GRANTEE' &&
-                      currentClosure.canManage &&
-                      currentClosure.forGranteeUse
-                    ">
+                      attribute.fieldType === 'kpi' && appComp.loggedInUser.organization.organizationType === 'GRANTEE' &&
+                      currentClosure.canManage && currentClosure.forGranteeUse">
                               <mat-form-field>
                                 <input matInput placeholder="Report Level Target:"
                                   style="background: #f0f1f0 !important" [value]="
@@ -1663,18 +1642,10 @@
                                     </button>
                                   </mat-list-item>
                                 </ng-container>
-                                <mat-list-item *ngIf="
-                          attribute.attachments &&
-                          attribute.attachments.length > 0
-                        ">
+                                <mat-list-item *ngIf="attribute.attachments && attribute.attachments.length > 0">
                                   <button id="attachments_download_{{ attribute.id }}" class="btn btn-sm btn-blue"
                                     [disabled]="!downloadAndDeleteAllowed" (click)="downloadSelection(attribute.id)">
-                                    <mat-icon style="
-                              cursor: pointer;
-                              top: 5px;
-                              font-size: 13px;
-                              margin-right: 3px;
-                            ">
+                                    <mat-icon style="cursor: pointer;top: 5px;font-size: 13px;margin-right: 3px;">
                                       system_update_alt
                                     </mat-icon>
                                     Download Selected Documents
@@ -1690,94 +1661,46 @@
                               </mat-nav-list>
                             </div>
                           </ng-container>
-                          <div class="col-12" *ngIf="
-                    currentClosure.canManage &&
-                    !currentClosure.forGranteeUse
-                  ">
+                          <div class="col-12" *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse">
                             <div class="row mt-3">
                               <div class="col-6 text-left" *ngIf="attribute.fieldType === 'kpi'">
-                                <sup>(1) - Totals based on all approved reports for
-                                  grant</sup>
+                                <sup>(1) - Totals based on all approved reports for grant</sup>
                               </div>
                               <div class="col-6 text-right" *ngIf="attribute.fieldType === 'kpi'">
-                                <a [class]="i === 0 ? 'isDisabled' : ''" (click)="
-                          moveTo(
-                            section,
-                            attribute,
-                            i === 0 ? null : section.attributes[i - 1]
-                          )
-                        ">
+                                <a [class]="i === 0 ? 'isDisabled' : ''"
+                                  (click)="moveTo(section,attribute, i === 0 ? null : section.attributes[i - 1])">
                                   <mat-icon style='color:#676767;'>keyboard_arrow_up</mat-icon>
                                 </a>
-                                <a [class]="
-                          i === section.attributes.length - 1
-                            ? 'isDisabled'
-                            : ''
-                        " (click)="
-                          moveTo(
-                            section,
-                            attribute,
-                            i === section.attributes.length - 1
-                              ? null
-                              : section.attributes[i + 1]
-                          )
-                        ">
+                                <a [class]="i === section.attributes.length - 1? 'isDisabled': ''"
+                                  (click)="moveTo(section,attribute,i === section.attributes.length - 1? null: section.attributes[i + 1])">
                                   <mat-icon style='color:#676767;'>keyboard_arrow_down</mat-icon>
                                 </a>
                                 <a><img alt="separator" src="./assets/img/Line.svg" class="w-10 mr-2"
                                     style="width: 1px" /></a>
-                                <a href="javascript:" (click)="
-                            deleteFieldEntry(
-                              section.id,
-                              attribute.id,
-                              attribute.fieldName
-                            )
-                          ">
+                                <a href="javascript:"
+                                  (click)="deleteFieldEntry(section.id,attribute.id,attribute.fieldName)">
                                   <mat-icon style='color:#676767;'>delete_outlined</mat-icon>
                                 </a>
                               </div>
                               <div class="col-12 text-right" *ngIf="attribute.fieldType !== 'kpi'">
-                                <a [class]="i === 0 ? 'isDisabled' : ''" (click)="
-                          moveTo(
-                            section,
-                            attribute,
-                            i === 0 ? null : section.attributes[i - 1]
-                          )
-                        ">
+                                <a [class]="i === 0 ? 'isDisabled' : ''"
+                                  (click)="moveTo(section,attribute,i === 0 ? null : section.attributes[i - 1])">
                                   <mat-icon style='color:#676767;'>keyboard_arrow_up</mat-icon>
                                 </a>
-                                <a [class]="
-                          i === section.attributes.length - 1
-                            ? 'isDisabled'
-                            : ''
-                        " (click)="
-                          moveTo(
-                            section,
-                            attribute,
-                            i === section.attributes.length - 1
-                              ? null
-                              : section.attributes[i + 1]
-                          )
-                        ">
+                                <a [class]="i === section.attributes.length - 1? 'isDisabled': ''"
+                                  (click)="moveTo(section,attribute,i === section.attributes.length - 1? null: section.attributes[i + 1])">
                                   <mat-icon style='color:#676767;'>keyboard_arrow_down</mat-icon>
                                 </a>
                                 <a><img alt="separator" src="./assets/img/Line.svg" class="w-10 mr-2"
                                     style="width: 1px" /></a>
-                                <a href="javascript:" (click)="
-                            deleteFieldEntry(
-                              section.id,
-                              attribute.id,
-                              attribute.fieldName
-                            )
-                          ">
+                                <a href="javascript:"
+                                  (click)="deleteFieldEntry(section.id,attribute.id,attribute.fieldName)">
                                   <mat-icon style='color:#676767;'>delete_outlined</mat-icon>
                                 </a>
                               </div>
                             </div>
                           </div>
-                          <div class="col-12" *ngIf="
-                    currentClosure.canManage && currentClosure.forGranteeUse
-                  ">
+                          <div class="col-12" *ngIf="currentClosure.canManage && currentClosure.forGranteeUse">
                             <div class="row mt-3">
                               <div class="col-12 text-left" *ngIf="attribute.fieldType === 'kpi'">
                                 <sup>(1) - Totals based on all approved reports for
