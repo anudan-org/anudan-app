@@ -100,78 +100,18 @@ export class ListDialogComponent implements OnInit {
    
     if (listMetaData._for === 'grants-inprogress') {
       this.grants = listMetaData.grants.tenants[0].grants;
-  
-      for (const grant of this.grants) {
-          if (
-            grant.workflowAssignment.filter(
-            (wf) => wf.stateId === grant.grantStatus.id && wf.assignments === this.appComp.loggedInUser.id).length > 0 &&
-            this.appComp.loggedInUser.organization.organizationType !=="GRANTEE" 
-          ) {
-            grant.canManage = true;
-            if ( grant.grantStatus.internalStatus == "DRAFT" || grant.grantStatus.internalStatus == "REVIEW" ) {
-            this.grantsList.push(grant);
-            }
-          } else {
-            grant.canManage = false;
-          }
-        }
-     this.filteredGrants = this.grantsList;
+      this.setGrantsListInProgress(this.grants);
    
     } else  if (listMetaData._for === 'grants-draft') {
       this.grants = listMetaData.grants.tenants[0].grants;
-      
-      for (const grant of this.grants) {
-            if (
-            grant.workflowAssignment.filter(
-            (wf) => wf.stateId === grant.grantStatus.id && wf.assignments === this.appComp.loggedInUser.id).length > 0 &&
-            this.appComp.loggedInUser.organization.organizationType !=="GRANTEE" 
-          ) {
-            grant.canManage = true;
-            if ( grant.grantStatus.internalStatus == "DRAFT" ) {
-                this.grantsList.push(grant);
-            }
-          } else {
-            grant.canManage = false;
-          }
-        }
-      this.filteredGrants = this.grantsList;
-      
+      this.setGrantsListDraft(this.grants);
+        
     }else  if (listMetaData._for === 'Active') {
       this.grants = listMetaData.grants.tenants[0].grants;
-      for (const grant of this.grants) {
-        if (
-        grant.workflowAssignment.filter(
-        (wf) => wf.stateId === grant.grantStatus.id && wf.assignments === this.appComp.loggedInUser.id).length > 0 &&
-        this.appComp.loggedInUser.organization.organizationType !=="GRANTEE" 
-      ) {
-        grant.canManage = true;
-        if ( grant.grantStatus.internalStatus == "ACTIVE"  ) {
-            this.grantsList.push(grant);
-        }
-      } else {
-        grant.canManage = false;
-      }
-    }
-    this.filteredGrants = this.grantsList;
-   
+      this.setGrantsListActive(this.grants);
     } else  if (listMetaData._for === 'Closed') {
       this.grants = listMetaData.grants.tenants[0].grants;
-      for (const grant of this.grants) {
-        if (
-        grant.workflowAssignment.filter(
-        (wf) => wf.stateId === grant.grantStatus.id && wf.assignments === this.appComp.loggedInUser.id).length > 0 &&
-        this.appComp.loggedInUser.organization.organizationType !=="GRANTEE" 
-      ) {
-        grant.canManage = true;
-        if ( grant.grantStatus.internalStatus === "CLOSED" && grant.amended===false  ) {
-            this.grantsList.push(grant);
-        }
-      } else {
-        grant.canManage = false;
-      }
-    }
-    this.filteredGrants = this.grantsList;
- 
+      this.setGrantsListClosed(this.grants);
     } else if (listMetaData._for === 'closure') {
       this.closures = listMetaData.closures;
       this.filteredClosures = this.closures;
@@ -189,6 +129,74 @@ export class ListDialogComponent implements OnInit {
 
   }
 
+  setGrantsListInProgress(grants) {
+    for (const grant of grants) {
+      if (
+        grant.workflowAssignment.filter(
+        (wf) => wf.stateId === grant.grantStatus.id && wf.assignments === this.appComp.loggedInUser.id).length > 0 &&
+        this.appComp.loggedInUser.organization.organizationType !=="GRANTEE" 
+      ) {
+        grant.canManage = true;
+        if ( grant.grantStatus.internalStatus == "DRAFT" || grant.grantStatus.internalStatus == "REVIEW" ) {
+        this.grantsList.push(grant);
+        }
+      } else {
+        grant.canManage = false;
+      }
+    }
+   this.filteredGrants = this.grantsList;
+  }
+  setGrantsListDraft(grants) {
+  for (const grant of this.grants) {
+    if (
+    grant.workflowAssignment.filter(
+    (wf) => wf.stateId === grant.grantStatus.id && wf.assignments === this.appComp.loggedInUser.id).length > 0 &&
+    this.appComp.loggedInUser.organization.organizationType !=="GRANTEE" 
+  ) {
+    grant.canManage = true;
+    if ( grant.grantStatus.internalStatus == "DRAFT" ) {
+        this.grantsList.push(grant);
+    }
+  } else {
+    grant.canManage = false;
+  }
+}
+this.filteredGrants = this.grantsList;
+}
+setGrantsListActive(grants) {
+for (const grant of this.grants) {
+  if (
+  grant.workflowAssignment.filter(
+  (wf) => wf.stateId === grant.grantStatus.id && wf.assignments === this.appComp.loggedInUser.id).length > 0 &&
+  this.appComp.loggedInUser.organization.organizationType !=="GRANTEE" 
+) {
+  grant.canManage = true;
+  if ( grant.grantStatus.internalStatus == "ACTIVE"  ) {
+      this.grantsList.push(grant);
+  }
+} else {
+  grant.canManage = false;
+}
+}
+this.filteredGrants = this.grantsList;
+}
+setGrantsListClosed(grants) {
+for (const grant of this.grants) {
+  if (
+  grant.workflowAssignment.filter(
+  (wf) => wf.stateId === grant.grantStatus.id && wf.assignments === this.appComp.loggedInUser.id).length > 0 &&
+  this.appComp.loggedInUser.organization.organizationType !=="GRANTEE" 
+) {
+  grant.canManage = true;
+  if ( grant.grantStatus.internalStatus === "CLOSED" && grant.amended===false  ) {
+      this.grantsList.push(grant);
+  }
+} else {
+  grant.canManage = false;
+}
+}
+this.filteredGrants = this.grantsList;
+}
 
   onNoClick(): void {
     this.dialogRef.close();
