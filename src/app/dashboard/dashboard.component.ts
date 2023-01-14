@@ -61,8 +61,6 @@ export class DashboardComponent implements OnInit {
   totalActiveUsers: number = 0;
   portfolioData: any;
 
-  ///////////
-
   constructor(private http: HttpClient,
     public appComponent: AppComponent,
     private router: Router,
@@ -408,11 +406,11 @@ export class DashboardComponent implements OnInit {
         Authorization: localStorage.getItem("AUTH_TOKEN"),
       }),
     };
-
-    this.http.get<Grant[]>('/api/users/' + this.appComponent.loggedInUser.id + '/dashboard/mysummary/pendinggrants', httpOptions)
+   
+    this.http.get<Tenants[]>('/api/users/' + this.appComponent.loggedInUser.id + '/dashboard?forStatus=inprogress', httpOptions)
       .subscribe((results) => {
         const dg = this.dialog.open(ListDialogComponent, {
-          data: { _for: 'grant', grants: results, appComp: this.appComponent, title: 'Actions Pending | Grants' },
+          data: { _for: 'grants-inprogress', grants: results, appComp: this.appComponent, title: 'Actions Pending | Grants' },
           panelClass: "addnl-report-class"
         });
 
@@ -434,6 +432,7 @@ export class DashboardComponent implements OnInit {
         Authorization: localStorage.getItem("AUTH_TOKEN"),
       }),
     };
+  
     this.http.get<GrantClosure[]>('/api/users/' + this.appComponent.loggedInUser.id + '/dashboard/mysummary/pendingclosures', httpOptions)
       .subscribe((results) => {
         const dg = this.dialog.open(ListDialogComponent, {
@@ -517,11 +516,10 @@ export class DashboardComponent implements OnInit {
         Authorization: localStorage.getItem("AUTH_TOKEN"),
       }),
     };
-
-    this.http.get<Grant[]>('/api/users/' + this.appComponent.loggedInUser.id + '/dashboard/mysummary/upcomingdraftgrants', httpOptions)
-      .subscribe((results) => {
+    this.http.get<Tenants[]>('/api/users/' + this.appComponent.loggedInUser.id + '/dashboard?forStatus=inprogress', httpOptions)
+        .subscribe((results) => {
         const dg = this.dialog.open(ListDialogComponent, {
-          data: { _for: 'grant', grants: results, appComp: this.appComponent, title: 'Upcoming | Grants | Drafts' },
+          data: { _for: 'grants-draft', grants: results, appComp: this.appComponent, title: 'Upcoming | Grants | Drafts' },
           panelClass: "addnl-report-class"
         });
         dg.afterClosed().subscribe(() => {
