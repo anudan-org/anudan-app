@@ -25,7 +25,7 @@
           <ng-container>
             <button [disabled]="
           wfDisabled" mat-stroked-button
-              (click)="submitDisbursement(getSingleBackwardFlow().fromStateId,'<span class=\'text-light-red\'>Returning to </span>' + getStateNameAndOwner(getSingleBackwardFlow().fromStateId,false))"
+              (click)="submitDisbursement(getSingleBackwardFlow().fromStateId,'<span class=\'text-light-red\'>Returning to </span>' + getStateNameAndOwner(getSingleBackwardFlow().fromStateId),false)"
               [class]="'mr-1 btn btn-sm btn-green border-light-red'">
               Request Modifications
             </button>
