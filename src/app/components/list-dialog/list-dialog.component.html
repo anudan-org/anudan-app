@@ -20,121 +20,167 @@
   </div>
 
   <div class="col-12 scrollable"
-    style="overflow-y: auto;height: inherit;min-height: calc(100vh - 215px) !important;max-height: calc(100vh - 215px) !important;"
-    *ngIf="_for==='grant'">
-    <div [ngClass]="uiService.getGrantCardStyle(grant,appComp)" style="cursor: pointer"
-      *ngFor="let grant of filteredGrants; let i = index; let last = last;" (click)="manageGrant(grant)">
-      <div class="d-flex align-items-center grant-delete">
-        <mat-icon class="text-red">delete_outline</mat-icon>
-      </div>
-
-      <div class="col-12 text-left search-context">
-        <em *ngIf="grant.grantTags.length===1" class="fas fa-tag fa-xs ml-2 grant-tags"></em>
-        <em *ngIf="grant.grantTags.length>1" class="fas fa-tags fa-xs ml-2 grant-tags"></em>
-        <p class="text-header-h1 mb-1" *ngIf="!grant.referenceNo" style="font-size: 18px">
-          <span class="text-subheader pl-0" style="font-weight: 600; font-size: 12px;display:flex;" *ngIf="
-                      (grant.grantStatus.internalStatus === 'DRAFT' ||
-                        grant.grantStatus.internalStatus === 'REVIEW') &&
-                      grant.origGrantId
-                    ">
-            <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1 mb-1">
-              info_outline
-            </mat-icon>
-            Amendment in-progress [<strong>{{ grant.origGrantRefNo }}</strong>]
-          </span>
-        </p>
-        <p>{{ grant.name }}</p>
-        <p class="text-header-h1 mb-1" *ngIf="grant.referenceNo" style="font-size: 18px">
-          <span class="text-red pl-0" style="font-size: 10px; font-weight: normal" *ngIf="
-                      (grant.grantStatus.internalStatus === 'DRAFT' ||
-                        grant.grantStatus.internalStatus === 'REVIEW') &&
-                      grant.origGrantId
-                    ">Amendment in-progress [<span>{{ grant.origGrantRefNo }}</span>]</span>
-          <span>{{ grant.name }}</span>
-        </p>
-      </div>
-
-      <div class="col-12 text-left search-context mb-3">
-        <div class="text-header mb-2">
-          {{ grant.organization ? grant.organization.name : null }}
-        </div>
-      </div>
-      <div class="col-4 text-left" style="border-right: 1px solid #d4d4d4">
+  style="overflow-y: auto;height: inherit;min-height: calc(100vh - 215px) !important;max-height: calc(100vh - 215px) !important;"
+  *ngIf="_for==='grants-inprogress' || _for ==='grants-draft' || _for==='Active' || _for==='Closed'">
+  
+  <div
+  [ngClass]="uiService.getGrantCardStyle(grant,appComp)"
+  style="cursor: pointer"
+  *ngFor="let grant of filteredGrants; let i = index; let last = last;"
+  (click)="manageGrant(grant)"
+>
+<div *ngIf="grant.canManage && grant.grantStatus.internalStatus === 'DRAFT'" class="d-flex align-items-center grant-delete" (click)="deleteGrant(grant)">
+  <mat-icon class="text-red">delete_outline</mat-icon>
+</div>
+  
+  <div class="col-12 text-left search-context">
+    <em *ngIf="grant.grantTags.length===1" class="fas fa-tag fa-xs ml-2 grant-tags"></em>
+    <em *ngIf="grant.grantTags.length>1" class="fas fa-tags fa-xs ml-2 grant-tags"></em>
+    <p
+      class="text-header-h1 mb-1"
+      style="font-size: 18px">
+      <span
+        class="text-subheader pl-0"
+        style="font-weight: 600; font-size: 12px;display:flex;"
+        *ngIf="
+          (grant.grantStatus.internalStatus === 'DRAFT' ||
+            grant.grantStatus.internalStatus === 'REVIEW') &&
+          grant.origGrantId">
+      <mat-icon [inline]="true" class="material-icons-outlined text-red mr-1">
+        info_outline
+      </mat-icon>
+        Amendment in-progress [<strong>{{ grant.origGrantRefNo }}</strong>]
+      </span>
+      <span *ngIf="grant.referenceNo">{{ grant.referenceNo }}| </span>
+      <strong>{{ grant.name }}</strong>
+    </p>
+    <p
+      class="text-header-h1 mb-1 mt-2"
+      *ngIf="grant.referenceNo"  style="font-size: 18px"    >
+      <span class="text-red pl-0" style="font-size: 10px; font-weight: normal"
+        *ngIf="
+          (grant.grantStatus.internalStatus === 'DRAFT' ||
+            grant.grantStatus.internalStatus === 'REVIEW') &&
+          grant.origGrantId
+        ">Amendment in-progress [<strong>{{ grant.origGrantRefNo }}</strong>]</span>
+    </p>
+  </div>
+  
+  <div class="col-12 text-left search-context mb-0">
+    <div class="text-header mb-0">
+      {{ grant.organization ? grant.organization.name : null }}
+    </div>
+  </div>
+  <div
+    class="col-9 text-left"
+  >
+    <div class="row">
+      <div class="col-12 mt-1" *ngIf="_for !=='Active' && _for !=='Closed'">
         <div class="row">
-          <div class="col-12 mt-1">
+          <div class="col-6 mb-0 pr-0" style="border-right: 1px solid #d4d4d4">
+            
+            <span class="text-header mr-2 search-context">{{
+              getFormattedGrantAmount(grant.amount)
+            }}</span><span class="text-subheader"><small>{{getGrantAmountInWords(grant.amount)}}</small></span>
+          </div>
+          <div class="col-6 mt-1 text-left">
             <div class="row">
-              <div class="col-12 mb-0 pr-0">
-
-                <span class="text-header mr-4 search-context">{{
-                  getFormattedGrantAmount(grant.amount)
-                  }}</span><span class="text-subheader"><small>{{getGrantAmountInWords(grant.amount)}}</small></span>
+              <div
+                class="col-12 mb-0 pr-0 text-subheader">
+               <span class="text-header">
+                  &nbsp;</span>
               </div>
             </div>
           </div>
-          <div class="col-12 mt-4">
+        </div>
+      </div>
+      <div class="col-12 mt-0" *ngIf="_for==='Active' || _for==='Closed'">
+        <div class="row">
+          <div class="col-12 mb-0 pr-0 mt-1 progress-summary-class">
+            <small>Disbursed {{getFormattedGrantAmount(grant.approvedDisbursementsTotal)}} /
+              <span style="font-weight: 800;">Committed
+                {{getFormattedGrantAmount(grant.amount)}}</span> (<span
+                class="text-green mt-2 mb-0"
+                style="font-size:14px;font-weight:800;">{{getRoundedFigure(grant)}}%</span>)<div>
+                <mat-progress-bar mode="determinate"
+                  [value]="((grant.approvedDisbursementsTotal/grant.amount)*100)"
+                  style="height: 8px !important;"></mat-progress-bar>
+              </div></small>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="row">
+              <div class="col-6 mb-0 pr-0" style="border-right: 1px solid #d4d4d4">&nbsp;</div>
+              <div class="col-6 mb-0 pr-0 text-subheader">Approved Reports:&nbsp;&nbsp;<span
+                  class="text-header">
+                  {{grant.approvedReportsForGrant === 0? "None": grant.approvedReportsForGrant}}</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+     
+      <div class="col-12 mt-0">
+        <div class="row">
+          <div class="col-6 mb-0 pr-0" style="border-right: 1px solid #d4d4d4">
             <p class="mb-0 text-header">
-              <mat-icon [inline]="true" class="mr-1">calendar_today</mat-icon>
+              <mat-icon [inline]="true" class="mr-1"
+                >calendar_today</mat-icon
+              >
               {{ grant.startDate | date: "dd-MMM-yyyy" }}
               -
               {{ grant.endDate | date: "dd-MMM-yyyy" }}
-              <span class="ml-2 text-subheader">({{ grantService.getDateDuration(grant) }})</span>
+              <span class="text-subheader"><small class="ml-2">({{ grantService.getDateDuration(grant) }})</small></span>
             </p>
           </div>
-        </div>
-      </div>
-      <div class="col-5">
-        <div class="row">
-          <div class="col-12 mt-2 text-left">
-            <div class="row">
-              <div class="col-12 text-subheader">
-                Disbursed <small>(till date)</small>:<span class="text-header">
-                  Applicable to Active grants only</span>
-              </div>
-            </div>
-          </div>
-          <div class="col-12 mt-2 text-left">
-            <div class="row">
-              <div class="col-12 text-subheader" style="">
-                Approved Reports :<span class="text-header">
-                  Applicable to Active grants only</span>
-              </div>
-
-            </div>
-          </div>
-          <div class="col-12 mt-2 text-left">
-            <div class="row">
-              <div class="col-12 text-subheader" style="">
-                Project Documents:<span class="text-header">
-                  {{
-                  grant.projectDocumentsCount === 0
+          <div class="col-6 mb-0 pr-0  text-subheader">
+            Project Documents:<span class="text-header">
+              {{
+                grant.projectDocumentsCount === 0
                   ? "none"
                   : grant.projectDocumentsCount
-                  }}</span>
-              </div>
-            </div>
-
+              }}</span>
           </div>
         </div>
+        
+        
       </div>
-      <div class="col-3 text-left">
-        <div class="status-indicator2">
-          <div [class]="'text-center status-icon state-'+grant.grantStatus.internalStatus.toLowerCase()">
-          </div>{{grant.grantStatus.name | uppercase}}
-        </div>
-        <div class="text-center text-subheader pl-3 mt-2 search-context">{{grant.ownerName}}</div>
-      </div>
-      <div class="col-9"></div>
-      <div *ngIf="appComp.loggedInUser.organization.organizationType!=='GRANTEE'"
-        [ngStyle]="{'background-color':getGrantTypeColor(grant.grantTypeId),'border-bottom-right-radius':'4px'}"
-        class="col-3 p-1 d-flex align-items-center justify-content-center">
-        <div class="float-right">
-          <small>{{getGrantTypeName(grant.grantTypeId)}}</small>
-        </div>
-      </div>
-
-
     </div>
   </div>
+  
+  <div class="col-3 text-left">
+    <div class="status-indicator2">
+      <div [class]="'text-center status-icon state-'+grant.grantStatus.internalStatus.toLowerCase()">
+      </div>{{grant.grantStatus.name | uppercase}}
+    </div>
+    <div class="text-center text-subheader pl-3 mt-2 search-context">{{grant.ownerName}}</div>
+  </div>
+  
+  
+
+  <div class="col-9">
+    <strong *ngIf="_for=='Active' && grant.closureInProgress" class="text-subheader d-flex align-items-center mt-1"
+      style="color: #ffbf00;">
+      <mat-icon [inline]="true" class="material-icons-outlined text-grey mr-1">
+        info_outline
+      </mat-icon>{{'Closure in-progress'}}
+    </strong>
+    <strong *ngIf="_for=='Closed'" class="text-subheader text-grey d-flex align-items-center mt-1"><mat-icon [inline]="true" class="material-icons-outlined text-grey mr-1">
+      info_outline
+    </mat-icon>{{getCleanClosureNote(grant)}}</strong>
+  </div>
+  
+
+  <div *ngIf="appComp.loggedInUser.organization.organizationType!=='GRANTEE'"
+    [ngStyle]="{'background-color':getGrantTypeColor(grant.grantTypeId),'border-bottom-right-radius':'4px'}"
+    class="col-3 p-1 d-flex align-items-center justify-content-center">
+    <div class="float-right">
+      <small>{{getGrantTypeName(grant.grantTypeId)}}</small>
+    </div>
+  </div>
+  
+  
+</div>
+</div>
 
   <div class="col-12 scrollable"
     style="overflow-y: auto;height: inherit;min-height: calc(100vh - 215px) !important;max-height: calc(100vh - 215px) !important;"
@@ -260,24 +306,7 @@
           <div class="col-12 my-4">
             <div class="text-header text-left mr-3" (click)="manageReport(report)">
               <span class="search-context">{{ report.name }}</span> | {{ report.dueDate | date: "dd-MMM-yyyy" }}
-              <!-- <ng-container *ngIf="report.futureReportsCount" class="col-2">
-                <div>
-                  <small>
-                    <a
-                      (click)="viewAddnlReports(report.id, report.grant.id,'upcoming')"
-                      class="text-blue"
-                      (mouseenter)="highlight($event, true)"
-                      (mouseleave)="highlight($event, false)">
-                      See additional reports ({{report.futureReportsCount}})</a>
-                    </small>
-                  </div>
-              </ng-container>
-              <ng-container *ngIf="!report.futureReportsCount" class="col-2">
-                <div>
-                  <small class="ml-0"><a class="text-grey"> Additional reports not available</a></small>
-                </div>
-                
-              </ng-container> -->
+              
             </div>
           </div>
           <div class="col-12 px-0">

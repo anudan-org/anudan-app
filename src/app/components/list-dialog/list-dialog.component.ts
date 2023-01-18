@@ -65,7 +65,9 @@ export class ListDialogComponent implements OnInit {
   filterCriteria: any;
   @ViewChild("appSearchFilter1") appSearchFilter1: SearchFilterComponent;
   filteredGrants: any;
-  filteredClosures: any;
+  
+  grantsList =[];
+  filteredClosures: GrantClosure[] = [];
   deleteDisbursementEvent: boolean = false;
 
   otherReportsClicked: boolean = false;
@@ -91,19 +93,25 @@ export class ListDialogComponent implements OnInit {
     private disbursementDataService: DisbursementDataService,
     public closureService: ClosureDataService
   ) {
-
     this.appComp = listMetaData.appComp;
     this._for = listMetaData._for;
     this.title = listMetaData.title;
     this.subtitle = listMetaData.subtitle;
-    if (listMetaData._for === 'grant') {
-      this.grants = listMetaData.grants;
-      /* if (this.grants && this.grants.length > 0) {
-        for (let g of this.grants) {
-          grantService.changeMessage(g, this.appComp.loggedInUser.id);
-        }
-      } */
-      this.filteredGrants = this.grants;
+   
+    if (listMetaData._for === 'grants-inprogress') {
+      this.grants = listMetaData.grants.tenants[0].grants;
+      this.setGrantsListInProgress(this.grants);
+   
+    } else  if (listMetaData._for === 'grants-draft') {
+      this.grants = listMetaData.grants.tenants[0].grants;
+      this.setGrantsListDraft(this.grants);
+        
+    }else  if (listMetaData._for === 'Active') {
+      this.grants = listMetaData.grants.tenants[0].grants;
+      this.setGrantsListActive(this.grants);
+    } else  if (listMetaData._for === 'Closed') {
+      this.grants = listMetaData.grants.tenants[0].grants;
+      this.setGrantsListClosed(this.grants);
     } else if (listMetaData._for === 'closure') {
       this.closures = listMetaData.closures;
       this.filteredClosures = this.closures;
@@ -115,15 +123,80 @@ export class ListDialogComponent implements OnInit {
       this.disbursements = listMetaData.disbursements;
       this.filteredDisbursements = this.disbursements;
     }
-
-
-    //this.selectedReports = this.futureReports.filter(r => r.grant.id===this.grantId);
   }
 
   ngOnInit() {
 
   }
 
+  setGrantsListInProgress(grants) {
+    for (const grant of grants) {
+      if (
+        grant.workflowAssignment.filter(
+        (wf) => wf.stateId === grant.grantStatus.id && wf.assignments === this.appComp.loggedInUser.id).length > 0 &&
+        this.appComp.loggedInUser.organization.organizationType !=="GRANTEE" 
+      ) {
+        grant.canManage = true;
+        if ( grant.grantStatus.internalStatus == "DRAFT" || grant.grantStatus.internalStatus == "REVIEW" ) {
+        this.grantsList.push(grant);
+        }
+      } else {
+        grant.canManage = false;
+      }
+    }
+   this.filteredGrants = this.grantsList;
+  }
+  setGrantsListDraft(grants) {
+  for (const grant of this.grants) {
+    if (
+    grant.workflowAssignment.filter(
+    (wf) => wf.stateId === grant.grantStatus.id && wf.assignments === this.appComp.loggedInUser.id).length > 0 &&
+    this.appComp.loggedInUser.organization.organizationType !=="GRANTEE" 
+  ) {
+    grant.canManage = true;
+    if ( grant.grantStatus.internalStatus == "DRAFT" ) {
+        this.grantsList.push(grant);
+    }
+  } else {
+    grant.canManage = false;
+  }
+}
+this.filteredGrants = this.grantsList;
+}
+setGrantsListActive(grants) {
+for (const grant of this.grants) {
+  if (
+  grant.workflowAssignment.filter(
+  (wf) => wf.stateId === grant.grantStatus.id && wf.assignments === this.appComp.loggedInUser.id).length > 0 &&
+  this.appComp.loggedInUser.organization.organizationType !=="GRANTEE" 
+) {
+  grant.canManage = true;
+  if ( grant.grantStatus.internalStatus == "ACTIVE"  ) {
+      this.grantsList.push(grant);
+  }
+} else {
+  grant.canManage = false;
+}
+}
+this.filteredGrants = this.grantsList;
+}
+setGrantsListClosed(grants) {
+for (const grant of this.grants) {
+  if (
+  grant.workflowAssignment.filter(
+  (wf) => wf.stateId === grant.grantStatus.id && wf.assignments === this.appComp.loggedInUser.id).length > 0 &&
+  this.appComp.loggedInUser.organization.organizationType !=="GRANTEE" 
+) {
+  grant.canManage = true;
+  if ( grant.grantStatus.internalStatus === "CLOSED" && grant.amended===false  ) {
+      this.grantsList.push(grant);
+  }
+} else {
+  grant.canManage = false;
+}
+}
+this.filteredGrants = this.grantsList;
+}
 
   onNoClick(): void {
     this.dialogRef.close();
@@ -133,7 +206,13 @@ export class ListDialogComponent implements OnInit {
     this.dialogRef.close({ result: false });
   }
 
-
+  getCleanClosureNote(grant) {
+    if (this.appComp.loggedInUser.organization.organizationType !== 'GRANTEE') {
+      return grant.note.substr(grant.note.lastIndexOf('</i>') + 4);
+    } else {
+      return 'This Grant has been closed.'
+    }
+  }
   getFormattedGrantAmount(amount: number) {
     let amtInWords = '-';
     if (amount) {
@@ -168,7 +247,9 @@ export class ListDialogComponent implements OnInit {
       return false;
     }
   }
-
+  getRoundedFigure(grant) {
+    return Math.round(((grant.approvedDisbursementsTotal / grant.amount) * 100))
+  }
   openSearch() {
     if (this.searchClosed) {
       this.searchClosed = false;

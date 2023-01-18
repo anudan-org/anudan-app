@@ -78,9 +78,9 @@ export class MyPortfolioSummaryComponent implements OnInit, OnChanges {
                 }),
             };
 
-            this.http.get<Grant[]>('/api/users/' + this.appComponent.loggedInUser.id + '/dashboard/mysummary/grants/' + status, httpOptions).subscribe(result => {
+            this.http.get<Grant[]>('/api/users/' + this.appComponent.loggedInUser.id + '/dashboard?forStatus='+ status, httpOptions).subscribe(result => {
                 const dg = this.dialog.open(ListDialogComponent, {
-                    data: { _for: 'grant', grants: result, appComp: this.appComponent, title: (status + ' Grants') },
+                    data: { _for: status, grants: result, appComp: this.appComponent, title: (status + ' Grants') },
                     panelClass: "addnl-report-class"
                 });
 
