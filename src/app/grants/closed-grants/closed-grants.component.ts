@@ -74,11 +74,13 @@ export class ClosedGrantsComponent implements OnInit {
   grantsDraft = [];
   grantsActive = [];
   grantsClosed: Grant[] = [];
+  grantsClosedForAmendment: Grant[] =[];
   logoURL: string;
   filteredGrants: Grant[] = [];
   searchClosed = true;
   filterReady = false;
   filterCriteria: any;
+  selectedTab: any;
   @ViewChild("appSearchFilter") appSearchFilter: SearchFilterComponent;
 
 
@@ -108,7 +110,7 @@ export class ClosedGrantsComponent implements OnInit {
       (id) => (this.currentGrantId = id)
     );
     this.data.currentMessage.subscribe((grant) => (this.currentGrant = grant));
-    this.fetchDashboard(user.id, this.currentGrant);
+    this.fetchDashboard(user.id, this.currentGrant, 'Closed');
     this.grantUpdateService.currentMessage.subscribe((id) => {
       if (id) {
         //this.fetchDashboard(user.id);
@@ -181,7 +183,7 @@ export class ClosedGrantsComponent implements OnInit {
       });
   }
 
-  fetchDashboard(userId: string, grant: Grant) {
+  fetchDashboard(userId: string, grant: Grant, closedStatus: string) {
     grant = null;
     if (grant) {
       this.saveGrant(grant);
@@ -218,6 +220,7 @@ export class ClosedGrantsComponent implements OnInit {
             this.grantsDraft = [];
             this.grantsActive = [];
             this.grantsClosed = [];
+            this.grantsClosedForAmendment =[];
             for (const grant of this.currentTenant.grants) {
               if (
                 grant.grantStatus.internalStatus === "DRAFT" ||
@@ -226,8 +229,10 @@ export class ClosedGrantsComponent implements OnInit {
                 this.grantsDraft.push(grant);
               } else if (grant.grantStatus.internalStatus === "ACTIVE") {
                 this.grantsActive.push(grant);
-              } else if (grant.grantStatus.internalStatus === "CLOSED") {
+              } else if (grant.grantStatus.internalStatus === "CLOSED" && grant.amended !==true ) {
                 this.grantsClosed.push(grant);
+              } else if (grant.grantStatus.internalStatus === "CLOSED" && grant.amended ===true ) {
+                this.grantsClosedForAmendment.push(grant);
               }
 
               if (
@@ -257,7 +262,11 @@ export class ClosedGrantsComponent implements OnInit {
                 break;
               }
             }
+            if (closedStatus==='Closed' ||closedStatus===''){
             this.filteredGrants = this.grantsClosed;
+            } else {
+              this.filteredGrants = this.grantsClosedForAmendment;
+            }
             this.grantUpdateService.changeMessage(false);
           }
         },
@@ -290,6 +299,17 @@ export class ClosedGrantsComponent implements OnInit {
           }
         }
       );
+    }
+  }
+
+  tabClicked(ev) {
+    this.selectedTab = ev.index;
+    if (ev.index === 0) {
+      this.hasTenant = false;
+      this.fetchDashboard(String(this.appComponent.loggedInUser.id), this.currentGrant, 'Closed');
+    } else if (ev.index === 1) {
+      this.hasTenant = false;
+      this.fetchDashboard(String(this.appComponent.loggedInUser.id), this.currentGrant, 'ClosedForAmendment');
     }
   }
 
@@ -364,7 +384,7 @@ export class ClosedGrantsComponent implements OnInit {
 
         this.http.delete(url, httpOptions).subscribe((val: any) => {
           const user = JSON.parse(localStorage.getItem("USER"));
-          this.fetchDashboard(user.id, null);
+          this.fetchDashboard(user.id, null,null);
         });
       } else {
         dialogRef.close();
@@ -407,7 +427,7 @@ export class ClosedGrantsComponent implements OnInit {
 
         this.appComponent.autosave = false;
         //this.appComponent.autosaveDisplay = 'Last saved @ ' + this.datepipe.transform(new Date(), 'hh:mm:ss a') + '     ';
-        this.fetchDashboard(String(this.appComponent.loggedInUser.id), null);
+        this.fetchDashboard(String(this.appComponent.loggedInUser.id), null,null);
       },
       (error) => {
         const errorMsg = error as HttpErrorResponse;
