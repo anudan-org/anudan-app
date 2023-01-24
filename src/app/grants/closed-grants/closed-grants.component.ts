@@ -221,22 +221,12 @@ export class ClosedGrantsComponent implements OnInit {
             this.grantsActive = [];
             this.grantsClosed = [];
             this.grantsClosedForAmendment =[];
-            for (const grant of this.currentTenant.grants) {
-          
-              if (grant.grantStatus.internalStatus === "CLOSED" && grant.amended !==true ) {
-                this.grantsClosed.push(grant);
-              } else if (grant.grantStatus.internalStatus === "CLOSED" && grant.amended ===true ) {
-                this.grantsClosedForAmendment.push(grant);
-              }
 
-             
-            }
-            if (closedStatus==='Closed' ||closedStatus===''){
-            this.filteredGrants = this.grantsClosed;
-            } else {
-              this.filteredGrants = this.grantsClosedForAmendment;
-            }
+            this.getFilteredGrants(this.currentTenant.grants, closedStatus);
             this.grantUpdateService.changeMessage(false);
+            
+             
+          
           }
         },
         (error) => {
@@ -269,6 +259,27 @@ export class ClosedGrantsComponent implements OnInit {
         }
       );
     }
+  }
+
+  getFilteredGrants(grants, closedStatus) {
+    if (closedStatus==='Closed' ||closedStatus===''){
+    for (const grant of grants) {
+          
+      if (grant.grantStatus.internalStatus === "CLOSED" && grant.amended !==true ) {
+        this.grantsClosed.push(grant);
+      }
+    }
+    this.filteredGrants = this.grantsClosed;
+    } else {
+      for (const grant of grants) {
+          
+      if (grant.grantStatus.internalStatus === "CLOSED" && grant.amended ===true ) {
+        this.grantsClosedForAmendment.push(grant);
+      }
+    }
+    this.filteredGrants = this.grantsClosedForAmendment;
+    }
+    
   }
 
   tabClicked(ev) {
