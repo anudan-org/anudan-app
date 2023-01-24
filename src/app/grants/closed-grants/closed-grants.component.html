@@ -24,10 +24,10 @@
     <div class="row">
       <div class="col-lg-12 col-md-12 col-sm-12">
         <mat-tab-group #matTabGroup (selectedTabChange)="tabClicked($event)">
-          <mat-tab label="Closed">
+          <mat-tab label="Completed">
             <ng-container *ngTemplateOutlet="tabContent"></ng-container>
       </mat-tab>
-      <mat-tab label="Closed because of Amendment">
+      <mat-tab label="Amended">
         <ng-container *ngTemplateOutlet="tabContent"></ng-container>
    </mat-tab>
     </mat-tab-group>
