@@ -222,45 +222,14 @@ export class ClosedGrantsComponent implements OnInit {
             this.grantsClosed = [];
             this.grantsClosedForAmendment =[];
             for (const grant of this.currentTenant.grants) {
-              if (
-                grant.grantStatus.internalStatus === "DRAFT" ||
-                grant.grantStatus.internalStatus === "REVIEW"
-              ) {
-                this.grantsDraft.push(grant);
-              } else if (grant.grantStatus.internalStatus === "ACTIVE") {
-                this.grantsActive.push(grant);
-              } else if (grant.grantStatus.internalStatus === "CLOSED" && grant.amended !==true ) {
+          
+              if (grant.grantStatus.internalStatus === "CLOSED" && grant.amended !==true ) {
                 this.grantsClosed.push(grant);
               } else if (grant.grantStatus.internalStatus === "CLOSED" && grant.amended ===true ) {
                 this.grantsClosedForAmendment.push(grant);
               }
 
-              if (
-                grant.workflowAssignment.filter(
-                  (wf) =>
-                    wf.stateId === grant.grantStatus.id &&
-                    wf.assignments === this.appComponent.loggedInUser.id
-                ).length > 0 &&
-                this.appComponent.loggedInUser.organization.organizationType !==
-                "GRANTEE" &&
-                grant.grantStatus.internalStatus !== "ACTIVE" &&
-                grant.grantStatus.internalStatus !== "CLOSED"
-              ) {
-                grant.canManage = true;
-              } else {
-                grant.canManage = false;
-              }
-              for (const submission of grant.submissions) {
-                if (submission.flowAuthorities) {
-                  this.hasKpisToSubmit = true;
-                  this.kpiSubmissionTitle = submission.title;
-                  // this.kpiSubmissionDate = submission.submitBy;
-                  break;
-                }
-              }
-              if (this.hasKpisToSubmit) {
-                break;
-              }
+             
             }
             if (closedStatus==='Closed' ||closedStatus===''){
             this.filteredGrants = this.grantsClosed;
@@ -416,14 +385,9 @@ export class ClosedGrantsComponent implements OnInit {
 
     this.http.put<Grant>(url, grant, httpOptions).subscribe(
       (grant: Grant) => {
-        //this.originalGrant = JSON.parse(JSON.stringify(grant));
+      
         this.data.changeMessage(grant, this.appComponent.loggedInUser.id);
-        //this.setDateDuration();
-        //this.dataService.changeMessage(grant.id);
-        //this.currentGrant = grant;
-        //this._setEditMode(false);
-        //this.currentSubmission = null;
-        //this.checkGrantPermissions();
+  
 
         this.appComponent.autosave = false;
         //this.appComponent.autosaveDisplay = 'Last saved @ ' + this.datepipe.transform(new Date(), 'hh:mm:ss a') + '     ';
