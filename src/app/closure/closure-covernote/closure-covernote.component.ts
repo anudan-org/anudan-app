@@ -25,7 +25,7 @@ export class ClosureCovernoteComponent implements OnInit, AfterViewChecked {
   
   comment: string;
   covertext : SafeHtml;
-  elementupdated: Boolean = false;
+  elementupdated: boolean = false;
   attributes: any;
   @ViewChild("flowContainer") flowContainer: ElementRef;
   

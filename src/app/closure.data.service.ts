@@ -143,7 +143,7 @@ export class ClosureDataService {
 
  
   getCoverNoteAttributes(orgId, userId): string {
-    const coverNoteAttributes= JSON.stringify(
+    return JSON.stringify(
       [
           {
               "parentId": "id1",
@@ -227,7 +227,7 @@ export class ClosureDataService {
           }
       ]);
 
-      return coverNoteAttributes;
+      
   
     }
 
