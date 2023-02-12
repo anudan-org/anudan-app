@@ -817,6 +817,7 @@ font-white {
   margin-top: 0px !important;
 }
 
+.closure-covernote-class,
 .wf-assignment-class,
 .project-document-class {
   min-width: calc(100% - 300px) !important;

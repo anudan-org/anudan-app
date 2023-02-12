@@ -13,13 +13,13 @@ import {
   providedIn: 'root',
 })
 export class ClosureDataService {
-
+ 
   private messageSource = new BehaviorSubject<GrantClosure>(null);
   currentMessage = this.messageSource.asObservable();
   langService: HumanizeDurationLanguage = new HumanizeDurationLanguage();
   humanizer: HumanizeDuration = new HumanizeDuration(this.langService);
   url: string = "/api/user/%USERID%/closure";
-
+  
   constructor(private httpClient: HttpClient,
     private userService: UserService) {
 
@@ -140,4 +140,97 @@ export class ClosureDataService {
         );
       });
   }
+
+ 
+  getCoverNoteAttributes(orgId, userId): string {
+    const coverNoteAttributes= JSON.stringify(
+      [
+          {
+              "parentId": "id1",
+              "id": "id_1",
+               "fieldName": "salutation",
+               "inputType" :"text",
+               "placeholder": "<Salutation>",
+               "attributeStyle":"width:100%;max-width: 100px;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted;"
+          },
+          {
+            "parentId": "id2",
+            "id": "id_2",
+            "fieldName": "name",
+            "inputType" :"text",
+            "placeholder": "<Name>",
+            "attributeStyle":"width:100%;max-width: 200px;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted;"
+          },
+          {
+            "parentId": "id3",
+            "id": "id_3",
+            "fieldName": "jobtitle",
+            "inputType" :"text",
+            "placeholder": "<Designation>",
+            "attributeStyle":"width:100%;max-width: 240px;padding: 2px;margin: 2px 0;border-color: transparent; border-bottom: thin red dotted;"
+          },
+          {
+            "parentId": "id4",
+            "id": "id_4",
+            "fieldName": "address",
+            "inputType" :"text",
+            "placeholder": "<Address>",
+            "attributeStyle":"width:100%;max-width: 240px;padding: 2px;margin: 2px 0;border-color: transparent; border-bottom: thin red dotted;  "
+          },
+          {
+            "parentId": "id5",
+            "id": "id_5",
+            "fieldName": "contactNumber",
+            "inputType" :"text",
+            "placeholder": "<Contact Number>",
+            "attributeStyle":"width:100%;max-width: 140px;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+          },
+          {
+            "parentId": "id6",
+            "id": "id_6",
+            "fieldName": "contactEmail",
+            "inputType" :"email",
+            "placeholder": "<Email Address>",
+            "attributeStyle":"width:100%;max-width: 180px;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+          },
+          {
+            "parentId": "id7",
+            "id": "id_7",
+            "fieldName": "greetingName",
+            "inputType" :"text",
+            "placeholder": "<Greeting>",
+            "attributeStyle":"width:100%;max-width: 200px;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+          },
+          {
+            "parentId": "id8",
+            "id": "id_8",
+            "fieldName": "yearEnded",
+            "inputType" :"text",
+            "placeholder": "<Year>",
+            "attributeStyle":"width:100%;max-width: 60px;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+          },
+          {
+            "parentId": "id9",
+            "id": "id_9",
+            "fieldName": "signeeName",
+             "inputType" :"text",
+            "placeholder": "<Signee Name>",
+            "attributeStyle":"width:100%;max-width: 150px;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+          },
+          {
+            "parentId": "id10",
+            "id": "id_10",
+            "fieldName": "signeeTitle",
+            "inputType" :"text",
+            "placeholder": "<Signee Title>",
+            "attributeStyle":"width:100%;max-width: 150px;padding: 2px;margin: 2px 0;border-color: transparent;   border-bottom: thin red dotted;"
+          }
+      ]);
+
+      return coverNoteAttributes;
+  
+    }
+
+  
+  
 }

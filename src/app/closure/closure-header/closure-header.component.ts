@@ -28,6 +28,7 @@ import * as inf from "indian-number-format";
 import * as indianCurrencyInWords from "indian-currency-in-words";
 import { DateAdapter, MAT_DATE_FORMATS, MatDialog } from '@angular/material';
 import { CustomDateAdapter } from 'app/model/dahsboard';
+import { ClosureCovernoteComponent } from '../closure-covernote/closure-covernote.component';
 
 
 @Component({
@@ -270,8 +271,82 @@ export class ClosureHeaderComponent implements OnInit {
     this.adminComp.showWorkflowAssigments();
   }
 
+  
+
+  editCoverNote() {
+    
+    if ( this.currentClosure.covernoteContent === undefined ) {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        "X-TENANT-CODE": localStorage.getItem("X-TENANT-CODE"),
+        Authorization: localStorage.getItem("AUTH_TOKEN"),
+      }),
+    };
+
+    const url =
+      "/api/user/" +
+      this.appComp.loggedInUser.id +
+      "/closure/" +
+      this.currentClosure.id +
+      "/covernote" ;
+
+    this.http
+      .post(url, this.currentClosure, httpOptions)
+      .subscribe(
+        (closure: GrantClosure) => {
+        console.log(closure);
+        this.closureService.changeMessage(closure, this.appComp.loggedInUser.id);
+
+        this.appComp.closureSaved = false;
+        this.appComp.autosaveDisplay =
+          "Last saved @ " +
+          this.datePipe.transform(new Date(), "hh:mm:ss a") +
+          "     ";
+
+        this.openCovernote();
+      
+      });
+    } else {
+      this.openCovernote();
+    }
+  }
+  
+  openCovernote(){
+    const dgRef = this.dialog.open(ClosureCovernoteComponent, {
+      data: {
+        title: "Closure Cover Note",
+        loggedInUser: this.appComp.loggedInUser,
+        appComp: this.appComp,
+        currentClosure: this.currentClosure,
+      },
+      panelClass: "closure-covernote-class",
+    });
+    dgRef.afterClosed().subscribe(result => {
+      if (result.result) {
+        console.log(result);
+      }
+    });
+  }
+
+  clearCovernote(){
+    const dialogRef = this.dialog.open(FieldDialogComponent, {
+      data: { title: "Clear Cover Note?", btnMain: "Clear Cover Note", btnSecondary: "Not Now" },
+      panelClass: "center-class",
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+      this.currentClosure.covernoteContent=null;
+      this.currentClosure.covernoteAttributes=null;
+      this.saveClosure();
+    }
+
+    });
+  }
+  
   showHistory(type, obj) {
-    this.adminComp.showHistory(type, obj);
+      this.adminComp.showHistory(type, obj);
   }
 
   showClosureDocuments() {

@@ -1,0 +1,33 @@
+<span class="" style="position:absolute; right: 20px; left: auto;top: 10px;z-index:1;" (click)="onNoClick()">
+  <mat-icon>close</mat-icon>
+</span>
+
+
+ <h1 mat-dialog-title class="text-header" style="font-weight: normal;">{{data.title}}
+  | &nbsp;
+    <span class="text-subheader">
+      {{(currentClosure.grant.referenceNo ? currentClosure.grant.referenceNo + " | ": "") +
+      currentClosure.grant.name}}</span>
+</h1> 
+
+<div class="main-content no-top-margin2" style="margin-top: 10px;overflow: hidden;">
+  <div class="container-fluid " style="background: #fff;">
+  <div class="row anu-container">
+  <div #flowContainer id="flowContainer" class="text-center" style="position:relative;">
+
+    <ng-container>
+      <div class="col-sm-12 col-lg-12 text-left mb-3 text-justify">
+        <pre
+        class="mt-1 text-justify"><strong><p style="font-size:16px;text-align:justify;" [innerHtml]="covertext"></p></strong>
+        </pre>
+      </div>
+    </ng-container>
+  </div>
+  </div>
+  </div>
+</div>
+
+
+
+
+

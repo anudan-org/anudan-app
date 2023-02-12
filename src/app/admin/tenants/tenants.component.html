@@ -12,10 +12,10 @@
         <mat-form-field>
             <input #tenantAdmin matInput placeholder="Send invite to" type="email" class="anu-input">
         </mat-form-field>
-        <!-- <mat-label>Select Reference Organization:</mat-label>
+        <mat-label>Select Reference Organization:</mat-label>
         <mat-select class="anu-input">
             <mat-option *ngFor="let org of referenceOrgs" [value]="org.code">{{org.name}}</mat-option>
-        </mat-select> -->
+        </mat-select>
         <input #tenantLogo type="file" placeholder="Select tenant logo"
             accept="image/jpeg,image/jpg,image/png,image/gif">
         <button (click)="createTenant()">Send Invite</button>
