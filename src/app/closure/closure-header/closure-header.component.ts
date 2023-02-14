@@ -189,8 +189,6 @@ export class ClosureHeaderComponent implements OnInit {
 
 
   ngOnInit() {
-    console.log(this.appComp.grantTypes.closureCovernote);
-    console.log(this.appComp);
     const httpOptions = {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
