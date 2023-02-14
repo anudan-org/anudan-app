@@ -3,7 +3,7 @@
     <ng-container *ngFor="let section of currentClosure.closureDetails.sections">
       <ng-container *ngIf="action === getCleanText(section)">
         <h4 class="col-11 text-left mt-3 mb-0 section-header">
-          <p class="text-header d-flex align-items-center mb-0">Final Grant Closure Report &nbsp;
+          <p class="text-header d-flex align-items-center mb-0">Grant Closure Report &nbsp;
             <span class="text-subheader">
               {{(currentClosure.grant.referenceNo ? currentClosure.grant.referenceNo + " | ": "") +
               currentClosure.grant.name}}</span>

@@ -116,6 +116,7 @@ export class ClosureHeaderComponent implements OnInit {
   noSingleClosureDocAction: boolean = false;
   downloadAndDeleteClosureDocsAllowed: boolean = false;
   newField: any;
+  allowClosureCovernote: any;
 
 
   constructor(public appComp: AppComponent,
@@ -188,7 +189,8 @@ export class ClosureHeaderComponent implements OnInit {
 
 
   ngOnInit() {
-
+    console.log(this.appComp.grantTypes.closureCovernote);
+    console.log(this.appComp);
     const httpOptions = {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
@@ -219,6 +221,7 @@ export class ClosureHeaderComponent implements OnInit {
 
     this.setSpendSumamry();
     this.setGrantAmount();
+    this.checkClosureCovernote();
 
 
     this.appComp.createNewClosureSection.subscribe((val) => {
@@ -240,6 +243,11 @@ export class ClosureHeaderComponent implements OnInit {
     });
 
 
+  }
+
+  public checkClosureCovernote() {
+    let typeId = this.currentClosure.grant.grantTypeId;
+    this.allowClosureCovernote =this.appComp.grantTypes.filter(t => t.id === typeId)[0].closureCovernote;
   }
 
   getClosureReasons() {

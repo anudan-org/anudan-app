@@ -36,13 +36,15 @@
       </div>
      
     </h4>
-    <div class="col-3  my-3 text-right">
-      <a style="margin-left:70px;"  
-       *ngIf="currentClosure.covernoteContent !==undefined && currentClosure.covernoteContent !=='' 
-        &&  ( !currentClosure.forGranteeUse || currentClosure.status.internalStatus=='CLOSED')"
-      (click)="showCovernote($event)" class="btn btn-sm btn-green">Show Cover Note<em
-        class="fa fa-eye ml-2"></em></a>
+    <div class="col-3" style="display: flex; align-items: center;justify-content: flex-end; ">
+    <a  *ngIf="currentClosure.covernoteContent !==undefined && currentClosure.covernoteContent !=='' 
+      &&  ( !currentClosure.forGranteeUse || currentClosure.status.internalStatus=='CLOSED')"
+    (click)="showCovernote($event)" 
+    class="btn btn-sm btn-green">Show Cover Note<em
+    class="fa fa-eye ml-2"></em></a>
     </div>
+    
+    
     <div class="col-1 text-right" style="display: flex; align-items: center; justify-content: flex-start">
       <mat-icon mat-button [matMenuTriggerFor]="menu" class="float-right" style="cursor: pointer">more_vert</mat-icon>
       <mat-menu #menu="matMenu">
@@ -91,7 +93,7 @@
                     <div class="row">
                       <div class="col-12">
                         <h4 class="m-0" type="text" autocomplete="off">
-                          <strong>{{ 'Closure Request for ' + currentClosure.grant.name }}</strong>
+                          <strong>{{ 'Grant Closure Report for ' + currentClosure.grant.name }}</strong>
                         </h4>
                       </div>
                       <div class="col-12 text-left">

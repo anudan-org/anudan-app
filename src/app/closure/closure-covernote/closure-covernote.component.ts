@@ -117,12 +117,17 @@ populateAttributes(){
       this.renderer.setAttribute(nodeInvite, 'id', attribute.id);
       this.renderer.setAttribute(nodeInvite, 'style', attribute.attributeStyle);
       this.renderer.setAttribute(nodeInvite, 'name', attribute.fieldName);
-      this.renderer.setAttribute(nodeInvite, 'type', attribute.inputType);
+      this.renderer.listen(nodeInvite, 'input', (event) => this.setTextWidth(event));
+      let textlen =0;
       if (attributeMap.has(attribute.fieldName)) {
         this.renderer.setAttribute(nodeInvite, 'value', attributeMap.get(attribute.fieldName));
-        
+         textlen = attributeMap.get(attribute.fieldName).length;
       }
-      
+       textlen = textlen === 0 ? parseInt(attribute.placeholder.length) + 1 : textlen + 2;
+     
+       this.renderer.setStyle(nodeInvite, 'width', textlen +'ch');
+       this.renderer.setStyle(nodeInvite, 'minWidth', textlen +'ch');
+  
       this.renderer.appendChild(elem, nodeInvite);
       
       }
@@ -133,7 +138,16 @@ populateAttributes(){
     this.elementupdated=true;
   }
 
-  
+  setTextWidth(event) {
+    console.log(event);
+    
+   
+    let textlen =  parseInt(event.target.value.length ) === 0 ? parseInt(event.target.placeholder.length) + 1 : parseInt(event.target.value.length) + 2;
+    event.target.style.width= textlen + "ch";
+    event.target.style.minWidth= textlen + "ch";
+
+
+  }
   updateModel() {
  
   let cnvaluesets:any [] =[];

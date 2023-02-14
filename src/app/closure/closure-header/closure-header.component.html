@@ -1,8 +1,9 @@
 <div class="col-12 bg-white" style="position: sticky; top: 80px; z-index: 1040">
   <div class="row">
-    <h4 class="col-9 text-left my-3 section-header">Grant Closure Request</h4>
+    <h4 class="col-9 text-left my-3 section-header">Grant Closure Report</h4>
     <div class="col-2" style="display: flex;align-items: center; justify-content: flex-end;">
-  <a *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse"
+  <a *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse && allowClosureCovernote "
+
   (click)="editCoverNote()" class="btn btn-sm btn-green">Cover Note<em
     class="fa fa-plus-square-o ml-2"></em></a>
   </div>

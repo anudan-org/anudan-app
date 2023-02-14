@@ -151,7 +151,7 @@ export class ClosureDataService {
                "fieldName": "salutation",
                "inputType" :"text",
                "placeholder": "<Salutation>",
-               "attributeStyle":"width:100%;max-width: 100px;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted;"
+               "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted;"
           },
           {
             "parentId": "id2",
@@ -159,7 +159,7 @@ export class ClosureDataService {
             "fieldName": "name",
             "inputType" :"text",
             "placeholder": "<Name>",
-            "attributeStyle":"width:100%;max-width: 200px;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted;"
+            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted;"
           },
           {
             "parentId": "id3",
@@ -167,7 +167,7 @@ export class ClosureDataService {
             "fieldName": "jobtitle",
             "inputType" :"text",
             "placeholder": "<Designation>",
-            "attributeStyle":"width:100%;max-width: 240px;padding: 2px;margin: 2px 0;border-color: transparent; border-bottom: thin red dotted;"
+            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent; border-bottom: thin red dotted;"
           },
           {
             "parentId": "id4",
@@ -175,7 +175,7 @@ export class ClosureDataService {
             "fieldName": "address",
             "inputType" :"text",
             "placeholder": "<Address>",
-            "attributeStyle":"width:100%;max-width: 240px;padding: 2px;margin: 2px 0;border-color: transparent; border-bottom: thin red dotted;  "
+            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent; border-bottom: thin red dotted;  "
           },
           {
             "parentId": "id5",
@@ -183,7 +183,7 @@ export class ClosureDataService {
             "fieldName": "contactNumber",
             "inputType" :"text",
             "placeholder": "<Contact Number>",
-            "attributeStyle":"width:100%;max-width: 140px;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
           },
           {
             "parentId": "id6",
@@ -191,7 +191,7 @@ export class ClosureDataService {
             "fieldName": "contactEmail",
             "inputType" :"email",
             "placeholder": "<Email Address>",
-            "attributeStyle":"width:100%;max-width: 180px;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
           },
           {
             "parentId": "id7",
@@ -199,7 +199,7 @@ export class ClosureDataService {
             "fieldName": "greetingName",
             "inputType" :"text",
             "placeholder": "<Greeting>",
-            "attributeStyle":"width:100%;max-width: 200px;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
           },
           {
             "parentId": "id8",
@@ -207,7 +207,7 @@ export class ClosureDataService {
             "fieldName": "yearEnded",
             "inputType" :"text",
             "placeholder": "<Year>",
-            "attributeStyle":"width:100%;max-width: 60px;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
           },
           {
             "parentId": "id9",
@@ -215,7 +215,7 @@ export class ClosureDataService {
             "fieldName": "signeeName",
              "inputType" :"text",
             "placeholder": "<Signee Name>",
-            "attributeStyle":"width:100%;max-width: 150px;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
           },
           {
             "parentId": "id10",
@@ -223,7 +223,7 @@ export class ClosureDataService {
             "fieldName": "signeeTitle",
             "inputType" :"text",
             "placeholder": "<Signee Title>",
-            "attributeStyle":"width:100%;max-width: 150px;padding: 2px;margin: 2px 0;border-color: transparent;   border-bottom: thin red dotted;"
+            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;   border-bottom: thin red dotted;"
           }
       ]);
 

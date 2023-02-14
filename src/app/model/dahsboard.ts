@@ -590,6 +590,7 @@ export class GrantType {
   internal: boolean;
   granterId: number;
   colorCode: string;
+  closureCovernote:boolean
 }
 
 export class OrgTag {
