@@ -244,8 +244,13 @@ export class ClosureHeaderComponent implements OnInit {
   }
 
   public checkClosureCovernote() {
+    if ( !this.currentClosure.forGranteeUse) {
     let typeId = this.currentClosure.grant.grantTypeId;
-    this.allowClosureCovernote =this.appComp.grantTypes.filter(t => t.id === typeId)[0].closureCovernote;
+    if (this.appComp.grantTypes.length >0 ) {
+      this.allowClosureCovernote =this.appComp.grantTypes.filter(t => t.id === typeId)[0].closureCovernote;
+    }
+    }
+   
   }
 
   getClosureReasons() {

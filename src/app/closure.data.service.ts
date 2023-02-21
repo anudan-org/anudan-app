@@ -151,7 +151,7 @@ export class ClosureDataService {
                "fieldName": "salutation",
                "inputType" :"text",
                "placeholder": "<Salutation>",
-               "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted;"
+               "className":"anu-input-dotted-bottom"
           },
           {
             "parentId": "id2",
@@ -159,7 +159,7 @@ export class ClosureDataService {
             "fieldName": "name",
             "inputType" :"text",
             "placeholder": "<Name>",
-            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted;"
+            "className":"anu-input-dotted-bottom"
           },
           {
             "parentId": "id3",
@@ -167,7 +167,7 @@ export class ClosureDataService {
             "fieldName": "jobtitle",
             "inputType" :"text",
             "placeholder": "<Designation>",
-            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent; border-bottom: thin red dotted;"
+            "className":"anu-input-dotted-bottom"
           },
           {
             "parentId": "id4",
@@ -175,7 +175,7 @@ export class ClosureDataService {
             "fieldName": "address",
             "inputType" :"text",
             "placeholder": "<Address>",
-            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent; border-bottom: thin red dotted;  "
+            "className":"anu-input-dotted-bottom"
           },
           {
             "parentId": "id5",
@@ -183,7 +183,7 @@ export class ClosureDataService {
             "fieldName": "contactNumber",
             "inputType" :"text",
             "placeholder": "<Contact Number>",
-            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+            "className":"anu-input-dotted-bottom"
           },
           {
             "parentId": "id6",
@@ -191,7 +191,7 @@ export class ClosureDataService {
             "fieldName": "contactEmail",
             "inputType" :"email",
             "placeholder": "<Email Address>",
-            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+            "className":"anu-input-dotted-bottom"
           },
           {
             "parentId": "id7",
@@ -199,7 +199,7 @@ export class ClosureDataService {
             "fieldName": "greetingName",
             "inputType" :"text",
             "placeholder": "<Greeting>",
-            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+            "className":"anu-input-dotted-bottom"
           },
           {
             "parentId": "id8",
@@ -207,7 +207,7 @@ export class ClosureDataService {
             "fieldName": "yearEnded",
             "inputType" :"text",
             "placeholder": "<Year>",
-            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+            "className":"anu-input-dotted-bottom"
           },
           {
             "parentId": "id9",
@@ -215,7 +215,7 @@ export class ClosureDataService {
             "fieldName": "signeeName",
              "inputType" :"text",
             "placeholder": "<Signee Name>",
-            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;  border-bottom: thin red dotted; "
+            "className":"anu-input-dotted-bottom"
           },
           {
             "parentId": "id10",
@@ -223,7 +223,7 @@ export class ClosureDataService {
             "fieldName": "signeeTitle",
             "inputType" :"text",
             "placeholder": "<Signee Title>",
-            "attributeStyle":"background:#ECF9FF;padding: 2px;margin: 2px 0;border-color: transparent;   border-bottom: thin red dotted;"
+            "className":"anu-input-dotted-bottom"
           }
       ]);
 

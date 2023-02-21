@@ -112,23 +112,24 @@ populateAttributes(){
   
     let elem = document.getElementById(attribute.parentId);  
       if (elem !== null) {
-      const nodeInvite = this.renderer.createElement('input');
-      this.renderer.setAttribute(nodeInvite, 'placeholder', attribute.placeholder);
-      this.renderer.setAttribute(nodeInvite, 'id', attribute.id);
-      this.renderer.setAttribute(nodeInvite, 'style', attribute.attributeStyle);
-      this.renderer.setAttribute(nodeInvite, 'name', attribute.fieldName);
-      this.renderer.listen(nodeInvite, 'input', (event) => this.setTextWidth(event));
+      const node = this.renderer.createElement('input');
+      this.renderer.setAttribute(node, 'placeholder', attribute.placeholder);
+      this.renderer.setAttribute(node, 'id', attribute.id);
+      this.renderer.addClass(node, attribute.className);
+      
+      this.renderer.setAttribute(node, 'name', attribute.fieldName);
+      this.renderer.listen(node, 'input', (event) => this.setTextWidth(event));
       let textlen =0;
       if (attributeMap.has(attribute.fieldName)) {
-        this.renderer.setAttribute(nodeInvite, 'value', attributeMap.get(attribute.fieldName));
+        this.renderer.setAttribute(node, 'value', attributeMap.get(attribute.fieldName));
          textlen = attributeMap.get(attribute.fieldName).length;
       }
        textlen = textlen === 0 ? parseInt(attribute.placeholder.length) + 1 : textlen + 2;
      
-       this.renderer.setStyle(nodeInvite, 'width', textlen +'ch');
-       this.renderer.setStyle(nodeInvite, 'minWidth', textlen +'ch');
+       this.renderer.setStyle(node, 'width', textlen +'ch');
+       this.renderer.setStyle(node, 'minWidth', textlen +'ch');
   
-      this.renderer.appendChild(elem, nodeInvite);
+      this.renderer.appendChild(elem, node);
       
       }
     }

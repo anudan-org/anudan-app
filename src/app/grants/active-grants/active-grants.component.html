@@ -70,7 +70,7 @@
                     <div class="row">
                       <div class="col-12 mt-0">
                         <div class="row">
-                          <div class="col-12 mb-0 pr-0 mt-1 progress-summary-class">
+                          <div class="col-6 mb-0 pr-15 mt-1 progress-summary-class">
                             <small>Disbursed {{currencyService.getFormattedAmount(grant.approvedDisbursementsTotal)}} /
                               <span style="font-weight: 800;">Committed
                                 {{currencyService.getFormattedAmount(grant.amount)}}</span> (<span
@@ -81,6 +81,19 @@
                                   style="height: 8px !important;"></mat-progress-bar>
                               </div></small>
                           </div>
+
+                          <div class="col-6 mb-0 pr-15 mt-1 progress-summary-class" *ngIf="grant.plannedFundOthers>0">
+                            <small>Other Sources: Received {{currencyService.getFormattedAmount(grant.actualFundOthers)}} /
+                              <span style="font-weight: 800;">Planned
+                                {{currencyService.getFormattedAmount(grant.plannedFundOthers)}}</span> (<span
+                                class="text-green mt-2 mb-0"
+                                style="font-size:14px;font-weight:800;">{{otherFundsPercentage(grant)}}%</span>)<div>
+                                <mat-progress-bar mode="determinate"
+                                  [value]="((grant.actualFundOthers/grant.plannedFundOthers)*100)"
+                                  style="height: 8px !important;"></mat-progress-bar>
+                              </div></small>
+                          </div>
+
                         </div>
                       </div>
                       <div class="col-12 mt-2">
@@ -130,8 +143,8 @@
                   </div>
                   <div class="col-9">
                     <strong *ngIf="grant.closureInProgress" class="text-subheader d-flex align-items-center mt-1"
-                      style="color: #ffbf00;">
-                      <mat-icon [inline]="true" class="material-icons-outlined text-grey mr-1">
+                     >
+                      <mat-icon [inline]="true" class="material-icons-outlined mr-1">
                         info_outline
                       </mat-icon>{{'Closure in-progress'}}
                     </strong>
