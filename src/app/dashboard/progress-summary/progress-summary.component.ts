@@ -1,5 +1,6 @@
 import {Component, OnInit,Input,OnChanges, SimpleChanges, SimpleChange} from '@angular/core';
-import * as inf from 'indian-number-format';
+import { CurrencyService } from 'app/currency-service';
+
 
 
 @Component({
@@ -7,9 +8,7 @@ import * as inf from 'indian-number-format';
   templateUrl: './progress-summary.component.html',
   styleUrls: ['./progress-summary.component.css'],
   styles: [`
-         ::ng-deep .progress-summary-class .mat-progress-bar-fill::after {
-               background:#4DC252 !important;
-         }
+         ::ng-deep .progress-summary-class 
     `]
 })
 export class ProgressSummaryComponent implements OnInit,OnChanges {
@@ -25,8 +24,13 @@ export class ProgressSummaryComponent implements OnInit,OnChanges {
      percent: number;
 
 
-    constructor() {
+     plannedFundOthers:string;
+     actualFundOthers:string;
+     percentFundOthers:number;
 
+    constructor(
+        public currencyService: CurrencyService
+    ) {
     }
 
     ngOnInit() {
@@ -41,9 +45,14 @@ export class ProgressSummaryComponent implements OnInit,OnChanges {
                     this.display = true;
                     this.heading = "Disbursed";
                     this.caption = "Committed";
-                    this.planned = inf.format(Number(this.data.committedAmount),2);
-                    this.actual = '₹' + inf.format(Number(this.data.disbursedAmount),2);
-                   this.percent = Math.round(Number(this.data.disbursedAmount)/Number(this.data.committedAmount)*100);
+                    this.planned = this.currencyService.getFormattedAmount(Number(this.data.committedAmount));
+                    this.actual = this.currencyService.getFormattedAmount(Number(this.data.disbursedAmount));
+                    this.percent = Math.round(Number(this.data.disbursedAmount)/Number(this.data.committedAmount)*100);
+                   
+                    this.plannedFundOthers =  this.currencyService.getFormattedAmount(Number(this.data.plannedFundOthers)) ;
+                    this.actualFundOthers  =this.currencyService.getFormattedAmount(Number(this.data.actualFundOthers));
+                    this.percentFundOthers = Math.round(Number(this.data.actualFundOthers)/Number(this.data.plannedFundOthers)*100);
+ 
                 }
             }
         }

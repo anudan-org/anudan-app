@@ -454,6 +454,15 @@ export class ClosedGrantsComponent implements OnInit {
     }
   }
 
+  otherFundsPercentage(grant) {
+    if (grant.plannedFundOthers > 0 ) {
+      return Math.round(((grant.actualFundOthers / grant.plannedFundOthers) * 100))
+    } else {
+      return null;
+    }
+    
+  }
+  
   getGrantTypeName(typeId): string {
     return this.appComponent.grantTypes.filter(t => t.id === typeId)[0].name;
   }

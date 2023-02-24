@@ -49,5 +49,13 @@ export class GrantDataService {
       return "Not set";
     }
   }
+  grantPastEndDate(grant: Grant) {
+   
+    if (  new Date() >  new Date(grant.endDate) ){
+        return true;
+    } else {
+      return false;
+    }
+  }
 
 }

@@ -80,8 +80,11 @@
           <div class="row">
             <div class="col-12 mt-0">
               <div class="row">
-                <div class="col-12 mb-0 pr-0 mt-1 progress-summary-class">
+                <div class="col-6 mb-0 pr-15 mt-1 progress-summary-class">
                   <small >Disbursed {{currencyService.getFormattedAmount(grant.approvedDisbursementsTotal)}} / <span style="font-weight: 800;">Committed {{currencyService.getFormattedAmount(grant.amount)}}</span> (<span class="text-green mt-2 mb-0" style="font-size:14px;font-weight:800;">{{getRoundedFigure(grant)}}%</span>)<div><mat-progress-bar mode="determinate" [value]="((grant.approvedDisbursementsTotal/grant.amount)*100)" style="height: 8px !important;"></mat-progress-bar></div></small>
+                </div>
+                <div class="col-6 mb-0 pr-15 mt-1 progress-summary-class" *ngIf="grant.plannedFundOthers>0">
+                  <small >Other Sources: Received {{currencyService.getFormattedAmount(grant.actualFundOthers)}} / <span style="font-weight: 800;">Planned {{currencyService.getFormattedAmount(grant.plannedFundOthers)}}</span> (<span class="text-green mt-2 mb-0" style="font-size:14px;font-weight:800;">{{otherFundsPercentage(grant)}}%</span>)<div><mat-progress-bar mode="determinate" [value]="((grant.actualFundOthers/grant.plannedFundOthers)*100)" style="height: 8px !important;"></mat-progress-bar></div></small>
                 </div>
               </div>
             </div>

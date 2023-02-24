@@ -224,6 +224,14 @@ export class ClosureDataService {
             "inputType" :"text",
             "placeholder": "<Signee Title>",
             "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id11",
+            "id": "id_11",
+            "fieldName": "noteDate",
+            "inputType" :"text",
+            "placeholder": "<Date>",
+            "className":"anu-input-dotted-bottom"
           }
       ]);
 
