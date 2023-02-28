@@ -113,6 +113,7 @@ export class ListDialogComponent implements OnInit {
       this.grants = listMetaData.grants.tenants[0].grants;
       this.setGrantsListClosed(this.grants);
     } else if (listMetaData._for === 'closure') {
+      console.log(listMetaData);
       this.closures = listMetaData.closures;
       this.filteredClosures = this.closures;
     }
@@ -238,7 +239,14 @@ this.filteredGrants = this.grantsList;
   public getGrantTypeColor(typeId): any {
     return this.appComp.grantTypes.filter(t => t.id === typeId)[0].colorCode;
   }
-
+  otherFundsPercentage(grant) {
+    if (grant.plannedFundOthers > 0 ) {
+      return Math.round(((grant.actualFundOthers / grant.plannedFundOthers) * 100))
+    } else {
+      return null;
+    }
+    
+  }
   isExternalGrant(grant: Grant): boolean {
     const grantType = this.appComp.grantTypes.filter(gt => gt.id === grant.grantTypeId)[0];
     if (!grantType.internal) {

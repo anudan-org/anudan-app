@@ -96,7 +96,7 @@
       </div>
       <div class="col-12 mt-0" *ngIf="_for==='Active' || _for==='Closed'">
         <div class="row">
-          <div class="col-12 mb-0 pr-0 mt-1 progress-summary-class">
+          <div class="col-6 mb-0 pr-15 mt-1 progress-summary-class">
             <small>Disbursed {{getFormattedGrantAmount(grant.approvedDisbursementsTotal)}} /
               <span style="font-weight: 800;">Committed
                 {{getFormattedGrantAmount(grant.amount)}}</span> (<span
@@ -105,6 +105,18 @@
                 <mat-progress-bar mode="determinate"
                   [value]="((grant.approvedDisbursementsTotal/grant.amount)*100)"
                   style="height: 8px !important;"></mat-progress-bar>
+              </div></small>
+          </div>
+          <div class="col-6 mb-0 pr-0 mt-1 progress-summary-class" *ngIf="grant.plannedFundOthers>0">
+            <small>Other Sources: Received {{getFormattedGrantAmount(grant.actualFundOthers)}} /
+              <span style="font-weight: 800;">Planned
+                {{getFormattedGrantAmount(grant.plannedFundOthers)}}</span> (<span
+                class="text-green mt-2 mb-0"
+                style="font-size:14px;font-weight:800;">{{otherFundsPercentage(grant)}}%</span>)<div>
+                <mat-progress-bar  mode="determinate"
+                  [value]="((grant.actualFundOthers/grant.plannedFundOthers)*100)"
+                  style="height: 8px !important;"></mat-progress-bar>
+                
               </div></small>
           </div>
           <div class="col-12 mt-2">
@@ -191,45 +203,78 @@
         (click)="deleteClosure(closure)">
         <mat-icon class="text-red">delete_outline</mat-icon>
       </div>
-      <div class="col-12 mb-1">
-        <div class="text-subheader text-left mb-0 mt-2">
-          <div class="mb-1"><span class="search-context">{{
-              (closure.grant.referenceNo
-              ? closure.grant.referenceNo + " | "
-              : "") + closure.grant.name
-              }}</span></div>
 
-          <div class="mb-1"><span *ngIf="isExternalGrant(closure.grant)" class=" mt-1 search-context">{{
-              closure.grant.organization
-              ? closure.grant.organization.name
-              : ""
-              }}</span>
-            <span *ngIf="!isExternalGrant(closure.grant)" class="mt-1 search-context">{{
-              closure.grant.grantorOrganization.name
-              }}</span>
-          </div>
-
-          <div class="mt-1">
-            <span>{{
-              getFormattedGrantAmount(closure.grant.amount) }}
-            </span>
-            &nbsp;&nbsp;<span class="text-subheader"><small>({{
-                getGrantAmountInWords(closure.grant.amount)
-                }})</small></span>
-          </div>
-
+      <div class="col-12 text-left search-context">
+        <em *ngIf="closure.grant.grantTags.length===1" class="fas fa-tag fa-xs ml-2 grant-tags"></em>
+        <em *ngIf="closure.grant.grantTags.length>1" class="fas fa-tags fa-xs ml-2 grant-tags"></em>
+        <p
+          class="text-header-h1 mb-1"
+          style="font-size: 18px">
+       
+          <span >{{ closure.grant.referenceNo }}| </span>
+          <strong>{{ closure.grant.name }}</strong>
+        </p>
+      </div>
+    <div class="col-12 text-left search-context mb-0">
+        <div class="text-header mb-0">
+          {{ closure.grant.organization ? closure.grant.organization.name : null }}
         </div>
       </div>
-      <div class="col-9 mb-2" style="display: flex; align-items: center">
+
+      <div class="col-9 mt-0" *ngIf="_for==='closure'">
         <div class="row">
-          <div class="col-12 my-4">
-            <div class="text-header text-left mr-3" (click)="manageClosure(closure)">
-              <p class="mb-0 text-subheader text-left">Closure Reason:</p>
-              <span *ngIf="closure.reason" class="search-context">{{ closure.reason.reason }}</span>
+          <div class="col-6 mb-0 pr-15 mt-1 progress-summary-class">
+            <small>Disbursed {{getFormattedGrantAmount(closure.grant.approvedDisbursementsTotal)}} /
+              <span style="font-weight: 800;">Committed
+                {{getFormattedGrantAmount(closure.grant.amount)}}</span> (<span
+                class="text-green mt-2 mb-0"
+                style="font-size:14px;font-weight:800;">{{getRoundedFigure(closure.grant)}}%</span>)<div>
+                <mat-progress-bar mode="determinate"
+                  [value]="((closure.grant.approvedDisbursementsTotal/closure.grant.amount)*100)"
+                  style="height: 8px !important;"></mat-progress-bar>
+              </div></small>
+          </div>
+          <div class="col-6 mb-0 pr-0 mt-1 progress-summary-class" *ngIf="closure.grant.plannedFundOthers>0">
+            <small>Other Sources: Received {{getFormattedGrantAmount(closure.grant.actualFundOthers)}} /
+              <span style="font-weight: 800;">Planned
+                {{getFormattedGrantAmount(closure.grant.plannedFundOthers)}}</span> (<span
+                class="text-green mt-2 mb-0"
+                style="font-size:14px;font-weight:800;">{{otherFundsPercentage(closure.grant)}}%</span>)<div>
+                <mat-progress-bar  mode="determinate"
+                  [value]="((closure.grant.actualFundOthers/closure.grant.plannedFundOthers)*100)"
+                  style="height: 8px !important;"></mat-progress-bar>
+                
+              </div></small>
+          </div>
+          <div class="col-12 mt-2">
+            <div class="row">
+              <div class="col-6 mb-0 pr-0" style="border-right: 1px solid #d4d4d4">&nbsp;</div>
+              <div class="col-6 mb-0 pr-0 text-subheader">Approved Reports:&nbsp;&nbsp;<span
+                  class="text-header">
+                  {{closure.grant.approvedReportsForGrant === 0? "None": closure.grant.approvedReportsForGrant}}</span></div>
             </div>
           </div>
+        <div class="col-12 mt-0">
+        <div class="row">
+          <div class="col-6 mb-0 pr-0" style="border-right: 1px solid #d4d4d4">
+            <p class="mb-0 text-header">
+              <mat-icon [inline]="true" class="mr-1">calendar_today</mat-icon>
+              {{ closure.grant.startDate | date: "dd-MMM-yyyy" }}
+              -
+              {{ closure.grant.endDate | date: "dd-MMM-yyyy" }}
+              <span class="text-subheader"><small class="ml-2">({{ grantService.getDateDuration(closure.grant) }})</small></span>
+            </p>
+          </div>
+          <div class="col-6 mb-0 pr-0  text-subheader">
+            Project Documents:<span class="text-header">
+              {{closure.grant.projectDocumentsCount === 0
+                  ? "none"
+                  : closure.grant.projectDocumentsCount
+              }}</span>
+          </div>
         </div>
-
+        </div>
+        </div>
       </div>
       <div class="col-3">
         <div class="row">
@@ -243,7 +288,26 @@
           </div>
         </div>
       </div>
+      <div class="col-9" >
+        <div class="row">
+          <div class="col-12 my-2">
+            <div class="text-header text-left mr-3" (click)="manageClosure(closure)">
+              <span class="mb-0 text-subheader text-left">Closure Reason:&nbsp;</span>
+              <span *ngIf="closure.reason" class="search-context">{{ closure.reason.reason }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-3" >
+      <div *ngIf="appComp.loggedInUser.organization.organizationType!=='GRANTEE'"
+      [ngStyle]="{'background-color':getGrantTypeColor(closure.grant.grantTypeId),'border-bottom-right-radius':'4px'}"
+      class="col-12 p-1 d-flex align-items-center justify-content-center">
+      <div class="float-right">
+        <small>{{getGrantTypeName(closure.grant.grantTypeId)}}</small>
+      </div>
     </div>
+    </div>
+  </div>
   </div>
 
 
@@ -354,7 +418,18 @@
               </div>{{report.status.name | uppercase}}
             </div>
             <div class="text-center text-subheader pl-3 mt-2 search-context">{{report.ownerName}}</div>
+            <div>&nbsp;</div>
+            <div>&nbsp;</div>
+            <div class="text-center" *ngIf="appComp.loggedInUser.organization.organizationType!=='GRANTEE'"
+            [ngStyle]="{'background-color':getGrantTypeColor(report.grant.grantTypeId),'border-bottom-right-radius':'4px'}">
+            <div>
+              <small>{{getGrantTypeName(report.grant.grantTypeId)}}</small>
+            </div>
           </div>
+
+          </div>
+
+
         </div>
       </div>
     </div>
@@ -403,7 +478,7 @@
           </div>
         </div>
       </div>
-      <div class="col-10 text-left pt-3" (click)="manageDisbursement(disbursement)">
+      <div class="col-9 text-left pt-3" (click)="manageDisbursement(disbursement)">
         <div class="row mb-2">
           <div class="col-12">
             <div class="text-subheader mb-0">
@@ -421,6 +496,15 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="col-3 text-center pt-3">
+        <div>&nbsp;</div>
+        <div *ngIf="appComp.loggedInUser.organization.organizationType!=='GRANTEE'"
+        [ngStyle]="{'background-color':getGrantTypeColor(disbursement.grant.grantTypeId),'border-bottom-right-radius':'4px'}">
+        <div>
+          <small>{{getGrantTypeName(disbursement.grant.grantTypeId)}}</small>
+        </div>
+      </div>
       </div>
     </div>
   </div>

@@ -302,6 +302,8 @@ export class Grant {
   actualOngoingDisbursementRecorded: number;
   ongoingDisbursementNote: string;
   actualRefunds: ActualRefund[];
+  plannedFundOthers: number;
+  actualFundOthers: number;
 
 }
 

@@ -70,6 +70,8 @@ export class ClosurePreviewComponent implements OnInit, AfterViewChecked {
   attributes: any;
   elementupdated: any;
   @ViewChild("covernoteSection") covernoteSection: ElementRef;
+ 
+
   covernoteVisible:any;
 
   constructor(private closureService: ClosureDataService,
@@ -167,20 +169,21 @@ export class ClosurePreviewComponent implements OnInit, AfterViewChecked {
   }
   
   showCovernote(event){
+
+    var anchor = event.target.closest('a');
   
-    if ( event.srcElement.childNodes[0].textContent==="Show Cover Note" ) {
-      this.covernoteSection.nativeElement.style.display='block';
-      event.srcElement.childNodes[0].textContent="Hide Cover Note";
-      event.srcElement.childNodes[1].className="fa fa-eye-slash ml-2";
-      this.covernoteVisible = true;
+   if ( this.covernoteSection.nativeElement.style.display='none' ) {
+  
+    this.covernoteSection.nativeElement.style.display='block';
+     anchor.childNodes[0].textContent ="Hide Cover Note";
+     anchor.childNodes[1].className="fa fa-eye-slash ml-2";
+    this.covernoteVisible = true;
     } else {
       this.covernoteSection.nativeElement.style.display='none';
-      event.srcElement.childNodes[0].textContent="Show Cover Note";
-      event.srcElement.childNodes[1].className="fa fa-eye ml-2";
+      anchor.childNodes[0].textContent ="Show Cover Note";
+      anchor.childNodes[1].className="fa fa-eye ml-2";
       this.covernoteVisible = false;
     }
-
-   
 
   }
 
