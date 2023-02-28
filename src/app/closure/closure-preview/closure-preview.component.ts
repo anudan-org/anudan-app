@@ -172,7 +172,7 @@ export class ClosurePreviewComponent implements OnInit, AfterViewChecked {
 
     var anchor = event.target.closest('a');
   
-   if ( this.covernoteSection.nativeElement.style.display='none' ) {
+   if ( this.covernoteSection.nativeElement.style.display==='none' ) {
   
     this.covernoteSection.nativeElement.style.display='block';
      anchor.childNodes[0].textContent ="Hide Cover Note";
