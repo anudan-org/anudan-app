@@ -73,12 +73,7 @@
           >
             {{ grant.referenceNo }} | <strong>{{ grant.name }}</strong>
           </p>
-        <!-- </div> -->
-        
-        <!-- <div class="col-12 text-left mb-0 search-context"> -->
-          <!-- <div class="text-header mb-0">
-            {{ grant.organization ? grant.organization.name : null }}
-          </div> -->
+  
 
           <div class="text-header mb-0" *ngIf="appComponent.loggedInUser.organization.organizationType==='GRANTER'">
             {{ grant.organization ? grant.organization.name : null }}
