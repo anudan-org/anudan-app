@@ -21,7 +21,11 @@
           *ngFor="let report of filteredApprovedReports; let i = index"
           (click)="manageReport(report)"
         >
-          <div class="col-12 mb-1">
+        <div class="col-1 text-left" *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'">
+          <div style="margin-left:-20px;"> <img alt="img" [src]="'/api/public/images/' + report.grant.grantorOrganization.code + '/logo'" alt="logo" class="img-fluid" />
+          </div> 
+      </div>
+          <div class="col-11 mb-1" [ngStyle]="{'margin-left':appComp.loggedInUser.organization.organizationType==='GRANTEE'?'-30px':'0px'}">
 
             <div class="text-subheader text-left mb-0 mt-2">
               <div class="mb-1"><span  class="search-context">{{
@@ -30,16 +34,17 @@
                   : "") + report.grant.name
               }}</span></div>
               
-              <div class="mb-1"><span *ngIf="isExternalGrant(report.grant)" class=" mt-1 search-context">{{
+              <div class="mb-1"><span *ngIf="isExternalGrant(report.grant) && appComp.loggedInUser.organization.organizationType!=='GRANTEE'" class=" mt-1 search-context">{{
                 report.grant.organization
                   ? report.grant.organization.name
                   : ""
               }}</span> 
-              <span *ngIf="!isExternalGrant(report.grant)" class="mt-1 search-context">{{
+              <span *ngIf="!isExternalGrant(report.grant) || appComp.loggedInUser.organization.organizationType=='GRANTEE'" class="mt-1 search-context">{{
                 report.grant.grantorOrganization.name
               }}</span> </div>
-              
-              <div class="mt-1">
+            </div>
+          </div>
+              <div class="col-11 mt-1 text-subheader text-left">
                 <img alt="img"src="./assets/img/rupee.png" style="width: 9px" /><span
                 >{{ getFormattedGrantAmount(report.grant.amount) }}
               </span>
@@ -48,8 +53,7 @@
               }})</small></span>
               </div>
               
-            </div>
-          </div>
+          
           <div class="col-9 mb-2" style="display: flex; align-items: center">
             <div class="row">
               <div class="col-12 my-4">

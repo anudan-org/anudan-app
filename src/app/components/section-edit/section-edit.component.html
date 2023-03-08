@@ -1,20 +1,15 @@
-<h4>Edit Section name</h4>
-<span
-  class=""
-  style="position: absolute; right: 10px; left: auto; top: 10px"
-  (click)="onNoClick()"
-  ><mat-icon>close</mat-icon></span
->
-
-<input
-  #sectionNameField
-  matInput
-  value="{{ currentSection.sectionName }}"
-  class="anu-input"
-/>
-<div mat-dialog-actions>
-  <button mat-raised-button color="primary" (click)="onYesClick()">
+<h1 mat-dialog-title>Edit Section name</h1>
+<mat-form-field >
+    <input matInput
+     #sectionNameField
+      placeholder="Section Name"
+      value="{{ currentSection.sectionName }}"
+      class="anu-input"
+    />
+</mat-form-field>
+<div mat-dialog-actions class="row px-3">
+  <button class="btn btn-sm btn-green-primary" (click)="onYesClick()">
     Save Changes
   </button>
-  <button mat-button mat-flat-button (click)="onNoClick()">Not Now</button>
+  <button class="btn btn-sm btn-green" (click)="onNoClick()">Not Now</button>
 </div>

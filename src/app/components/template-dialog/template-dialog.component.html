@@ -1,7 +1,6 @@
 <h1 mat-dialog-title>Save {{message}}?</h1>
-<p>We noticed a change in the <strong>Default {{message}}</strong>. Please provide a name for the template and click
-  <strong>Save
-    Template</strong>.
+<p>We noticed a change in the current Template. Please provide a name for this template and click
+  <strong>Save Template</strong>.
 </p>
 
 <mat-form-field>
@@ -13,7 +12,7 @@
 </mat-form-field>
 
 <div mat-dialog-actions>
-  <button class="btn btn-sm btn-green-primary" (click)="onYesClick()">Save Template</button>
+  <button class="btn btn-sm btn-green-primary"  [disabled]="disableSaveTemplate()" (click)="onYesClick()">Save Template</button>
   <button class="btn btn-sm btn-green" (click)="onNoClick()">Not Now</button>
 
 </div>

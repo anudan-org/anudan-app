@@ -18,7 +18,7 @@
             </div>
     
             <div class="col-6" *ngIf="data.plannedFundOthers>0">
-                <div style="min-width:200px;font-weight: 800;font-size: 14px;color: rgba(14, 16, 14, 0.68);">Other Sources: Received
+                <div  style="min-width:200px;font-weight: 800;font-size: 14px;color: rgba(14, 16, 14, 0.68);"><small>Co-funding:</small> Recorded
                     <ng-container *ngIf="caption"> / <small>Planned</small></ng-container>
                 </div>
                 <div class="mt-2" style="min-width:200px;font-weight: 800;font-size: 14px;color: rgba(14, 16, 14, 0.68);">{{actualFundOthers}}

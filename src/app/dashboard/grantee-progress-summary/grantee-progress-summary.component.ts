@@ -43,7 +43,7 @@ export class GranteeProgressSummaryComponent implements OnInit, OnChanges {
                 console.log('data changed');
                 if (this.data) {
                     this.display = true;
-                    this.heading = "Disbursed";
+                    this.heading = "Received";
                     this.caption = "Committed";
                     this.planned =  this.currencyService.getFormattedAmount(Number(this.data.committedAmount));
                     this.actual =  this.currencyService.getFormattedAmount(Number(this.data.disbursedAmount));

@@ -1,6 +1,13 @@
-<div class="main-content">
-    <div class="container-fluid text-left">
-        <mat-form-field>
+<!-- <div class="row mt-0 mx-0 py-4"> -->
+   
+<div class="main-content  no-top-margin2">
+    <div class="col-12">
+        <h4 class="col-11 text-left my-3 section-header">Add a Tenant</h4>
+        <!-- <h3 style="" class="text-center">Add a Tenant</h3> -->
+    </div>
+    <div class="container-fluid text-left anudan-scrollable">
+        <div class="col-12 mb-4">
+        <mat-form-field >
             <input #tenantName matInput placeholder="Tenant name" class="anu-input">
         </mat-form-field>
         <mat-form-field>
@@ -9,21 +16,27 @@
         <mat-form-field>
             <input #refTenantCode matInput placeholder="Reference Tenant code" class="anu-input">
         </mat-form-field>
+      
         <mat-form-field>
             <input #tenantAdmin matInput placeholder="Send invite to" type="email" class="anu-input">
         </mat-form-field>
-        <mat-label>Select Reference Organization:</mat-label>
+      
+        <!-- <mat-label>Select Reference Organization:</mat-label>
         <mat-select class="anu-input">
             <mat-option *ngFor="let org of referenceOrgs" [value]="org.code">{{org.name}}</mat-option>
-        </mat-select>
+        </mat-select> -->
         <input #tenantLogo type="file" placeholder="Select tenant logo"
             accept="image/jpeg,image/jpg,image/png,image/gif">
-        <button (click)="createTenant()">Send Invite</button>
-    </div>
+        <!-- <button (click)="createTenant()">Send Invite</button> -->
 
-    <hr>
+        <button class="btn btn-sm btn-green my-3 ml-0" (click)="createTenant()">
+            Send Invite
+          </button>
+    </div>
+</div>
+    <!-- <hr> -->
     <!-- <input [(ngModel)]="tenant">
     <button (click)="encryptPassword();">Encrypt Passwords for Tenant</button>
     <button (click)="fixGrants();">Fix Sustainplus Grants</button> -->
-    <button (click)="fixGranType();">Create Grant Types</button>
+    <!-- <button (click)="fixGranType();">Create Grant Types</button> -->
 </div>
