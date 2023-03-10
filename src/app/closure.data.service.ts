@@ -189,7 +189,7 @@ export class ClosureDataService {
             "parentId": "id6",
             "id": "id_6",
             "fieldName": "contactEmail",
-            "inputType" :"email",
+            "inputType" :"text",
             "placeholder": "<Email Address>",
             "className":"anu-input-dotted-bottom"
           },
@@ -231,6 +231,22 @@ export class ClosureDataService {
             "fieldName": "noteDate",
             "inputType" :"text",
             "placeholder": "<Date>",
+            "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id12",
+            "id": "id_12",
+            "fieldName": "projectComment",
+            "inputType" :"text",
+            "placeholder": "<Comment on project>",
+            "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id13",
+            "id": "id_13",
+            "fieldName": "additionalComment",
+            "inputType" :"textarea",
+            "placeholder": "<Additional Comments>",
             "className":"anu-input-dotted-bottom"
           }
       ]);

@@ -31,6 +31,7 @@ export class ClosureCovernoteComponent implements OnInit, AfterViewChecked {
   
   cnvaluesetString: string;
   attributeValuePresent: boolean;
+  divWidth: number;
 
   constructor(public dialogRef: MatDialogRef<ClosureCovernoteComponent>
     , @Inject(MAT_DIALOG_DATA) public data: any,
@@ -112,40 +113,65 @@ populateAttributes(){
   
     let elem = document.getElementById(attribute.parentId);  
       if (elem !== null) {
-      const node = this.renderer.createElement('input');
+      let node;
+      if ( attribute.inputType ==="text"){
+         node = this.renderer.createElement('input');
+      }
+      if ( attribute.inputType ==='textarea'){
+         node = this.renderer.createElement('textarea');
+      }
+    
       this.renderer.setAttribute(node, 'placeholder', attribute.placeholder);
       this.renderer.setAttribute(node, 'id', attribute.id);
       this.renderer.addClass(node, attribute.className);
-      
       this.renderer.setAttribute(node, 'name', attribute.fieldName);
       this.renderer.listen(node, 'input', (event) => this.setTextWidth(event));
+
       let textlen =0;
+      let elementlength=parseInt(attribute.placeholder.length) + 1;
       if (attributeMap.has(attribute.fieldName)) {
+        textlen = attributeMap.get(attribute.fieldName).length;
+        
+        if ( attribute.inputType ==="text"){
         this.renderer.setAttribute(node, 'value', attributeMap.get(attribute.fieldName));
-         textlen = attributeMap.get(attribute.fieldName).length;
+        elementlength = textlen === 0 ? elementlength : textlen + 2;
+        this.renderer.setStyle(node, 'width', elementlength +'ch');
+        this.renderer.setStyle(node, 'minWidth', elementlength +'ch');
+        }
+       
       }
-       textlen = textlen === 0 ? parseInt(attribute.placeholder.length) + 1 : textlen + 2;
-     
-       this.renderer.setStyle(node, 'width', textlen +'ch');
-       this.renderer.setStyle(node, 'minWidth', textlen +'ch');
-  
-      this.renderer.appendChild(elem, node);
       
+      this.renderer.appendChild(elem, node);
+      if ( attribute.inputType ==="textarea"){
+        this.divWidth = document.getElementById('contentId').getBoundingClientRect().width;
+
+        let el = document.getElementById(attribute.id);
+        el.style.width= this.divWidth + 'px';
+        el.innerHTML=attributeMap.get(attribute.fieldName);
+        el.style.height =(el.scrollHeight +10) + 'px';
+      
+       }
       }
     }
-    
-    
     
     this.elementupdated=true;
   }
 
   setTextWidth(event) {
-    console.log(event);
-    
    
     let textlen =  parseInt(event.target.value.length ) === 0 ? parseInt(event.target.placeholder.length) + 1 : parseInt(event.target.value.length) + 2;
+    
+    if ( event.target.localName ==="textarea"){
+        let element = event.currentTarget.id;
+        let el = document.getElementById(element);
+        el.style.height =el.scrollHeight + 'px';
+     
+    } else {
     event.target.style.width= textlen + "ch";
     event.target.style.minWidth= textlen + "ch";
+
+      }
+
 
 
   }
