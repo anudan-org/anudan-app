@@ -113,48 +113,56 @@ populateAttributes(){
   
     let elem = document.getElementById(attribute.parentId);  
       if (elem !== null) {
-      let node;
-      if ( attribute.inputType ==="text"){
-         node = this.renderer.createElement('input');
+        if ( attribute.inputType ==="text"){
+          this.addInputElement(elem, attribute, attributeMap);
+
+        }
+        if ( attribute.inputType ==='textarea'){
+          this.addTextAreaElement(elem, attribute, attributeMap);
+        }
       }
-      if ( attribute.inputType ==='textarea'){
-         node = this.renderer.createElement('textarea');
-      }
+    }
     
+    this.elementupdated=true;
+  }
+
+  addInputElement(elem, attribute, attributeMap) {
+    let node = this.renderer.createElement('input');
+    this.renderer.setAttribute(node, 'placeholder', attribute.placeholder);
+    this.renderer.setAttribute(node, 'id', attribute.id);
+    this.renderer.addClass(node, attribute.className);
+    this.renderer.setAttribute(node, 'name', attribute.fieldName);
+    this.renderer.listen(node, 'input', (event) => this.setTextWidth(event));
+    let textlen =0;
+    let elementlength=parseInt(attribute.placeholder.length) + 1;
+    if (attributeMap.has(attribute.fieldName)) {
+      textlen = attributeMap.get(attribute.fieldName).length;
+      this.renderer.setAttribute(node, 'value', attributeMap.get(attribute.fieldName));
+      elementlength = textlen === 0 ? elementlength : textlen + 2;
+      this.renderer.setStyle(node, 'width', elementlength +'ch');
+      this.renderer.setStyle(node, 'minWidth', elementlength +'ch');
+     
+    }
+    this.renderer.appendChild(elem, node);
+  }
+
+  addTextAreaElement(elem, attribute, attributeMap){
+      let node = this.renderer.createElement('textarea');
       this.renderer.setAttribute(node, 'placeholder', attribute.placeholder);
       this.renderer.setAttribute(node, 'id', attribute.id);
       this.renderer.addClass(node, attribute.className);
       this.renderer.setAttribute(node, 'name', attribute.fieldName);
       this.renderer.listen(node, 'input', (event) => this.setTextWidth(event));
 
-      let textlen =0;
-      let elementlength=parseInt(attribute.placeholder.length) + 1;
-      if (attributeMap.has(attribute.fieldName)) {
-        textlen = attributeMap.get(attribute.fieldName).length;
-        
-        if ( attribute.inputType ==="text"){
-        this.renderer.setAttribute(node, 'value', attributeMap.get(attribute.fieldName));
-        elementlength = textlen === 0 ? elementlength : textlen + 2;
-        this.renderer.setStyle(node, 'width', elementlength +'ch');
-        this.renderer.setStyle(node, 'minWidth', elementlength +'ch');
-        }
-       
-      }
-      
       this.renderer.appendChild(elem, node);
-      if ( attribute.inputType ==="textarea"){
-        this.divWidth = document.getElementById('contentId').getBoundingClientRect().width;
+      this.divWidth = document.getElementById('contentId').getBoundingClientRect().width;
 
-        let el = document.getElementById(attribute.id);
-        el.style.width= this.divWidth + 'px';
-        el.innerHTML=attributeMap.get(attribute.fieldName);
-        el.style.height =(el.scrollHeight +10) + 'px';
+      let el = document.getElementById(attribute.id);
+      el.style.width= this.divWidth + 'px';
+      el.innerHTML=attributeMap.get(attribute.fieldName);
+      el.style.height =(el.scrollHeight +10) + 'px';
       
-       }
-      }
-    }
-    
-    this.elementupdated=true;
+       
   }
 
   setTextWidth(event) {
