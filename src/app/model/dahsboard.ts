@@ -302,6 +302,8 @@ export class Grant {
   actualOngoingDisbursementRecorded: number;
   ongoingDisbursementNote: string;
   actualRefunds: ActualRefund[];
+  plannedFundOthers: number;
+  actualFundOthers: number;
 
 }
 
@@ -590,6 +592,7 @@ export class GrantType {
   internal: boolean;
   granterId: number;
   colorCode: string;
+  closureCovernote:boolean
 }
 
 export class OrgTag {

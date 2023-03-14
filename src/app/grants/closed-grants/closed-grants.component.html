@@ -52,7 +52,11 @@
       *ngFor="let grant of filteredGrants; let i = index"
         (click)="manageGrant(grant)"
       >
-        <div class="col-12 text-left  search-context">
+      <div class="col-1 text-left" *ngIf="appComponent.loggedInUser.organization.organizationType==='GRANTEE'">
+        <div style="margin-left:-15px;"> <img alt="img" [src]="'/api/public/images/' + grant.grantorOrganization.code + '/logo'" alt="logo" class="img-fluid" />
+        </div> 
+      </div>
+        <div class="col-11 text-left  search-context" [ngStyle]="{'margin-left':appComponent.loggedInUser.organization.organizationType==='GRANTEE'?'-30px':'0px'}">
           <em *ngIf="appComponent.loggedInUser.organization.organizationType==='GRANTER' && grant.grantTags.length===1" class="fas fa-tag fa-xs ml-2 grant-tags"></em>
           <em *ngIf="appComponent.loggedInUser.organization.organizationType==='GRANTER' && grant.grantTags.length>1" class="fas fa-tags fa-xs ml-2 grant-tags"></em>
           <p
@@ -69,19 +73,25 @@
           >
             {{ grant.referenceNo }} | <strong>{{ grant.name }}</strong>
           </p>
-        </div>
-        
-        <div class="col-12 text-left mb-0 search-context">
-          <div class="text-header mb-0">
+  
+
+          <div class="text-header mb-0" *ngIf="appComponent.loggedInUser.organization.organizationType==='GRANTER'">
             {{ grant.organization ? grant.organization.name : null }}
           </div>
+          <div class="text-header mb-0" *ngIf="appComponent.loggedInUser.organization.organizationType==='GRANTEE'">
+            {{ grant.grantorOrganization ? grant.grantorOrganization.name : null }}
+          </div>
+
         </div>
         <div class="col-9 text-left">
           <div class="row">
             <div class="col-12 mt-0">
               <div class="row">
-                <div class="col-12 mb-0 pr-0 mt-1 progress-summary-class">
-                  <small >Disbursed {{currencyService.getFormattedAmount(grant.approvedDisbursementsTotal)}} / <span style="font-weight: 800;">Committed {{currencyService.getFormattedAmount(grant.amount)}}</span> (<span class="text-green mt-2 mb-0" style="font-size:14px;font-weight:800;">{{getRoundedFigure(grant)}}%</span>)<div><mat-progress-bar mode="determinate" [value]="((grant.approvedDisbursementsTotal/grant.amount)*100)" style="height: 8px !important;"></mat-progress-bar></div></small>
+                <div class="col-6 mb-0 pr-15 mt-1 progress-summary-class">
+                  <small >{{appComponent.loggedInUser.organization.organizationType==='GRANTEE'?"Received":"Disbursed"}}  {{currencyService.getFormattedAmount(grant.approvedDisbursementsTotal)}} / <span style="font-weight: 800;">Committed {{currencyService.getFormattedAmount(grant.amount)}}</span> (<span class="text-green mt-2 mb-0" style="font-size:14px;font-weight:800;">{{getRoundedFigure(grant)}}%</span>)<div><mat-progress-bar mode="determinate" [value]="((grant.approvedDisbursementsTotal/grant.amount)*100)" style="height: 8px !important;"></mat-progress-bar></div></small>
+                </div>
+                <div class="col-6 mb-0 pr-15 mt-1 progress-summary-class" *ngIf="grant.plannedFundOthers>0">
+                  <small >Co-funding: Recorded {{currencyService.getFormattedAmount(grant.actualFundOthers)}} / <span style="font-weight: 800;">Planned {{currencyService.getFormattedAmount(grant.plannedFundOthers)}}</span> (<span class="text-green mt-2 mb-0" style="font-size:14px;font-weight:800;">{{otherFundsPercentage(grant)}}%</span>)<div><mat-progress-bar mode="determinate" [value]="((grant.actualFundOthers/grant.plannedFundOthers)*100)" style="height: 8px !important;"></mat-progress-bar></div></small>
                 </div>
               </div>
             </div>

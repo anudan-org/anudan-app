@@ -1,16 +1,30 @@
 <div class="col-12 bg-white" style="position: sticky; top: 80px; z-index: 1040">
   <div class="row">
-    <h4 class="col-11 text-left my-3 section-header">Grant Closure Request</h4>
+    <h4 class="col-9 text-left my-3 section-header">Grant Closure Report</h4>
+    <div class="col-2" style="display: flex;align-items: center; justify-content: flex-end;">
+  <a *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse && allowClosureCovernote "
+
+  (click)="editCoverNote()" class="btn btn-sm btn-green">Cover Note<em
+    class="fa fa-plus-square-o ml-2"></em></a>
+  </div>
     <div class="col-1 text-right" style="display: flex; align-items: center; justify-content: flex-start">
       <mat-icon mat-button [matMenuTriggerFor]="menu" class="float-right" style="cursor: pointer">more_vert
       </mat-icon>
       <mat-menu #menu="matMenu">
+        <button *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse && this.currentClosure.covernoteContent !== undefined" 
+          mat-menu-item (click)="clearCovernote()">
+        <em class="fa fa-lg fa-minus-square-o ml-2 mr-2"></em> Clear Cover Note
+         </button>
+        <hr *ngIf="currentClosure.canManage && !currentClosure.forGranteeUse && this.currentClosure.covernoteContent !== undefined" >
+        
         <button mat-menu-item (click)="showWorkflowAssigments()">
           <mat-icon class="ml-1">assignment</mat-icon>Manage Assignments
         </button>
         <button mat-menu-item (click)="showHistory('grant-closure', currentClosure)">
           <mat-icon class="ml-1">comment</mat-icon>View Notes
         </button>
+      
+    
         <ng-container>
           <hr />
           <button mat-menu-item (click)="manageGrant()">

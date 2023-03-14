@@ -2,25 +2,30 @@
     <div class="mt-1 mx-2 px-3 py-1" style="">
         <span *ngIf="disabled" matBadge style="position: absolute;right: 30px;top: 25px;font-size: 10px;">Coming soon</span>
         <div class="row">
-            <div class="col-12 px-0">
+            <div class="col-6 px-0">
                 <div style="min-width:200px;font-weight: 800;font-size: 14px;color: rgba(14, 16, 14, 0.68);">{{heading}}
                     <ng-container *ngIf="caption"> / <small>{{caption}}</small></ng-container>
                 </div>
-            </div>
-            <div class="col-10 px-0">
+          
                 <div class="mt-2" style="min-width:200px;font-weight: 800;font-size: 14px;color: rgba(14, 16, 14, 0.68);">{{actual}}
-                    <ng-container *ngIf="caption"> / <small style="font-family:rgba(14, 16, 14, 0.68);">{{planned}}</small></ng-container>
+                    <ng-container *ngIf="caption"> / <small style="font-family:rgba(14, 16, 14, 0.68);">{{planned}}</small> ({{percent}}%)</ng-container>
+                </div>
+                <div class="mr-2 progress-summary-class">
+                    <mat-progress-bar mode="determinate" [value]="percent" style="height: 8px !important;"></mat-progress-bar>
                 </div>
             </div>
-            <div class="col-2 text-right">
-                <p class="text-green mt-2 mb-0" style="font-weight:800;">{{percent}} %</p>
-            </div>
-            <div class="col-12 px-0">
-                <div class="mt-2 progress-summary-class">
-                    <mat-progress-bar mode="determinate" [value]="percent" style="height: 8px !important;"></mat-progress-bar>
+            <div class="col-6 px-0" *ngIf="data.plannedFundOthers>0">
+                <div style="min-width:200px;font-weight: 800;font-size: 14px;color: rgba(14, 16, 14, 0.68);"><small>Co-funding:</small> Recorded: 
+                    <ng-container *ngIf="caption"> / <small>Planned</small></ng-container>
+                </div>
+                <div class="mt-2" style="min-width:200px;font-weight: 800;font-size: 14px;color: rgba(14, 16, 14, 0.68);">{{actualFundOthers}}
+                    <ng-container *ngIf="caption"> / <small style="font-family:rgba(14, 16, 14, 0.68);">{{plannedFundOthers}}</small>({{percentFundOthers}}%)</ng-container>
+                </div>
+                <div class="mr-2 progress-summary-class">
+                    <mat-progress-bar mode="determinate" [value]="percentFundOthers" style="height: 8px !important;"></mat-progress-bar>
 
                 </div>
-            </div>
+           
         </div>
     </div>
 </div>

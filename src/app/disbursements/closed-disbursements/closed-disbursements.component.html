@@ -50,7 +50,7 @@
                             </div>
                           </div>
                         </div>
-                        <div class="col-10 text-left pt-3" (click)="manageDisbursement(disbursement)">
+                        <div class="col-9 text-left pt-3" >
                           <div class="row mb-2">
                             <div class="col-6">
                               <div class="text-subheader mb-1"><p class="mb-0">Requested Amount:</p> <span class="text-subheader search-context">
@@ -81,6 +81,15 @@
                             </div>
                             </div>
                           </div>
+                        </div>
+                        <div class="col-3 text-center pt-3">
+                          <div>&nbsp;</div>
+                          <div *ngIf="appComponent.loggedInUser.organization.organizationType!=='GRANTEE'"
+                          [ngStyle]="{'background-color':getGrantTypeColor(disbursement.grant.grantTypeId),'border-bottom-right-radius':'4px'}">
+                          <div>
+                            <small>{{getGrantTypeName(disbursement.grant.grantTypeId)}}</small>
+                          </div>
+                        </div>
                         </div>
                       </div>
                     </div>
