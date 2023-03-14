@@ -53,7 +53,7 @@
         (click)="manageGrant(grant)"
       >
       <div class="col-1 text-left" *ngIf="appComponent.loggedInUser.organization.organizationType==='GRANTEE'">
-        <div style="margin-left:-20px;"> <img alt="img" [src]="'/api/public/images/' + grant.grantorOrganization.code + '/logo'" alt="logo" class="img-fluid" />
+        <div style="margin-left:-15px;"> <img alt="img" [src]="'/api/public/images/' + grant.grantorOrganization.code + '/logo'" alt="logo" class="img-fluid" />
         </div> 
       </div>
         <div class="col-11 text-left  search-context" [ngStyle]="{'margin-left':appComponent.loggedInUser.organization.organizationType==='GRANTEE'?'-30px':'0px'}">

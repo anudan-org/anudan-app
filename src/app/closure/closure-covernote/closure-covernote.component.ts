@@ -138,11 +138,12 @@ populateAttributes(){
     if (attributeMap.has(attribute.fieldName)) {
       textlen = attributeMap.get(attribute.fieldName).length;
       this.renderer.setAttribute(node, 'value', attributeMap.get(attribute.fieldName));
+     }
       elementlength = textlen === 0 ? elementlength : textlen + 2;
       this.renderer.setStyle(node, 'width', elementlength +'ch');
       this.renderer.setStyle(node, 'minWidth', elementlength +'ch');
      
-    }
+    
     this.renderer.appendChild(elem, node);
   }
 
@@ -159,7 +160,9 @@ populateAttributes(){
 
       let el = document.getElementById(attribute.id);
       el.style.width= this.divWidth + 'px';
+      if (attributeMap.has(attribute.fieldName)) {
       el.innerHTML=attributeMap.get(attribute.fieldName);
+      }
       el.style.height =(el.scrollHeight +10) + 'px';
       
        

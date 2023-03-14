@@ -27,7 +27,7 @@
               
 
               <div class="col-1 text-left" *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'">
-                <div style="margin-left:-20px;"> <img alt="img" [src]="'/api/public/images/' + report.grant.grantorOrganization.code + '/logo'" alt="logo" class="img-fluid" />
+                <div style="margin-left:-15px;"> <img alt="img" [src]="'/api/public/images/' + report.grant.grantorOrganization.code + '/logo'" alt="logo" class="img-fluid" />
                 </div> 
             </div>
               
@@ -150,7 +150,7 @@
               *ngFor="let report of filteredSubmittedReportsOD; let i = index" (click)="manageReport(report)">
              
               <div class="col-1 text-left" *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'">
-                <div style="margin-left:-20px;"> <img alt="img" [src]="'/api/public/images/' + report.grant.grantorOrganization.code + '/logo'" alt="logo" class="img-fluid" />
+                <div style="margin-left:-15px;"> <img alt="img" [src]="'/api/public/images/' + report.grant.grantorOrganization.code + '/logo'" alt="logo" class="img-fluid" />
                 </div> 
             </div>
               
