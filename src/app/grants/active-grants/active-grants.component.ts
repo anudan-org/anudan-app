@@ -514,6 +514,14 @@ export class ActiveGrantsComponent implements OnInit {
     return Math.round(((grant.approvedDisbursementsTotal / grant.amount) * 100))
   }
 
+  otherFundsPercentage(grant) {
+    if (grant.plannedFundOthers > 0 ) {
+      return Math.round(((grant.actualFundOthers / grant.plannedFundOthers) * 100))
+    } else {
+      return null;
+    }
+    
+  }
   manageClosure(closure: GrantClosure) {
     if (this.deleteClosureClicked) {
       return;

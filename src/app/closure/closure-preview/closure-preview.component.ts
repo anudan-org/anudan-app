@@ -23,7 +23,7 @@ import { AppComponent } from 'app/app.component';
 import { WorkflowStatus, Grant, TableData, Attribute, Section, AttachmentDownloadRequest } from './../../model/dahsboard';
 import { ClosureWorkflowAssignmentModel, GrantClosure } from 'app/model/closures';
 import { ClosureDataService } from './../../closure.data.service';
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Renderer2, AfterViewChecked } from '@angular/core';
 import { User } from 'app/model/user';
 import { saveAs } from 'file-saver';
 import * as indianCurrencyInWords from 'indian-currency-in-words';
@@ -43,12 +43,11 @@ import { TitleCasePipe } from '@angular/common';
     }
   `]
 })
-export class ClosurePreviewComponent implements OnInit {
+export class ClosurePreviewComponent implements OnInit, AfterViewChecked {
 
   @ViewChild('pdf') pdf;
   @ViewChild('createSectionModal') createSectionModal: ElementRef;
-
-
+  
   currentClosure: GrantClosure;
   wfDisabled: boolean = false;
   closureWorkflowStatuses: WorkflowStatus[];
@@ -67,6 +66,13 @@ export class ClosurePreviewComponent implements OnInit {
 
   @ViewChild("grantRefundFormatted") grantRefundFormatted: ElementRef;
   @ViewChild("refundAmount") refundAmount: ElementRef;
+  covertext: any;
+  attributes: any;
+  elementupdated: any;
+  @ViewChild("covernoteSection") covernoteSection: ElementRef;
+ 
+
+  covernoteVisible:any;
 
   constructor(private closureService: ClosureDataService,
     public appComp: AppComponent,
@@ -81,6 +87,7 @@ export class ClosurePreviewComponent implements OnInit {
     private sidebar: SidebarComponent,
     private docPreviewService: DocpreviewService,
     private docManagementService: DocManagementService,
+    private renderer: Renderer2,
     private sanitizer: DomSanitizer) {
 
     this.closureService.currentMessage.subscribe((closure) => {
@@ -135,6 +142,8 @@ export class ClosurePreviewComponent implements OnInit {
     this.getRefundAmount();
     this.getRefundReceived();
     this.setSpendSumamry();
+    this.attributes=JSON.parse(this.closureService.getCoverNoteAttributes(this.currentClosure.grant.organization.id, this.appComp.loggedInUser.id)); 
+    this.covertext= this.sanitizer.bypassSecurityTrustHtml(this.currentClosure.covernoteContent); 
   }
 
   setGrantAmount() {
@@ -152,6 +161,73 @@ export class ClosurePreviewComponent implements OnInit {
     this.disbursedAmount = this.currencyService.getFormattedAmount(Number(disbursement));
     this.unspentAmount = this.currencyService.getFormattedAmount(Number(disbursement) + Number(interest) - spent);
   }
+
+  ngAfterViewChecked(){
+    if (!this.elementupdated) {
+    this.populateAttributes();
+    }
+  }
+  
+  showCovernote(event){
+
+    var anchor = event.target.closest('a');
+  
+   if ( this.covernoteSection.nativeElement.style.display==='none' ) {
+  
+    this.covernoteSection.nativeElement.style.display='block';
+     anchor.childNodes[0].textContent ="Hide Cover Note";
+     anchor.childNodes[1].className="fa fa-eye-slash ml-2";
+    this.covernoteVisible = true;
+    } else {
+      this.covernoteSection.nativeElement.style.display='none';
+      anchor.childNodes[0].textContent ="Show Cover Note";
+      anchor.childNodes[1].className="fa fa-eye ml-2";
+      this.covernoteVisible = false;
+    }
+
+  }
+
+  
+  populateAttributes(){
+  
+    let attributeMap = new Map();
+    let currentAttributes;
+    if (this.currentClosure.covernoteAttributes!==undefined && this.currentClosure.covernoteAttributes!=="" ) {
+      currentAttributes = JSON.parse(this.currentClosure.covernoteAttributes);
+     }
+    
+    if ( currentAttributes !== undefined ) {
+      for(let currentAttribute of currentAttributes ) {
+    
+       let name = currentAttribute.fieldName;
+       let value = currentAttribute.fieldValue;
+       attributeMap.set(name,value);
+      }
+     
+    }
+
+ 
+    for (let attribute of this.attributes) {
+  
+      let referenceId = document.getElementById(attribute.parentId);  
+      if (referenceId !== null) {
+         const elem = this.renderer.createElement('span');
+       let fieldValue;
+        if (attributeMap.has(attribute.fieldName) && attributeMap.get(attribute.fieldName) !=="") {
+            fieldValue = this.renderer.createText( attributeMap.get(attribute.fieldName));
+          } else {
+            fieldValue = this.renderer.createText( attribute.placeholder);
+        }
+        
+        this.renderer.appendChild(elem, fieldValue);
+        this.renderer.appendChild(referenceId, elem);
+      
+      }
+    }
+   
+    this.elementupdated=true;
+  }
+    
 
   submitClosure(toStateId: number, transitionTitle: string, direction: boolean) {
 

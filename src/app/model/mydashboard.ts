@@ -81,6 +81,8 @@ export class Filter {
   disbursedAmount: number = 0;
   committedAmount: number = 0;
   details: Detail[] = [];
+  plannedFundOthers: number = 0;
+  actualFundOthers: number = 0;
 }
 
 export class MyCategory {

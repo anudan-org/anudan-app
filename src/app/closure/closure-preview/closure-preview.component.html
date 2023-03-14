@@ -1,6 +1,6 @@
 <div class="col-12 bg-white" style="position: sticky; top: 80px; z-index: 1040">
   <div class="row">
-    <h4 class="col-11 text-left my-3 section-header">
+    <h4 class="col-8 text-left my-3 section-header">
       <div *ngIf="currentClosure.canManage" style="display: flex">
         <div *ngFor="let flow of getForwardFlow()">
           <button [disabled]="wfDisabled" mat-stroked-button
@@ -32,8 +32,18 @@
             </button>
           </ng-container>
         </div>
+       
       </div>
+     
     </h4>
+    <div class="col-3" style="display: flex; align-items: center;justify-content: flex-end; ">
+    <a  *ngIf="currentClosure.covernoteContent !==undefined && currentClosure.covernoteContent !=='' 
+      &&  ( !currentClosure.forGranteeUse || currentClosure.status.internalStatus=='CLOSED')"
+    (click)="showCovernote($event)" 
+    class="btn btn-sm btn-green">Show Cover Note<em class="fa fa-eye ml-2"></em></a>
+    </div>
+    
+    
     <div class="col-1 text-right" style="display: flex; align-items: center; justify-content: flex-start">
       <mat-icon mat-button [matMenuTriggerFor]="menu" class="float-right" style="cursor: pointer">more_vert</mat-icon>
       <mat-menu #menu="matMenu">
@@ -82,7 +92,7 @@
                     <div class="row">
                       <div class="col-12">
                         <h4 class="m-0" type="text" autocomplete="off">
-                          <strong>{{ 'Closure Request for ' + currentClosure.grant.name }}</strong>
+                          <strong>{{ 'Grant Closure Report for ' + currentClosure.grant.name }}</strong>
                         </h4>
                       </div>
                       <div class="col-12 text-left">
@@ -98,7 +108,17 @@
                 </div>
               </div>
               <hr />
-              <div class="col-12 mb-2 m-2" style="background: #f9f9f9">
+              <div #covernoteSection class="col-12 mb-2 m-2 " style="background: #f9f9f9; display:none" >
+                <div class="row">
+                  <div class="col-12 mb-0">
+                    <pre 
+                    class="mt-1 text-justify"><p style="font-size:16px;text-align:justify;" [innerHtml]="covertext"></p>
+                  </pre>
+                  </div>
+                </div>
+                <hr />
+              </div>
+              <div class="col-12 mb-2 m-2 "  [ngClass]="{'page-break': covernoteVisible}" style="background: #f9f9f9">
                 <div class="row">
                   <div class="col-12 mb-0">
                     <span style="color: #929292; font-size: 13px; font-family: Roboto, sans-serif;">Grant Name:</span>

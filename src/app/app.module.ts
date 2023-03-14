@@ -48,6 +48,7 @@ import { RefundpopupComponent } from './refundpopup/refundpopup.component';
 import { ProjectFundSummaryComponent } from './project-fund-summary/project-fund-summary.component';
 import { LandingComponent } from './landing/landing.component';
 import { AutosizeModule } from 'ngx-autosize';
+import { ClosureCovernoteComponent} from './closure/closure-covernote/closure-covernote.component';
 
 export class AnudanErrorHandler implements ErrorHandler {
   constructor() {
@@ -102,6 +103,7 @@ export function provideConfig() {
     RefundpopupComponent,
     ProjectFundSummaryComponent,
     LandingComponent,
+    ClosureCovernoteComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -166,7 +168,7 @@ export function provideConfig() {
     MatMenuModule,
     { provide: ErrorHandler, useClass: AnudanErrorHandler }
   ],
-  entryComponents: [WfassignmentComponent, GranthistoryComponent, NotificationspopupComponent, MessagingComponent, FieldDialogComponent, OwnersPopupComponent, ProjectDocumentsComponent, ClosureSelectionComponent, DocpreviewComponent, ReturnsPopupComponent, RefundpopupComponent, ProjectFundSummaryComponent],
+  entryComponents: [WfassignmentComponent, GranthistoryComponent, NotificationspopupComponent, MessagingComponent, FieldDialogComponent, OwnersPopupComponent, ProjectDocumentsComponent, ClosureSelectionComponent, DocpreviewComponent, ReturnsPopupComponent, RefundpopupComponent, ProjectFundSummaryComponent,ClosureCovernoteComponent],
   schemas: [NO_ERRORS_SCHEMA],
   bootstrap: [AppComponent]
 })

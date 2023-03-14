@@ -13,13 +13,13 @@ import {
   providedIn: 'root',
 })
 export class ClosureDataService {
-
+ 
   private messageSource = new BehaviorSubject<GrantClosure>(null);
   currentMessage = this.messageSource.asObservable();
   langService: HumanizeDurationLanguage = new HumanizeDurationLanguage();
   humanizer: HumanizeDuration = new HumanizeDuration(this.langService);
   url: string = "/api/user/%USERID%/closure";
-
+  
   constructor(private httpClient: HttpClient,
     private userService: UserService) {
 
@@ -140,4 +140,121 @@ export class ClosureDataService {
         );
       });
   }
+
+ 
+  getCoverNoteAttributes(orgId, userId): string {
+    return JSON.stringify(
+      [
+          {
+              "parentId": "id1",
+              "id": "id_1",
+               "fieldName": "salutation",
+               "inputType" :"text",
+               "placeholder": "<Salutation>",
+               "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id2",
+            "id": "id_2",
+            "fieldName": "name",
+            "inputType" :"text",
+            "placeholder": "<Name>",
+            "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id3",
+            "id": "id_3",
+            "fieldName": "jobtitle",
+            "inputType" :"text",
+            "placeholder": "<Designation>",
+            "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id4",
+            "id": "id_4",
+            "fieldName": "address",
+            "inputType" :"text",
+            "placeholder": "<Address>",
+            "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id5",
+            "id": "id_5",
+            "fieldName": "contactNumber",
+            "inputType" :"text",
+            "placeholder": "<Contact Number>",
+            "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id6",
+            "id": "id_6",
+            "fieldName": "contactEmail",
+            "inputType" :"text",
+            "placeholder": "<Email Address>",
+            "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id7",
+            "id": "id_7",
+            "fieldName": "greetingName",
+            "inputType" :"text",
+            "placeholder": "<Greeting>",
+            "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id8",
+            "id": "id_8",
+            "fieldName": "yearEnded",
+            "inputType" :"text",
+            "placeholder": "<Year>",
+            "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id9",
+            "id": "id_9",
+            "fieldName": "signeeName",
+             "inputType" :"text",
+            "placeholder": "<Signee Name>",
+            "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id10",
+            "id": "id_10",
+            "fieldName": "signeeTitle",
+            "inputType" :"text",
+            "placeholder": "<Signee Title>",
+            "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id11",
+            "id": "id_11",
+            "fieldName": "noteDate",
+            "inputType" :"text",
+            "placeholder": "<Date>",
+            "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id12",
+            "id": "id_12",
+            "fieldName": "projectComment",
+            "inputType" :"text",
+            "placeholder": "<Comment on project>",
+            "className":"anu-input-dotted-bottom"
+          },
+          {
+            "parentId": "id13",
+            "id": "id_13",
+            "fieldName": "additionalComment",
+            "inputType" :"textarea",
+            "placeholder": "<Additional Comments>",
+            "className":"anu-input-dotted-bottom"
+          }
+      ]);
+
+      
+  
+    }
+
+  
+  
 }

@@ -169,7 +169,7 @@ export class LoginComponent implements OnInit {
     this.http.post<HttpResponse<User>>(url, user, httpOptions).subscribe(resp => {
 
       const keys = resp.headers.keys();
-      // console.log(keys);
+    
       this.user = resp.body;
 
 
@@ -213,7 +213,11 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/dashboard']);
         }
       } else {
+        if (this.parameters) {
         this.router.navigate(['/admin/tenants'], { queryParams: { g: this.parameters.g, r: this.parameters.r, d: this.parameters.d, email: this.parameters.email, org: this.parameters.org, type: this.parameters.type, status: 'e' } });
+        } else {
+          this.router.navigate(['/admin/tenants']);
+        }
       }
     },
       error => {

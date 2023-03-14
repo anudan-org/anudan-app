@@ -9,10 +9,10 @@
                 <mat-option *ngFor="let filter of data" [value]="filter.name">{{filter.name}}</mat-option>
             </mat-select>
         </div>
-        <div class="col-6">
+        <div class="col-5">
             <app-granteesummary-centered [display]="false" [data]="portfolioData"></app-granteesummary-centered>
         </div>
-        <div class="col-6">
+        <div class="col-7">
             <app-granteeprogress-summary [display]="false" [data]="portfolioProgessData"></app-granteeprogress-summary>
         </div>
     </div>

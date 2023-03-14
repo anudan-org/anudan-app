@@ -24,7 +24,14 @@
             </div>
             <div [ngClass]="uiService.getReportCardStyle(report,appComp)" style="cursor: pointer"
               *ngFor="let report of filteredSubmittedReportsD; let i = index" (click)="manageReport(report)">
-              <div class="col-12 mb-1">
+              
+
+              <div class="col-1 text-left" *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'">
+                <div style="margin-left:-15px;"> <img alt="img" [src]="'/api/public/images/' + report.grant.grantorOrganization.code + '/logo'" alt="logo" class="img-fluid" />
+                </div> 
+            </div>
+              
+              <div class="col-11 mb-1" [ngStyle]="{'margin-left':appComp.loggedInUser.organization.organizationType==='GRANTEE'?'-30px':'0px'}">
                 <p *ngIf="report.disabledByAmendment"
                   class="mb-0 text-subheader d-flex align-items-center text-left mt-2"
                   style="font-weight: 600; font-size: 12px">
@@ -41,17 +48,18 @@
                       : "") + report.grant.name
                       }}</span></div>
 
-                  <div class="mb-1"><span *ngIf="isExternalGrant(report.grant)" class=" mt-1 search-context">{{
+                  <div class="mb-1"><span *ngIf="isExternalGrant(report.grant) && appComp.loggedInUser.organization.organizationType!=='GRANTEE'" class=" mt-1 search-context">{{
                       report.grant.organization
                       ? report.grant.organization.name
                       : ""
                       }}</span>
-                    <span *ngIf="!isExternalGrant(report.grant)" class="mt-1 search-context">{{
+                    <span *ngIf="!isExternalGrant(report.grant) || appComp.loggedInUser.organization.organizationType=='GRANTEE'" class="mt-1 search-context">{{
                       report.grant.grantorOrganization.name
                       }}</span>
                   </div>
-
-                  <div class="mt-1">
+                </div>
+              </div>
+                  <div class="col-11 mt-1 text-subheader text-left">
                     <img alt="img" src="./assets/img/rupee.png" style="width: 9px" /><span>{{
                       getFormattedGrantAmount(report.grant.amount) }}
                     </span>
@@ -60,8 +68,8 @@
                         }})</small></span>
                   </div>
 
-                </div>
-              </div>
+                
+            
               <div class="col-9 mb-2" style="display: flex; align-items: center">
                 <div class="row">
                   <div class="col-12 my-4">
@@ -115,6 +123,14 @@
                       </div>{{report.status.name | uppercase}}
                     </div>
                     <div class="text-center text-subheader pl-3 mt-2 search-context">{{report.ownerName}}</div>
+                    <div>&nbsp;</div>
+                    <div>&nbsp;</div>
+                    <div *ngIf="appComp.loggedInUser.organization.organizationType!=='GRANTEE'"
+                    [ngStyle]="{'background-color':getGrantTypeColor(report.grant.grantTypeId),'border-bottom-right-radius':'4px'}">
+                    <div>
+                      <small>{{getGrantTypeName(report.grant.grantTypeId)}}</small>
+                    </div>
+                  </div>
                   </div>
                 </div>
               </div>
@@ -132,7 +148,13 @@
             </div>
             <div [ngClass]="uiService.getReportCardStyle(report,appComp)" style="cursor: pointer"
               *ngFor="let report of filteredSubmittedReportsOD; let i = index" (click)="manageReport(report)">
-              <div class="col-12 mb-1">
+             
+              <div class="col-1 text-left" *ngIf="appComp.loggedInUser.organization.organizationType==='GRANTEE'">
+                <div style="margin-left:-15px;"> <img alt="img" [src]="'/api/public/images/' + report.grant.grantorOrganization.code + '/logo'" alt="logo" class="img-fluid" />
+                </div> 
+            </div>
+              
+              <div class="col-11 mb-1" [ngStyle]="{'margin-left':appComp.loggedInUser.organization.organizationType==='GRANTEE'?'-30px':'0px'}">
                 <p *ngIf="report.disabledByAmendment"
                   class="mb-0 text-subheader d-flex align-items-center text-left mt-2"
                   style="font-weight: 600; font-size: 12px">
@@ -149,17 +171,18 @@
                       : "") + report.grant.name
                       }}</span></div>
 
-                  <div class="mb-1"><span *ngIf="isExternalGrant(report.grant)" class=" mt-1 search-context">{{
+                  <div class="mb-1"><span *ngIf="isExternalGrant(report.grant) && appComp.loggedInUser.organization.organizationType!=='GRANTEE'" class=" mt-1 search-context">{{
                       report.grant.organization
                       ? report.grant.organization.name
                       : ""
                       }}</span>
-                    <span *ngIf="!isExternalGrant(report.grant)" class="mt-1 search-context">{{
+                    <span *ngIf="!isExternalGrant(report.grant) || appComp.loggedInUser.organization.organizationType=='GRANTEE'" class="mt-1 search-context">{{
                       report.grant.grantorOrganization.name
                       }}</span>
                   </div>
-
-                  <div class="mt-1">
+                </div>
+              </div>
+                  <div class="col-11 mt-1 text-subheader text-left">
                     <img alt="img" src="./assets/img/rupee.png" style="width: 9px" /><span>{{
                       getFormattedGrantAmount(report.grant.amount) }}
                     </span>
@@ -168,8 +191,8 @@
                         }})</small></span>
                   </div>
 
-                </div>
-              </div>
+                
+              
               <div class="col-9 mb-2" style="display: flex; align-items: center">
                 <div class="row">
                   <div class="col-12 my-4">
@@ -223,6 +246,15 @@
                       </div>{{report.status.name | uppercase}}
                     </div>
                     <div class="text-center text-subheader pl-3 mt-2 search-context">{{report.ownerName}}</div>
+                    <div>&nbsp;</div>
+                    <div>&nbsp;</div>
+                    <div *ngIf="appComp.loggedInUser.organization.organizationType!=='GRANTEE'"
+                    [ngStyle]="{'background-color':getGrantTypeColor(report.grant.grantTypeId),'border-bottom-right-radius':'4px'}">
+                    <div>
+                      <small>{{getGrantTypeName(report.grant.grantTypeId)}}</small>
+                    </div>
+                  </div>
+
                   </div>
 
                 </div>

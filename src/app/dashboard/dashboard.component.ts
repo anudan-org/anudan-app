@@ -433,7 +433,8 @@ export class DashboardComponent implements OnInit {
       }),
     };
   
-    this.http.get<GrantClosure[]>('/api/users/' + this.appComponent.loggedInUser.id + '/dashboard/mysummary/pendingclosures', httpOptions)
+  //  this.http.get<GrantClosure[]>('/api/users/' + this.appComponent.loggedInUser.id + '/dashboard/mysummary/pendingclosures', httpOptions)
+  this.http.get<GrantClosure[]>('/api/user/' + this.appComponent.loggedInUser.id + '/closure/pendingclosures', httpOptions)
       .subscribe((results) => {
         const dg = this.dialog.open(ListDialogComponent, {
           data: { _for: 'closure', closures: results, appComp: this.appComponent, title: 'Actions Pending | Closures' },

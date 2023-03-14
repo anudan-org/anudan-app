@@ -27,6 +27,8 @@ export class GrantClosure {
   refundReason: string;
   actualSpent: number;
   interestEarned: number;
+  covernoteAttributes: string;
+  covernoteContent: string;
 }
 
 export class ClosureDocument {
